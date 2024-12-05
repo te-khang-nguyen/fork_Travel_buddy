@@ -124,7 +124,7 @@ function Login() {
         <Box textAlign="center" mt={3}>
           <Typography variant="body2">
             Do not have an account?{' '}
-            <Link href="#" onClick={handleRegistration}>
+            <Link href="/register" onClick={handleRegistration}>
               Register here
             </Link>
           </Typography>
