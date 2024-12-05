@@ -107,9 +107,14 @@ const RegistrationForm = () => {
               error={!!errors.password}
               helperText={errors.password?.message as string}
             />
+            <Box sx={{display: 'flex' ,flexDirection:'row' ,gap:1,}}>
+            <Button href='/'  variant="contained" color="primary" fullWidth>
+              Go Back
+            </Button>
             <Button type="submit" variant="contained" color="primary" fullWidth>
               Register
             </Button>
+            </Box>
           </Box>
         </form>
       </Box>
