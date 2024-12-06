@@ -8,7 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 import { Google, Facebook, Instagram } from "@mui/icons-material";
-import  defaultBackground from "@/assets/background.jpg";
+import defaultBackground from "@/assets/background.jpg";
 
 function Login() {
   const handleLogin = () => {
@@ -26,11 +26,14 @@ function Login() {
   return (
     <Box
       sx={{
-        backgroundImage:`url(${defaultBackground})`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundImage: `url("${defaultBackground.src}")`,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
+        width: "100%",
       }}
     >
       <Box
@@ -43,11 +46,11 @@ function Login() {
           backgroundColor: "white",
         }}
       >
-        <Typography variant="h5" align="center" gutterBottom>
-          Login
+        <Typography variant="h4" color="primary" align="center" gutterBottom>
+          User Login
         </Typography>
 
-        <Box sx={{display:'flex' , flexDirection:'column', gap:1,}}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Box>
             <Typography>Email</Typography>
             <TextField
@@ -55,6 +58,7 @@ function Login() {
               fullWidth
               margin="normal"
               variant="outlined"
+              placeholder="Enter Your Email"
             />
           </Box>
           <Box>
@@ -63,9 +67,10 @@ function Login() {
               sx={{ mt: 0.5 }}
               fullWidth
               margin="normal"
-              label="Password"
               type="password"
               variant="outlined"
+              placeholder="Enter Your Password"
+
             />
           </Box>
         </Box>

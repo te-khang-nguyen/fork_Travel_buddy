@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Button, Box, Typography } from "@mui/material";
+import defaultBackground from "@/assets/background.jpg";
 
 const RegistrationForm = () => {
   const {
@@ -24,6 +25,9 @@ const RegistrationForm = () => {
   return (
     <Box
       sx={{
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundImage: `url("${defaultBackground.src}")`,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -47,68 +51,91 @@ const RegistrationForm = () => {
         }}
       >
         <Typography variant="h5" textAlign="center">
-          Register
+          Create Account
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <TextField
-              fullWidth
-              label="First Name"
-              {...register("firstName", { required: "First name is required" })}
-              error={!!errors.firstName}
-              helperText={errors.firstName?.message as string}
-            />
-            <TextField
-              fullWidth
-              label="Last Name"
-              {...register("lastName", { required: "Last name is required" })}
-              error={!!errors.lastName}
-              helperText={errors.lastName?.message as string}
-            />
-            <TextField
-              fullWidth
-              label="Email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /\S+@\S+\.\S+/,
-                  message: "Invalid email address",
-                },
-              })}
-              error={!!errors.email}
-              helperText={errors.email?.message as string}
-            />
-            <TextField
-              fullWidth
-              label="Phone"
-              {...register("phone", {
-                required: "Phone number is required",
-                pattern: {
-                  value: /^\d{10}$/,
-                  message: "Phone number must be 10 digits",
-                },
-              })}
-              error={!!errors.phone}
-              helperText={errors.phone?.message as string}
-            />
-            <TextField
-              fullWidth
-              type="password"
-              label="Password"
-              {...register("password", {
-                required: "Password is required",
-                pattern: {
-                  value:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  message:
-                    "Password must be at least 8 characters, include an uppercase letter, a number, and a special character",
-                },
-              })}
-              error={!!errors.password}
-              helperText={errors.password?.message as string}
-            />
+            <Box>
+              <Typography>First Name</Typography>
+              <TextField
+                sx={{ mt: 0.5 }}
+                placeholder="Enter your first name"
+                fullWidth
+                {...register("firstName", {
+                  required: "First name is required",
+                })}
+                error={!!errors.firstName}
+                helperText={errors.firstName?.message as string}
+              />
+            </Box>
+            <Box>
+              <Typography>Last Name</Typography>
+              <TextField
+                sx={{ mt: 0.5 }}
+                fullWidth
+                placeholder="Enter your last name"
+                {...register("lastName", { required: "Last name is required" })}
+                error={!!errors.lastName}
+                helperText={errors.lastName?.message as string}
+              />
+            </Box>
+            <Box>
+              <Typography>Email</Typography>
+              <TextField
+                sx={{ mt: 0.5 }}
+                fullWidth
+                placeholder="Enter your email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "Invalid email address",
+                  },
+                })}
+                error={!!errors.email}
+                helperText={errors.email?.message as string}
+              />
+            </Box>
+            <Box>
+              <Typography>Phone</Typography>
+              <TextField
+                sx={{ mt: 0.5 }}
+                fullWidth
+                placeholder="Enter your phone"
+                {...register("phone", {
+                  required: "Phone number is required",
+                  pattern: {
+                    value: /^\d{10}$/,
+                    message: "Phone number must be 10 digits",
+                  },
+                })}
+                error={!!errors.phone}
+                helperText={errors.phone?.message as string}
+              />
+            </Box>
+            <Box>
+              <Typography>Password</Typography>
+              <TextField
+                sx={{ mt: 0.5 }}
+                fullWidth
+                type="password"
+                placeholder="Enter your password"
+                {...register("password", {
+                  required: "Password is required",
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+                      "Password must be at least 8 characters, include an uppercase letter, a number, and a special character",
+                  },
+                })}
+                error={!!errors.password}
+                helperText={errors.password?.message as string}
+              />
+            </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Button
+                sx={{ p: 1.5 }}
                 type="submit"
                 variant="contained"
                 color="primary"
@@ -117,7 +144,7 @@ const RegistrationForm = () => {
                 Create account
               </Button>
               <Button href="/" color="primary" fullWidth>
-              Already have an account? Login here.
+                Already have an account? Login here.
               </Button>
             </Box>
           </Box>
