@@ -28,7 +28,7 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.grey[300], 0.9),
   },
-  border:'1px solid grey',
+  border: "1px solid grey",
   margin: "0 auto",
   width: "100%",
   maxWidth: "600px",
@@ -58,7 +58,10 @@ interface DrawerLayoutProps {
   showDrawerButton?: boolean;
 }
 
-const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton = false }) => {
+const DrawerLayout: React.FC<DrawerLayoutProps> = ({
+  children,
+  showDrawerButton = false,
+}) => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const router = useRouter();
 
@@ -81,6 +84,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
           { text: "About", icon: <InfoIcon />, route: "/about" },
         ].map((item) => (
           <ListItem
+
             key={item.text}
             onClick={() => {
               router.push(item.route);
@@ -96,7 +100,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
   );
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <CssBaseline />
       {showDrawerButton && (
         <AppBar
@@ -104,7 +108,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
           sx={{
             backgroundColor: "white",
             color: "black",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Added shadow
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", 
           }}
         >
           <Toolbar>
@@ -145,11 +149,11 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
-          marginLeft: { sm: 0 },
+          flex: 1, 
+          marginTop: showDrawerButton ? "64px" : 0, //should move to constant height of appbar
+          overflow: "auto", 
         }}
       >
-        {showDrawerButton && <Toolbar />}
         {children}
       </Box>
     </Box>
