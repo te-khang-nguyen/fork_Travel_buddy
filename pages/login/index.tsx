@@ -8,6 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 import { Google, Facebook, Instagram } from "@mui/icons-material";
+import  defaultBackground from "@/assets/background.jpg";
 
 function Login() {
   const handleLogin = () => {
@@ -24,13 +25,12 @@ function Login() {
 
   return (
     <Box
-
       sx={{
+        backgroundImage:`url(${defaultBackground})`,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
-        backgroundColor: "#f4f4f4",
       }}
     >
       <Box
@@ -47,20 +47,28 @@ function Login() {
           Login
         </Typography>
 
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Email or Username"
-          variant="outlined"
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Password"
-          type="password"
-          variant="outlined"
-        />
-
+        <Box sx={{display:'flex' , flexDirection:'column', gap:1,}}>
+          <Box>
+            <Typography>Email</Typography>
+            <TextField
+              sx={{ mt: 0.5 }}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+            />
+          </Box>
+          <Box>
+            <Typography>Password</Typography>
+            <TextField
+              sx={{ mt: 0.5 }}
+              fullWidth
+              margin="normal"
+              label="Password"
+              type="password"
+              variant="outlined"
+            />
+          </Box>
+        </Box>
         <Button
           fullWidth
           variant="contained"
@@ -116,12 +124,13 @@ function Login() {
         </Box>
 
         <Box textAlign="center" mt={3}>
-          <Typography variant="body2">
-            Do not have an account?{" "}
-            <Link href="/register" onClick={handleRegistration}>
-              Register here
-            </Link>
-          </Typography>
+          <Link
+            href="/register"
+            sx={{ textDecoration: "none" }}
+            onClick={handleRegistration}
+          >
+            Have not registered yet? Join us!
+          </Link>
         </Box>
       </Box>
     </Box>

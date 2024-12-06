@@ -29,7 +29,7 @@ function AccountRecoveryPage() {
               Account Recovery
             </Typography>
             <Typography variant="body1" paragraph>
-              Enter your email address, and we'll send you a link to recover
+              Enter your email address, and we will send you a link to recover
               your account.
             </Typography>
             <Box

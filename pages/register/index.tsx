@@ -35,7 +35,7 @@ const RegistrationForm = () => {
       <Box
         sx={{
           width: "100%",
-          maxWidth: { xs: 300, sm: 400 }, // Responsive width
+          maxWidth: { xs: 300, sm: 600 }, // Responsive width
           p: 3,
           border: "1px solid #ddd",
           borderRadius: 2,
@@ -107,13 +107,18 @@ const RegistrationForm = () => {
               error={!!errors.password}
               helperText={errors.password?.message as string}
             />
-            <Box sx={{display: 'flex' ,flexDirection:'row' ,gap:1,}}>
-            <Button href='/'  variant="contained" color="primary" fullWidth>
-              Go Back
-            </Button>
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              Register
-            </Button>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
+                Create account
+              </Button>
+              <Button href="/" color="primary" fullWidth>
+              Already have an account? Login here.
+              </Button>
             </Box>
           </Box>
         </form>

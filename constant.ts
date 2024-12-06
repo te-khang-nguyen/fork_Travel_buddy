@@ -1,0 +1,1 @@
+export const defaultBackground = '@/assets/background.jpg'
