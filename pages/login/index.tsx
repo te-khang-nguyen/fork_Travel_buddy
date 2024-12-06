@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   TextField,
@@ -6,43 +6,41 @@ import {
   Typography,
   Link,
   Divider,
-} from '@mui/material';
-import { Google, Facebook, Instagram } from '@mui/icons-material';
+} from "@mui/material";
+import { Google, Facebook, Instagram } from "@mui/icons-material";
 
 function Login() {
   const handleLogin = () => {
     // Add login logic here
   };
 
-
-
   const handleRegistration = () => {
     // Add registration navigation logic here
   };
 
-  const handleSocialLogin = (platform:unknown) => {
+  const handleSocialLogin = (platform: unknown) => {
     console.log(`Login with ${platform}`);
   };
 
   return (
     <Box
+
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#f4f4f4',
-        px: 2,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#f4f4f4",
       }}
     >
       <Box
         sx={{
-          width: '100%',
-          maxWidth: 'max-content',
+          width: "100%",
+          maxWidth: "max-content",
           p: 4,
           boxShadow: 3,
           borderRadius: 2,
-          backgroundColor: 'white',
+          backgroundColor: "white",
         }}
       >
         <Typography variant="h5" align="center" gutterBottom>
@@ -74,9 +72,7 @@ function Login() {
         </Button>
 
         <Box textAlign="center" mt={2}>
-          <Link href="/recovery" >
-            Forgot Password?
-          </Link>
+          <Link href="/recovery">Forgot Password?</Link>
         </Box>
 
         <Divider sx={{ my: 3 }} />
@@ -87,16 +83,16 @@ function Login() {
 
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
             gap: 2,
-            justifyContent: 'center',
+            justifyContent: "center",
           }}
         >
           <Button
             variant="outlined"
             startIcon={<Google />}
-            onClick={() => handleSocialLogin('Google')}
+            onClick={() => handleSocialLogin("Google")}
             fullWidth={true}
           >
             Google
@@ -104,7 +100,7 @@ function Login() {
           <Button
             variant="outlined"
             startIcon={<Facebook />}
-            onClick={() => handleSocialLogin('Facebook')}
+            onClick={() => handleSocialLogin("Facebook")}
             fullWidth={true}
           >
             Facebook
@@ -112,7 +108,7 @@ function Login() {
           <Button
             variant="outlined"
             startIcon={<Instagram />}
-            onClick={() => handleSocialLogin('Instagram')}
+            onClick={() => handleSocialLogin("Instagram")}
             fullWidth={true}
           >
             Instagram
@@ -121,7 +117,7 @@ function Login() {
 
         <Box textAlign="center" mt={3}>
           <Typography variant="body2">
-            Do not have an account?{' '}
+            Do not have an account?{" "}
             <Link href="/register" onClick={handleRegistration}>
               Register here
             </Link>
