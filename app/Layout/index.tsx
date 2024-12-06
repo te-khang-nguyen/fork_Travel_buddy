@@ -99,11 +99,10 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          marginLeft: { sm: 0 }, // No reserved space for the drawer
+          marginLeft: { sm: 0 }, 
         }}
       >
-        {showDrawerButton && <Toolbar />} {/* Keeps content below the app bar */}
+        {showDrawerButton && <Toolbar />}
         {children}
       </Box>
     </Box>
