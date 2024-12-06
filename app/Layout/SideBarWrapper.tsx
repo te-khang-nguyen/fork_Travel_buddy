@@ -5,23 +5,57 @@ import {
   CssBaseline,
   Drawer,
   IconButton,
+  InputBase,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Toolbar,
-  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
+import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
 
 const drawerWidth = 240;
 
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.grey[200], 0.9),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.grey[300], 0.9),
+  },
+  border:'1px solid grey',
+  margin: "0 auto",
+  width: "100%",
+  maxWidth: "600px",
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  width: "100%",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+  },
+}));
+
 interface DrawerLayoutProps {
   children: ReactNode;
-  showDrawerButton?: boolean; // Prop to control visibility of the app bar and drawer button
+  showDrawerButton?: boolean;
 }
 
 const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton = false }) => {
@@ -50,7 +84,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
             key={item.text}
             onClick={() => {
               router.push(item.route);
-              setDrawerOpen(false); // Close drawer after navigation
+              setDrawerOpen(false);
             }}
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
@@ -65,7 +99,14 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       {showDrawerButton && (
-        <AppBar position="fixed">
+        <AppBar
+          position="fixed"
+          sx={{
+            backgroundColor: "white",
+            color: "black",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Added shadow
+          }}
+        >
           <Toolbar>
             <IconButton
               color="inherit"
@@ -76,9 +117,15 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              My App
-            </Typography>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
           </Toolbar>
         </AppBar>
       )}
@@ -87,7 +134,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
         open={drawerOpen}
         onClose={handleDrawerToggle}
         ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
+          keepMounted: true,
         }}
         sx={{
           "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
@@ -99,7 +146,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children, showDrawerButton 
         component="main"
         sx={{
           flexGrow: 1,
-          marginLeft: { sm: 0 }, 
+          marginLeft: { sm: 0 },
         }}
       >
         {showDrawerButton && <Toolbar />}
