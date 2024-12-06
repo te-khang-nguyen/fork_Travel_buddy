@@ -51,7 +51,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
               sx={{
                 width: "50%",
                 backgroundColor: "#dff9e7",
-                textAlign: "center",
+                color:'green',
                 p: 2,
                 borderRadius: 2,
               }}
@@ -69,7 +69,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
               sx={{
                 width: "50%",
                 backgroundColor: "#f3e7fc",
-                textAlign: "center",
+                color:'purple',
                 p: 2,
                 borderRadius: 2,
               }}
