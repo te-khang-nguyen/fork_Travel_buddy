@@ -9,7 +9,7 @@ const MainContent = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
   // Define pages where the drawer button is visible
-  const showDrawerButton = !["/", "/login/business", "/register"].includes(
+  const showDrawerButton = !["/", "/login/business","/recovery", "/register"].includes(
     router.pathname
   ); //Move this to another file as enum/ variable
   return (

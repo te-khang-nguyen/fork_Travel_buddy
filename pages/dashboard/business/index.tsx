@@ -21,7 +21,29 @@ const BusinessDashboard: React.FC<BusinessDashboardProps> = ({
   totalChallenges = 0,
   activeParticipants = 0,
   completedChallenges = 0,
-  activeChallenges = [],
+  activeChallenges = [ {
+    challengeName: "Nature Photography Contest",
+    participants: 45,
+    entries: [
+      {
+        user: "JohnDoe",
+        location: "Yosemite National Park",
+        comment: "Captured this amazing sunrise!",
+        avatarUrl: "https://randomuser.me/api/portraits/men/1.jpg",
+      },
+      {
+        user: "JaneSmith",
+        location: "Grand Canyon",
+        comment: "The view here is breathtaking!",
+        avatarUrl: "https://randomuser.me/api/portraits/women/2.jpg",
+      },
+      {
+        user: "Alex90",
+        location: "Yellowstone",
+        comment: "Loving the wildlife here.",
+      },
+    ],
+  },],
 }) => {
   return (
     <Box

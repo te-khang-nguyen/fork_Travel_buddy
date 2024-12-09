@@ -10,7 +10,7 @@ interface UserDashboardProps {
 const UserDashboard: React.FC<UserDashboardProps> = ({
   totalChallenges = 0,
   completedChallenges = 0,
-  activeChallenges = [],
+  activeChallenges = [{name: "Test",  status: 'done', link: 'https:123.com'}],
 }) => {
   return (
     <Box
