@@ -1,110 +1,100 @@
-import { Box, Button, Card, CardContent, CardMedia, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import React from "react";
+import { Box, Typography, Container, Button, IconButton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useRouter } from "next/router";
 
-const ChallengeLocations = () => {
-    const locations = [
-        { id: 1, name: 'Train Street Hanoi', image: '/train-street.jpg', sections: 3 },
-        { id: 2, name: 'Hoan Kiem Lake', image: '/hoan-kiem.jpg', sections: 3 },
-        { id: 3, name: "St. Joseph's Cathedral", image: '/cathedral.jpg', sections: 3 },
-    ];
+import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 
-    return (
-        <Box sx={{ padding: '2rem', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-            {/* Header */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    marginBottom: '1.5rem',
-                }}
-            >
-                <Typography variant="h4" fontWeight="bold" sx={{ flexGrow: 1 }}>
-                    Challenge Locations
-                </Typography>
-                <Box>
-                    <Button
-                        variant="contained"
-                        color="success"
-                        sx={{ marginRight: '1rem', marginBottom: { xs: '0.5rem', sm: 0 } }}
-                    >
-                        Submit Challenge
-                    </Button>
-                    <Button variant="outlined" color="primary">
-                        Back to Portal
-                    </Button>
-                </Box>
-            </Box>
+function JoinChallenge() {
+  const router = useRouter();
 
-            {/* Locations */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '1.5rem',
-                    justifyContent: { xs: 'center', sm: 'space-between' },
-                }}
-            >
-                {/* Add New Location Card */}
-                <Box
-                    sx={{
-                        flex: '1 1 calc(100% - 1.5rem)', // Full width on small screens
-                        maxWidth: { sm: 'calc(50% - 1.5rem)', md: 'calc(33.33% - 1.5rem)' },
-                        border: '2px dashed #ddd',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        textAlign: 'center',
-                        padding: '1rem',
-                    }}
-                >
-                    <Box>
-                        <AddIcon sx={{ fontSize: 40, color: '#666' }} />
-                        <Typography variant="subtitle1" color="textSecondary">
-                            Add New Location
-                        </Typography>
-                    </Box>
-                </Box>
+  const handleGoBack = () => {
+    router.back();
+  };
 
-                {/* Location Cards */}
-                {locations.map((location) => (
-                    <Box
-                        key={location.id}
-                        sx={{
-                            flex: '1 1 calc(100% - 1.5rem)', // Full width on small screens
-                            maxWidth: { sm: 'calc(50% - 1.5rem)', md: 'calc(33.33% - 1.5rem)' },
-                        }}
-                    >
-                        <Card
-                            sx={{
-                                borderRadius: '8px',
-                                boxShadow: 3,
-                                height: '100%',
-                            }}
-                        >
-                            <CardMedia
-                                component="img"
-                                height="140"
-                                image={location.image}
-                                alt={location.name}
-                            />
-                            <CardContent>
-                                <Typography variant="h6" fontWeight="bold">
-                                    {location.name}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {location.sections} sections
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Box>
-                ))}
-            </Box>
-        </Box>
-    );
-};
+  return (
+    <Box
+      sx={{
+        backgroundImage: `url("${defaultBackground.src}")`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        color: "white",
+        textAlign: "center",
+        padding: "20px",
+        gap: 4,
+        position: "relative",
+      }}
+    >
+      {/* Go Back Button */}
+      <IconButton
+        onClick={handleGoBack}
+        sx={{
+          position: "absolute",
+          top: "20px",
+          left: "20px",
+          color: "white",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          "&:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+          },
+        }}
+      >
+        <ArrowBackIcon />
+      </IconButton>
 
-export default ChallengeLocations;
+      {/* Main Content */}
+      <Container maxWidth="md">
+        <Typography
+          variant="h1"
+          component="h1"
+          sx={{ fontSize: { xs: "3rem", md: "4.5rem" }, fontWeight: "bold" }}
+          gutterBottom
+        >
+          Demo Challenge
+        </Typography>
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{ fontSize: { xs: "1.5rem", md: "2.5rem" }, mt: 2 }}
+          gutterBottom
+        >
+          Welcome aboard!
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{ fontSize: { xs: "1rem", md: "1.5rem" }, mt: 2, mb: 4 }}
+        >
+          Let&apos;s capture your traveling moments together!
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            fontSize: { xs: "1rem", md: "1.5rem" },
+            fontStyle: "italic",
+            mb: 4,
+          }}
+        >
+          Description: This is an example for a challenge creation
+        </Typography>
+      </Container>
+      <Button
+        sx={{
+          borderRadius: 14,
+          width: "150px",
+          fontSize: { xs: "0.5rem", md: "1rem" },
+        }}
+        variant="contained"
+      >
+        Begin
+      </Button>
+    </Box>
+  );
+}
+
+export default JoinChallenge;

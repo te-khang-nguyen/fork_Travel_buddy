@@ -89,7 +89,7 @@ const LocationUI = () => {
           sx={{ p: 3, display: "flex", flexDirection: "column", gap: "40px" }}
         >
           <Box>
-            <Typography variant="h5" sx={{ mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 3 }}>
               Location Title
             </Typography>
             <TextField
@@ -100,6 +100,14 @@ const LocationUI = () => {
               sx={{ mb: 4 }}
             />
           </Box>
+
+          <Box>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Reward
+            </Typography>
+            in progress
+          </Box>
+
           <Box>
             <Typography variant="h6" sx={{ mb: 1 }}>
               Location Images
@@ -165,6 +173,7 @@ const LocationUI = () => {
               </Box>
             </Box>
           </Box>
+
           <Box>
             <Box
               sx={{
@@ -197,7 +206,13 @@ const LocationUI = () => {
                 }}
               >
                 <Box sx={{ mb: 2 }}>
-                  <Box sx={{display:'flex', flexDirection:'row' ,justifyItems:'center'}}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyItems: "center",
+                    }}
+                  >
                     <TextField
                       fullWidth
                       variant="outlined"
@@ -231,7 +246,7 @@ const LocationUI = () => {
             ))}
           </Box>
         </Box>
-        <Button fullWidth variant="contained"  onClick={handleSave}>
+        <Button fullWidth variant="contained" onClick={handleSave}>
           Save
         </Button>
       </CardContent>
