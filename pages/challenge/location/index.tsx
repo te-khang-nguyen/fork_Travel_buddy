@@ -231,7 +231,7 @@ const LocationUI = () => {
             ))}
           </Box>
         </Box>
-        <Button variant="contained" color="secondary" onClick={handleSave}>
+        <Button fullWidth variant="contained"  onClick={handleSave}>
           Save
         </Button>
       </CardContent>
