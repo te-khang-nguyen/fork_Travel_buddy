@@ -1,11 +1,12 @@
 import { Box, Button, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import LocationCard from '@/app/components/challenge/LocationCard';
 
 const ChallengeLocations = () => {
     const locations = [
-        { id: 1, name: 'Train Street Hanoi', image: '/train-street.jpg', sections: 3 },
-        { id: 2, name: 'Hoan Kiem Lake', image: '/hoan-kiem.jpg', sections: 3 },
-        { id: 3, name: "St. Joseph's Cathedral", image: '/cathedral.jpg', sections: 3 },
+        { id: 1, name: 'Train Street Hanoi', sections: 3 },
+        { id: 2, name: 'Hoan Kiem Lake', sections: 3 },
+        { id: 3, name: "St. Joseph's Cathedral", sections: 3 },
     ];
 
     return (
@@ -71,36 +72,7 @@ const ChallengeLocations = () => {
 
                 {/* Location Cards */}
                 {locations.map((location) => (
-                    <Box
-                        key={location.id}
-                        sx={{
-                            flex: '1 1 calc(100% - 1.5rem)', // Full width on small screens
-                            maxWidth: { sm: 'calc(50% - 1.5rem)', md: 'calc(33.33% - 1.5rem)' },
-                        }}
-                    >
-                        <Card
-                            sx={{
-                                borderRadius: '8px',
-                                boxShadow: 3,
-                                height: '100%',
-                            }}
-                        >
-                            <CardMedia
-                                component="img"
-                                height="140"
-                                image={location.image}
-                                alt={location.name}
-                            />
-                            <CardContent>
-                                <Typography variant="h6" fontWeight="bold">
-                                    {location.name}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {location.sections} sections
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Box>
+                    <LocationCard location={location}/>
                 ))}
             </Box>
         </Box>
