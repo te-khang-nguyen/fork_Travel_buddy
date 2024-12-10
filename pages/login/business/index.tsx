@@ -1,10 +1,12 @@
 import React from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 
 function AdminLogin() {
+  const router = useRouter()
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Admin login submitted");
+    router.push('/dashboard/admin')
     // Add login logic here
   };
 

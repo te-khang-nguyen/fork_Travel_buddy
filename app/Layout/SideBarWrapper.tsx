@@ -18,9 +18,10 @@ import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
+import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
 
 const drawerWidth = 240;
-
+type role = "business" | "user";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -55,11 +56,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface DrawerLayoutProps {
   children: ReactNode;
+  role: role; // TODO: config role
   showDrawerButton?: boolean;
 }
 
 const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   children,
+  role = "user",
   showDrawerButton = false,
 }) => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -68,6 +71,17 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
   };
+
+  const defaultMenuItems = [
+    { text: "Dashboard", icon: <HomeIcon />, route: `/dashboard/${role}` },
+    { text: "Profile", icon: <AccountCircle />, route: `/profile/${role}` },
+    { text: "Logout", icon: <Logout />, route: `/` },
+  ];
+
+  const menuItems =
+    role === "user"
+      ? [{ text: "Challenge", icon: <Inventory />, route: `` }]
+      : [];
 
   const drawer = (
     <Box
@@ -79,12 +93,8 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
     >
       <Toolbar />
       <List>
-        {[
-          { text: "Home", icon: <HomeIcon />, route: "/" },
-          { text: "About", icon: <InfoIcon />, route: "/about" },
-        ].map((item) => (
+        {defaultMenuItems.map((item) => (
           <ListItem
-
             key={item.text}
             onClick={() => {
               router.push(item.route);
@@ -108,7 +118,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
           sx={{
             backgroundColor: "white",
             color: "black",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", 
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Toolbar>
@@ -149,9 +159,9 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
       <Box
         component="main"
         sx={{
-          flex: 1, 
+          flex: 1,
           marginTop: showDrawerButton ? "64px" : 0, //should move to constant height of appbar
-          overflow: "auto", 
+          overflow: "auto",
         }}
       >
         {children}

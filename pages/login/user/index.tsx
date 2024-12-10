@@ -9,10 +9,14 @@ import {
 } from "@mui/material";
 import { Google, Facebook, Instagram } from "@mui/icons-material";
 import defaultBackground from "@/assets/background.jpg";
+import { useRouter } from "next/router";
 
 function Login() {
+  const router = useRouter()
   const handleLogin = () => {
     // Add login logic here
+    router.push('/dashboard/user')
+
   };
 
   const handleRegistration = () => {
