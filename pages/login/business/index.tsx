@@ -6,7 +6,7 @@ function AdminLogin() {
   const router = useRouter()
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
-    router.push('/dashboard/admin')
+    router.push('/dashboard/business')
     // Add login logic here
   };
 
