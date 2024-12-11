@@ -4,6 +4,8 @@ import { Provider } from "react-redux";
 import "../app/globals.css";
 import { useRouter } from "next/router";
 import DrawerLayout from "@/app/Layout/SideBarWrapper";
+import { ThemeProvider } from "@mui/material";
+import theme from "@/app/theme";
 
 const MainContent = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -14,9 +16,11 @@ const MainContent = ({ Component, pageProps }: AppProps) => {
   ); //Move this to another file as enum/ variable
   return (
     <Provider store={store}>
+      <ThemeProvider theme={theme}>
       <DrawerLayout showDrawerButton={showDrawerButton} role="business">
         <Component {...pageProps} />
       </DrawerLayout>
+      </ThemeProvider>
     </Provider>
   );
 };
