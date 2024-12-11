@@ -1,8 +1,5 @@
-import { useGetUsersQuery } from "@/libs/services/user"
+import Login from "./login/user";
 
-export default function Home(){
-    const {data  } = useGetUsersQuery({})
-    console.log(data)
-
-    return <>aaaba</>
+export default function Index(){
+  return <Login/>
 }
