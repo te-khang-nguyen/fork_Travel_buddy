@@ -12,11 +12,7 @@ import defaultBackground from "@/assets/background.jpg";
 import ImageDisplay from "@/app/components/kits/Image";
 
 const MainUI = () => {
-  const [imageError, setImageError] = useState(false);
 
-  // Fallback image URL
-  const placeholderImage =
-    "https://via.placeholder.com/150?text=Image+Unavailable";
 
   const accordionItems = [
     {

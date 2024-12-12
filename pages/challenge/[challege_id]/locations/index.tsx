@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 import LocationCard from "@/app/components/challenge/LocationCard";
+import ReviewNotesComponent from "@/app/components/challenge/RemoveModal";
 
 function JoinChallenge() {
   const router = useRouter();
@@ -38,6 +39,10 @@ function JoinChallenge() {
     },
   ];
 
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  
   return (
     <Box
       sx={{
@@ -49,7 +54,7 @@ function JoinChallenge() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
+        minHeight: "100%",
         color: "white",
         textAlign: "center",
         padding: "20px",
@@ -88,6 +93,17 @@ function JoinChallenge() {
           <LocationCard location={location} />
         ))}
       </Box>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setModalOpen(true)}
+      >
+       Submit
+      </Button>
+      <ReviewNotesComponent
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
     </Box>
   );
 }
