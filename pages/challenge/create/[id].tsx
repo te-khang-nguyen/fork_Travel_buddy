@@ -1,8 +1,10 @@
 import { Box, Button, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import LocationCard from '@/app/components/challenge/LocationCard';
+import { useRouter } from 'next/router';
 
 const ChallengeLocations = () => {
+    const router =useRouter()
     const locations = [
         { id: 1, name: 'Train Street Hanoi', sections: 3 },
         { id: 2, name: 'Hoan Kiem Lake', sections: 3 },
@@ -40,6 +42,7 @@ const ChallengeLocations = () => {
 
             {/* Locations */}
             <Box
+             onClick={()=>{router.push('/challenge/create/location')}}
                 sx={{
                     display: 'flex',
                     flexWrap: 'wrap',
