@@ -1,20 +1,13 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Container,
-  Button,
-  IconButton,
-  Card,
-  CardContent,
-  CardMedia,
-} from "@mui/material";
+import { Box, Button, IconButton, Fab } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/router";
 
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 import LocationCard from "@/app/components/challenge/LocationCard";
 import ReviewNotesComponent from "@/app/components/challenge/RemoveModal";
+import { ChangeCircle } from "@mui/icons-material";
+import LocationStageModal from "@/app/components/challenge/LocationStageModal";
 
 function JoinChallenge() {
   const router = useRouter();
@@ -39,10 +32,9 @@ function JoinChallenge() {
     },
   ];
 
-
   const [modalOpen, setModalOpen] = useState(false);
+  const [locationStage, setLocationStage] = useState(false);
 
-  
   return (
     <Box
       sx={{
@@ -98,12 +90,34 @@ function JoinChallenge() {
         color="primary"
         onClick={() => setModalOpen(true)}
       >
-       Submit
+        Submit
       </Button>
       <ReviewNotesComponent
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       />
+
+      <LocationStageModal
+        open={locationStage}
+        onClose={() => setLocationStage(false)}
+        locations={locations}
+      />
+      <Fab
+        onClick={() => setLocationStage(true)}
+        variant="extended"
+        color="primary"
+        aria-label="add"
+        sx={{
+          position: "fixed",
+          bottom: 16,
+          left: 16,
+          borderRadius: 2, // Adjust the border radius to make the corners more or less rounded
+          padding: "8px 16px", // Adjust padding for desired button size
+          boxShadow: 3, // Optional, to give it a shadow for a raised effect
+        }}
+      >
+        <ChangeCircle />
+      </Fab>
     </Box>
   );
 }
