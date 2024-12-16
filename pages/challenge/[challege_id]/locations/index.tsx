@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 import LocationCard from "@/app/components/challenge/LocationCard";
-import ReviewNotesComponent from "@/app/components/challenge/RemoveModal";
+import ReviewNotesComponent from "@/app/components/challenge/ReviewModal";
 import { ChangeCircle } from "@mui/icons-material";
 import LocationStageModal from "@/app/components/challenge/LocationStageModal";
 

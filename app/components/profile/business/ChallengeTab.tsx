@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -8,6 +8,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import QRModal from "../../challenge/QRModal";
 
 // Define the Challenge interface
 interface Challenge {
@@ -30,6 +31,8 @@ const ChallengesTab: React.FC = () => {
       image: "https://via.placeholder.com/300x140",
     },
   ];
+
+  let [modalOpen, setModalOpen]= useState(false)
 
   return (
     <Box sx={{ p: 3 }}>
@@ -56,7 +59,9 @@ const ChallengesTab: React.FC = () => {
               <Button variant="contained" color="primary">
                 Edit Challenge
               </Button>
-              <Button variant="contained" color="success">
+              <Button 
+              onClick={()=>{setModalOpen(true)}}
+              variant="contained" color="success">
                 View QR Code
               </Button>
             </CardActions>
@@ -80,6 +85,7 @@ const ChallengesTab: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
+      <QRModal open={modalOpen} onClose={()=>{setModalOpen(false)}}/>
     </Box>
   );
 };
