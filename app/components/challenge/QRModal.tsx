@@ -42,7 +42,7 @@ const QRModal: React.FC<QRModalComponentProps> = ({ open, onClose }) => {
           width: "90%",
           maxWidth: 600,
           maxHeight: "90vh",
-alignItems:'center',
+          alignItems: "center",
           padding: { xs: 2, sm: 4 },
           backgroundColor: "#f9f9f9",
           borderRadius: 2,
@@ -55,7 +55,9 @@ alignItems:'center',
           <p>Loading...</p>
         )}
 
-        <Typography variant="h4" sx={{fontWeight:'bold'}}>Location name</Typography>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Location name
+        </Typography>
       </Box>
     </Modal>
   );
