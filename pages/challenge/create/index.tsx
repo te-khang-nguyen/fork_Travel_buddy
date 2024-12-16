@@ -1,82 +1,256 @@
-import { Box, Button, Card, CardContent, CardMedia, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import LocationCard from '@/app/components/challenge/LocationCard';
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Box, Typography, TextField, Button, Paper } from "@mui/material";
 
-const ChallengeLocations = () => {
-    const locations = [
-        { id: 1, name: 'Train Street Hanoi', sections: 3 },
-        { id: 2, name: 'Hoan Kiem Lake', sections: 3 },
-        { id: 3, name: "St. Joseph's Cathedral", sections: 3 },
-    ];
+interface ChallengeFormInputs {
+  title: string;
+  description: string;
+  thumbnail: File | null;
+  backgroundImage: File | null;
+}
 
-    return (
-        <Box sx={{ padding: '2rem', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-            {/* Header */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    marginBottom: '1.5rem',
-                }}
-            >
-                <Typography variant="h4" fontWeight="bold" sx={{ flexGrow: 1 }}>
-                    Challenge Locations
-                </Typography>
-                <Box>
-                    <Button
-                        variant="contained"
-                        color="success"
-                        sx={{ marginRight: '1rem', marginBottom: { xs: '0.5rem', sm: 0 } }}
-                    >
-                        Submit Challenge
-                    </Button>
-                    <Button variant="outlined" color="primary">
-                        Back to Portal
-                    </Button>
-                </Box>
-            </Box>
+const CreateChallengeForm: React.FC = () => {
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<ChallengeFormInputs>({
+    defaultValues: {
+      title: "",
+      description: "",
+      thumbnail: null,
+      backgroundImage: null,
+    },
+  });
 
-            {/* Locations */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '1.5rem',
-                    justifyContent: { xs: 'center', sm: 'space-between' },
-                }}
-            >
-                {/* Add New Location Card */}
-                <Box
-                    sx={{
-                        flex: '1 1 calc(100% - 1.5rem)', // Full width on small screens
-                        maxWidth: { sm: 'calc(50% - 1.5rem)', md: 'calc(33.33% - 1.5rem)' },
-                        border: '2px dashed #ddd',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        textAlign: 'center',
-                        padding: '1rem',
-                    }}
+  const [thumbnailName, setThumbnailName] = useState<string | null>(null);
+  const [backgroundName, setBackgroundName] = useState<string | null>(null);
+
+  const onSubmit = (data: ChallengeFormInputs) => {
+    console.log("Form Data:", data);
+  };
+
+  const handleFileChange = (
+    name: keyof ChallengeFormInputs,
+    file: File | null
+  ) => {
+    setValue(name, file);
+    if (name === "thumbnail") {
+      setThumbnailName(file ? file.name : null);
+    } else if (name === "backgroundImage") {
+      setBackgroundName(file ? file.name : null);
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        backgroundColor: "#f4f4f4",
+        padding: 2,
+      }}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          padding: 4,
+          borderRadius: 2,
+          width: "100%",
+          maxWidth: 800,
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+          Create a New Challenge
+        </Typography>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 3,
+            }}
+          >
+            {/* Title */}
+            <Box>
+              <Typography
+                variant="body2"
+                sx={{ marginBottom: 0.5, fontWeight: 500 }}
+              >
+                Challenge Title
+                <Typography
+                  component="span"
+                  color="error"
+                  sx={{ marginLeft: 0.5 }}
                 >
-                    <Box>
-                        <AddIcon sx={{ fontSize: 40, color: '#666' }} />
-                        <Typography variant="subtitle1" color="textSecondary">
-                            Add New Location
-                        </Typography>
-                    </Box>
-                </Box>
-
-                {/* Location Cards */}
-                {locations.map((location) => (
-                    <LocationCard location={location}/>
-                ))}
+                  *
+                </Typography>
+              </Typography>
+              <Controller
+                name="title"
+                control={control}
+                rules={{ required: "Challenge Title is required" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Enter the challenge title"
+                    error={!!errors.title}
+                    helperText={errors.title?.message}
+                  />
+                )}
+              />
             </Box>
-        </Box>
-    );
+
+            {/* Description */}
+            <Box>
+              <Typography
+                variant="body2"
+                sx={{ marginBottom: 0.5, fontWeight: 500 }}
+              >
+                Challenge Description
+                <Typography
+                  component="span"
+                  color="error"
+                  sx={{ marginLeft: 0.5 }}
+                >
+                  *
+                </Typography>
+              </Typography>
+              <Controller
+                name="description"
+                control={control}
+                rules={{ required: "Challenge Description is required" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={4}
+                    placeholder="Describe your challenge"
+                    error={!!errors.description}
+                    helperText={errors.description?.message}
+                  />
+                )}
+              />
+            </Box>
+
+            {/* Thumbnail Upload */}
+            <Box>
+              <Typography
+                variant="body2"
+                sx={{ marginBottom: 0.5, fontWeight: 500 }}
+              >
+                Upload Challenge Thumbnail
+                <Typography
+                  component="span"
+                  color="error"
+                  sx={{ marginLeft: 0.5 }}
+                >
+                  *
+                </Typography>
+              </Typography>
+              <Controller
+                name="thumbnail"
+                control={control}
+                rules={{ required: "Thumbnail is required" }}
+                render={({ field }) => (
+                  <Box sx={{display:'flex', flexDirection:'row',alignItems:'center' ,gap:1}}>
+                    <Button
+                      variant="contained"
+                      component="label"
+                      color="primary"
+                      sx={{borderRadius:14, textTransform: "none", marginBottom: 1 }}
+                    >
+                      Choose File
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files
+                            ? e.target.files[0]
+                            : null;
+                          handleFileChange("thumbnail", file);
+                          field.onChange(file); // Update react-hook-form state
+                        }}
+                      />
+                    </Button>
+                    {thumbnailName && (
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        Selected File: {thumbnailName}
+                      </Typography>
+                    )}
+                    {errors.thumbnail && (
+                      <Typography variant="caption" color="error">
+                        {errors.thumbnail.message}
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+              />
+            </Box>
+
+            {/* Background Image Upload */}
+            <Box>
+              <Typography
+                variant="body2"
+                sx={{ marginBottom: 0.5, fontWeight: 500 }}
+              >
+                Upload Background Image
+              </Typography>
+              <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+                <Button
+                  variant="contained"
+                  component="label"
+                  color="primary"
+                  sx={{ borderRadius:14, textTransform: "none", marginBottom: 1 }}
+                >
+                  Choose File
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files ? e.target.files[0] : null;
+                      handleFileChange("backgroundImage", file);
+                    }}
+                  />
+                </Button>
+                {backgroundName && (
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    Selected File: {backgroundName}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Submit Button */}
+
+            <Button
+            fullWidth
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{width:'100%', marginTop: 3, textTransform: "none",  padding: 1.5 }}
+            >
+              Save Challenge
+            </Button>
+     
+        </form>
+      </Paper>
+    </Box>
+  );
 };
 
-export default ChallengeLocations;
+export default CreateChallengeForm;

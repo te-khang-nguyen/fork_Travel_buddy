@@ -7,30 +7,12 @@ import {
   Card,
   CardContent,
   IconButton,
-  CardMedia,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ImageUploader from "@/app/components/image_picker/ImagePicker";
+
 
 const LocationUI = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [imageName, setImageName] = useState<string | null>(null);
-
-  const [imageError, setImageError] = useState(false);
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImageName(file.name);
-        setSelectedImage(reader.result as string);
-        setImageError(false);
-      };
-      reader.onerror = () => setImageError(true);
-      reader.readAsDataURL(file);
-    }
-  };
-
   const [sections, setSections] = useState<
     { id: number; name: string; content: string }[]
   >([
@@ -75,6 +57,10 @@ const LocationUI = () => {
     alert("Sections saved successfully!");
   };
 
+  const handleImageUpload = (image: string | null, name: string | null) => {
+    console.log("Image uploaded:", { image, name });
+  };
+
   return (
     <Card
       sx={{
@@ -112,66 +98,7 @@ const LocationUI = () => {
             <Typography variant="h6" sx={{ mb: 1 }}>
               Location Images
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Box display="flex" alignItems="center" gap={2}>
-                <Button
-                  variant="contained"
-                  component="label"
-                  sx={{
-                    backgroundColor: "#4285F4",
-                    color: "white",
-                    textTransform: "none",
-                    padding: "8px 16px",
-                    fontSize: "14px",
-                    borderRadius: "4px",
-                    "&:hover": {
-                      backgroundColor: "#357ae8",
-                    },
-                  }}
-                >
-                  Choose Files
-                  <input
-                    type="file"
-                    multiple
-                    hidden
-                    onChange={handleImageUpload}
-                  />
-                </Button>
-                <Typography
-                  sx={{ maxWidth: "300px" }}
-                  variant="body2"
-                  color="textSecondary"
-                >
-                  {selectedImage ? imageName : "No file chosen"}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "300px",
-                  overflow: "hidden",
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  position: "relative",
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  src={
-                    imageError || !selectedImage
-                      ? "https://via.placeholder.com/600x300?text=No+Image+Available"
-                      : selectedImage
-                  }
-                  alt="Uploaded"
-                  onError={() => setImageError(true)}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </Box>
-            </Box>
+            <ImageUploader onImageUpload={handleImageUpload} />
           </Box>
 
           <Box>
