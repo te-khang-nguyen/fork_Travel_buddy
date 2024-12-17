@@ -80,8 +80,14 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
 
   const menuItems =
     role === "user"
-      ? [{ text: "Challenge", icon: <Inventory />, route: `` }]
-      : [];
+      ? [{ text: "Challenge", icon: <Inventory />, route: `/challenge` }]
+      : [
+          {
+            text: "Challenge Management",
+            icon: <Inventory />,
+            route: `/profile/business/#challenges`,
+          },
+        ];
 
   const drawer = (
     <Box
@@ -93,14 +99,13 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
     >
       <Toolbar />
       <List>
-        {defaultMenuItems.map((item) => (
+        {[...menuItems, ...defaultMenuItems].map((item) => (
           <ListItem
             key={item.text}
             onClick={() => {
               router.push(item.route);
               setDrawerOpen(false);
             }}
-
             sx={{
               "&:hover": {
                 backgroundColor: "rgba(0, 0, 0, 0.08)", // Light gray background on hover
