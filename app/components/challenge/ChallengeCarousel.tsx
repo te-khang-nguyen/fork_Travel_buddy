@@ -54,11 +54,7 @@ const ChallengeCarousel: React.FC<Props> = ({ challenges, onViewAll }) => {
       }}
     >
       {/* Header with View All Button */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography
           variant="h4"
           gutterBottom
@@ -66,7 +62,11 @@ const ChallengeCarousel: React.FC<Props> = ({ challenges, onViewAll }) => {
         >
           Featured Challenges
         </Typography>
-        <Button variant="outlined" onClick={onViewAll}>
+        <Button
+          sx={{ color: "#4a90e2", fontWeight: "bold" }}
+          variant="outlined"
+          onClick={onViewAll}
+        >
           View All
         </Button>
       </Box>

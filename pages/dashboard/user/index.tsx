@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import ChallengeCard from "@/app/components/challenge/ChallengeCard";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
+import { useRouter } from "next/router";
 
 interface UserDashboardProps {
   totalChallenges: number;
@@ -14,6 +15,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   completedChallenges = 0,
   activeChallenges = [{ name: "Test", status: "done", link: "https:123.com" }],
 }) => {
+  const router = useRouter()
   const challenges = [
     {
       id: 1,
@@ -24,6 +26,27 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       id: 3,
       name: "Challenge 3",
     },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+
   ];
   return (
     <Box
@@ -39,7 +62,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       <ChallengeCarousel
         challenges={challenges}
         onViewAll={() => {
-          console.log(1);
+          router.push('/challenge')
         }}
       />
       <Box
