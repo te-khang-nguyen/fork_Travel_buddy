@@ -100,6 +100,14 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
               router.push(item.route);
               setDrawerOpen(false);
             }}
+
+            sx={{
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.08)", // Light gray background on hover
+                cursor: "pointer",
+              },
+              transition: "background-color 0.3s", // Smooth transition effect
+            }}
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />

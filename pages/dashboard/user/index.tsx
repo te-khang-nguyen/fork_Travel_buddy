@@ -1,5 +1,8 @@
 import React from "react";
 import { Box, Typography, Card, CardContent } from "@mui/material";
+import ChallengeCard from "@/app/components/challenge/ChallengeCard";
+import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
+import { useRouter } from "next/router";
 
 interface UserDashboardProps {
   totalChallenges: number;
@@ -10,17 +13,58 @@ interface UserDashboardProps {
 const UserDashboard: React.FC<UserDashboardProps> = ({
   totalChallenges = 0,
   completedChallenges = 0,
-  activeChallenges = [{name: "Test",  status: 'done', link: 'https:123.com'}],
+  activeChallenges = [{ name: "Test", status: "done", link: "https:123.com" }],
 }) => {
+  const router = useRouter()
+  const challenges = [
+    {
+      id: 1,
+      name: "Challenge 1",
+    },
+    { id: 2, name: "Challenge 2" },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+    {
+      id: 3,
+      name: "Challenge 3",
+    },
+
+  ];
   return (
     <Box
       sx={{
-        height: "100%",
         display: "flex",
         flexDirection: "column",
         p: 3,
+        gap: 2,
+        mb: 2,
+
       }}
     >
+      <ChallengeCarousel
+        challenges={challenges}
+        onViewAll={() => {
+          router.push('/challenge')
+        }}
+      />
       <Box
         sx={{
           height: "100%",
@@ -51,7 +95,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
               sx={{
                 width: "50%",
                 backgroundColor: "#dff9e7",
-                color:'green',
+                color: "green",
                 p: 2,
                 borderRadius: 2,
               }}
@@ -69,7 +113,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
               sx={{
                 width: "50%",
                 backgroundColor: "#f3e7fc",
-                color:'purple',
+                color: "purple",
                 p: 2,
                 borderRadius: 2,
               }}

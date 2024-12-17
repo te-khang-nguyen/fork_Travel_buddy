@@ -17,7 +17,7 @@ const MainContent = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-      <DrawerLayout showDrawerButton={showDrawerButton} role="business">
+      <DrawerLayout showDrawerButton={showDrawerButton} role="user">
         <Component {...pageProps} />
       </DrawerLayout>
       </ThemeProvider>
