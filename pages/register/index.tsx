@@ -2,6 +2,9 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import defaultBackground from "@/assets/background.jpg";
+import { useSignUpMutation } from "@/libs/services/auth";
+
+
 
 const RegistrationForm = () => {
   const {
@@ -9,16 +12,21 @@ const RegistrationForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+ 
+  const [signUp, { data, error, isLoading }] = useSignUpMutation();
+  
 
-  const onSubmit = (data) => {
+  const onSubmit = async (dat) => {
+    console.log(dat);
+    await signUp(dat);
     // Simulate a unique email validation
     const uniqueEmails = ["test@example.com"];
-    if (uniqueEmails.includes(data.email)) {
+    if (uniqueEmails.includes(dat.email)) {
       alert("Email is already in use!");
       return;
     }
 
-    console.log("Registration Successful:", data);
+    console.log("Registration Successful:", dat);
     alert("Registration Successful!");
   };
 
