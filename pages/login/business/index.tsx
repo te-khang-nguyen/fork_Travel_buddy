@@ -1,11 +1,24 @@
 import React from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
+import { useLogInMutation } from "@/libs/services/business/auth";
 
 function AdminLogin() {
   const router = useRouter()
-  const handleLogin = (event: React.FormEvent) => {
+  const [logIn, {data, error, isLoading}] = useLogInMutation();
+
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
+    try {
+      let result = await logIn({email, password}).unwrap();
+      console.log(result);
+    } catch (error) {
+      console.log('Login failed', error);
+      alert(error);
+    }
     router.push('/dashboard/business')
     // Add login logic here
   };
@@ -50,6 +63,7 @@ function AdminLogin() {
               margin="normal"
               variant="outlined"
               placeholder="Enter Your Email"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Box>
           <Box>
@@ -61,6 +75,7 @@ function AdminLogin() {
               type="password"
               variant="outlined"
               placeholder="Enter Your Password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Box>
           <Button

@@ -18,6 +18,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
+import { globalStore } from '@/libs/globalStore';
 
 const drawerWidth = 240;
 type role = "business" | "user";
@@ -61,7 +62,7 @@ interface DrawerLayoutProps {
 
 const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   children,
-  role = "user",
+  role = globalStore.role,
   showDrawerButton = false,
 }) => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);

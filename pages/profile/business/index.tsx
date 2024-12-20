@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Box, Tabs, Tab } from "@mui/material";
 import { useRouter } from "next/router";
-
 import ChallengesTab from "@/app/components/profile/business/ChallengeTab";
-import ProfileTab from "@/app/components/profile/business/ProfileTab";
+import ProfileTab from "@/app/components/profile/business/ProfileTabtest";
+
 
 const BusinessTabs = () => {
   const [tabValue, setTabValue] = useState(0);

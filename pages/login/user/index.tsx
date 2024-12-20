@@ -10,11 +10,23 @@ import {
 import { Google, Facebook, Instagram } from "@mui/icons-material";
 import defaultBackground from "@/assets/background.jpg";
 import { useRouter } from "next/router";
+import { useLogInMutation } from "@/libs/services/user/auth";
 
 function Login() {
   const router = useRouter()
-  const handleLogin = () => {
-    // Add login logic here
+  const [logIn, {data, error, isLoading}] = useLogInMutation();
+
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const handleLogin = async () => {
+    // Add login logic here 
+    try {
+      let result = await logIn({email, password}).unwrap();
+    } catch (error) {
+      alert(error);
+    }
+
     router.push('/dashboard/user')
 
   };
@@ -63,6 +75,7 @@ function Login() {
               margin="normal"
               variant="outlined"
               placeholder="Enter Your Email"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Box>
           <Box>
@@ -74,7 +87,7 @@ function Login() {
               type="password"
               variant="outlined"
               placeholder="Enter Your Password"
-
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Box>
         </Box>

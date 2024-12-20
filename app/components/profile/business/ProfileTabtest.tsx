@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, TextField, Typography, Button, Paper } from '@mui/material';
-//import { useAppDispatch } from '@/libs/appDispatch';
-import { useGetProfileQuery, useUpdateProfileMutation } from '@/libs/services/user/profile';
+import { useGetProfileQuery, useUpdateProfileMutation } from '@/libs/services/business/profile';
+
 
 interface ProfileFormInputs {
   username: string;
@@ -15,57 +15,59 @@ interface ProfileFormInputs {
   phone: string;
 }
 
-const ProfileForm = () => {
-  //const [resetCount, setResetCount] = useState(0);
-  //const MAX_RESETS = 5; // Maximum allowed resets
-  //const dispatch = useAppDispatch();
+
+const ProfileTab = () => {
+
   const [updateProfile, { data, error, isLoading }] = useUpdateProfileMutation();
-  const defaultValues = {
-    username: '',
-    email: '',
-    firstname: '',
-    lastname: '',
-    facebook: '',
-    instagram: '',
-    x: '',
-    phone: '',
-  };
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-  } = useForm<ProfileFormInputs>({
-    defaultValues
-  });
-
-  const { data: profile, error: profileError, isLoading: profileLoad } = useGetProfileQuery();
-
-  if(profileError){
-    alert(profileError);
-  }
-  useEffect(() => {
-    if (profile){
-
-      for (const [key, value] of Object.entries(profile)) {
-        if(key in defaultValues){
-          setValue(key, value ? value : '');
-        }
-      };
+    const defaultValues = {
+      businessname: '',
+      description: '',
+      email: '',
+      facebook: '',
+      instagram: '',
+      x: '',
+      phone: '',
+    };
+    const {
+      handleSubmit,
+      control,
+      formState: { errors },
+      setValue,
+    } = useForm<ProfileFormInputs>({
+      defaultValues
+    });
+  
+    const { data: profile, error: profileError, isLoading: profileLoad } = useGetProfileQuery();
+    if (profileError) {
+      console.log("Service error:", profileError);
     }
-
-  }, [profile, setValue]);
-
-  const onSubmit = async (profileData: ProfileFormInputs) => {
-    
-    let result = await updateProfile(profileData);
-    if (result.data) {
-      alert("Profile updated successfully!");
-    } else {
-      alert(result);
-    }
-
-  };
+    useEffect(() => {
+      if (profile){
+        console.log("Service output:", profile);
+  
+        for (const [key, value] of Object.entries(profile)) {
+          if(key in defaultValues){
+            setValue(key, value ? value : '');
+          }
+        };
+      }
+  
+    }, [profile, setValue]);
+  
+    const onSubmit = async (profileData: ProfileFormInputs) => {
+      
+      console.log('Form Data:', profileData);
+      let result = await updateProfile(profileData);
+      console.log(result);
+      if (result.data) {
+        console.log("Profile updated successfully!", result.data);
+        alert("Profile updated successfully!");
+      } else {
+        console.log(result);
+        alert(result);
+      }
+  
+    };
 
   return (
     <Box
@@ -88,7 +90,7 @@ const ProfileForm = () => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
-          Profile Information
+          Business Information
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box
@@ -100,14 +102,13 @@ const ProfileForm = () => {
             }}
           >
             {[
-              { name: 'username', label: 'Username', required: true },
+              { name: 'businessname', label: 'Businessname', required: true },
               { name: 'email', label: 'Email', required: true },
-              { name: 'firstname', label: 'Firstname', required: true },
-              { name: 'lastname', label: 'Lastname', required: true },
               { name: 'facebook', label: 'Facebook', required: false },
               { name: 'instagram', label: 'Instagram', required: false },
               { name: 'x', label: 'X', required: false },
               { name: 'phone', label: 'Phone', required: true },
+              { name: 'description', label: 'Description', required: true }
             ].map((field) => (
               <Box
                 key={field.name}
@@ -132,6 +133,7 @@ const ProfileForm = () => {
                     </Typography>
                   )}
                 </Typography>
+                
                 <Controller
                   name={field.name as keyof ProfileFormInputs}
                   control={control}
@@ -141,9 +143,21 @@ const ProfileForm = () => {
                       : undefined
                   }
                   render={({ field: controllerField }) => (
+                    field.name != 'description'?
                     <TextField
                       {...controllerField}
                       fullWidth
+                      variant="outlined"
+                      error={!!errors[field.name as keyof ProfileFormInputs]}
+                      helperText={
+                        errors[field.name as keyof ProfileFormInputs]?.message
+                      }
+                    /> : 
+                    <TextField
+                      {...controllerField}
+                      fullWidth
+                      multiline
+                      rows={4}
                       variant="outlined"
                       error={!!errors[field.name as keyof ProfileFormInputs]}
                       helperText={
@@ -172,4 +186,4 @@ const ProfileForm = () => {
   );
 };
 
-export default ProfileForm;
+export default ProfileTab
