@@ -40,12 +40,12 @@ const ProfileForm = () => {
   });
 
   const { data: profile, error: profileError, isLoading: profileLoad } = useGetProfileQuery();
-  if (profileError) {
-    console.log("Service error:", profileError);
+
+  if(profileError){
+    alert(profileError);
   }
   useEffect(() => {
     if (profile){
-      console.log("Service output:", profile);
 
       for (const [key, value] of Object.entries(profile)) {
         if(key in defaultValues){
@@ -58,14 +58,10 @@ const ProfileForm = () => {
 
   const onSubmit = async (profileData: ProfileFormInputs) => {
     
-    console.log('Form Data:', profileData);
     let result = await updateProfile(profileData);
-    console.log(result);
     if (result.data) {
-      console.log("Profile updated successfully!", result.data);
       alert("Profile updated successfully!");
     } else {
-      console.log(result);
       alert(result);
     }
 

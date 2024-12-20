@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { useLogInMutation } from "@/libs/services/auth";
+import { useLogInMutation } from "@/libs/services/business/auth";
 
 function AdminLogin() {
   const router = useRouter()

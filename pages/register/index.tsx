@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import defaultBackground from "@/assets/background.jpg";
-import { useSignUpMutation } from "@/libs/services/auth";
+import { useSignUpMutation } from "@/libs/services/user/auth";
 
 
 
@@ -17,7 +17,6 @@ const RegistrationForm = () => {
   
 
   const onSubmit = async (dat) => {
-    console.log(dat);
     await signUp(dat);
     // Simulate a unique email validation
     const uniqueEmails = ["test@example.com"];
@@ -25,8 +24,6 @@ const RegistrationForm = () => {
       alert("Email is already in use!");
       return;
     }
-
-    console.log("Registration Successful:", dat);
     alert("Registration Successful!");
   };
 

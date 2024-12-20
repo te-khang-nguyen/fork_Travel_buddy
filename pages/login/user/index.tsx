@@ -10,7 +10,7 @@ import {
 import { Google, Facebook, Instagram } from "@mui/icons-material";
 import defaultBackground from "@/assets/background.jpg";
 import { useRouter } from "next/router";
-import { useLogInMutation } from "@/libs/services/auth";
+import { useLogInMutation } from "@/libs/services/user/auth";
 
 function Login() {
   const router = useRouter()
@@ -23,9 +23,7 @@ function Login() {
     // Add login logic here 
     try {
       let result = await logIn({email, password}).unwrap();
-      console.log(result);
     } catch (error) {
-      console.log('Login failed', error);
       alert(error);
     }
 
