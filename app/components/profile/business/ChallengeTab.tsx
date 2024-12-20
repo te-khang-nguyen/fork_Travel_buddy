@@ -32,7 +32,7 @@ const ChallengesTab: React.FC = () => {
     },
   ];
 
-  let [modalOpen, setModalOpen]= useState(false)
+  const [modalOpen, setModalOpen]= useState(false)
 
   return (
     <Box sx={{ p: 3 }}>

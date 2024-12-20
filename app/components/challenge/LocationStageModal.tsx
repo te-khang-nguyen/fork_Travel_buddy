@@ -1,6 +1,5 @@
 import {
   Modal,
-  DialogActions,
   DialogContent,
   DialogTitle,
   Card,

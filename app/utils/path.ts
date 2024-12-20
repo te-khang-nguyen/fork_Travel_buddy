@@ -9,6 +9,6 @@ export const isPathAccessible = (
     );
   };
   
-const roles = ['user', 'business']; // Valid roles
-const basePaths = ['/dashboard', '/profile']; // Base paths that require role access
+// const roles = ['user', 'business']; // Valid roles
+// const basePaths = ['/dashboard', '/profile']; // Base paths that require role access
 

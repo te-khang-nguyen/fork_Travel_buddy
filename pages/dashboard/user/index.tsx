@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Typography, Card, CardContent } from "@mui/material";
-import ChallengeCard from "@/app/components/challenge/ChallengeCard";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
 import { useRouter } from "next/router";
 

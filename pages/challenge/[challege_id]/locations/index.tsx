@@ -81,8 +81,8 @@ function JoinChallenge() {
           justifyContent: { xs: "center", sm: "space-between" },
         }}
       >
-        {locations.map((location) => (
-          <LocationCard location={location} />
+        {locations.map((location,index) => (
+          <LocationCard key={index} location={location} />
         ))}
       </Box>
       <Button
