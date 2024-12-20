@@ -13,22 +13,23 @@ import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/user/auth";
 
 function Login() {
-  const router = useRouter()
-  const [logIn, {data, error, isLoading}] = useLogInMutation();
+  const router = useRouter();
+  const [logIn, { data, error }] = useLogInMutation();
 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   const handleLogin = async () => {
-    // Add login logic here 
-    try {
-      let result = await logIn({email, password}).unwrap();
-    } catch (error) {
-      alert(error);
+    const result = await logIn({ email, password });
+
+    // Check the result manually
+    if (result.error) {
+      console.error("Login failed:", result.error);
+      alert(result.error || "Login failed");
+      return;
+    } else {
+      router.push("/dashboard/user");
     }
-
-    router.push('/dashboard/user')
-
   };
 
   const handleRegistration = () => {

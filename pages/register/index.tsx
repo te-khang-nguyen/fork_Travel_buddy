@@ -4,27 +4,21 @@ import { TextField, Button, Box, Typography } from "@mui/material";
 import defaultBackground from "@/assets/background.jpg";
 import { useSignUpMutation } from "@/libs/services/user/auth";
 
-
-
 const RegistrationForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
- 
-  const [signUp, { data, error, isLoading }] = useSignUpMutation();
-  
 
-  const onSubmit = async (dat) => {
-    await signUp(dat);
-    // Simulate a unique email validation
-    const uniqueEmails = ["test@example.com"];
-    if (uniqueEmails.includes(dat.email)) {
-      alert("Email is already in use!");
+  const [signUp, { error }] = useSignUpMutation();
+
+  const onSubmit = async (data) => {
+    await signUp(data);
+    if (error) {
+      alert(error);
       return;
     }
-    alert("Registration Successful!");
   };
 
   return (
