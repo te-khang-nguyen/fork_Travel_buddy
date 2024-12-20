@@ -14,7 +14,6 @@ const CreateChallengeForm: React.FC = () => {
     handleSubmit,
     control,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm<ChallengeFormInputs>({
     defaultValues: {

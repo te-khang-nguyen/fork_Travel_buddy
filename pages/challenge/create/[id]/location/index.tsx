@@ -11,7 +11,6 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import ImageUploader from "@/app/components/image_picker/ImagePicker";
 
-
 const LocationUI = () => {
   const [sections, setSections] = useState<
     { id: number; name: string; content: string }[]
@@ -57,9 +56,7 @@ const LocationUI = () => {
     alert("Sections saved successfully!");
   };
 
-  const handleImageUpload = (image: string | null, name: string | null) => {
-    console.log("Image uploaded:", { image, name });
-  };
+
 
   return (
     <Card
@@ -98,7 +95,7 @@ const LocationUI = () => {
             <Typography variant="h6" sx={{ mb: 1 }}>
               Location Images
             </Typography>
-            <ImageUploader onImageUpload={handleImageUpload} />
+            <ImageUploader onImageUpload={()=>{}} />
           </Box>
 
           <Box>

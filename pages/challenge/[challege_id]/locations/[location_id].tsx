@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   TextField,
   Button,
   Typography,
   Card,
-  CardMedia,
 } from "@mui/material";
 import CustomAccordionList from "@/app/components/challenge/Section";
 import defaultBackground from "@/assets/background.jpg";
