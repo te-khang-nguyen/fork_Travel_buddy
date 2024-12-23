@@ -8,7 +8,7 @@ import { ThemeProvider } from "@mui/material";
 import theme from "@/app/theme";
 import { GlobalContextProvider } from "@/app/GlobalContextProvider";
 import { supabase } from "@/libs/supabase/supabase_client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const NO_DRAWER_BUTTON_PAGES = [
   "/recovery",
@@ -26,10 +26,11 @@ const MainContent = ({ Component, pageProps }: AppProps) => {
         data: { session },
       } = await supabase.auth.getSession();
 
-      if (!session && router.pathname !== "/") {
-        router.replace("/");
-      } else if (session && router.pathname === "/") {
-        router.replace("/dashboard/user");
+      const publicPaths = ["/", "/login/business"]; // Define public paths
+      if (!session && !publicPaths.includes(router.pathname)) {
+        await router.replace("/");
+      } else if (session && publicPaths.includes(router.pathname)) {
+        await router.replace("/dashboard/user");
       }
     };
 

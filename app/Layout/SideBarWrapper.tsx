@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
 import { useGlobalContext } from "../GlobalContextProvider";
 import { useLogOutMutation } from "@/libs/services/user/auth";
+import { supabase } from "@/libs/supabase/supabase_client";
 
 const drawerWidth = 240;
 const Search = styled("div")(({ theme }) => ({
@@ -112,10 +113,12 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
         {[...menuItems, ...defaultMenuItems].map((item) => (
           <ListItem
             key={item.text}
-            onClick={() => {
+            onClick={async () => {
               // this is so not recommened, enhance later
               if (item.route == "/") {
                 logout();
+                await supabase.auth.getSession();
+                return
 
               }
               router.push(item.route);
