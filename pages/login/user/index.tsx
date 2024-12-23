@@ -13,8 +13,10 @@ import { Google, Facebook, Instagram } from "@mui/icons-material";
 import defaultBackground from "@/assets/background.jpg";
 import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/user/auth";
+import { useGlobalContext } from "@/app/GlobalContextProvider";
 
 function Login() {
+  const { setRole } = useGlobalContext();
   const router = useRouter();
   const [logIn] = useLogInMutation();
 
@@ -29,9 +31,10 @@ function Login() {
     const result = await logIn({ email, password });
 
     if (result.error) {
-      setSnackbarMessage(result.error as string || "Login failed");
+      setSnackbarMessage((result.error as string) || "Login failed");
       setSnackbarOpen(true);
     } else {
+      setRole("user");
       router.push("/dashboard/user");
     }
   };
@@ -160,7 +163,11 @@ function Login() {
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

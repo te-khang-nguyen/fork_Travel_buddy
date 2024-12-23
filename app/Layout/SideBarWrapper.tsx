@@ -18,10 +18,9 @@ import HomeIcon from "@mui/icons-material/Home";
 import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
-import { globalStore } from '@/libs/globalStore';
+import { useGlobalContext } from "../GlobalContextProvider";
 
 const drawerWidth = 240;
-type role = "business" | "user";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -56,15 +55,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface DrawerLayoutProps {
   children: ReactNode;
-  role: role; // TODO: config role
   showDrawerButton?: boolean;
 }
 
 const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   children,
-  role = globalStore.role,
   showDrawerButton = false,
 }) => {
+  const { role } = useGlobalContext();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const router = useRouter();
 
@@ -86,6 +84,11 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
             text: "Challenge Management",
             icon: <Inventory />,
             route: `/profile/business/#challenges`,
+          },
+          {
+            text: "Create Account",
+            icon: <AccountCircle />,
+            route: `/profile/business/createAccount`,
           },
         ];
 
