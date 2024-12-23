@@ -19,6 +19,7 @@ import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
 import { useGlobalContext } from "../GlobalContextProvider";
+import { useLogOutMutation } from "@/libs/services/user/auth";
 
 const drawerWidth = 240;
 const Search = styled("div")(({ theme }) => ({
@@ -62,6 +63,8 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   children,
   showDrawerButton = false,
 }) => {
+  const [logout] = useLogOutMutation();
+
   const { role } = useGlobalContext();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const router = useRouter();
@@ -73,7 +76,11 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   const defaultMenuItems = [
     { text: "Dashboard", icon: <HomeIcon />, route: `/dashboard/${role}` },
     { text: "Profile", icon: <AccountCircle />, route: `/profile/${role}` },
-    { text: "Logout", icon: <Logout />, route: `/` },
+    {
+      text: "Logout",
+      icon: <Logout />,
+      route: `/`,
+    },
   ];
 
   const menuItems =
@@ -106,6 +113,11 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
           <ListItem
             key={item.text}
             onClick={() => {
+              // this is so not recommened, enhance later
+              if (item.route == "/") {
+                logout();
+
+              }
               router.push(item.route);
               setDrawerOpen(false);
             }}

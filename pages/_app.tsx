@@ -6,26 +6,43 @@ import { useRouter } from "next/router";
 import DrawerLayout from "@/app/Layout/SideBarWrapper";
 import { ThemeProvider } from "@mui/material";
 import theme from "@/app/theme";
-import {
-  GlobalContextProvider,
-} from "@/app/GlobalContextProvider";
+import { GlobalContextProvider } from "@/app/GlobalContextProvider";
+import { supabase } from "@/libs/supabase/supabase_client";
+import { useEffect } from "react";
+
+const NO_DRAWER_BUTTON_PAGES = [
+  "/recovery",
+  "/",
+  "/login/business",
+  "/register",
+];
 
 const MainContent = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
+  useEffect(() => {
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-  // Define pages where the drawer button is visible
-  const showDrawerButton = ![
-    "/recovery",
-    "/",
-    "/login/business",
-    "/register",
-  ].includes(router.pathname); //Move this to another file as enum/ variable
+      if (!session && router.pathname !== "/") {
+        router.replace("/");
+      } else if (session && router.pathname === "/") {
+        router.replace("/dashboard/user");
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  const showDrawerButton = !NO_DRAWER_BUTTON_PAGES.includes(router.pathname);
+
   return (
     <GlobalContextProvider>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
-          <DrawerLayout showDrawerButton={showDrawerButton} >
+          <DrawerLayout showDrawerButton={showDrawerButton}>
             <Component {...pageProps} />
           </DrawerLayout>
         </ThemeProvider>

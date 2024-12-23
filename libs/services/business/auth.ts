@@ -100,7 +100,7 @@ const BusinessAuthApi = createApi({
       },
     }),
     
-    logOut: builder.query<AuthRes, AuthReq>({
+    logOut: builder.mutation<AuthRes, AuthReq>({
       queryFn: async () => {
         try {
           const { data: userData } = await supabase.auth.getUser();
@@ -122,6 +122,6 @@ const BusinessAuthApi = createApi({
   }),
 });
 
-export const { useSignUpMutation, useLogInMutation, useLogOutQuery } =
+export const { useSignUpMutation, useLogInMutation, useLogOutMutation } =
   BusinessAuthApi;
 export { BusinessAuthApi };

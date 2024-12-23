@@ -1,6 +1,5 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { supabase } from "../../supabase/supabase_client";
-import { globalStore } from "@/libs/globalStore";
 
 interface AuthReq {
   firstName?: string;
@@ -88,10 +87,6 @@ const UserAuthApi = createApi({
             return { error: authError.message };
           }
 
-          globalStore.setRole("user");
-          globalStore.setEntity("userprofiles");
-          globalStore.setField("userid");
-
           return { data: { message: "Congrats! You are signed in!" } };
         } catch (err: any) {
           return {
@@ -101,7 +96,7 @@ const UserAuthApi = createApi({
       },
     }),
 
-    logOut: builder.query<AuthRes, void>({
+    logOut: builder.mutation<AuthRes, void>({
       queryFn: async () => {
         try {
           const {
@@ -129,6 +124,6 @@ const UserAuthApi = createApi({
   }),
 });
 
-export const { useSignUpMutation, useLogInMutation, useLogOutQuery } =
+export const { useSignUpMutation, useLogInMutation, useLogOutMutation } =
   UserAuthApi;
 export { UserAuthApi };
