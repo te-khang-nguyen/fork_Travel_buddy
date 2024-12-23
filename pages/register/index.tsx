@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { TextField, Button, Box, Typography } from "@mui/material";
+import { TextField, Button, Box, Typography, Snackbar, Alert } from "@mui/material";
 import defaultBackground from "@/assets/background.jpg";
 import { useSignUpMutation } from "@/libs/services/user/auth";
 
@@ -11,14 +11,24 @@ const RegistrationForm = () => {
     formState: { errors },
   } = useForm();
 
-  const [signUp, { error }] = useSignUpMutation();
+  const [signUp] = useSignUpMutation();
+
+  // Snackbar state for errors
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
 
   const onSubmit = async (data) => {
-    await signUp(data);
-    if (error) {
-      alert(error);
+    const result = await signUp(data);
+
+    if (result.error) {
+      setSnackbarMessage(result.error as string || "Sign up failed");
+      setSnackbarOpen(true);
       return;
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -149,6 +159,18 @@ const RegistrationForm = () => {
           </Box>
         </form>
       </Box>
+
+      {/* Snackbar for error messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
