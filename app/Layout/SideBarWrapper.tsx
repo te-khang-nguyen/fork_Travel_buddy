@@ -21,6 +21,7 @@ import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
 import { useGlobalContext } from "../GlobalContextProvider";
 import { useLogOutMutation } from "@/libs/services/user/auth";
 import { supabase } from "@/libs/supabase/supabase_client";
+import { setCookie } from "cookies-next";
 
 const drawerWidth = 240;
 const Search = styled("div")(({ theme }) => ({
@@ -77,16 +78,18 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   const defaultMenuItems = [
     { text: "Dashboard", icon: <HomeIcon />, route: `/dashboard/${role}` },
     { text: "Profile", icon: <AccountCircle />, route: `/profile/${role}` },
-    {
-      text: "Logout",
-      icon: <Logout />,
-      route: `/`,
-    },
   ];
 
   const menuItems =
     role === "user"
-      ? [{ text: "Challenge", icon: <Inventory />, route: `/challenge` }]
+      ? [
+          { text: "Challenge", icon: <Inventory />, route: `/challenge` },
+          {
+            text: "Logout",
+            icon: <Logout />,
+            route: `/`,
+          },
+        ]
       : [
           {
             text: "Challenge Management",
@@ -97,6 +100,11 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
             text: "Create Account",
             icon: <AccountCircle />,
             route: `/profile/business/createAccount`,
+          },
+          {
+            text: "Logout",
+            icon: <Logout />,
+            route: `/login/business`,
           },
         ];
 
@@ -110,16 +118,14 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
     >
       <Toolbar />
       <List>
-        {[...menuItems, ...defaultMenuItems].map((item) => (
+        {[...defaultMenuItems, ...menuItems].map((item) => (
           <ListItem
             key={item.text}
             onClick={async () => {
               // this is so not recommened, enhance later
-              if (item.route == "/") {
+              if (item.text == "Logout") {
                 logout();
-                await supabase.auth.getSession();
-                return
-
+                setCookie('role', '');
               }
               router.push(item.route);
               setDrawerOpen(false);

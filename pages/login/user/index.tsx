@@ -14,6 +14,7 @@ import defaultBackground from "@/assets/background.jpg";
 import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/user/auth";
 import { useGlobalContext } from "@/app/GlobalContextProvider";
+import { setCookie } from 'cookies-next';
 
 function Login() {
   const { setRole } = useGlobalContext();
@@ -35,6 +36,7 @@ function Login() {
       setSnackbarOpen(true);
     } else {
       setRole("user");
+      setCookie('role', 'user');
       router.push("/dashboard/user");
     }
   };

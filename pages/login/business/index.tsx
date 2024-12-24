@@ -2,7 +2,8 @@ import React from "react";
 import { Box, TextField, Button, Typography, Alert, Snackbar } from "@mui/material";
 import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/business/auth";
-import { useGlobalContext } from "@/app/GlobalContextProvider";
+  import { setCookie } from 'cookies-next';
+  import { useGlobalContext } from "@/app/GlobalContextProvider";
 
 function AdminLogin() {
   const router = useRouter();
@@ -13,7 +14,6 @@ function AdminLogin() {
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
-
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -28,6 +28,7 @@ function AdminLogin() {
       setSnackbarOpen(true);
     } else {
       setRole("business");
+      setCookie('role', 'business');
       router.push("/dashboard/business");
     }
   };
