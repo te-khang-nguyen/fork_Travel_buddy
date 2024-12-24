@@ -1,8 +1,16 @@
 /* eslint-disable */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Box, TextField, Typography, Button, Paper } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Button,
+  Paper,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
@@ -20,8 +28,13 @@ interface ProfileFormInputs {
 }
 
 const ProfileTab = () => {
-  const [updateProfile, { data, error, isLoading }] =
-    useUpdateProfileMutation();
+  const [updateProfile] = useUpdateProfileMutation();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
+
   const defaultValues = {
     businessname: "",
     description: "",
@@ -45,13 +58,13 @@ const ProfileTab = () => {
     error: profileError,
     isLoading: profileLoad,
   } = useGetProfileQuery();
+
   if (profileError) {
     console.log("Service error:", profileError);
   }
+
   useEffect(() => {
     if (profile) {
-      console.log("Service output:", profile);
-
       for (const [key, value] of Object.entries(profile)) {
         if (key in defaultValues) {
           setValue(key as any, value ? value : "");
@@ -61,16 +74,25 @@ const ProfileTab = () => {
   }, [profile, setValue]);
 
   const onSubmit = async (profileData: ProfileFormInputs) => {
-    console.log("Form Data:", profileData);
     let result = await updateProfile(profileData);
-    console.log(result);
+
     if (result.data) {
-      console.log("Profile updated successfully!", result.data);
-      alert("Profile updated successfully!");
+      setSnackbar({
+        open: true,
+        message: "Profile updated successfully!",
+        severity: "success",
+      });
     } else {
-      console.log(result);
-      alert(result);
+      setSnackbar({
+        open: true,
+        message: "Failed to update profile. Please try again.",
+        severity: "error",
+      });
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   return (
@@ -147,7 +169,7 @@ const ProfileTab = () => {
                       : undefined
                   }
                   render={({ field: controllerField }) =>
-                    field.name != "description" ? (
+                    field.name !== "description" ? (
                       <TextField
                         {...controllerField}
                         fullWidth
@@ -187,6 +209,21 @@ const ProfileTab = () => {
           </Box>
         </form>
       </Paper>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
