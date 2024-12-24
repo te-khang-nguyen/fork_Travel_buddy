@@ -1,11 +1,9 @@
-
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { supabase } from "../../supabase/supabase_client";
 
 // TypeScript interfaces
 interface AuthReq {
-  firstName?: string;
-  lastName?: string;
+  businessName?: string;
   email: string;
   phone?: string;
   password: string;
@@ -21,7 +19,7 @@ const BusinessAuthApi = createApi({
   baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
     signUp: builder.mutation<AuthRes, AuthReq>({
-      queryFn: async ({ firstName, lastName, email, phone, password }) => {
+      queryFn: async ({ businessName, email, phone, password }) => {
         if (!email || !password) {
           return { error: { data: "Email and password are required!" } };
         }
@@ -39,7 +37,7 @@ const BusinessAuthApi = createApi({
           }
 
           // Create user profile
-          const businessname = firstName || lastName || "";
+          const businessname = businessName || "";
           const userProfile = {
             email,
             businessname,
@@ -67,32 +65,35 @@ const BusinessAuthApi = createApi({
         if (!email || !password) {
           return { error: { data: "Email and password are required!" } };
         }
-    
+
         try {
-          const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-    
+          const { data: authData, error: authError } =
+            await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+
           if (authError) {
             return { error: { data: authError.message } };
           }
-    
+
           const { user } = authData;
-    
+
           const { data: profileData, error: profileError } = await supabase
             .from("profile")
             .select("*")
             .eq("business_id", user!.id);
-    
+
           if (profileError) {
             return { error: { data: profileError.message } };
           }
-    
+
           if (profileData && profileData.length > 0) {
             return { data: { data: "Congrats! You are signed in!" } };
           } else {
-            return { error: { data: "No profile associated with this account." } };
+            return {
+              error: { data: "No profile associated with this account." },
+            };
           }
         } catch (error) {
           console.error("Login error:", error);
@@ -100,7 +101,7 @@ const BusinessAuthApi = createApi({
         }
       },
     }),
-    
+
     logOut: builder.mutation<AuthRes, AuthReq>({
       queryFn: async () => {
         try {
