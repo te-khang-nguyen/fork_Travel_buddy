@@ -1,153 +1,129 @@
-import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
-import { supabase } from '../../supabase/supabase_client';
-const { createClient } = require('@supabase/supabase-js');
-import  { globalStore } from '@/libs/globalStore';
+import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
+import { supabase } from "../../supabase/supabase_client";
 
-// Define TypeScript interfaces for the request and response data
 interface AuthReq {
-
-    firstName?: string,
-    lastName?: string,
-    email: string,
-    phone?: string,
-    password: string
-
-};
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  phone?: string;
+  password: string;
+}
 
 interface AuthRes {
-    data: any;
-    error?: string;
-};
-
+  message?: string;
+  error?: string;
+}
 
 const UserAuthApi = createApi({
-    reducerPath: 'userauth',
-    baseQuery: fakeBaseQuery(),
-    endpoints: (builder) => ({
-        signUp: builder.mutation<AuthRes, AuthReq>({
-            queryFn: async ({ firstName, lastName, email, phone, password }) => { //: {firstname, lastname, email, phone, password}
-                let token;
-                let userProfile;
-                if (!email || !password) {
-                    return { err: 'Email and password are required!' };
+  reducerPath: "userauth",
+  baseQuery: fakeBaseQuery(),
+  endpoints: (builder) => ({
+    signUp: builder.mutation<AuthRes, AuthReq>({
+      queryFn: async ({ firstName, lastName, email, phone, password }) => {
+        if (!email || !password) {
+          return { error: "Email and password are required!" };
+        }
+
+        try {
+          // Sign up the user
+          const { data: authData, error: authError } =
+            await supabase.auth.signUp({
+              email,
+              password,
+              options: {
+                emailRedirectTo: "http://localhost:3000",
+              },
+            });
+
+          if (authError) {
+            return { error: authError.message };
+          }
+
+          // Create user profile
+          const userProfile =
+            firstName !== lastName
+              ? {
+                  email,
+                  username: `${firstName}${lastName}`,
+                  firstname: firstName,
+                  lastname: lastName,
+                  phone,
                 }
-                
-                try {
-
-                    try {
-                        const { data: authData, error: authError } = await supabase.auth.signUp({
-                            email: email,
-                            password: password,
-                            options: {
-                                emailRedirectTo: 'http://localhost:3000'
-                            },
-                        });
-                        if (authError){
-                            return { authError };
-                        };
-                        //uid = authData.user.id;
-                        //token = authData.session.access_token;
-
-                    } catch (error) {
-                        return { code: 500, mess: { message: "Email is already used by another account!" } };
-                    }
-
-
-                    if (firstName != lastName) {
-                        userProfile = {
-                            email: email,
-                            username: `${firstName}${lastName}`,
-                            firstname: firstName,
-                            lastname: lastName,
-                            phone: phone
-                        };
-                    } else {
-                        let businessname = firstName ? firstName : lastName? lastName : "";
-                        userProfile = {
-                            email: email,
-                            businessname: businessname,
-                            phone: !phone ? "" : phone,
-                        }
-                    }
-
-                    //const supabasePreSignIn = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-                    //    global: {
-                    //        headers: {
-                    //            'Authorization': `Bearer ${token}`
-                    //        }
-                    //    }
-                    //});
-
-
-                    // Create user profile in profiles table
-                    const { error } = await supabase //PreSignIn
-                        .from('userprofiles')
-                        .insert(userProfile);
-
-                    if (error) {
-                        return { err: error };
-                    };
-
-                    return { data: 'User created successfully!' };
-
-                } catch (error) {
-                    console.error('Error creating user:', error);
-                    return { err: error };
-                }
-                
-            },
-        }),
-
-        logIn: builder.mutation<AuthRes, AuthReq>({
-            queryFn: async ({ email, password }) => {
-                let resp;
-                if (!email || !password) {
-                    resp = { code: 400, mess: { message: 'Email and password are required!' } };
-                    return resp;
-                }
-
-                try {
-                    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-
-                    
-
-                    if (!authError) {
-                        globalStore.setRole('user');
-                        globalStore.setEntity('userprofiles');
-                        globalStore.setField('userid');
-                        return {  data: "Congrats! You are signed in!" };
-                    } else {
-                        return { err: `Login fail!` };
-                    }
-
-                } catch (error) {
-                    //console.error('Login error:', error);
-                    return { error };
-                }
-            }
-        }),
-
-        logOut: builder.query({
-            queryFn: async () => {
-                try {
-                    const { data: { user } } = await supabase.auth.getUser()
-                    if (user) {
-                        const { error } = await supabase.auth.signOut();
-                        return !error? {  data: "User is signed out successfully!"} : { err: error };
-                    } else {
-                        return { err: "No user currently signed in!" };
-                    }
-                } catch (error) {
-                    return { error };
+              : {
+                  email,
+                  businessname: firstName || lastName || "",
+                  phone: phone || "",
                 };
-            }
-        }),
 
+          const { error: profileError } = await supabase
+            .from("userprofiles")
+            .insert(userProfile);
+
+          if (profileError) {
+            return { error: profileError.message };
+          }
+
+          return { data: { message: "User created successfully!" } };
+        } catch (err: any) {
+          return { error: err.message || "An unknown error occurred." };
+        }
+      },
     }),
+
+    logIn: builder.mutation<AuthRes, AuthReq>({
+      queryFn: async ({ email, password }) => {
+        if (!email || !password) {
+          return { error: "Email and password are required!" };
+        }
+
+        try {
+          const { data: authData, error: authError } =
+            await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+
+          if (authError) {
+            return { error: authError.message };
+          }
+
+          return { data: { message: "Congrats! You are signed in!" } };
+        } catch (err: any) {
+          return {
+            error: err.message || "Login failed due to an unknown error.",
+          };
+        }
+      },
+    }),
+
+    logOut: builder.mutation<AuthRes, void>({
+      queryFn: async () => {
+        try {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+
+          if (!user) {
+            return { error: "No user currently signed in!" };
+          }
+
+          const { error } = await supabase.auth.signOut();
+
+          if (error) {
+            return { error: error.message };
+          }
+
+          return { data: { message: "User is signed out successfully!" } };
+        } catch (err: any) {
+          return {
+            error: err.message || "An unknown error occurred during sign out.",
+          };
+        }
+      },
+    }),
+  }),
 });
 
-export const { useSignUpMutation, useLogInMutation, useLogOutQuery } = UserAuthApi;
+export const { useSignUpMutation, useLogInMutation, useLogOutMutation } =
+  UserAuthApi;
 export { UserAuthApi };

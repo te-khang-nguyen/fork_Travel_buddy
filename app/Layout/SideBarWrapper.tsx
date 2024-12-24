@@ -18,10 +18,11 @@ import HomeIcon from "@mui/icons-material/Home";
 import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
-import { globalStore } from '@/libs/globalStore';
+import { useGlobalContext } from "../GlobalContextProvider";
+import { useLogOutMutation } from "@/libs/services/user/auth";
+import { setCookie } from "cookies-next";
 
 const drawerWidth = 240;
-type role = "business" | "user";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -56,15 +57,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface DrawerLayoutProps {
   children: ReactNode;
-  role: role; // TODO: config role
   showDrawerButton?: boolean;
 }
 
 const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   children,
-  role = globalStore.role,
   showDrawerButton = false,
 }) => {
+  const [logout] = useLogOutMutation();
+
+  const { role } = useGlobalContext();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const router = useRouter();
 
@@ -75,17 +77,33 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
   const defaultMenuItems = [
     { text: "Dashboard", icon: <HomeIcon />, route: `/dashboard/${role}` },
     { text: "Profile", icon: <AccountCircle />, route: `/profile/${role}` },
-    { text: "Logout", icon: <Logout />, route: `/` },
   ];
 
   const menuItems =
     role === "user"
-      ? [{ text: "Challenge", icon: <Inventory />, route: `/challenge` }]
+      ? [
+          { text: "Challenge", icon: <Inventory />, route: `/challenge` },
+          {
+            text: "Logout",
+            icon: <Logout />,
+            route: `/`,
+          },
+        ]
       : [
           {
             text: "Challenge Management",
             icon: <Inventory />,
             route: `/profile/business/#challenges`,
+          },
+          {
+            text: "Create Account",
+            icon: <AccountCircle />,
+            route: `/profile/business/createAccount`,
+          },
+          {
+            text: "Logout",
+            icon: <Logout />,
+            route: `/login/business`,
           },
         ];
 
@@ -99,10 +117,15 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
     >
       <Toolbar />
       <List>
-        {[...menuItems, ...defaultMenuItems].map((item) => (
+        {[...defaultMenuItems, ...menuItems].map((item) => (
           <ListItem
             key={item.text}
-            onClick={() => {
+            onClick={async () => {
+              // this is so not recommened, enhance later
+              if (item.text == "Logout") {
+                logout();
+                setCookie('role', '');
+              }
               router.push(item.route);
               setDrawerOpen(false);
             }}

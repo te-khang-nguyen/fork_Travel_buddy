@@ -1,26 +1,36 @@
 import React from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import { Box, TextField, Button, Typography, Alert, Snackbar } from "@mui/material";
 import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/business/auth";
+  import { setCookie } from 'cookies-next';
+  import { useGlobalContext } from "@/app/GlobalContextProvider";
 
 function AdminLogin() {
-  const router = useRouter()
-  const [logIn, {data, error, isLoading}] = useLogInMutation();
+  const router = useRouter();
+  const [logIn, ] = useLogInMutation();
 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+  const {setRole} = useGlobalContext()
   const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      let result = await logIn({email, password}).unwrap();
-      console.log(result);
-    } catch (error) {
-      console.log('Login failed', error);
-      alert(error);
+    event.preventDefault(); 
+    const result = await logIn({ email, password });
+
+    if (result.error) {
+      setSnackbarMessage((result.error as any)?.data || "Login failed");
+      setSnackbarOpen(true);
+    } else {
+      setRole("business");
+      setCookie('role', 'business');
+      router.push("/dashboard/business");
     }
-    router.push('/dashboard/business')
-    // Add login logic here
   };
 
   return (
@@ -45,7 +55,7 @@ function AdminLogin() {
           backgroundColor: "white",
         }}
       >
-        <Box  sx={{textAlign:'center'}}>
+        <Box sx={{ textAlign: "center" }}>
           <Typography variant="h4" gutterBottom>
             Admin Portal
           </Typography>
@@ -89,6 +99,21 @@ function AdminLogin() {
           </Button>
         </Box>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{border:'1px solid red' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

@@ -6,37 +6,43 @@ import {
   Typography,
   Link,
   Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Google, Facebook, Instagram } from "@mui/icons-material";
 import defaultBackground from "@/assets/background.jpg";
 import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/user/auth";
+import { useGlobalContext } from "@/app/GlobalContextProvider";
+import { setCookie } from 'cookies-next';
 
 function Login() {
-  const router = useRouter()
-  const [logIn, {data, error, isLoading}] = useLogInMutation();
+  const { setRole } = useGlobalContext();
+  const router = useRouter();
+  const [logIn] = useLogInMutation();
 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  // Snackbar state for errors
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
 
   const handleLogin = async () => {
-    // Add login logic here 
-    try {
-      let result = await logIn({email, password}).unwrap();
-    } catch (error) {
-      alert(error);
+    const result = await logIn({ email, password });
+
+    if (result.error) {
+      setSnackbarMessage((result.error as string) || "Login failed");
+      setSnackbarOpen(true);
+    } else {
+      setRole("user");
+      setCookie('role', 'user');
+      router.push("/dashboard/user");
     }
-
-    router.push('/dashboard/user')
-
   };
 
-  const handleRegistration = () => {
-    // Add registration navigation logic here
-  };
-
-  const handleSocialLogin = (platform: unknown) => {
-    console.log(`Login with ${platform}`);
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -122,7 +128,7 @@ function Login() {
           <Button
             variant="outlined"
             startIcon={<Google />}
-            onClick={() => handleSocialLogin("Google")}
+            onClick={() => console.log("Login with Google")}
             fullWidth={true}
           >
             Google
@@ -130,7 +136,7 @@ function Login() {
           <Button
             variant="outlined"
             startIcon={<Facebook />}
-            onClick={() => handleSocialLogin("Facebook")}
+            onClick={() => console.log("Login with Facebook")}
             fullWidth={true}
           >
             Facebook
@@ -138,7 +144,7 @@ function Login() {
           <Button
             variant="outlined"
             startIcon={<Instagram />}
-            onClick={() => handleSocialLogin("Instagram")}
+            onClick={() => console.log("Login with Instagram")}
             fullWidth={true}
           >
             Instagram
@@ -146,15 +152,27 @@ function Login() {
         </Box>
 
         <Box textAlign="center" mt={3}>
-          <Link
-            href="/register"
-            sx={{ textDecoration: "none" }}
-            onClick={handleRegistration}
-          >
+          <Link href="/register" sx={{ textDecoration: "none" }}>
             Have not registered yet? Join us!
           </Link>
         </Box>
       </Box>
+
+      {/* Snackbar for error messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
