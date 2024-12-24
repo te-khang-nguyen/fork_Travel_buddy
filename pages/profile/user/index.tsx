@@ -49,7 +49,7 @@ const ProfileForm = () => {
 
       for (const [key, value] of Object.entries(profile)) {
         if(key in defaultValues){
-          setValue(key, value ? value : '');
+          setValue(key as any, value ? value : '');
         }
       };
     }
@@ -58,7 +58,7 @@ const ProfileForm = () => {
 
   const onSubmit = async (profileData: ProfileFormInputs) => {
     
-    let result = await updateProfile(profileData);
+    const result = await updateProfile(profileData);
     if (result.data) {
       alert("Profile updated successfully!");
     } else {

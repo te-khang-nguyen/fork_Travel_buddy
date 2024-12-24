@@ -8,7 +8,7 @@ import { ThemeProvider } from "@mui/material";
 import theme from "@/app/theme";
 import { GlobalContextProvider } from "@/app/GlobalContextProvider";
 import { supabase } from "@/libs/supabase/supabase_client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const NO_DRAWER_BUTTON_PAGES = [
   "/recovery",

@@ -20,7 +20,6 @@ import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
 import { useGlobalContext } from "../GlobalContextProvider";
 import { useLogOutMutation } from "@/libs/services/user/auth";
-import { supabase } from "@/libs/supabase/supabase_client";
 import { setCookie } from "cookies-next";
 
 const drawerWidth = 240;
