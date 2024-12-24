@@ -4,8 +4,7 @@ import { Box, TextField, Typography, Button, Paper } from "@mui/material";
 import { useSignUpMutation } from "@/libs/services/business/auth";
 
 interface SignUpFormInputs {
-  firstName: string;
-  lastName: string;
+  businessName: string;
   email: string;
   phone: string;
   password: string;
@@ -17,8 +16,7 @@ const SignUpForm = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const defaultValues = {
-    firstName: "",
-    lastName: "",
+    businessName: "",
     email: "",
     phone: "",
     password: "",
@@ -36,12 +34,11 @@ const SignUpForm = () => {
     setServerError(null);
     setSuccessMessage(null);
 
-    const { firstName, lastName, email, phone, password } = formData;
+    const { businessName, email, phone, password } = formData;
 
     try {
       const response = await signUp({
-        firstName,
-        lastName,
+        businessName,
         email,
         phone,
         password,
@@ -50,7 +47,9 @@ const SignUpForm = () => {
       if ((response as any).data) {
         setSuccessMessage("Account created successfully!");
       } else if ((response as any).error) {
-        setServerError((response as any).error.data || "An unknown error occurred.");
+        setServerError(
+          (response as any).error.data || "An unknown error occurred."
+        );
       }
     } catch (err) {
       setServerError("An unexpected error occurred. Please try again.");
@@ -83,8 +82,7 @@ const SignUpForm = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {[
-              { name: "firstName", label: "First Name" },
-              { name: "lastName", label: "Last Name" },
+              { name: "businessName", label: "Business Name" },
               { name: "email", label: "Email", type: "email" },
               { name: "phone", label: "Phone" },
               { name: "password", label: "Password", type: "password" },
