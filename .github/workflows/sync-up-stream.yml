@@ -1,0 +1,27 @@
+name: Sync with Upstream
+
+on:
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Fork
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.PAT_TOKEN }}
+        fetch-depth: 0 # Ensure full history is fetched
+
+    - name: Add Upstream Repository
+      run: |
+        git remote add upstream https://github.com/talentedgeai/travel-buddy-prj.git
+        git fetch upstream
+
+    - name: Force Sync Fork with Upstream
+      run: |
+        git reset --hard upstream/main
+        git push origin main --force
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
