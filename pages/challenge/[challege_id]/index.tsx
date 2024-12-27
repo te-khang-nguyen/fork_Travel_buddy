@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { 
   Box, 
   Typography, 
@@ -121,25 +122,38 @@ export default function TravelItineraryPage() {
       </Box>
 
       {challengeLocations.map((location) => (
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          width: '100%' 
-        }}
-      >
-        <Card 
-          key={location.id} 
+        <Link 
+          href={`/challenge/${challenge_id}/locations/${location.id}`} 
+          passHref
+          key={location.id}
+        >
+        <Box 
+          component="div"  // Use div to allow clickable Box
           sx={{ 
             display: 'flex', 
-            mb: 4, 
-            boxShadow: 3,
-            borderRadius: 2,
-            height: { xs: 200, sm: 300, md: 300 },
-            width: { xs: 400, sm: 600, md: 800 }
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            width: '100%',
+            cursor: 'pointer',  // Show pointer on hover
+            '&:hover': {
+              '& > .MuiCard-root': {
+                boxShadow: 4,  // Increase shadow on hover
+                transform: 'scale(1.02)',  // Slight scale up on hover
+                transition: 'transform 0.2s, box-shadow 0.2s'
+              }
+            }
           }}
         >
+          <Card 
+            sx={{ 
+              display: 'flex', 
+              mb: 4, 
+              boxShadow: 3,
+              borderRadius: 2,
+              height: { xs: 200, sm: 300, md: 300 },
+              width: { xs: 400, sm: 600, md: 800 }
+            }}
+          >
           <Grid container spacing={0}>
             {/* Location Image */}
             <Grid item xs={4} sx={{ 
@@ -237,7 +251,8 @@ export default function TravelItineraryPage() {
             </Grid>
           </Grid>
         </Card>
-      </Box>
+        </Box>
+      </Link>
       ))}
 
       {/* Submit Button */}
