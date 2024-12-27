@@ -6,6 +6,27 @@ const base64toBinary =  (input) =>{
     return Uint8Array.from(Buffer.from(input.split(',')[1], 'base64'))
 };
 
+const upsertNewRow = async (inputobj) => {
+    const {entity, ...rest} = inputobj;
+    let newRowRef;
+	try{
+        newRowRef = await supabase
+                .from(inputobj.entity)
+                .upsert({...rest})
+                .select()
+                .single();
+
+        if (newRowRef.error) {
+            return {error: newRowRef.error};
+        } 
+
+        return {data: newRowRef.data};
+        
+	} catch (err: any) {
+        return {error: err};
+	};
+};
+
 const uploadNewRow = async (inputobj) => {
     const {entity, ...rest} = inputobj;
     let newRowRef;
@@ -143,6 +164,7 @@ const getDataByField = async (inputobj, compound = false) => {
 
 export {
 	uploadNewRow,
+	upsertNewRow,
     updateRow,
     getDataByField,
     getRowById,

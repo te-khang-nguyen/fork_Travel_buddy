@@ -1,8 +1,8 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { supabase } from "../../supabase/supabase_client";
 import {
-    uploadNewRow,
-    updateRow,
+
+    upsertNewRow,
     getDataByField,
     getRowById,
     uploadToStorage,
@@ -134,7 +134,7 @@ const JoinChallengeApi = createApi({
                     const {
                         data: uploadRessponse,
                         error: uploadError
-                    } = await uploadNewRow(newHistoryData);
+                    } = await upsertNewRow(newHistoryData);
 
                     if (uploadError) {
                         return { error: { data: uploadError.error } };
@@ -151,62 +151,76 @@ const JoinChallengeApi = createApi({
         uploadInputs: builder.mutation<ChallengeRes, ChallengeReq>({
             queryFn: async ({ challengeId, userLocationSubmission }) => {
                 const { data: { user } } = await supabase.auth.getUser();
-                console.log("Input:", userLocationSubmission);
-                let newHistoryData;
 
                 try {
-                    let queryHist = {
-                        entity: "challengeHistories",
-                        searchField: "challengeId",
-                        value: challengeId
-                    }
 
-                    const { data: historyData, error: historyError } = await getDataByField(queryHist);
-                    
-                    if (historyError) {
-                        return { error: { data: historyError } };
-                    } else {
-                        console.log("fromDb:", historyData);
-                        newHistoryData = historyData.filter(e => (e.ended == null) && (e.userId == user!.id))[0];
-                        console.log("Filtered:", newHistoryData);
-                    }
 
-                    for (const [ii, items] of userLocationSubmission!.entries()) {
+
+
+
+                    for (const [ii, items] of userLocationSubmission.entries()) {
                         let imgUrls: (string | undefined)[] | null = [];
+
                         if (items?.userMediaSubmission) {
-                            for (const [jj, item] of items?.userMediaSubmission?.entries()) {
-                                let bytesArray = (typeof item) == "string" ? base64toBinary(item) : item;
-                                let toStorageUpload = {
+                            for (const [jj, item] of items.userMediaSubmission.entries()) {
+                                const bytesArray = typeof item === "string" ? base64toBinary(item) : item;
+                                const toStorageUpload = {
                                     bucket: "challenge",
-                                    title: newHistoryData?.challengeTitle,
+                                    title: `${challengeId}id=${jj}`,
                                     location: `userSubmit${jj}`,
-                                    data: bytesArray
+                                    data: bytesArray,
                                 };
-                                let storageURL = await uploadToStorage(toStorageUpload);
-                                imgUrls.push(storageURL.data);
+
+                                try {
+                                    const storageURL = await uploadToStorage(toStorageUpload);
+                                    imgUrls.push(storageURL.data);
+                                } catch (error) {
+                                    console.error(`Error uploading to storage for item ${jj}:`, error);
+                                    imgUrls.push(undefined); // Add undefined if upload fails
+                                }
                             }
                         } else {
                             imgUrls = null;
                         }
-                        let newSubmissionObject = {
-                            userQuetionSubmission: items?.userQuestionSubmission,
-                            userMediaSubmission: imgUrls
-                        };
-                        userLocationSubmission!.fill(newSubmissionObject, ii);
-                    };
+
+                        // Update userMediaSubmission for the current item
+                        userLocationSubmission[ii].userMediaSubmission = imgUrls;
+                    }
+
+
 
                     try {
-                        newHistoryData.userChallengeSubmission.push({
-                            userLocationSubmission: userLocationSubmission
-                        });
 
-                        console.log("Before Submission:", newHistoryData);
-                        
+
+                        const { data: historyData, error: historyError } = await await supabase
+                            .from('challengeHistories')
+                            .select()
+                            .eq('challengeId', challengeId)
+                            .eq('userId', user!.id)
+                            .single();
+
+                        const oldSubmissions = historyData?.userChallengeSubmission || [];
+
+
+                        const mergedSubmissions = [
+                            ...userLocationSubmission,
+                            ...oldSubmissions.filter((oldItem) => !userLocationSubmission.some((newItem) => newItem.index === oldItem.index))
+                        ];
+
+
+                        const insertData = {
+                            challengeId: challengeId,
+                            userId: user!.id,
+                            userChallengeSubmission: mergedSubmissions,
+
+                            ...(historyData ? { id: historyData.id } : {})
+                        }
+
 
                         const {
                             data: updateData,
                             error: updateError
-                        } = await updateRow({entity: "challengeHistories",...newHistoryData}, newHistoryData.id);
+                        } = await upsertNewRow({ entity: "challengeHistories", ...insertData });
 
                         if (updateError) {
                             console.log("After Submission with ERr:", updateError);

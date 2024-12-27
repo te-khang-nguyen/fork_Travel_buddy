@@ -17,16 +17,11 @@ import ImageUploader from "@/app/components/image_picker/ImagePicker";
 import ExploreIcon from '@mui/icons-material/Explore';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LocationStageModal from "@/app/components/challenge/LocationStageModal";
-import CunstomInputsField from "@/app/components/challenge/UserInputsField";
 import { useRouter } from "next/router";
 import {
   useGetChallengeQuery,
   useGetLocationsQuery,
-  useUploadInputsMutation,
-  useGetProgressQuery
-} from "@/libs/services/user/challenge";
-import { AnyARecord } from "dns";
-
+  useUploadInputsMutation} from "@/libs/services/user/challenge";
 interface FetchForm {
   data?: any,
   error?: any
@@ -131,12 +126,10 @@ const MainUI = () => {
   }
 
   const handleInputsUpload = async (userInputs) => {
-    console.log("fetch",userInputs);
     setSubmissionUploads([...submissionUploads, userInputs]);
   };
 
   const handleSave = async () => {
-    console.log("Before calling upload",submissionUploads);
     let result = await uploadInputs({
       challengeId: challege_id,
       userLocationSubmission: submissionUploads
@@ -145,7 +138,7 @@ const MainUI = () => {
     if (result.error) {
       setSnackbar({
         open: true,
-        message: result.error.data,
+        message: (result.error as any). data,
         severity: "error"
       });
 

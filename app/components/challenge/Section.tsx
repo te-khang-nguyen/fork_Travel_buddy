@@ -25,20 +25,10 @@ interface CustomAccordionListProps {
 
 
 const CustomAccordionList: React.FC<CustomAccordionListProps> = ({ items,  onInputsUpload}) => {
-  
-  let userLocationSubmission: {
-    userQuestionSubmission: string,
-    userMediaSubmission: (string | null)[]
-  }[] = [];
+
 
   const handleInputsUpload = async (userInputs) => {
-    const {id, ...rest} = userInputs;
-    if (userLocationSubmission.length == 0 || !userLocationSubmission.at(id)){
-      userLocationSubmission.push(rest);
-    } else if (userLocationSubmission.at(userInputs.index)) {
-      userLocationSubmission.fill(rest, id);
-    }
-    onInputsUpload(userLocationSubmission);
+    onInputsUpload(userInputs);
   };
 
   return (
