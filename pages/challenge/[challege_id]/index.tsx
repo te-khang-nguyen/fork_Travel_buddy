@@ -9,10 +9,6 @@ import {
 import { useRouter } from 'next/router';
 import { supabase } from "@/libs/supabase/supabase_client";
 import ReviewModal from "@/app/components/challenge/ReviewModal";
-import travelIconImage from '@/assets/travelIcon.jpeg';
-import travel1 from '@/assets/travel1.jpeg';
-import travel2 from '@/assets/travel2.jpeg';
-import travel3 from '@/assets/travel3.jpeg';
 import travelItineraryImage from '@/assets/travelItinerary.png';
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 
@@ -21,67 +17,6 @@ interface FetchForm {
   error?: any
 };
 
-// Mock data - replace with actual data fetching
-// const challengeLocations = [
-//   {
-//     id: 1,
-//     name: 'Train Street Hanoi',
-//     description: 'A unique urban experience where trains pass through a narrow street, creating a thrilling and photogenic moment.',
-//     mainImage: travelIconImage.src,
-//     submittedPhotos: [
-//         travel1.src,
-//         travel2.src,
-//         travel3.src,
-//     ],
-//     instructions: 'Pose with a train passing by while holding a cup of coffee'
-//   },
-//   {
-//     id: 2,
-//     name: 'Hoan Kiem Lake',
-//     description: 'A picturesque lake in the heart of Hanoi, surrounded by historical significance and beautiful landscapes.',
-//     mainImage: travelIconImage.src,
-//     submittedPhotos: [
-//         travel1.src,
-//         travel2.src,
-//         travel3.src,
-//     ],
-//     instructions: '1. Pose in the early morning with a group of aunties and uncles exercising \n2. Pose gazing afar into the Turtle Tower in the middle of the lake',
-//   },
-//   {
-//     id: 3,
-//     name: 'St. Joseph\'s Cathedral',
-//     description: 'A stunning neo-gothic Catholic church, a testament to French colonial architecture in Hanoi.',
-//     mainImage: travelIconImage.src,
-//     submittedPhotos: [
-//         travel1.src,
-//         travel2.src,
-//         travel3.src,
-//     ],
-//     instructions: '1. Pose with a group of young people eating street food facing the cathedral\n2. Pose on a Vespa riding past the Cathedral',
-//   }
-// ];
-const mockChallengeLocations = [
-  {
-    backgroundUrl: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/challenge/b1dac327-94c7-45bc-91f7-354e5d1cf1b2/Demo%20Challenge/BenThanh_background.webp?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJjaGFsbGVuZ2UvYjFkYWMzMjctOTRjNy00NWJjLTkxZjctMzU0ZTVkMWNmMWIyL0RlbW8gQ2hhbGxlbmdlL0JlblRoYW5oX2JhY2tncm91bmQud2VicCIsImlhdCI6MTczNTI2ODk3OCwiZXhwIjoxNzY2ODA0OTc4fQ.ruoyNk5LU8DwrP0IMhgl-VJj3ndsXmscWE0fMg8eYIQ&t=2024-12-27T03%3A16%3A07.932Z",
-    businessid: "b1dac327-94c7-45bc-91f7-354e5d1cf1b2",
-    created: "2024-12-22T09:32:07.067528+00:00",
-    description: "This is the first demo challenge.",
-    id: "59f3ce3b-79c8-47dd-906b-24034d935dff",
-    price: 0,
-    qrurl: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/challenge/b1dac327-94c7-45bc-91f7-354e5d1cf1b2/Demo%20Challenge/DemoChallenge_QR.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJjaGFsbGVuZ2UvYjFkYWMzMjctOTRjNy00NWJjLTkxZjctMzU0ZTVkMWNmMWIyL0RlbW8gQ2hhbGxlbmdlL0RlbW9DaGFsbGVuZ2VfUVIuanBnIiwiaWF0IjoxNzM1MTA0MDE5LCJleHAiOjE3NjY2NDAwMTl9.JQ2sFHkfK-2VeVZ6LmdG5zWxQv2Si5ayDcUeNNSQgVE",
-    thumbnailUrl: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/challenge/b1dac327-94c7-45bc-91f7-354e5d1cf1b2/Demo%20Challenge/BenThanh_thumbnail.webp?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJjaGFsbGVuZ2UvYjFkYWMzMjctOTRjNy00NWJjLTkxZjctMzU0ZTVkMWNmMWIyL0RlbW8gQ2hhbGxlbmdlL0JlblRoYW5oX3RodW1ibmFpbC53ZWJwIiwiaWF0IjoxNzM1MjY5MDM3LCJleHAiOjE3NjY4MDUwMzd9.lEe2p_GTdkE4646iSu6fCtcC3f7J28zSCB5IfWydNGQ&t=2024-12-27T03%3A17%3A06.277Z",
-    title: "Cho Ben Thanh Tour",
-  }
-];
-
-// const mockChallengeLocations2 = {
-//   id: 1
-// instruction: "Pose Idea: Stand with your arms outstretched or in a welcoming pose to show the excitement of entering the market.\nTip: Capture the iconic clock tower in the background. Go for a wide-angle shot to include the vibrant market activity."
-// media: []
-// title: "Entrance Pose"
-
-// }
-
 function JoinChallenge() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -89,18 +24,12 @@ function JoinChallenge() {
 
   // Consistent hook for logging and ID extraction
   useEffect(() => {
-    console.log("FULL ROUTER QUERY:", router.query);
-    console.log("ROUTER IS READY:", router.isReady);
-    console.log("CURRENT PATH:", router.asPath);
-
     if (router.isReady) {
       // Try different variations of how the ID might be in the query
       const id = router.query.challenge_id || 
                  router.query.challege_id || 
                  router.query.id;
-      
-      console.log("EXTRACTED CHALLENGE ID:", id);
-      
+            
       setChallengeId(id as string | undefined);
       setIsLoading(false);
     }
@@ -129,13 +58,6 @@ function JoinChallenge() {
   }, {
     skip: !challenge_id
   });
-  // Comprehensive logging
-  useEffect(() => {
-    console.log("Challenge Data:", challengeData);
-    console.log("Challenge Error:", ChallengeError);
-    console.log("Locations Data:", locationsData);
-    console.log("Locations Error:", locationsError);
-  }, [challengeData, ChallengeError, locationsData, locationsError]);
 
   // Update loading state based on locations query
   useEffect(() => {
@@ -205,56 +127,12 @@ function JoinChallenge() {
   const handleGoBack = () => {
     router.back();
   };
-
-  const handleBegin = async () => {
-    try {
-      console.log("CHALLENGE ID", challenge_id);
-      console.log("CHALLENGE DATA", challengeLocations);
-      console.log("CHALLENGE", challenge);
-  
-      // Comprehensive authentication logging
-      console.log("Supabase Client:", supabase);
-      console.log("Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-      console.log("Supabase Anon Key:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-  
-      try {
-        const authResponse = await supabase.auth.getUser();
-        console.log("Full Auth Response:", authResponse);
-        
-        const { data: { user }, error: authError } = authResponse;
-        
-        console.log("Supabase Auth User:", user);
-        console.log("Supabase Auth Error:", authError);
-  
-        if (authError) {
-          console.error("Authentication Error Details:", {
-            name: authError.name,
-            message: authError.message,
-            status: authError.status
-          });
-        }
-  
-        if (authError || !user) {
-          console.error("User not authenticated", authError);
-          alert("Please log in first");
-          return;
-        }
-  
-        // Rest of the existing code...
-      } catch (catchError) {
-        console.error("Catch block error during authentication:", catchError);
-      }
-    } catch (error) {
-      console.error("Unexpected error in handleBegin:", error);
-      alert("An unexpected error occurred");
-    }
-  };
   
 
   return (
     <Box
       sx={{
-        backgroundImage: `url("${bg? bg : defaultBackground.src}")`,
+        backgroundColor: '#F5F5F5',
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
@@ -511,17 +389,6 @@ function JoinChallenge() {
         challengeId={challenge_id as string}
       />
     </Container>
-      <Button
-        onClick={handleBegin}
-        sx={{
-          borderRadius: 14,
-          width: "150px",
-          fontSize: { xs: "0.5rem", md: "1rem" },
-        }}
-        variant="contained"
-      >
-        Begin
-      </Button>
     </Box>
   );
 }
