@@ -2,20 +2,62 @@ import React from "react";
 import { Box, Typography, Container, Button, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/router";
+import { 
+  useGetChallengeQuery, 
+  useJoinChallengeMutation 
+} from "@/libs/services/user/challenge";
 
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 
+interface FetchForm {
+  data?: any,
+  error?: any
+};
+
+
+
 function JoinChallenge() {
   const router = useRouter();
+  const { challege_id } = router.query;
+  const [ joinChallenge, {} ] = useJoinChallengeMutation();
+
+  const { 
+    data: challengeData, 
+    error: ChallengeError 
+  } = useGetChallengeQuery<FetchForm>({
+    challengeId: challege_id
+  });
+
+  if (ChallengeError?.data) console.log(ChallengeError?.data);
+  const challenge = challengeData?.data[0];
+  const bg = challenge?.backgroundUrl;
 
   const handleGoBack = () => {
     router.back();
   };
 
+  const handleBegin = async () => {
+    console.log(challege_id);
+    const {error: uploadError} = 
+      await joinChallenge({
+        title: challenge.title
+      });
+    
+    if(uploadError){
+      alert((uploadError as any).data);
+      //alert(joinError);
+    } else {
+      alert(`${challenge.title} begin!`);
+      router.push(`/challenge/${challege_id}/locations`);
+    }
+
+    
+  };
+
   return (
     <Box
       sx={{
-        backgroundImage: `url("${defaultBackground.src}")`,
+        backgroundImage: `url("${bg? bg : defaultBackground.src}")`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
@@ -56,7 +98,7 @@ function JoinChallenge() {
           sx={{ fontSize: { xs: "3rem", md: "4.5rem" }, fontWeight: "bold" }}
           gutterBottom
         >
-          Demo Challenge
+          {challenge?.title ? challenge?.title : "Demo Challenge" }
         </Typography>
         <Typography
           variant="h4"
@@ -80,10 +122,11 @@ function JoinChallenge() {
             mb: 4,
           }}
         >
-          Description: This is an example for a challenge creation
+          Description: {challenge?.description}
         </Typography>
       </Container>
       <Button
+        onClick={handleBegin}
         sx={{
           borderRadius: 14,
           width: "150px",
