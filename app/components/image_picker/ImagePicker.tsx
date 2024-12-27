@@ -6,10 +6,20 @@ interface ImageUploaderProps {
   onImageUpload: (images: Array<{ image: string | null; name: string | null }>) => void;
   variant?: "image" | "name"; // New prop for variants
   allowMultiple?: boolean; // New prop for choosing and displaying multiple images
+  fetchImages?: Array<{ image: string | null; name: string | null }>;
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, variant = "image", allowMultiple = false }) => {
-  const [selectedImages, setSelectedImages] = useState<Array<{ image: string | null; name: string | null }>>([]);
+const ImageUploader: React.FC<ImageUploaderProps> = 
+({ 
+  onImageUpload, 
+  variant = "image", 
+  allowMultiple = false,
+  fetchImages = [{image: "", name: ""}]
+}) => {
+  const [selectedImages, setSelectedImages] = useState<
+    Array<{ image: string | null; name: string | null }>
+    >([]);
+
   const [imageError, setImageError] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

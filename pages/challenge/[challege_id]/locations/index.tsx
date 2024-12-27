@@ -1,36 +1,68 @@
 import React, { useState } from "react";
-import { Box, Button, IconButton, Fab } from "@mui/material";
+import { Box, Button, IconButton, Fab, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/router";
+
 
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 import LocationCard from "@/app/components/challenge/LocationCard";
 import ReviewNotesComponent from "@/app/components/challenge/ReviewModal";
-import { ChangeCircle } from "@mui/icons-material";
+import ExploreIcon from '@mui/icons-material/Explore';
 import LocationStageModal from "@/app/components/challenge/LocationStageModal";
+import { useGetChallengeQuery, useGetLocationsQuery } from "@/libs/services/user/challenge";
+
+interface FetchForm {
+  data?: any,
+  error?: any
+};
 
 function JoinChallenge() {
   const router = useRouter();
+  const { challege_id } = router.query;
+  
+  let locations;
+  let bgImage = "";
+
+  const {
+    data: challengeRef, 
+    error: challengeError
+  } = useGetChallengeQuery<FetchForm>(
+    {
+      challengeId: challege_id,
+    });
+
+  if(challengeError?.data) alert(challengeError?.data);
+
+  if (challengeRef?.data) {
+    bgImage = challengeRef?.data[0].backgroundurl;
+  }
+
+  const {
+    data: locationsRef, 
+    error: locationsError
+  } = useGetLocationsQuery<FetchForm>(
+    {
+      challengeId: challege_id,
+    });
+
+  if(locationsError?.data) alert(locationsError?.data);
+
+  if (locationsRef?.data) {
+    locations = locationsRef?.data.map((item, idx) => {
+      return {
+        id: item.id,
+        index: idx + 1,
+        title: item.title, 
+        image: item.imageurls[0], 
+        location_info: item.location_info
+      };
+    });
+  }
 
   const handleGoBack = () => {
     router.back();
   };
 
-  const locations = [
-    {
-      id: 1,
-      name: "Train Street Hanoi",
-
-      sections: 3,
-    },
-    { id: 2, name: "Hoan Kiem Lake", sections: 3 },
-    {
-      id: 3,
-      name: "St. Joseph's Cathedral",
-
-      sections: 3,
-    },
-  ];
 
   const [modalOpen, setModalOpen] = useState(false);
   const [locationStage, setLocationStage] = useState(false);
@@ -38,7 +70,7 @@ function JoinChallenge() {
   return (
     <Box
       sx={{
-        backgroundImage: `url("${defaultBackground.src}")`,
+        backgroundImage: `url("${ bgImage? bgImage : defaultBackground.src }")`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
@@ -81,17 +113,11 @@ function JoinChallenge() {
           justifyContent: { xs: "center", sm: "space-between" },
         }}
       >
-        {locations.map((location,index) => (
-          <LocationCard key={index} location={location} />
+        {!locations?<Typography></Typography>:
+        locations.map((location) => (
+          <LocationCard location={location} />
         ))}
       </Box>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setModalOpen(true)}
-      >
-        Submit
-      </Button>
       <ReviewNotesComponent
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -116,8 +142,15 @@ function JoinChallenge() {
           boxShadow: 3, // Optional, to give it a shadow for a raised effect
         }}
       >
-        <ChangeCircle />
+        <ExploreIcon />
       </Fab>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setModalOpen(true)}
+      >
+        Submit
+      </Button>
     </Box>
   );
 }

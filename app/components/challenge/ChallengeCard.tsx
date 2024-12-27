@@ -1,8 +1,15 @@
 import { useState } from "react";
-import { Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
+
+import { useRouter } from "next/router";
 
 const ChallengeCard = ({ challenge }) => {
+  const router = useRouter();
   const [imageError, setImageError] = useState(false);
+
+  const handleClick = (value) => {
+    router.push(`/challenge/${value}`);
+  };
 
   // Fallback image URL
   const placeholderImage =
@@ -12,7 +19,7 @@ const ChallengeCard = ({ challenge }) => {
     <Box
       key={challenge.id}
       sx={{
-        flex: 1, 
+        flex: 1,
       }}
     >
       <Card
@@ -22,20 +29,22 @@ const ChallengeCard = ({ challenge }) => {
 
         }}
       >
-        <CardMedia
-          component="img"
-          height="250px"
-          image={
-            imageError || !challenge.image ? placeholderImage : challenge.image
-          }
-          alt={challenge.name || "Location Image"}
-          onError={() => setImageError(true)} // Handle image load error
-        />
-        <CardContent>
-          <Typography variant="h6" fontWeight="bold">
-            {challenge.name || "Unknown Challenge"}
-          </Typography>
-        </CardContent>
+        <CardActionArea onClick={() => handleClick(challenge.id)}>
+          <CardMedia
+            component="img"
+            height="250px"
+            image={
+              imageError || !challenge.image ? placeholderImage : challenge.image
+            }
+            alt={challenge.name || "Location Image"}
+            onError={() => setImageError(true)} // Handle image load error
+          />
+          <CardContent>
+            <Typography variant="h6" fontWeight="bold">
+              {challenge.name || "Unknown Challenge"}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
       </Card>
     </Box>
   );
