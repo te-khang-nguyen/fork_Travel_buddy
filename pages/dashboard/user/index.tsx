@@ -1,52 +1,75 @@
 import React from "react";
-import { Box, Typography, Card, CardContent } from "@mui/material";
+import { Box, Typography, Card, CardContent, Button } from "@mui/material";
+import FastForwardIcon from '@mui/icons-material/FastForward';
+import ChallengeCard from "@/app/components/challenge/ChallengeCard";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
 import { useRouter } from "next/router";
+import { useGetChallengeQuery, useGetUserSubmissionsQuery } from "@/libs/services/user/challenge";
 
 interface UserDashboardProps {
   totalChallenges: number;
   completedChallenges: number;
-  activeChallenges: { name: string; status: string; link: string }[];
+  activeChallenges: { id: string, name: string; status: string; link: string }[];
 }
 
-const UserDashboard: React.FC<UserDashboardProps> = ({
-  totalChallenges = 0,
-  completedChallenges = 0,
-  activeChallenges = [{ name: "Test", status: "done", link: "https:123.com" }],
-}) => {
-  const router = useRouter()
-  const challenges = [
-    {
-      id: 1,
-      name: "Challenge 1",
-    },
-    { id: 2, name: "Challenge 2" },
-    {
-      id: 3,
-      name: "Challenge 3",
-    },
-    {
-      id: 3,
-      name: "Challenge 3",
-    },
-    {
-      id: 3,
-      name: "Challenge 3",
-    },
-    {
-      id: 3,
-      name: "Challenge 3",
-    },
-    {
-      id: 3,
-      name: "Challenge 3",
-    },
-    {
-      id: 3,
-      name: "Challenge 3",
-    },
+interface FetchForm {
+  data?: any,
+  error?: any
+};
 
-  ];
+const UserDashboard: React.FC<UserDashboardProps> = ({
+  totalChallenges,
+  completedChallenges,
+  activeChallenges,
+}) => {
+  const router = useRouter();
+
+  const { 
+    data: challengeRef, 
+    error: challengeError 
+  } = useGetChallengeQuery<FetchForm>({});
+  const { 
+    data: historyRef, 
+    error: historyError 
+  } = useGetUserSubmissionsQuery<FetchForm>();
+
+  
+  let challenges;
+
+  if (challengeError?.data || historyError?.data) {
+    console.log(!challengeError?.data ? historyError?.data : challengeError?.data);
+  }
+  if (challengeRef?.data) {
+    challenges = challengeRef?.data.map((item) => {
+      return {
+        id: item.id,
+        name: item.title,
+        image: item.thumbnailUrl
+      };
+    })
+    console.log(challenges[0].image);
+  }
+
+  if (historyRef?.data) {
+    activeChallenges = historyRef?.data.map((item) => {
+      return {
+        id: item.challengeId,
+        name: item.challengeTitle,
+        status: !item.ended ? "In progress" : "Completed",
+        link: !item?.reward ? "Your reward is being prepared" : item?.reward
+      };
+    })
+    totalChallenges = activeChallenges.length;
+    completedChallenges = activeChallenges.filter((item) => item.status == 'Completed').length;
+  }
+
+
+
+  const handleContinue = (challengeId) => {
+    router.push(`/challenge/${challengeId}/locations`);
+  };
+
+
   return (
     <Box
       sx={{
@@ -58,12 +81,14 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
       }}
     >
-      <ChallengeCarousel
-        challenges={challenges}
-        onViewAll={() => {
-          router.push('/challenge')
-        }}
-      />
+      {!challenges ?
+        <><Typography>No Challenges Found</Typography></> :
+        <ChallengeCarousel
+          challenges={challenges}
+          onViewAll={() => {
+            router.push('/challenge')
+          }}
+        />}
       <Box
         sx={{
           height: "100%",
@@ -134,31 +159,52 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
           <Typography variant="h6" gutterBottom>
             Active Challenges
           </Typography>
-          {activeChallenges.length > 0 ? (
-            activeChallenges.map((challenge, index) => (
-              <Card
-                key={index}
-                sx={{
-                  p: 2,
-                  mb: 2,
-                  backgroundColor: "#fff",
-                  boxShadow: 1,
-                  borderRadius: 2,
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  {challenge.name}
-                </Typography>
-                <Typography>Status: {challenge.status}</Typography>
-                <Typography>
-                  Link to Reels:{" "}
-                  {challenge.link || "Your video is being prepared!"}
-                </Typography>
-              </Card>
-            ))
-          ) : (
-            <Typography>No active challenges</Typography>
-          )}
+          {!activeChallenges ?
+            <Typography>
+              No existing participation history
+            </Typography> :
+            activeChallenges.length > 0 ? (
+              activeChallenges.map((challenge, index) => (
+                <Card
+                  key={index}
+                  sx={{
+                    p: 2,
+                    mb: 2,
+                    backgroundColor: "#fff",
+                    boxShadow: 1,
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    {challenge.name}
+                  </Typography>
+                  <Typography>Status: {challenge.status}</Typography>
+                  <Typography>
+                    Link to Reels:{" "}
+                    {challenge.link || "Your video is being prepared!"}
+                  </Typography>
+                  {challenge.status !== 'Completed' ?
+                    <Typography align='center'>
+                      <Button
+                        sx={{
+                          borderRadius: 14,
+                          width: "150px",
+                          fontSize: { xs: "0.5rem", md: "1rem" },
+                        }}
+                        variant="contained"
+                        startIcon={<FastForwardIcon />}
+                        onClick={() => { handleContinue(challenge.id) }}>
+
+                        Continue
+                      </Button>
+                    </Typography> : <Typography></Typography>
+                  }
+
+                </Card>
+              ))
+            ) : (
+              <Typography>No active challenges</Typography>
+            )}
         </Box>
       </Box>
     </Box>

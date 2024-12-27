@@ -10,11 +10,12 @@ import {
 } from "@mui/material";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import { useRouter } from "next/router";
 
 type LocationStageModalProps = {
   open: boolean;
   onClose: () => void;
-  locations: { id: number; name: string; sections: number }[]; // Accept entire array of locations
+  locations: { id: string; index: number; name: string; location_info: number }[]; // Accept entire array of locations
 };
 
 const LocationStageModal: React.FC<LocationStageModalProps> = ({
@@ -22,7 +23,11 @@ const LocationStageModal: React.FC<LocationStageModalProps> = ({
   onClose,
   locations,
 }) => {
-  const handleCardClick = () => {
+  const router = useRouter();
+  const { query } = router;
+
+  const handleCardClick = (value) => {
+    router.push(`/challenge/${query?.challengeId}/locations/${value}.tsx`); //Move to location page
     onClose(); // Close the modal when a card is clicked
   };
 
@@ -74,7 +79,10 @@ const LocationStageModal: React.FC<LocationStageModalProps> = ({
               gap: "20px",
             }}
           >
-            {locations.map((location) => (
+            {!locations?
+            <Typography></Typography>
+            :
+            locations.map((location) => (
               <Card
                 key={location.id}
                 sx={{
@@ -90,7 +98,7 @@ const LocationStageModal: React.FC<LocationStageModalProps> = ({
                     color: "#fff", // Change text color inside the Box
                   },
                 }}
-                onClick={handleCardClick}
+                onClick={() => handleCardClick(location.id)}
               >
                 <CardContent
                   style={{
@@ -116,7 +124,7 @@ const LocationStageModal: React.FC<LocationStageModalProps> = ({
                       component="div"
                       style={{ fontWeight: "bold" }}
                     >
-                      {location.id}
+                      {location.index}
                     </Typography>
                   </Box>
                   <Typography variant="body1">{location.name}</Typography>
