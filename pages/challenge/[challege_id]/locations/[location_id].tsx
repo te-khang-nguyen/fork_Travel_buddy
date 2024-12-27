@@ -3,10 +3,12 @@ import {
   Box,
   CircularProgress,
   TextField,
+  IconButton,
   Button,
   Typography,
   Card,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { 
   useGetLocationsQuery,
 } from "@/libs/services/user/challenge";
@@ -134,6 +136,10 @@ const MainUI = () => {
     },
   ];
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <Box
       sx={{
@@ -147,6 +153,7 @@ const MainUI = () => {
         p: 2,
       }}
     >
+      
       <Card sx={{
         mb: 4,
         boxShadow: 3,
@@ -170,27 +177,49 @@ const MainUI = () => {
             borderRadius: 7
           }}
         >
-          <Typography 
-            variant="h4"  // Base variant
+          <Box 
             sx={{ 
-              fontSize: {
-                xs: '1.5rem',   // Small screens (mobile)
-                sm: '2rem',     // Medium screens (tablet)
-                md: '2.5rem'    // Large screens (desktop)
-              },
-              fontWeight: 'bold',
-              color: 'darkblue', 
-              textAlign: 'center',
-              fontStyle: 'normal',
-              mb: { 
-                xs: 0.5,   
-                sm: 1,     
-                md: 1 
-              }
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              position: 'relative', 
+              width: '100%' 
             }}
           >
-            {currentLocation.title}
-          </Typography>
+            <IconButton 
+              onClick={handleGoBack}
+              sx={{ 
+                position: 'absolute', 
+                left: 0, 
+                top: '50%', 
+                transform: 'translateY(-50%)' 
+              }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            
+            <Typography 
+              variant="h4"  
+              sx={{ 
+                fontSize: {
+                  xs: '1.5rem',   
+                  sm: '2rem',     
+                  md: '2.5rem'    
+                },
+                fontWeight: 'bold',
+                color: 'darkblue', 
+                textAlign: 'center',
+                fontStyle: 'normal',
+                mb: { 
+                  xs: 0.5,   
+                  sm: 1,     
+                  md: 1 
+                }
+              }}
+            >
+              {currentLocation.title}
+            </Typography>
+          </Box>
         </Card>
         <Box 
           sx={{ 
