@@ -32,7 +32,8 @@ const challengeLocations = [
         travel1.src,
         travel2.src,
         travel3.src,
-    ]
+    ],
+    instructions: 'Pose with a train passing by while holding a cup of coffee'
   },
   {
     id: 2,
@@ -43,7 +44,8 @@ const challengeLocations = [
         travel1.src,
         travel2.src,
         travel3.src,
-    ]
+    ],
+    instructions: '1. Pose in the early morning with a group of aunties and uncles exercising \n2. Pose gazing afar into the Turtle Tower in the middle of the lake',
   },
   {
     id: 3,
@@ -54,7 +56,8 @@ const challengeLocations = [
         travel1.src,
         travel2.src,
         travel3.src,
-    ]
+    ],
+    instructions: '1. Pose with a group of young people eating street food facing the cathedral\n2. Pose on a Vespa riding past the Cathedral',
   }
 ];
 
@@ -118,6 +121,14 @@ export default function TravelItineraryPage() {
       </Box>
 
       {challengeLocations.map((location) => (
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          width: '100%' 
+        }}
+      >
         <Card 
           key={location.id} 
           sx={{ 
@@ -125,7 +136,8 @@ export default function TravelItineraryPage() {
             mb: 4, 
             boxShadow: 3,
             borderRadius: 2,
-            height: { xs: 300, sm: 350, md: 400 }
+            height: { xs: 200, sm: 300, md: 300 },
+            width: { xs: 400, sm: 600, md: 800 }
           }}
         >
           <Grid container spacing={0}>
@@ -159,7 +171,14 @@ export default function TravelItineraryPage() {
                   <Typography 
                     variant="h6" 
                     component="h2" 
-                    sx={{ mb: { xs: 1, sm: 2 } }}
+                    sx={{ 
+                      mb: { xs: 1, sm: 2 },
+                      fontSize: { 
+                        xs: '1rem',   // Smaller on mobile
+                        sm: '1.25rem', 
+                        md: '1.5rem'  // Larger on desktop 
+                      }
+                    }}
                   >
                     {location.name}
                   </Typography>
@@ -167,28 +186,58 @@ export default function TravelItineraryPage() {
                   <Typography 
                     variant="body2" 
                     color="text.secondary" 
-                    sx={{ mb: { xs: 1, sm: 2 } }}
+                    sx={{ 
+                      mb: { xs: 1, sm: 2 },
+                      fontSize: { 
+                        xs: '0.75rem',  // Smaller on mobile
+                        sm: '0.875rem', 
+                        md: '1rem'      // Larger on desktop
+                      }
+                    }}
                   >
                     {location.description}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography 
+                <Typography 
                     variant="subtitle2" 
-                    sx={{ fontWeight: 'bold', mb: 1 }}
-                  >
-                    Photos Submitted
-                  </Typography>
+                    sx={{ 
+                        fontWeight: 'bold', 
+                        mb: { 
+                            xs: 0.5,   // Smaller margin on small screens
+                            sm: 1,     // Default margin on larger screens
+                            md: 1 
+                        }
+                    }}
+                >
+                    Challenge Instructions
+                </Typography>
+                <Typography 
+                    variant="body2" 
+                    color="text.secondary"
+                    sx={{ 
+                        whiteSpace: 'pre-line',  // Preserves line breaks
+                        fontSize: { 
+                            xs: '0.75rem',  // Smaller on mobile
+                            sm: '0.875rem', 
+                            md: '1rem'      // Larger on desktop
+                        },
+                        mt: { 
+                            xs: 0.5,   // Smaller margin on small screens
+                            sm: 1,     // Default margin on larger screens
+                            md: 1 
+                        }
+                    }}
+                >
+                    {location.instructions}
+                </Typography>
 
-                  <ImageCarousel 
-                    images={location.submittedPhotos}
-                    height={250} 
-                  />
                 </Box>
               </CardContent>
             </Grid>
           </Grid>
         </Card>
+      </Box>
       ))}
 
       {/* Submit Button */}
