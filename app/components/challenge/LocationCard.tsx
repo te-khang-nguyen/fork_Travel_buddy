@@ -6,9 +6,9 @@ const LocationCard = ({ location }) => {
   const router = useRouter();
   const { challege_id } = router.query;
   const [imageError, setImageError] = useState(false);
-  
+
   const handleClick = (value) => {
-      router.push(`/challenge/${challege_id}/locations/${value}`);
+    router.push(`/challenge/${challege_id}/locations/${value}`);
   };
 
   // Fallback image URL
@@ -49,7 +49,7 @@ const LocationCard = ({ location }) => {
               {location.title || "Unknown Location"}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              {location.location_info.length || 0} sections
+              {location.location_info?.length || 0} sections
             </Typography>
           </CardContent>
         </CardActionArea>

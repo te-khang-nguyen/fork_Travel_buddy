@@ -65,8 +65,6 @@ const JoinChallengeApi = createApi({
         // ------------------QUERY LOCATIONS-------------------------- 
         getLocations: builder.query<ChallengeRes, ChallengeReq>({
             queryFn: async ({ challengeId }) => {
-                const { data: { user } } = await supabase.auth.getUser();
-
                 try {
                     let locationReq = {
                         entity: "locations",
@@ -80,11 +78,13 @@ const JoinChallengeApi = createApi({
                         return { error: { data: locationError } };
                     }
 
-                    if (locationData !== undefined || locationData.length > 0) {
-                        return { data: { data: locationData } };
-                    }
+                    return {
+                        data: {
+                            data: locationData
 
-                } catch (err: any) {
+                        }
+                    };
+                } catch (err) {
                     return { error: { data: (err as Error).message } };
                 }
             },

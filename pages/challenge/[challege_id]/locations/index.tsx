@@ -114,8 +114,8 @@ function JoinChallenge() {
         }}
       >
         {!locations?<Typography></Typography>:
-        locations.map((location) => (
-          <LocationCard location={location} />
+        locations.map((location,index) => (
+          <LocationCard key={index} location={location} />
         ))}
       </Box>
       <ReviewNotesComponent

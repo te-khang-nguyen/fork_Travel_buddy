@@ -44,7 +44,7 @@ function JoinChallenge() {
       });
     
     if(uploadError){
-      alert(uploadError.data);
+      alert((uploadError as any).data);
       //alert(joinError);
     } else {
       alert(`${challenge.title} begin!`);

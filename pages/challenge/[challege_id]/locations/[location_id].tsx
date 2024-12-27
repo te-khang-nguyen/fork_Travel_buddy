@@ -21,7 +21,8 @@ import { useRouter } from "next/router";
 import {
   useGetChallengeQuery,
   useGetLocationsQuery,
-  useUploadInputsMutation} from "@/libs/services/user/challenge";
+  useUploadInputsMutation
+} from "@/libs/services/user/challenge";
 interface FetchForm {
   data?: any,
   error?: any
@@ -50,7 +51,7 @@ const MainUI = () => {
   let locations;
   let chosenLocation;
   let bg;
- 
+
 
   const [locationStage, setLocationStage] = useState(false);
   const [submissionUploads, setSubmissionUploads] = useState<any>([]);
@@ -61,16 +62,16 @@ const MainUI = () => {
     error: challengeError
   } = useGetChallengeQuery<FetchForm>({ challengeId: challege_id });
 
-  if (challengeError) {
-    useEffect(() => {
-      setSnackbar({
-        open: true,
-        message: challengeError?.data,
-        severity: "error"
-      });
-    }, [snackbar, challengeError]);
 
-  }
+  useEffect(() => {
+    setSnackbar({
+      open: true,
+      message: challengeError?.data,
+      severity: "error"
+    });
+  }, [snackbar, challengeError]);
+
+
 
   if (challengeData) {
     bg = challengeData.data[0].backgroundUrl;
@@ -85,15 +86,15 @@ const MainUI = () => {
     }
   );
 
-  if (locsError?.data) {
-    useEffect(() => {
-      setSnackbar({
-        open: true,
-        message: locsError?.data,
-        severity: "error"
-      });
-    }, [snackbar, locsError]);
-  }
+
+  useEffect(() => {
+    setSnackbar({
+      open: true,
+      message: locsError?.data,
+      severity: "error"
+    });
+  }, [snackbar, locsError]);
+
 
   if (locsRef) {
     locations = locsRef?.data.map((item, idx) => {
@@ -110,10 +111,10 @@ const MainUI = () => {
     accordionItems = chosenLocation.location_info.map((item) => {
       let display
       if (item.instruction.includes('\n')) {
-        let lines = item.instruction.split('\n');
-        display = lines.map((line) => {
+        const lines = item.instruction.split('\n');
+        display = lines.map((line, index) => {
           if (line !== '' && line !== ',') {
-            return (<Typography sx={{ p: 2, color: 'white' }}>
+            return (<Typography key={line + index} sx={{ p: 2, color: 'white' }}>
               {line}
             </Typography>)
           }
@@ -130,7 +131,7 @@ const MainUI = () => {
   };
 
   const handleSave = async () => {
-    let result = await uploadInputs({
+    const result = await uploadInputs({
       challengeId: challege_id,
       userLocationSubmission: submissionUploads
     })
@@ -138,7 +139,7 @@ const MainUI = () => {
     if (result.error) {
       setSnackbar({
         open: true,
-        message: (result.error as any). data,
+        message: (result.error as any).data,
         severity: "error"
       });
 
@@ -217,7 +218,7 @@ const MainUI = () => {
         {!accordionItems ?
           <Typography></Typography> :
           <Box>
-            <CustomAccordionList items={accordionItems} onInputsUpload={handleInputsUpload}/>
+            <CustomAccordionList items={accordionItems} onInputsUpload={handleInputsUpload} />
           </Box>
         }
       </Card>
