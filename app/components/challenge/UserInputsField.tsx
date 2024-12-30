@@ -22,21 +22,21 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputs
   const [uploadedImg, setUploadedImg] = useState<
     Array<{ image: string | null, name: string | null }>>([{ image: "", name: "" }]);
 
-  const handleImageUpload = (uploadedImages) => {
-    setUploadedImg(uploadedImages);
-  };
-
-  const handleConfirm = async () => {
-    onInputsUpload(
-      {
-        index: index,
-        userQuestionSubmission: inputTexts,
-        userMediaSubmission: uploadedImg.map((img) => {
-          return img.image;
-        })
-      }
-    );
-  };
+    const handleImageUpload = (uploadedImages) => {
+      setUploadedImg(uploadedImages);
+    };
+  
+    const handleConfirm = () => {
+      onInputsUpload(
+        {
+          index: index,
+          userQuestionSubmission: inputTexts,
+          userMediaSubmission: uploadedImg.map((img) => {
+            return img.image;
+          })
+        }
+      );
+    };
 
   return (
     <Box sx={{ p: 2 }} >
@@ -69,6 +69,7 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputs
       >
         Confirm
       </Button>
+
 
     </Box>
   );

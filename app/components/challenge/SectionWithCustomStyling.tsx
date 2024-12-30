@@ -19,11 +19,11 @@ interface AccordionItem {
 
 interface CustomAccordionListProps {
   items: AccordionItem[];
-  onInputsUpload?: (locationInputs: {
+  sx?: SxProps<Theme>;  // Add optional sx prop
+  onInputsUpload: (locationInputs: {
     userQuestionSubmission: string | null;
     userMediaSubmission: (string | null)[];
   }[]) => void;
-  sx?: SxProps<Theme>;  // Add optional sx prop
 }
 
 const CustomAccordionList: React.FC<CustomAccordionListProps> = ({ 

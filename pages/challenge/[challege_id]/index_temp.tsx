@@ -8,13 +8,9 @@ import {
   Card, 
   CardMedia, 
   CardContent, 
-  Paper,
-  Stack,
   Button,
-  Dialog
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import ImageCarousel from "@/app/components/challenge/ImageCarousel";
 import ReviewModal from "@/app/components/challenge/ReviewModal"; // Ensure this import exists
 import travelIconImage from '@/assets/travelIcon.jpeg';
 import travel1 from '@/assets/travel1.jpeg';
@@ -74,13 +70,13 @@ export default function TravelItineraryPage() {
   const handleCloseReviewModal = () => {
     setIsReviewModalOpen(false);
   };
-  const handleConfirmSubmission = () => {
+  //const handleConfirmSubmission = () => {
     // Additional logic for submission confirmation
     // Could include API call, navigation, etc.
-    setIsReviewModalOpen(false);
+    //setIsReviewModalOpen(false);
     // Example: navigate to next page
-    router.push(`/challenge/${challenge_id}/confirmation`);
-  };
+    //router.push(`/challenge/${challenge_id}/confirmation`);
+  //};
 
   return (
     <Container maxWidth="lg" sx={{ 
@@ -286,8 +282,8 @@ export default function TravelItineraryPage() {
       <ReviewModal 
         open={isReviewModalOpen}
         onClose={handleCloseReviewModal}
-        onConfirm={handleConfirmSubmission}
-        challengeId={challenge_id as string}
+        //onConfirm={handleConfirmSubmission}
+        //challengeId={challenge_id as string}
       />
     </Container>
   );

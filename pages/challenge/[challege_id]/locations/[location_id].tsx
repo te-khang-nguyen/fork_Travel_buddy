@@ -7,22 +7,43 @@ import {
   Button,
   Typography,
   Card,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { 
   useGetLocationsQuery,
+  useUploadInputsMutation
 } from "@/libs/services/user/challenge";
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import CustomAccordionList from "@/app/components/challenge/SectionWithCustomStyling";
-import defaultBackground from "@/assets/background.jpg";
-import ImageDisplay from "@/app/components/kits/Image";
-import BenThanhLoc from "@/assets/BenThanhLoc.jpg";
+
+interface FetchForm {
+  data?: any,
+  error?: any,
+  isLoading?: any,
+  isFetching?: any
+}
 
 const MainUI = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [challenge_id, setChallengeId] = useState<string | undefined>(undefined);
+  const [submissionUploads, setSubmissionUploads] = useState<any>([]);
+  const [uploadInputs,] = useUploadInputsMutation();
+
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
   
   // Explicitly extract location_id from router query
   const { location_id } = router.query;
@@ -77,6 +98,31 @@ const MainUI = () => {
       </Box>
     );
   }
+
+  const handleInputsUpload = async (userInputs) => {
+    console.log("Fetched data:",userInputs);
+    setSubmissionUploads([...submissionUploads, userInputs]);
+    console.log("Data to uploaded:",submissionUploads);
+    const result = await uploadInputs({
+      challengeId: challenge_id,
+      userLocationSubmission: submissionUploads
+    })
+
+    if (result.error) {
+      setSnackbar({
+        open: true,
+        message: (result.error as any).data,
+        severity: "error"
+      });
+
+    } else {
+      setSnackbar({
+        open: true,
+        message: "Great sharings!\n Your notes are saved!\n Let's keep exploring",
+        severity: "success"
+      });
+    }
+  };
 
   // Find the specific location based on location_id
   const challengeLocations = locationsData?.data?.[0]?.location_info || [];
@@ -318,9 +364,25 @@ const MainUI = () => {
                 backgroundColor: '#F5F5F5', // Set AccordionDetails background color
               }
             }}
+            onInputsUpload={handleInputsUpload}
           />
 
       </Card>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
