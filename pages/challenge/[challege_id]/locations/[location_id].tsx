@@ -18,13 +18,17 @@ import {
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import CustomAccordionList from "@/app/components/challenge/SectionWithCustomStyling";
+import defaultBackground from "@/assets/background.jpg";
+import ImageDisplay from "@/app/components/kits/Image";
+import BenThanhLoc from "@/assets/BenThanhLoc.jpg";
+import { Roboto } from 'next/font/google'
 
-interface FetchForm {
-  data?: any,
-  error?: any,
-  isLoading?: any,
-  isFetching?: any
-}
+const roboto = Roboto({ 
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['300', '400', '500', '700']
+});
+
 
 const MainUI = () => {
   const router = useRouter();
@@ -74,7 +78,7 @@ const MainUI = () => {
     error: locationsError,
     isLoading: isLocationsLoading,
     isFetching: isLocationsFetching
-  } = useGetLocationsQuery<FetchForm>({
+  } = useGetLocationsQuery({
     challengeId: challenge_id
   }, {
     skip: !challenge_id
@@ -125,11 +129,13 @@ const MainUI = () => {
   };
 
   // Find the specific location based on location_id
+  const challengeLocations1 = locationsData?.data || [];
+  console.log("CURRENT Challenge Locations 1", challengeLocations1);
   const challengeLocations = locationsData?.data?.[0]?.location_info || [];
   console.log("CURRENT Challenge Locations", challengeLocations);
   
   // Use loose equality to handle different types
-  const currentLocation = challengeLocations.find(location => 
+  const currentLocation = challengeLocations1.find(location => 
     location.id == parsedLocationId
   );
   console.log("CURRENT LOCATION", currentLocation);
@@ -152,7 +158,7 @@ const MainUI = () => {
           <br />
           Location ID: {parsedLocationId}
           <br />
-          Available Locations: {JSON.stringify(challengeLocations.map(loc => loc.id))}
+          Available Locations: {JSON.stringify(challengeLocations1.map(loc => loc.id))}
           <br />
           Location ID Type: {typeof parsedLocationId}
         </Typography>
@@ -167,20 +173,21 @@ const MainUI = () => {
     },
   ];
 
-  const instructionSections = [
+  const instructionSections = currentLocation.location_info || [
     {
-      title: "Context",
-      content: currentLocation.context || 'No context available'
+      title: "Title",
+      content: currentLocation.location_info.title || 'No context available'
     },
     {
-      title: "Famous Visitors",
-      content: currentLocation.famous_visitors || 'No famous visitors available'
+      title: "Instructions",
+      content: currentLocation.location_info.instruction || 'No famous visitors available'
     },
     {
       title: "Photo Posting Guides",
       content: currentLocation.instruction || 'No instruction available'
     },
   ];
+  console.log("Instruction Section", instructionSections)
 
   const handleGoBack = () => {
     router.back();
@@ -194,23 +201,33 @@ const MainUI = () => {
         backgroundRepeat: "no-repeat",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: "flex-start", // Changed from center to flex-start
         width: "100%",
-        p: 2,
+        minHeight: "100vh", // Use minHeight instead of height
+        height: "100%", // Allow content to determine height
+        overflowY: "auto", // Enable vertical scrolling
+        py: 2, // Vertical padding
+        px: { xs: 1, sm: 2, md: 4 }, // Responsive horizontal padding
+        boxSizing: "border-box", // Ensure padding is included in width calculation
       }}
     >
-      
-      <Card sx={{
-        mb: 4,
-        boxShadow: 3,
-        borderRadius: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        backgroundColor: "rgba(197, 195, 218, 0.45)",
-        width: "100%",
-        p: 2,
-      }}>
+      <Card 
+        sx={{
+          width: "100%",
+          maxWidth: { xs: "100%", sm: "90%", md: "600px" }, // Responsive max-width
+          minHeight: "90vh", // Ensure minimum height
+          height: "auto", // Allow content to determine height
+          mb: 4,
+          boxShadow: 3,
+          borderRadius: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: "rgba(197, 195, 218, 0.45)",
+          p: { xs: 1, sm: 2, md: 2 }, // Responsive padding
+          overflow: "visible", // Allow content to be fully visible
+          position: "relative", // Ensure proper positioning
+        }}
+      >
         <Card
           sx={{
             display: 'flex',
@@ -277,7 +294,7 @@ const MainUI = () => {
             position: 'relative'
           }}
         >
-          {currentLocation.media?.[0] && (
+          {currentLocation.imageurls?.[0] && (
             <Box 
               sx={{ 
                 position: 'relative', 
@@ -287,7 +304,7 @@ const MainUI = () => {
               }}
             >
               <Image
-                src={currentLocation.media[0]}
+                src={currentLocation.imageurls[0]}
                 alt={currentLocation.title}
                 layout="fill"
                 objectFit="contain"  
@@ -301,54 +318,86 @@ const MainUI = () => {
           <Box 
             key={index}
             sx={{ 
-              width: '100%', 
-              display: 'flex', 
-              flexDirection: 'column',  
-              alignItems: 'center',     
-              justifyContent: 'center', 
-              mt: 1,  // Reduced from mt: 2 to mt: 1
-              px: { xs: 2, sm: 4, md: 6 }  
+              display: 'flex',
+              width: '100%',
+              gap: { xs: 1, sm: 2 },
+              mb: 2,
+              flexDirection: { 
+                xs: 'row', // Change to row on mobile
+                sm: 'row' 
+              },
+              alignItems: 'flex-start' // Align items to the top
             }}
           >
-            <Typography 
-              variant="subtitle1" 
+            {/* Image on the left */}
+            <Box 
               sx={{ 
-                fontWeight: 'bold', 
-                textAlign: 'center',
-                fontStyle: 'normal',
-                textDecoration: 'none',
-                mb: { 
-                  xs: 0.5,   
-                  sm: 1,     
-                  md: 1 
-                }
+                width: { 
+                  xs: '120px',
+                  sm: '200px'
+                },
+                height: { 
+                  xs: '120px',
+                  sm: '200px'
+                },
+                position: 'relative',
+                flexShrink: 0,
+                borderRadius: 2,
+                overflow: 'hidden'
               }}
             >
-              {section.title}
-            </Typography>
-            <Typography 
-              variant="body2" 
-              color="text.secondary"
+              {section.media?.[0] && (
+                <Image
+                  src={section.media[0]}
+                  alt={section.title}
+                  layout="fill"
+                  objectFit="cover"
+                  priority
+                />
+              )}
+            </Box>
+
+            {/* Text content on the right */}
+            <Box 
               sx={{ 
-                whiteSpace: 'pre-line',  
-                fontSize: { 
-                  xs: '0.75rem',  
-                  sm: '0.875rem', 
-                  md: '1rem'      
-                },
-                textAlign: 'center',
-                fontStyle: 'normal',
-                textDecoration: 'none',
-                mt: { 
-                  xs: 0.5,   
-                  sm: 1,     
-                  md: 1 
-                },
-                maxWidth: '800px'  
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                flex: 1, // Take remaining space
+                pl: { xs: 2, sm: 0 } // Add left padding on mobile
               }}
             >
-              {section.content}
-            </Typography>
+              {/* Title on top right */}
+              <Typography 
+                variant="h6"
+                sx={{ 
+                  fontWeight: 'bold',
+                  mb: 1,
+                  textAlign: { xs: 'left', sm: 'left' },
+                  fontSize: {
+                    xs: '1rem',
+                    sm: '1.5rem'
+                  }
+                }}
+              >
+                {section.title}
+              </Typography>
+
+              {/* Instruction on bottom right */}
+              <Typography 
+                variant="body2"
+                sx={{ 
+                  textAlign: { xs: 'left', sm: 'left' },
+                  whiteSpace: 'pre-line',
+                  fontSize: {
+                    xs: '0.75rem',
+                    sm: '1rem'
+                  }
+                }}
+              >
+                {section.instruction}
+              </Typography>
+            </Box>
           </Box>
         ))}
 
