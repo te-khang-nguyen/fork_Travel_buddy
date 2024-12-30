@@ -278,25 +278,30 @@ const MainUI = () => {
             sx={{ 
               display: 'flex',
               width: '100%',
-              gap: 2,
+              gap: { xs: 1, sm: 2 },
               mb: 2,
               flexDirection: { 
-                xs: 'column', 
+                xs: 'row', // Change to row on mobile
                 sm: 'row' 
               },
-              alignItems: 'stretch' // Ensure equal height of columns
+              alignItems: 'flex-start' // Align items to the top
             }}
           >
             {/* Image on the left */}
             <Box 
               sx={{ 
-                width: { xs: '100%', sm: '50%' },
-                position: 'relative',
-                height: { 
-                  xs: '200px',  // Reduced height on mobile
-                  sm: '400px'   // Larger height on desktop
+                width: { 
+                  xs: '120px',
+                  sm: '200px'
                 },
-                flexShrink: 0 // Prevent image from shrinking
+                height: { 
+                  xs: '120px',
+                  sm: '200px'
+                },
+                position: 'relative',
+                flexShrink: 0,
+                borderRadius: 2,
+                overflow: 'hidden'
               }}
             >
               {section.media?.[0] && (
@@ -313,22 +318,22 @@ const MainUI = () => {
             {/* Text content on the right */}
             <Box 
               sx={{ 
-                width: { xs: '100%', sm: '50%' },
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
-                p: { xs: 2, sm: 0 } // Add padding on mobile to prevent text from touching edges
+                justifyContent: 'flex-start',
+                flex: 1, // Take remaining space
+                pl: { xs: 2, sm: 0 } // Add left padding on mobile
               }}
             >
               {/* Title on top right */}
               <Typography 
-                variant="h6"  // Slightly smaller on mobile
+                variant="h6"
                 sx={{ 
                   fontWeight: 'bold',
-                  mb: 2,
-                  textAlign: { xs: 'center', sm: 'left' },
+                  mb: 1,
+                  textAlign: { xs: 'left', sm: 'left' },
                   fontSize: {
-                    xs: '1.25rem',
+                    xs: '1rem',
                     sm: '1.5rem'
                   }
                 }}
@@ -338,12 +343,12 @@ const MainUI = () => {
 
               {/* Instruction on bottom right */}
               <Typography 
-                variant="body2"  // Smaller variant for mobile
+                variant="body2"
                 sx={{ 
-                  textAlign: { xs: 'center', sm: 'left' },
+                  textAlign: { xs: 'left', sm: 'left' },
                   whiteSpace: 'pre-line',
                   fontSize: {
-                    xs: '0.875rem',
+                    xs: '0.75rem',
                     sm: '1rem'
                   }
                 }}
