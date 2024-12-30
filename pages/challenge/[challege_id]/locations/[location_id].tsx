@@ -34,7 +34,6 @@ const MainUI = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [challenge_id, setChallengeId] = useState<string | undefined>(undefined);
-  const [submissionUploads, setSubmissionUploads] = useState<any>([]);
   const [uploadInputs,] = useUploadInputsMutation();
 
   const [snackbar, setSnackbar] = useState<{
@@ -105,11 +104,9 @@ const MainUI = () => {
 
   const handleInputsUpload = async (userInputs) => {
     console.log("Fetched data:",userInputs);
-    setSubmissionUploads([...submissionUploads, userInputs]);
-    console.log("Data to uploaded:",submissionUploads);
     const result = await uploadInputs({
       challengeId: challenge_id,
-      userLocationSubmission: submissionUploads
+      userLocationSubmission: [userInputs]
     })
 
     if (result.error) {

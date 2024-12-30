@@ -19,11 +19,6 @@ const roboto = Roboto({
   weight: ['300', '400', '500', '700']
 });
 
-interface FetchForm {
-  data?: any,
-  error?: any
-};
-
 function JoinChallenge() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +44,7 @@ function JoinChallenge() {
   const { 
     data: challengeData, 
     error: ChallengeError 
-  } = useGetChallengeQuery<FetchForm>({
+  } = useGetChallengeQuery({
     challengeId: challenge_id
   }, {
     skip: !challenge_id
@@ -60,7 +55,7 @@ function JoinChallenge() {
     error: locationsError,
     isLoading: isLocationsLoading,
     isFetching: isLocationsFetching
-  } = useGetLocationsQuery<FetchForm>({
+  } = useGetLocationsQuery({
     challengeId: challenge_id
   }, {
     skip: !challenge_id
@@ -79,8 +74,6 @@ function JoinChallenge() {
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <Typography variant="h6" color="error">
           Error Loading Challenge:
-          {ChallengeError && ` Challenge Error - ${JSON.stringify(ChallengeError)}`}
-          {locationsError && ` Locations Error - ${JSON.stringify(locationsError)}`}
         </Typography>
       </Box>
     );
@@ -233,7 +226,6 @@ function JoinChallenge() {
       {challengeLocations.map((location) => (
         <Link 
           href={location?.id ? `/challenge/${challenge_id}/locations/${location?.id}` : '#'} 
-          passHref
           key={location?.id || 'default-location'}
           sx={{
             textDecoration: 'none',  // Remove underline for the entire link
@@ -415,8 +407,8 @@ function JoinChallenge() {
       <ReviewModal 
         open={isReviewModalOpen}
         onClose={handleCloseReviewModal}
-        onConfirm={handleConfirmSubmission}
-        challengeId={challenge_id as string}
+        // onConfirm={handleConfirmSubmission}
+        // challengeId={challenge_id as string}
       />
     </Container>
     </Box>
