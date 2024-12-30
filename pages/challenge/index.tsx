@@ -1,34 +1,30 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import ChallengeCard from "@/app/components/challenge/ChallengeCard";
+import { useGetChallengeQuery } from "@/libs/services/user/challenge";
+
+
+interface FetchForm{
+  data?: any,
+  error?: any
+}
 
 function ChallengeList() {
-  const challenges = [
-    { id: 1, name: "Challenge 1" },
-    { id: 2, name: "Challenge 2" },
-    { id: 3, name: "Challenge 3" },
-    { id: 4, name: "Challenge 4" },
-    { id: 5, name: "Challenge 5" },
-    { id: 6, name: "Challenge 6" },
-    { id: 7, name: "Challenge 7" },
-    { id: 7, name: "Challenge 7" },
 
-    { id: 7, name: "Challenge 7" },
+  const {
+    data: challengeData, 
+    error: challengeError
+  } = useGetChallengeQuery<FetchForm>({});
 
-    { id: 7, name: "Challenge 7" },
+  let challenges: any;
+  
+  if(challengeError?.data) throw challengeError?.data;
 
-    { id: 7, name: "Challenge 7" },
-
-    { id: 7, name: "Challenge 7" },
-    { id: 7, name: "Challenge 7" },
-    { id: 7, name: "Challenge 7" },
-    { id: 7, name: "Challenge 7" },
-    { id: 7, name: "Challenge 7" },
-    { id: 7, name: "Challenge 7" },
-    { id: 7, name: "Challenge 7" },
-    
-
-  ];
+  if(challengeData?.data !== undefined){
+    challenges = challengeData?.data.map((item) => {
+      return {id: item.id, name: item.title, image:item.thumbnailUrl};
+    });
+  }
 
   return (
     <Box
@@ -39,7 +35,11 @@ function ChallengeList() {
         justifyContent: "flex-start",
       }}
     >
-      {challenges.map((challenge, index) => (
+      {(challenges == undefined)? 
+      <Typography>
+        No Existing Challenge
+      </Typography>:
+      challenges.map((challenge, index) => (
         <Box
           key={index}
           sx={{

@@ -8,6 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CunstomInputsField from "../challenge/UserInputsField";
 
 interface AccordionItem {
   header: string;
@@ -16,9 +17,20 @@ interface AccordionItem {
 
 interface CustomAccordionListProps {
   items: AccordionItem[];
+  onInputsUpload: (locationInputs: {
+    userQuestionSubmission: string | null;
+    userMediaSubmission: (string | null)[];
+  }[]) => void;
 }
 
-const CustomAccordionList: React.FC<CustomAccordionListProps> = ({ items }) => {
+
+const CustomAccordionList: React.FC<CustomAccordionListProps> = ({ items,  onInputsUpload}) => {
+
+
+  const handleInputsUpload = async (userInputs) => {
+    onInputsUpload(userInputs);
+  };
+
   return (
     <Box
     
@@ -37,7 +49,9 @@ const CustomAccordionList: React.FC<CustomAccordionListProps> = ({ items }) => {
             ) : (
               item.content
             )}
+          <CunstomInputsField index={index} onInputsUpload={handleInputsUpload} />
           </AccordionDetails>
+            
         </Accordion>
       ))}
     </Box>
