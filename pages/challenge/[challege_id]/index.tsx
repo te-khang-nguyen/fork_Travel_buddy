@@ -11,6 +11,13 @@ import { supabase } from "@/libs/supabase/supabase_client";
 import ReviewModal from "@/app/components/challenge/ReviewModal";
 import travelItineraryImage from '@/assets/travelItinerary.png';
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
+import { Roboto } from 'next/font/google'
+
+const roboto = Roboto({ 
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['300', '400', '500', '700']
+});
 
 interface FetchForm {
   data?: any,
@@ -81,8 +88,9 @@ function JoinChallenge() {
 
   // Safely extract challenge and locations
   const challenge = challengeData?.data?.[0];
-  const challengeLocations = locationsData?.data?.[0]?.location_info || [];
-
+  const challengeLocations = locationsData?.data || [];
+  const challengeLocationsInfos = locationsData?.data?.[0]?.location_info || [];
+  console.log("CHALLENGE LOCATIONS", locationsData?.data)
   // If still loading, show loading state
   if (isLoading) {
     return (
@@ -139,12 +147,16 @@ function JoinChallenge() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
+        alignItems: "flex-start", // Changed from center to flex-start
+        width: "100%",
+        minHeight: "100vh", // Use minHeight instead of height
+        height: "100%", // Allow content to determine height
+        overflowY: "auto", // Enable vertical scrolling
+        py: 2, // Vertical padding
+        px: { xs: 1, sm: 2, md: 4 }, // Responsive horizontal padding
+        boxSizing: "border-box", // Ensure padding is included in width calculation
         color: "white",
         textAlign: "center",
-        padding: "20px",
-        gap: 4,
         position: "relative",
       }}
     >
@@ -160,17 +172,31 @@ function JoinChallenge() {
           "&:hover": {
             backgroundColor: "rgba(0, 0, 0, 0.7)",
           },
+          zIndex: 10, // Ensure button is above other content
         }}
       >
         <ArrowBackIcon />
       </IconButton>
 
       {/* Main Content */}
-      <Container maxWidth="lg" sx={{ 
-        py: 4, 
-        backgroundColor: '#F5F5F5', // Off-white color
-        minHeight: '100vh'
-      }}>
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          width: "100%",
+          fontFamily: roboto.style.fontFamily,
+          maxWidth: { xs: "100%", sm: "90%", md: "1200px" }, // Responsive max-width
+          minHeight: "90vh", // Ensure minimum height
+          height: "auto", // Allow content to determine height
+          py: { xs: 2, sm: 4, md: 4 }, // Responsive vertical padding
+          px: { xs: 1, sm: 2, md: 4 }, // Responsive horizontal padding
+          backgroundColor: '#F5F5F5',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          overflow: "visible", // Allow content to be fully visible
+          position: "relative", // Ensure proper positioning
+        }}
+      >
       <Box 
         sx={{ 
           display: 'flex', 
@@ -206,9 +232,9 @@ function JoinChallenge() {
 
       {challengeLocations.map((location) => (
         <Link 
-          href={location?.id ? `/challenge/${challenge_id}/locations/${location.id}` : '#'} 
+          href={location?.location_info?.id ? `/challenge/${challenge_id}/locations/${location?.location_info?.id}` : '#'} 
           passHref
-          key={location?.id || 'default-location'}
+          key={location?.location_info?.id || 'default-location'}
           sx={{
             textDecoration: 'none',  // Remove underline for the entire link
             color: 'inherit',        // Inherit color from parent
@@ -217,7 +243,7 @@ function JoinChallenge() {
         <Box 
           component="div"
           sx={{ 
-            display: 'flex', 
+            display: 'flex',
             justifyContent: 'center', 
             alignItems: 'center', 
             width: '100%',
@@ -254,7 +280,7 @@ function JoinChallenge() {
                   width: '100%',
                   objectFit: 'cover' 
                 }}
-                image={location.media[0]}
+                image={location.imageurls[0]}
                 alt={location.title}
               />
             </Grid>
@@ -275,6 +301,7 @@ function JoinChallenge() {
                     sx={{ 
                       mb: { xs: 1, sm: 2 },
                       textAlign: 'left',
+                      fontFamily: roboto.style.fontFamily,
                       fontStyle: 'normal',
                       textDecoration: 'none',
                       fontSize: { 
@@ -294,6 +321,7 @@ function JoinChallenge() {
                       mb: { xs: 1, sm: 2 },
                       textAlign: 'left',
                       fontStyle: 'normal',
+                      fontFamily: roboto.style.fontFamily,
                       textDecoration: 'none',
                       fontSize: { 
                         xs: '0.75rem',  
@@ -310,6 +338,7 @@ function JoinChallenge() {
                     variant="subtitle2" 
                     sx={{ 
                         fontWeight: 'bold', 
+                        fontFamily: roboto.style.fontFamily,
                         textAlign: 'left',
                         fontStyle: 'normal',
                         textDecoration: 'none',
@@ -333,6 +362,7 @@ function JoinChallenge() {
                             md: '1rem'      // Larger on desktop
                         },
                         textAlign: 'left',
+                        fontFamily: roboto.style.fontFamily,
                         fontStyle: 'normal',
                         textDecoration: 'none',
                         mt: { 
@@ -342,7 +372,7 @@ function JoinChallenge() {
                         }
                     }}
                 >
-                    {location.instruction}
+                    {location.instruction || "No instruction available"}
                 </Typography>
 
                 </Box>
