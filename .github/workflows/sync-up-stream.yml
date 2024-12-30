@@ -19,9 +19,12 @@ jobs:
         git remote add upstream https://github.com/talentedgeai/travel-buddy-prj.git
         git fetch upstream
 
-    - name: Force Sync Fork with Upstream
+    - name: Sync Fork with Upstream
       run: |
-        git reset --hard upstream/main
+        git checkout upstream/main -- .
+        git reset HEAD .github/workflows
+        git checkout origin/main -- .github/workflows
+        git commit -m "Sync with upstream, excluding workflows"
         git push origin main --force
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
