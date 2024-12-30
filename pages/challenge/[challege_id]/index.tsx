@@ -232,9 +232,9 @@ function JoinChallenge() {
 
       {challengeLocations.map((location) => (
         <Link 
-          href={location?.location_info?.id ? `/challenge/${challenge_id}/locations/${location?.location_info?.id}` : '#'} 
+          href={location?.id ? `/challenge/${challenge_id}/locations/${location?.id}` : '#'} 
           passHref
-          key={location?.location_info?.id || 'default-location'}
+          key={location?.id || 'default-location'}
           sx={{
             textDecoration: 'none',  // Remove underline for the entire link
             color: 'inherit',        // Inherit color from parent
