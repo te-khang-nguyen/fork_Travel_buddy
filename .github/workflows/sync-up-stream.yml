@@ -1,4 +1,4 @@
-name: Sync with Upstream1
+name: Sync with Upstream
 
 on:
   workflow_dispatch: # Allows manual trigger
