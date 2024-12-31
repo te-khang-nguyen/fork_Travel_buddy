@@ -19,6 +19,11 @@ jobs:
         git remote add upstream https://github.com/talentedgeai/travel-buddy-prj.git
         git fetch upstream
 
+    - name: Configure Git User
+      run: |
+        git config --global user.email "khoa.le@talentedge.ai"
+        git config --global user.name "TalentEdge-Khoa Le"
+
     - name: Sync Fork with Upstream
       run: |
         git checkout upstream/main -- .
