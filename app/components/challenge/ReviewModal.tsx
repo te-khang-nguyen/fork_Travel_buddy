@@ -83,8 +83,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
       message: "Wonderful!\nYou've completed the challenge!",
       severity: "success"
     });
-    onClose();
-
+    router.push('/challenge/generating-reel');
   };
 
   return (
@@ -160,6 +159,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
             display: "block",
             width: "100%",
           }}
+          onClick={handleSubmit}
           onClick={handleSubmit}
         >
           Submit
