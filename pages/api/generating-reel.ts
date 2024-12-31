@@ -1,3 +1,6 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import { NextApiRequest, NextApiResponse } from 'next';
 import { spawn } from 'child_process';
 import path from 'path';

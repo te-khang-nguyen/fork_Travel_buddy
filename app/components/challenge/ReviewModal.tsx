@@ -57,7 +57,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
   if (locationData && history) {
     historyData = history[0];
     fetchImages = historyData.userChallengeSubmission?.map((submission, index) => {
-      let matchedLocation = locationData?.data.filter(e => e.id == submission.locationId)[0];
+      const matchedLocation = locationData?.data.filter(e => e.id == submission.locationId)[0];
       return submission.userMediaSubmission?.map((img) => {
         return { image: img, name: `Image for ${!matchedLocation? `Location ${index + 1}`: matchedLocation?.title}` };
       })
@@ -65,7 +65,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
     });
 
     const userSubmission = historyData.userChallengeSubmission?.map((submission) => {
-      let matchedLocation = locationData?.data.filter(e => e.id == submission.locationId)[0];
+      const matchedLocation = locationData?.data.filter(e => e.id == submission.locationId)[0];
       return { title: matchedLocation?.title, ...submission };
     });
     historyData = userSubmission;
@@ -160,7 +160,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
             width: "100%",
           }}
           onClick={handleSubmit}
-          onClick={handleSubmit}
+          
         >
           Submit
         </Button>
