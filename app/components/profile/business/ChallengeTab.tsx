@@ -9,30 +9,50 @@ import {
   Typography,
 } from "@mui/material";
 import QRModal from "../../challenge/QRModal";
+import { useRouter } from "next/router";
+import { useGetAllChallengesQuery } from "@/libs/services/business/challenge";
+import { set } from "react-hook-form";
 
 // Define the Challenge interface
 interface Challenge {
-  id: number;
+  id: string;
+  businessid: string;
+  description: string;
+  thumbnailUrl: string;
+  backgroundUrl: string;
+  qrurl: string | null;
+  price: number;
+  created: string;
   title: string;
-  image: string;
 }
 
 const ChallengesTab: React.FC = () => {
-  // Example challenge data
-  const challenges: Challenge[] = [
-    {
-      id: 1,
-      title: "Demo Challenge",
-      image: "https://via.placeholder.com/300x140",
-    },
-    {
-      id: 2,
-      title: "Another Challenge",
-      image: "https://via.placeholder.com/300x140",
-    },
-  ];
+  const { data, isFetching } = useGetAllChallengesQuery();
+  const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
+  const [locationName, setLocationName] = useState("");   
 
-  const [modalOpen, setModalOpen]= useState(false)
+  const { chanllenge_Id, location_Id } = router.query;
+  const challengeId = Array.isArray(chanllenge_Id)
+    ? chanllenge_Id[0]
+    : chanllenge_Id || "";
+  const locationId = Array.isArray(location_Id)
+    ? location_Id[0]
+    : location_Id || "";
+
+  const handleCreateNewChallenge = () => {
+    router.push("/challenge/create");
+  };
+
+  const handleViewQRCode = (challenge) => {
+    setModalOpen(true);
+    setLocationName(challenge.title); 
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setLocationName("");
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -42,26 +62,31 @@ const ChallengesTab: React.FC = () => {
 
       {/* Challenges List */}
       <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-        {challenges.map((challenge) => (
+        {data?.map((challenge: Challenge) => (
           <Card key={challenge.id} sx={{ width: 300 }}>
             <CardMedia
               component="img"
               height="140"
-              image={challenge.image}
+              image={challenge.thumbnailUrl}
               alt={challenge.title}
             />
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 {challenge.title}
               </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {challenge.description}
+              </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
               <Button variant="contained" color="primary">
                 Edit Challenge
               </Button>
-              <Button 
-              onClick={()=>{setModalOpen(true)}}
-              variant="contained" color="success">
+              <Button
+                onClick={()=>handleViewQRCode(challenge)}
+                variant="contained"
+                color="success"
+              >
                 View QR Code
               </Button>
             </CardActions>
@@ -70,6 +95,7 @@ const ChallengesTab: React.FC = () => {
 
         {/* Create New Challenge Card */}
         <Card
+          onClick={handleCreateNewChallenge}
           sx={{
             width: 300,
             display: "flex",
@@ -85,7 +111,13 @@ const ChallengesTab: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
-      <QRModal open={modalOpen} onClose={()=>{setModalOpen(false)}}/>
+      <QRModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        chanllengeId={challengeId}
+        locationName={locationName}
+        locationId={locationId}
+      />
     </Box>
   );
 };

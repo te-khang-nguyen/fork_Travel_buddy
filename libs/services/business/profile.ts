@@ -29,6 +29,7 @@ const BusinessProfileApi = createApi({
   reducerPath: "businessprofile",
   baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
+
     getProfile: builder.query<ProfileRes, void>({
       queryFn: async () => {
         try {

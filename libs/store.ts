@@ -5,6 +5,8 @@ import { BusinessAuthApi } from './services/business/auth'; // Your API slice
 import { UserProfileApi } from './services/user/profile'; // Your API slice
 import { BusinessProfileApi } from './services/business/profile'; // Your API slice
 import { JoinChallengeApi } from './services/user/challenge';
+import { ChallengeApi } from './services/business/challenge';
+import { LocationApi } from './services/business/location';
 //import { ManageChallengeApi } from './services/business/challenge'; 
 //import { BusinessDashboardApi } from './services/business/dashboard';
 
@@ -18,6 +20,10 @@ export const store = configureStore({
     [BusinessAuthApi.reducerPath]: BusinessAuthApi.reducer,
     [BusinessProfileApi.reducerPath]: BusinessProfileApi.reducer,
     [JoinChallengeApi.reducerPath]: JoinChallengeApi.reducer,
+    [ChallengeApi.reducerPath]: ChallengeApi.reducer,
+    [LocationApi.reducerPath]: LocationApi.reducer,
+
+
     //[ManageChallengeApi.reducerPath]: ManageChallengeApi.reducer,
     //[BusinessDashboardApi.reducerPath]: BusinessDashboardApi.reducer,
   },
@@ -30,6 +36,10 @@ export const store = configureStore({
       .concat(BusinessProfileApi.middleware)
       .concat(BusinessProfileApi.middleware)
       .concat(JoinChallengeApi.middleware)
+      .concat(ChallengeApi.middleware)
+      .concat(LocationApi.middleware)
+
+
       //.concat(ManageChallengeApi.middleware)
       //.concat(BusinessDashboardApi.middleware), // Adding middleware for the API slice
 });

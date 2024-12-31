@@ -2,14 +2,15 @@ import { Box, Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import LocationCard from "@/app/components/challenge/LocationCard";
 import { useRouter } from "next/router";
+import { useGetLocationsByChallengeIdQuery } from "@/libs/services/business/location";
+
 
 const ChallengeLocations = () => {
   const router = useRouter();
-  const locations = [
-    { id: 1, name: "Train Street Hanoi", sections: 3 },
-    { id: 2, name: "Hoan Kiem Lake", sections: 3 },
-    { id: 3, name: "St. Joseph's Cathedral", sections: 3 },
-  ];
+  const challengeId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
+  const {data} = useGetLocationsByChallengeIdQuery(challengeId!)
+
+
 
   return (
     <Box
@@ -45,7 +46,7 @@ const ChallengeLocations = () => {
       {/* Locations */}
       <Box
         onClick={() => {
-          router.push("/challenge/create/location");
+          router.push(`/challenge/create/${challengeId}/location`);
         }}
         sx={{
           display: "flex",
@@ -78,7 +79,7 @@ const ChallengeLocations = () => {
         </Box>
 
         {/* Location Cards */}
-        {locations.map((location, index) => (
+        {data?.map((location, index) => (
           <LocationCard key={index} location={location} />
         ))}
       </Box>

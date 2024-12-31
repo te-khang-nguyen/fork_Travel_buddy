@@ -3,17 +3,20 @@ import { Box, Modal, Typography } from "@mui/material";
 import QRCode from "qrcode";
 
 type QRModalComponentProps = {
+  chanllengeId: string;
+  locationName: string;
+  locationId: string;
   open: boolean;
   onClose: () => void;
 };
 
-const QRModal: React.FC<QRModalComponentProps> = ({ open, onClose }) => {
+const QRModal: React.FC<QRModalComponentProps> = ({locationName,locationId, chanllengeId, open, onClose }) => {
   const [qr, setQr] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
       QRCode.toDataURL(
-        "http://localhost:3000/challenge/1/locations/1",
+        `http://localhost:3000/challenge/${chanllengeId}/locations/${locationId}`,
         {
           scale: 10, // Higher scale value for better resolution
         },
@@ -56,7 +59,7 @@ const QRModal: React.FC<QRModalComponentProps> = ({ open, onClose }) => {
         )}
 
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Location name
+        {locationName}
         </Typography>
       </Box>
     </Modal>

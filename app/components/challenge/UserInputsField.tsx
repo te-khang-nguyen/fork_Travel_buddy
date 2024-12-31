@@ -3,7 +3,9 @@ import {
   Typography,
   Box,
   TextField,
-  Button
+  Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import ImageUploader from "../image_picker/ImagePicker";
 
@@ -17,26 +19,53 @@ interface CunstomInputsFieldProps {
 }
 
 const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputsUpload }) => {
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   const [inputTexts, setInputTexts] = useState('');
   const [uploadedImg, setUploadedImg] = useState<
-    Array<{ image: string | null, name: string | null }>>([{ image: "", name: "" }]);
+    Array<{ image: string | null, name: string | null }>>();
 
-    const handleImageUpload = (uploadedImages) => {
-      setUploadedImg(uploadedImages);
-    };
-  
-    const handleConfirm = () => {
+  const handleImageUpload = (uploadedImages) => {
+    setUploadedImg(uploadedImages);
+  };
+
+  const handleConfirm = () => {
+    if (!uploadedImg||inputTexts == '') {
+      if (!uploadedImg&&inputTexts == '') {
+        setSnackbar({
+          open: true, 
+          message: "Please share with us your experience! Your story will be amazing with two or more sentences and at least one image!", 
+          severity: "error"
+        });
+      } else {
+        setSnackbar({
+          open: true, 
+          message: !uploadedImg? "Please share at least one image!": "Please share with us some notes!", 
+          severity: "error"
+        });
+      }
+    } else {
       onInputsUpload(
         {
           index: index,
           userQuestionSubmission: inputTexts,
-          userMediaSubmission: uploadedImg.map((img) => {
+          userMediaSubmission: uploadedImg?.map((img) => {
             return img.image;
-          })
+          }) as any
         }
       );
-    };
+    }
+  };
 
   return (
     <Box sx={{ p: 2 }} >
@@ -56,7 +85,7 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputs
         }}
         onChange={(e) => { setInputTexts(e.target.value) }}
       />
-      <ImageUploader onImageUpload={handleImageUpload} fetchImages={uploadedImg} />
+      <ImageUploader allowMultiple onImageUpload={handleImageUpload} />
 
       <Button
         variant="contained"
@@ -69,8 +98,20 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputs
       >
         Confirm
       </Button>
-
-
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Box, Typography, TextField, Button, Paper } from "@mui/material";
+import { useCreateChallengeMutation } from "@/libs/services/business/challenge";
+import ImagePicker from "@/app/components/image_picker/ImagePicker";
+import { useRouter } from "next/router";
 
 interface ChallengeFormInputs {
   title: string;
   description: string;
-  thumbnail: File | null;
-  backgroundImage: File | null;
+  thumbnail: string;
+  backgroundImage: string | null;
 }
 
 const CreateChallengeForm: React.FC = () => {
+  const router = useRouter();
   const {
     handleSubmit,
     control,
@@ -19,27 +23,24 @@ const CreateChallengeForm: React.FC = () => {
     defaultValues: {
       title: "",
       description: "",
-      thumbnail: null,
+      thumbnail: "",
       backgroundImage: null,
     },
   });
 
-  const [thumbnailName, setThumbnailName] = useState<string | null>(null);
-  const [backgroundName, setBackgroundName] = useState<string | null>(null);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const [background, setBackground] = useState<string | null>(null);
 
-  const onSubmit = (data: ChallengeFormInputs) => {
-    console.log("Form Data:", data);
-  };
+  const [createChallenge] = useCreateChallengeMutation();
 
-  const handleFileChange = (
-    name: keyof ChallengeFormInputs,
-    file: File | null
-  ) => {
-    setValue(name, file);
-    if (name === "thumbnail") {
-      setThumbnailName(file ? file.name : null);
-    } else if (name === "backgroundImage") {
-      setBackgroundName(file ? file.name : null);
+  const onSubmit = async (data: ChallengeFormInputs) => {
+    try {
+      const response = await createChallenge(data);
+      if (response.data) {
+        router.push(`/challenge/create/${(response.data as any).id}`);
+      }
+    } catch (error) {
+      console.error("Failed to create challenge:", error);
     }
   };
 
@@ -155,47 +156,14 @@ const CreateChallengeForm: React.FC = () => {
                   *
                 </Typography>
               </Typography>
-              <Controller
-                name="thumbnail"
-                control={control}
-                rules={{ required: "Thumbnail is required" }}
-                render={({ field }) => (
-                  <Box sx={{display:'flex', flexDirection:'row',alignItems:'center' ,gap:1}}>
-                    <Button
-                      variant="contained"
-                      component="label"
-                      color="primary"
-                      sx={{borderRadius:14, textTransform: "none", marginBottom: 1 }}
-                    >
-                      Choose File
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files
-                            ? e.target.files[0]
-                            : null;
-                          handleFileChange("thumbnail", file);
-                          field.onChange(file); // Update react-hook-form state
-                        }}
-                      />
-                    </Button>
-                    {thumbnailName && (
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        Selected File: {thumbnailName}
-                      </Typography>
-                    )}
-                    {errors.thumbnail && (
-                      <Typography variant="caption" color="error">
-                        {errors.thumbnail.message}
-                      </Typography>
-                    )}
-                  </Box>
-                )}
+              <ImagePicker
+                onImageUpload={(
+                  images: Array<{ image: string | null; name: string | null }>
+                ) => {
+                  const image = images[0]?.image || null;
+                  setThumbnail(image);
+                  setValue("thumbnail", image || "");
+                }}
               />
             </Box>
 
@@ -207,45 +175,34 @@ const CreateChallengeForm: React.FC = () => {
               >
                 Upload Background Image
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-                <Button
-                  variant="contained"
-                  component="label"
-                  color="primary"
-                  sx={{ borderRadius:14, textTransform: "none", marginBottom: 1 }}
-                >
-                  Choose File
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files ? e.target.files[0] : null;
-                      handleFileChange("backgroundImage", file);
-                    }}
-                  />
-                </Button>
-                {backgroundName && (
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    Selected File: {backgroundName}
-                  </Typography>
-                )}
-              </Box>
+              <ImagePicker
+                onImageUpload={(
+                  images: Array<{ image: string | null; name: string | null }>
+                ) => {
+                  const image = images[0]?.image || null;
+                  setBackground(image);
+                  setValue("backgroundImage", image || "");
+                }}
+              />
             </Box>
           </Box>
 
           {/* Submit Button */}
 
-            <Button
+          <Button
             fullWidth
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{width:'100%', marginTop: 3, textTransform: "none",  padding: 1.5 }}
-            >
-              Save Challenge
-            </Button>
-     
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{
+              width: "100%",
+              marginTop: 3,
+              textTransform: "none",
+              padding: 1.5,
+            }}
+          >
+            Save Challenge
+          </Button>
         </form>
       </Paper>
     </Box>

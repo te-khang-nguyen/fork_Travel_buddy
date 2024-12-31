@@ -1,15 +1,21 @@
 import React, { useState } from "react";
-import { Box, Button, IconButton, Fab, Typography } from "@mui/material";
+import { Box, 
+  Button, 
+  IconButton, 
+  Fab, 
+  Typography,
+  Snackbar,
+  Alert 
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/router";
-
 
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 import LocationCard from "@/app/components/challenge/LocationCard";
 import ReviewNotesComponent from "@/app/components/challenge/ReviewModal";
 import ExploreIcon from '@mui/icons-material/Explore';
 import LocationStageModal from "@/app/components/challenge/LocationStageModal";
-import { useGetChallengeQuery, useGetLocationsQuery } from "@/libs/services/user/challenge";
+import { useGetChallengeQuery, useGetLocationsQuery, useGetProgressQuery } from "@/libs/services/user/challenge";
 
 interface FetchForm {
   data?: any,
@@ -19,9 +25,27 @@ interface FetchForm {
 function JoinChallenge() {
   const router = useRouter();
   const { challege_id } = router.query;
+
+  const [snackbar, setSnackbar] = useState<{
+      open: boolean;
+      message: string;
+      severity: "success" | "error";
+    }>({
+      open: false,
+      message: "",
+      severity: "success",
+    });
+  
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
   
   let locations;
   let bgImage = "";
+
+  const {
+    data: historyData,
+    error: historyError
+  } = useGetProgressQuery({ challengeId: challege_id });
+
 
   const {
     data: challengeRef, 
@@ -31,7 +55,7 @@ function JoinChallenge() {
       challengeId: challege_id,
     });
 
-  if(challengeError?.data) alert(challengeError?.data);
+  
 
   if (challengeRef?.data) {
     bgImage = challengeRef?.data[0].backgroundurl;
@@ -48,13 +72,19 @@ function JoinChallenge() {
   if(locationsError?.data) alert(locationsError?.data);
 
   if (locationsRef?.data) {
+    const history = historyData as Array<any>;
     locations = locationsRef?.data.map((item, idx) => {
       return {
         id: item.id,
         index: idx + 1,
         title: item.title, 
         image: item.imageurls[0], 
-        location_info: item.location_info
+        location_info: item.location_info,
+        status: history?.map((submission)=>{
+          if(item.id == submission.userChallengeSubmission[0].locationId){
+            return true;
+          }
+        })[0]
       };
     });
   }

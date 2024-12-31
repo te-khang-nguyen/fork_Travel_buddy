@@ -39,7 +39,7 @@ const LocationCard = ({ location }) => {
             component="img"
             height='250px'
             image={
-              !location.image ? placeholderImage : location.image
+              !location.imageurls[0] ? placeholderImage : location.imageurls[0]
             }
             alt={location.title || "Location Image"}
             onError={() => setImageError(true)} // Handle image load error
