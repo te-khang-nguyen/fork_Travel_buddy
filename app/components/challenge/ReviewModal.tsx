@@ -83,7 +83,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
       message: "Wonderful!\nYou've completed the challenge!",
       severity: "success"
     });
-    router.push('/challenge/generating-reel');
+    router.push(`/challenge/${challege_id}/generating-reel`);
   };
 
   return (

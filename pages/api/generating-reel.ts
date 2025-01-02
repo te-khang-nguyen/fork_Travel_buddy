@@ -6,7 +6,7 @@ import { spawn } from 'child_process';
 import path from 'path';
 
 const OUTPUT_VIDEO_PATH = '/output_video.mp4';
-const PYTHON_SCRIPT_PATH = '././scripts/generate_reel.py';
+const PYTHON_SCRIPT_PATH = 'scripts/generate_reel.py';
 
 // Generate reel using Python script with URLs
 const generateReel = async (imageUrls: string[]): Promise<{output: string, errorOutput: string}> => {
