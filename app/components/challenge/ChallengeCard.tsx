@@ -1,12 +1,32 @@
 import { useState } from "react";
-import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Typography,
+} from "@mui/material";
 
 import { useRouter } from "next/router";
+import QRModal from "./QRModal";
+import { Share } from "@mui/icons-material";
 
 const ChallengeCard = ({ challenge }) => {
   const router = useRouter();
-  const [imageError, setImageError] = useState(false);
+  const [challengeName, setChallengeName] = useState("");
 
+  const [imageError, setImageError] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleViewQRCode = (challenge) => {
+    setModalOpen(true);
+    setChallengeName(challenge.name);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setChallengeName("");
+  };
   const handleClick = (value) => {
     router.push(`/challenge/${value}`);
   };
@@ -20,13 +40,19 @@ const ChallengeCard = ({ challenge }) => {
       key={challenge.id}
       sx={{
         flex: 1,
+        position: "relative",
       }}
     >
+      <QRModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        chanllengeId={challenge.id}
+        displayText={challengeName}
+      />
       <Card
         sx={{
           borderRadius: "8px",
           boxShadow: 3,
-
         }}
       >
         <CardActionArea onClick={() => handleClick(challenge.id)}>
@@ -34,7 +60,9 @@ const ChallengeCard = ({ challenge }) => {
             component="img"
             height="250px"
             image={
-              imageError || !challenge.image ? placeholderImage : challenge.image
+              imageError || !challenge.image
+                ? placeholderImage
+                : challenge.image
             }
             alt={challenge.name || "Location Image"}
             onError={() => setImageError(true)} // Handle image load error
@@ -45,6 +73,27 @@ const ChallengeCard = ({ challenge }) => {
             </Typography>
           </CardContent>
         </CardActionArea>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onClick={() => handleViewQRCode(challenge)}
+        >
+          <Share
+            sx={{
+              color: "primary.main",
+
+              "&:hover": {
+                color: "red",
+              },
+            }}
+          />
+        </Box>
       </Card>
     </Box>
   );

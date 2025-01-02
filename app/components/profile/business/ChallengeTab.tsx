@@ -30,7 +30,7 @@ const ChallengesTab: React.FC = () => {
   const { data, isFetching } = useGetAllChallengesQuery();
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
-  const [locationName, setLocationName] = useState("");   
+  const [challengeName, setChallengeName] = useState("");   
 
   const { chanllenge_Id, location_Id } = router.query;
   const challengeId = Array.isArray(chanllenge_Id)
@@ -46,12 +46,12 @@ const ChallengesTab: React.FC = () => {
 
   const handleViewQRCode = (challenge) => {
     setModalOpen(true);
-    setLocationName(challenge.title); 
+    setChallengeName(challenge.title); 
   };
 
   const handleCloseModal = () => {
     setModalOpen(false);
-    setLocationName("");
+    setChallengeName("");
   };
 
   return (
@@ -115,8 +115,7 @@ const ChallengesTab: React.FC = () => {
         open={modalOpen}
         onClose={handleCloseModal}
         chanllengeId={challengeId}
-        locationName={locationName}
-        locationId={locationId}
+        displayText={challengeName}
       />
     </Box>
   );
