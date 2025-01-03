@@ -13,10 +13,6 @@ interface UserDashboardProps {
   activeChallenges: { id: string, name: string; status: string; link: string }[];
 }
 
-interface FetchForm {
-  data?: any,
-  error?: any
-};
 
 const UserDashboard: React.FC<UserDashboardProps> = ({
   totalChallenges,
@@ -27,13 +23,21 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
   const {
     data: challengeRef,
-    error: challengeError
-  } = useGetChallengeQuery<FetchForm>({});
+    error: challengeError,
+    isLoading: isChallengeLoading
+  } = useGetChallengeQuery({});
   const {
     data: historyRef,
-    error: historyError
-  } = useGetUserSubmissionsQuery<FetchForm>();
+    error: historyError,
+    isLoading: isHistoryLoading
+  } = useGetUserSubmissionsQuery();
 
+  // If still loading, show loading state
+  if (isChallengeLoading || isHistoryLoading) {
+    return (
+      <LoadingSkeleton isLoading={true} />
+    );
+  }
 
   let challenges;
 
@@ -62,13 +66,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   }
 
 
-
   const handleContinue = (challengeId) => {
     router.push(`/challenge/${challengeId}/locations`);
   };
-
-
-
 
 
   return (
@@ -84,7 +84,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     >
       {/* Challenge Dashboard */}
       {!challenges ?
-        <LoadingSkeleton isLoading={true} /> :
+        <Typography></Typography>:
         <ChallengeCarousel
           challenges={challenges}
           onViewAll={() => {
@@ -104,7 +104,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
         }}
       >
         {!activeChallenges ?
-          <LoadingSkeleton isLoading={true} /> :
+          <Typography></Typography>:
           <Box>
             <Typography
               variant="h4"

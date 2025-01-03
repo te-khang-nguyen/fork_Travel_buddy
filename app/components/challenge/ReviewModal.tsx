@@ -81,7 +81,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
     if (open){
       historyRefetch();
     }
-  }, [open, fetchImages]);
+  }, [open]);
 
   const [uploadedImg, setUploadedImg] = useState(fetchImages);
 

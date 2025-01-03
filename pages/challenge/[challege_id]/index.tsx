@@ -132,17 +132,13 @@ function JoinChallenge() {
   };
 
   const handleCloseReviewModal = () => {
+    // Close the ReviewModal
     setIsReviewModalOpen(false);
   };
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/dashboard/user");
   };
-
-  const handleCardClick = (input) => {
-    router.push(input ? `/challenge/${challenge_id}/locations/${input}` : '#')
-  }
-
 
   return (
     <Box
@@ -261,7 +257,6 @@ function JoinChallenge() {
                   }
                 }
               }}
-              onClick={() => { handleCardClick(location?.id) }}
             >
               <Card
                 sx={{

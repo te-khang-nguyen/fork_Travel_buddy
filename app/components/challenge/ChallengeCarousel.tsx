@@ -106,7 +106,7 @@ const ChallengeCarousel: React.FC<Props> = ({ challenges, onViewAll }) => {
             <Box
               key={challenge.id}
               sx={{
-                minWidth: { xs: "85vw", sm: "300px" }, // Adjust card width for mobile and larger screens
+                minWidth: { xs: "35vw", sm: "300px" }, // Adjust card width for mobile and larger screens
                 maxWidth: "100%",
               }}
             >

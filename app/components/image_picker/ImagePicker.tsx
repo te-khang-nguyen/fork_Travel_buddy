@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Typography, CardMedia, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -20,7 +20,11 @@ const ImageUploader: React.FC<ImageUploaderProps> =
   }) => {
     const [selectedImages, setSelectedImages] = useState<
       Array<{ image: string | null; name: string | null }>
-    >(fetchImages);
+    >([]);
+
+    useEffect(()=>{
+      setSelectedImages(fetchImages);
+    },[fetchImages]);
 
     const [imageError, setImageError] = useState(false);
 

@@ -1,0 +1,8 @@
+{
+    "functions": {
+      "api/python/generate_reel.py": {
+        "runtime": "vercel-python@latest"
+      }
+    }
+  }
+  

@@ -34,7 +34,7 @@ const GeneratingReelPage: React.FC = () => {
       hasGeneratedRef.current = true;
 
       try {
-        const response = await fetch('/api/generating-reel', {
+        const response = await fetch('/api/python/generating-reel', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
