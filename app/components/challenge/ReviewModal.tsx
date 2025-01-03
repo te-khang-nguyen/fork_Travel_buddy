@@ -28,11 +28,23 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
 }) => {
   const router = useRouter();
   const { challege_id } = router.query;
+  
 
   const {
-    data: history,
-    error: historyError
-  } = useGetProgressQuery({ challengeId: challege_id });
+    data: history = [],
+    error: historyError,
+    refetch: historyRefetch
+  } = useGetProgressQuery({
+    challengeId: challege_id
+  });
+
+  const {
+    data: locationData,
+    error: locationError,
+  } = useGetLocationsQuery({
+    challengeId: challege_id
+  });
+
 
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -49,27 +61,27 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
   let fetchImages;
   let historyData;
 
-  const {
-    data: locationData,
-    error: locationError
-  } = useGetLocationsQuery({ challengeId: challege_id });
-
   if (locationData && history) {
-    historyData = history[0];
-    fetchImages = historyData.userChallengeSubmission?.map((submission, index) => {
+    fetchImages = history?.[0]?.userChallengeSubmission?.map((submission, index) => {
       const matchedLocation = locationData?.data.filter(e => e.id == submission.locationId)[0];
       return submission.userMediaSubmission?.map((img) => {
-        return { image: img, name: `Image for ${!matchedLocation? `Location ${index + 1}`: matchedLocation?.title}` };
+        return { image: img, name: `Image for ${!matchedLocation ? `Location ${index + 1}` : matchedLocation?.title}` };
       })
 
     });
 
-    const userSubmission = historyData.userChallengeSubmission?.map((submission) => {
+    const userSubmission = history?.[0]?.userChallengeSubmission?.map((submission) => {
       const matchedLocation = locationData?.data.filter(e => e.id == submission.locationId)[0];
       return { title: matchedLocation?.title, ...submission };
     });
     historyData = userSubmission;
   }
+
+  useEffect(()=>{
+    if (open){
+      historyRefetch();
+    }
+  }, [open, fetchImages]);
 
   const [uploadedImg, setUploadedImg] = useState(fetchImages);
 
@@ -113,17 +125,17 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
           Upload your photos!
         </Typography>
 
-        <ImageUploader 
+        <ImageUploader
           allowMultiple
-          allowAddNew={false} 
-          onImageUpload={handleImageUpload} 
-          fetchImages={fetchImages?.flat()} 
+          allowAddNew={false}
+          onImageUpload={handleImageUpload}
+          fetchImages={fetchImages?.flat()}
         />
 
         <Typography
           variant="h4"
           gutterBottom
-          sx={{ color: "#1976d2", }}
+          sx={{ mt: 2,color: "#1976d2", }}
         >
           Review your notes
         </Typography>
@@ -160,7 +172,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
             width: "100%",
           }}
           onClick={handleSubmit}
-          
+
         >
           Submit
         </Button>

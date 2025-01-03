@@ -7,13 +7,15 @@ import path from 'path';
 
 const OUTPUT_VIDEO_PATH = '/output_video.mp4';
 const PYTHON_SCRIPT_PATH = 'scripts/generate_reel.py';
+const MUSIC_DEFAULT = "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/challenge/music1.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJjaGFsbGVuZ2UvbXVzaWMxLm1wMyIsImlhdCI6MTczNTgwOTAzNCwiZXhwIjoxNzY3MzQ1MDM0fQ.dy76I0r31Gs7-bi1X8GQLwzsgpEqzcojGoN2xceu_1g&t=2025-01-02T09%3A10%3A34.145Z"
 
 // Generate reel using Python script with URLs
 const generateReel = async (imageUrls: string[]): Promise<{output: string, errorOutput: string}> => {
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn('python3', [
       PYTHON_SCRIPT_PATH, 
-      ...imageUrls
+      ...imageUrls,
+      MUSIC_DEFAULT
     ], {
       stdio: ['pipe', 'pipe', 'pipe']
     });

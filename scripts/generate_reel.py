@@ -4,6 +4,29 @@ import time
 import os
 import subprocess
 import sys
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s: %(message)s',
+    handlers=[
+        logging.FileHandler('/tmp/generate_reel.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+logger = logging.getLogger(__name__)
+
+
+def uninstall(package):
+    logger.info(f"Attempting to uninstall {package}")
+    subprocess.check_call([
+        sys.executable,
+        "-m", "pip", "uninstall",
+        "-y", # force uninstall
+        package
+    ])
 
 # Install the package first
 def install(package):
@@ -15,11 +38,12 @@ def install(package):
         package
     ])
 
-install('git+https://github.com/talentedgeai/pix2reel.git')
+uninstall('pix2reel')
+install('git+https://github.com/talentedgeai/pix2reel.git@khang/dev')
 
 def main():
     # Receive image paths as command-line arguments
-    image_paths = sys.argv[1:]
+    image_paths = sys.argv[1:-1]
     
     # Process images
     if not image_paths:
@@ -32,6 +56,9 @@ def main():
         if not os.path.exists(path):
             print(f"Image not found: {path}", flush=True)
     
+    # Add audio
+    audio_path = sys.argv[-1]
+    
     # Generate video
     output_path = os.path.join(os.getcwd(), 'public', 'output_video.mp4')
     
@@ -40,7 +67,7 @@ def main():
     
     try:
         import pix2reel
-        pix2reel.run_reel_assembly(image_paths, captions, output_video=output_path, mode='url')
+        pix2reel.run_reel_assembly(image_paths, captions, audio_path, output_video=output_path, mode='url')
         
     except Exception as e:
         print(f"Error generating video: {e}", flush=True)

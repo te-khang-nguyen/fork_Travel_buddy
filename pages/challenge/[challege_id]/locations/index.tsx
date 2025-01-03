@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { Box, 
-  Button, 
-  IconButton, 
-  Fab, 
+import {
+  Box,
+  Button,
+  IconButton,
+  Fab,
   Typography,
   Snackbar,
-  Alert 
+  Alert
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/router";
-
+import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import defaultBackground from "@/assets/background.jpg"; // Replace with the actual background image path
 import LocationCard from "@/app/components/challenge/LocationCard";
 import ReviewNotesComponent from "@/app/components/challenge/ReviewModal";
@@ -27,17 +28,17 @@ function JoinChallenge() {
   const { challege_id } = router.query;
 
   const [snackbar, setSnackbar] = useState<{
-      open: boolean;
-      message: string;
-      severity: "success" | "error";
-    }>({
-      open: false,
-      message: "",
-      severity: "success",
-    });
-  
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
-  
+
   let locations;
   let bgImage = "";
 
@@ -48,28 +49,28 @@ function JoinChallenge() {
 
 
   const {
-    data: challengeRef, 
+    data: challengeRef,
     error: challengeError
   } = useGetChallengeQuery<FetchForm>(
     {
       challengeId: challege_id,
     });
 
-  
+
 
   if (challengeRef?.data) {
     bgImage = challengeRef?.data[0].backgroundurl;
   }
 
   const {
-    data: locationsRef, 
+    data: locationsRef,
     error: locationsError
   } = useGetLocationsQuery<FetchForm>(
     {
       challengeId: challege_id,
     });
 
-  if(locationsError?.data) alert(locationsError?.data);
+  if (locationsError?.data) alert(locationsError?.data);
 
   if (locationsRef?.data) {
     const history = historyData as Array<any>;
@@ -77,11 +78,11 @@ function JoinChallenge() {
       return {
         id: item.id,
         index: idx + 1,
-        title: item.title, 
-        image: item.imageurls[0], 
+        title: item.title,
+        image: item.imageurls[0],
         location_info: item.location_info,
-        status: history?.map((submission)=>{
-          if(item.id == submission.userChallengeSubmission[0].locationId){
+        status: history?.map((submission) => {
+          if (item.id == submission.userChallengeSubmission[0].locationId) {
             return true;
           }
         })[0]
@@ -100,7 +101,7 @@ function JoinChallenge() {
   return (
     <Box
       sx={{
-        backgroundImage: `url("${ bgImage? bgImage : defaultBackground.src }")`,
+        backgroundImage: `url("${bgImage ? bgImage : defaultBackground.src}")`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
@@ -143,10 +144,12 @@ function JoinChallenge() {
           justifyContent: { xs: "center", sm: "space-between" },
         }}
       >
-        {!locations?<Typography></Typography>:
-        locations.map((location,index) => (
-          <LocationCard key={index} location={location} />
-        ))}
+        {!locations ?
+          <LoadingSkeleton isLoading={true} /> :
+          locations.map((location, index) => (
+            <LocationCard key={index} location={location} />
+          ))
+        }
       </Box>
       <ReviewNotesComponent
         open={modalOpen}

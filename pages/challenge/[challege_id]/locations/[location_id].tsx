@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  CircularProgress,
-  TextField,
   IconButton,
-  Button,
   Typography,
   Card,
   Snackbar,
@@ -12,11 +9,13 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
+  useGetProgressQuery,
   useGetLocationsQuery,
   useUploadInputsMutation,
 } from "@/libs/services/user/challenge";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import CustomAccordionList from "@/app/components/challenge/SectionWithCustomStyling";
 import { Roboto } from 'next/font/google'
 
@@ -32,6 +31,8 @@ const MainUI = () => {
   const [challenge_id, setChallengeId] = useState<string | undefined>(
     undefined
   );
+  const [isConfirmClicked, setIsConfirmClicked] = useState(false);
+  let lastUserInputs: any;
   const [uploadInputs] = useUploadInputsMutation();
 
   const [snackbar, setSnackbar] = useState<{
@@ -85,6 +86,16 @@ const MainUI = () => {
     }
   );
 
+  const {
+    data: history,
+    error: historyError
+  } = useGetProgressQuery({ 
+    challengeId: challenge_id 
+  },{
+      skip: !challenge_id,
+    }
+  );
+
   // Update loading state based on locations query
   useEffect(() => {
     if (challenge_id) {
@@ -112,19 +123,24 @@ const MainUI = () => {
     );
   }
 
+  
+
   const handleInputsUpload = async (userInputs) => {
+    setIsConfirmClicked(true);
     const result = await uploadInputs({
       challengeId: challenge_id,
       userLocationSubmission: [{ locationId: location_id, ...userInputs }],
     });
 
     if (result.error) {
+      setIsConfirmClicked(false);
       setSnackbar({
         open: true,
         message: (result.error as any).data,
         severity: "error",
       });
     } else {
+      setIsConfirmClicked(false);
       setSnackbar({
         open: true,
         message:
@@ -147,16 +163,7 @@ const MainUI = () => {
   // If still loading, show loading state
   if (isLoading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
+      <LoadingSkeleton isLoading={isLoading} />
     );
   }
 
@@ -183,15 +190,26 @@ const MainUI = () => {
         </Typography>
       </Box>
     );
+  } else {
+    const matchedLocationSubmission = history?.[0].userChallengeSubmission?.filter((e) => e.locationId == currentLocation?.id);
+    lastUserInputs = {
+      lastUploadedTexts: matchedLocationSubmission?.[0]?.userQuestionSubmission, 
+      lastUploadedImgs: matchedLocationSubmission?.[0]?.userMediaSubmission?.map((img, index)=>{
+          return {image: img, name: `Image ${index} for ${currentLocation?.title}`};
+      })
+    }
   }
+
 
   const accordionItems = [
     {
       header: "Write your own story",
       content:
         "Please add some notes about what you found, how you felt, and upload some photos! The more the merrier!",
+      lastUploads: lastUserInputs
     },
   ];
+  
 
   const instructionSections = currentLocation.location_info || [
     {
@@ -211,7 +229,7 @@ const MainUI = () => {
   ];
 
   const handleGoBack = () => {
-    router.back();
+    router.push(`/challenge/${challenge_id}`);
   };
 
   return (
@@ -226,7 +244,6 @@ const MainUI = () => {
         width: "100%",
         minHeight: "100vh", // Use minHeight instead of height
         height: "100%", // Allow content to determine height
-        overflowY: "auto", // Enable vertical scrolling
         py: 2, // Vertical padding
         px: { xs: 1, sm: 2, md: 4 }, // Responsive horizontal padding
         boxSizing: "border-box", // Ensure padding is included in width calculation
@@ -435,6 +452,7 @@ const MainUI = () => {
             },
           }}
           onInputsUpload={handleInputsUpload}
+          confirmStatus={isConfirmClicked}
         />
       </Card>
 

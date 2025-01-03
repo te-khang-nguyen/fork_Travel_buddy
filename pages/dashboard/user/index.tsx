@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, Typography, Card, CardContent, Button } from "@mui/material";
+import { Box, CircularProgress, Typography, Card, CardContent, Button } from "@mui/material";
 import FastForwardIcon from '@mui/icons-material/FastForward';
-import ChallengeCard from "@/app/components/challenge/ChallengeCard";
+import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
 import { useRouter } from "next/router";
 import { useGetChallengeQuery, useGetUserSubmissionsQuery } from "@/libs/services/user/challenge";
@@ -25,21 +25,18 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 }) => {
   const router = useRouter();
 
-  const { 
-    data: challengeRef, 
-    error: challengeError 
+  const {
+    data: challengeRef,
+    error: challengeError
   } = useGetChallengeQuery<FetchForm>({});
-  const { 
-    data: historyRef, 
-    error: historyError 
+  const {
+    data: historyRef,
+    error: historyError
   } = useGetUserSubmissionsQuery<FetchForm>();
 
-  
+
   let challenges;
 
-  if (challengeError?.data || historyError?.data) {
-    console.log(!challengeError?.data ? historyError?.data : challengeError?.data);
-  }
   if (challengeRef?.data) {
     challenges = challengeRef?.data.map((item) => {
       return {
@@ -48,14 +45,14 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
         image: item.thumbnailUrl
       };
     })
-    console.log(challenges[0].image);
   }
 
   if (historyRef?.data) {
     activeChallenges = historyRef?.data.map((item) => {
+      const matchedChallenge = challengeRef?.data.filter(e => e.id == item.challengeId)[0];
       return {
         id: item.challengeId,
-        name: item.challengeTitle,
+        name: matchedChallenge?.title,
         status: !item.ended ? "In progress" : "Completed",
         link: !item?.reward ? "Your reward is being prepared" : item?.reward
       };
@@ -85,8 +82,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
       }}
     >
+      {/* Challenge Dashboard */}
       {!challenges ?
-        <><Typography>No Challenges Found</Typography></> :
+        <LoadingSkeleton isLoading={true} /> :
         <ChallengeCarousel
           challenges={challenges}
           onViewAll={() => {
@@ -105,111 +103,108 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
           p: 3,
         }}
       >
-        <Typography
-          variant="h4"
-          gutterBottom
-          sx={{ color: "#4a90e2", fontWeight: "bold" }}
-        >
-          Activity
-        </Typography>
-
-        {/* Challenge Dashboard */}
-        <Box>
-          <Typography variant="h6" gutterBottom>
-            Challenge Dashboard
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-            <Card
-              sx={{
-                width: "50%",
-                backgroundColor: "#dff9e7",
-                color: "green",
-                p: 2,
-                borderRadius: 2,
-              }}
+        {!activeChallenges ?
+          <LoadingSkeleton isLoading={true} /> :
+          <Box>
+            <Typography
+              variant="h4"
+              gutterBottom
+              sx={{ color: "#4a90e2", fontWeight: "bold" }}
             >
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Participated
-                </Typography>
-                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                  {totalChallenges}
-                </Typography>
-              </CardContent>
-            </Card>
-            <Card
-              sx={{
-                width: "50%",
-                backgroundColor: "#f3e7fc",
-                color: "purple",
-                p: 2,
-                borderRadius: 2,
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Completed
-                </Typography>
-                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                  {completedChallenges}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-        </Box>
-
-        {/* Active Challenges */}
-        <Box>
-          <Typography variant="h6" gutterBottom>
-            Active Challenges
-          </Typography>
-          {!activeChallenges ?
-            <Typography>
-              No existing participation history
-            </Typography> :
-            activeChallenges.length > 0 ? (
-              activeChallenges.map((challenge, index) => (
+              Activity
+            </Typography>
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Challenge Dashboard
+              </Typography>
+              <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
                 <Card
-                  key={index}
                   sx={{
+                    width: "50%",
+                    backgroundColor: "#dff9e7",
+                    color: "green",
                     p: 2,
-                    mb: 2,
-                    backgroundColor: "#fff",
-                    boxShadow: 1,
                     borderRadius: 2,
                   }}
                 >
-                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                    {challenge.name}
-                  </Typography>
-                  <Typography>Status: {challenge.status}</Typography>
-                  <Typography>
-                    Link to Reels:{" "}
-                    {challenge.link || "Your video is being prepared!"}
-                  </Typography>
-                  {challenge.status !== 'Completed' ?
-                    <Typography align='center'>
-                      <Button
-                        sx={{
-                          borderRadius: 14,
-                          width: "150px",
-                          fontSize: { xs: "0.5rem", md: "1rem" },
-                        }}
-                        variant="contained"
-                        startIcon={<FastForwardIcon />}
-                        onClick={() => { handleContinue(challenge.id) }}>
-
-                        Continue
-                      </Button>
-                    </Typography> : <Typography></Typography>
-                  }
-
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Participated
+                    </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                      {totalChallenges}
+                    </Typography>
+                  </CardContent>
                 </Card>
-              ))
-            ) : (
-              <Typography>No active challenges</Typography>
-            )}
-        </Box>
+                <Card
+                  sx={{
+                    width: "50%",
+                    backgroundColor: "#f3e7fc",
+                    color: "purple",
+                    p: 2,
+                    borderRadius: 2,
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Completed
+                    </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                      {completedChallenges}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Box>
+              {/* Active Challenges */}
+              <Typography variant="h6" gutterBottom>
+                Active Challenges
+              </Typography>
+              {activeChallenges.length > 0 ? (
+                activeChallenges.map((challenge, index) => (
+                  <Card
+                    key={index}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      backgroundColor: "#fff",
+                      boxShadow: 1,
+                      borderRadius: 2,
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      {challenge.name}
+                    </Typography>
+                    <Typography>Status: {challenge.status}</Typography>
+                    <Typography>
+                      Link to Reels:{" "}
+                      {challenge.link || "Your video is being prepared!"}
+                    </Typography>
+                    {challenge.status !== 'Completed' ?
+                      <Typography align='center'>
+                        <Button
+                          sx={{
+                            borderRadius: 14,
+                            width: "150px",
+                            fontSize: { xs: "0.5rem", md: "1rem" },
+                          }}
+                          variant="contained"
+                          startIcon={<FastForwardIcon />}
+                          onClick={() => { handleContinue(challenge.id) }}>
+
+                          Continue
+                        </Button>
+                      </Typography> : <Typography></Typography>
+                    }
+
+                  </Card>
+                ))
+              ) : (
+                <Typography>No Challenges Currently Available</Typography>
+              )}
+            </Box>
+          </Box>
+        }
+
       </Box>
     </Box>
   );

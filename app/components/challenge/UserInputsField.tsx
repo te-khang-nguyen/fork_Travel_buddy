@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -6,6 +6,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  CircularProgress
 } from "@mui/material";
 import ImageUploader from "../image_picker/ImagePicker";
 
@@ -16,9 +17,18 @@ interface CunstomInputsFieldProps {
     userQuestionSubmission: string | null;
     userMediaSubmission: (string | null)[];
   }) => void;
+  lastInputText?: string | null;
+  lastUploadedImgs?: Array<{ image: string | null, name: string | null }>;
+  confirmStatus?: boolean;
 }
 
-const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputsUpload }) => {
+const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({
+  index,
+  onInputsUpload,
+  lastInputText = '',
+  lastUploadedImgs = [],
+  confirmStatus = false
+}) => {
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -31,26 +41,26 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputs
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
-  const [inputTexts, setInputTexts] = useState('');
+  const [inputTexts, setInputTexts] = useState(lastInputText);
   const [uploadedImg, setUploadedImg] = useState<
-    Array<{ image: string | null, name: string | null }>>();
+    Array<{ image: string | null, name: string | null }>>(lastUploadedImgs);
 
   const handleImageUpload = (uploadedImages) => {
     setUploadedImg(uploadedImages);
   };
 
   const handleConfirm = () => {
-    if (!uploadedImg||inputTexts == '') {
-      if (!uploadedImg&&inputTexts == '') {
+    if (!uploadedImg || inputTexts == '') {
+      if (!uploadedImg && inputTexts == '') {
         setSnackbar({
-          open: true, 
-          message: "Please share with us your experience! Your story will be amazing with two or more sentences and at least one image!", 
+          open: true,
+          message: "Please share with us your experience! Your story will be amazing with two or more sentences and at least one image!",
           severity: "error"
         });
       } else {
         setSnackbar({
-          open: true, 
-          message: !uploadedImg? "Please share at least one image!": "Please share with us some notes!", 
+          open: true,
+          message: !uploadedImg ? "Please share at least one image!" : "Please share with us some notes!",
           severity: "error"
         });
       }
@@ -69,7 +79,7 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputs
 
   return (
     <Box sx={{ p: 2 }} >
-      <Typography sx={{ color: "white" }}>Your Story</Typography>
+      <Typography variant="h6" sx={{ color: "#4285F4" }}>Your Story</Typography>
       <TextField
         variant="outlined"
         fullWidth
@@ -85,7 +95,7 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputs
         }}
         onChange={(e) => { setInputTexts(e.target.value) }}
       />
-      <ImageUploader allowMultiple onImageUpload={handleImageUpload} />
+      <ImageUploader allowMultiple onImageUpload={handleImageUpload} fetchImages={uploadedImg} />
 
       <Button
         variant="contained"
@@ -95,9 +105,11 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({ index, onInputs
           display: "block",
         }}
         onClick={handleConfirm}
+        disabled={confirmStatus}
       >
-        Confirm
+        {!confirmStatus? "Confirm" : <CircularProgress size="20px" thickness={6.0}/>}
       </Button>
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

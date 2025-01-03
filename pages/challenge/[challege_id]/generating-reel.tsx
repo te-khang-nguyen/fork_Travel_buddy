@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
 import { 
   useGetUserSubmissionsQuery
 } from "@/libs/services/user/challenge";
+import { supabase } from '@/libs/supabase/supabase_client';
 import { useRouter } from "next/router";
 
 
 const GeneratingReelPage: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(true);
   const [videoPath, setVideoPath] = useState('');
+  const hasGeneratedRef = useRef(false);
 
   const {
     data: userSubmissionData, 
@@ -17,8 +19,6 @@ const GeneratingReelPage: React.FC = () => {
   } = useGetUserSubmissionsQuery();
   const router = useRouter();
   const { challege_id } = router.query;
-  console.log("Challenge ID", challege_id)
-  console.log("User Submission Data", userSubmissionData)
   const userSubmittedMedias = userSubmissionData?.data.filter(
       submission => submission.challengeId === challege_id
     ).flatMap(
@@ -26,10 +26,13 @@ const GeneratingReelPage: React.FC = () => {
         challengeSubmission => challengeSubmission.userMediaSubmission || []
       ) || []
   );
-  console.log("User Filtered Data", userSubmittedMedias)
 
   useEffect(() => {
     const generateReel = async () => {
+      // Prevent multiple generations
+      if (hasGeneratedRef.current) return;
+      hasGeneratedRef.current = true;
+
       try {
         const response = await fetch('/api/generating-reel', {
           method: 'POST',
@@ -46,7 +49,35 @@ const GeneratingReelPage: React.FC = () => {
         console.log("RESULT", result.videoPath)
         
         if (result.success) {
-          setVideoPath(result.videoPath);
+          // Upload video to Supabase Storage
+          const videoFile = await fetch(result.videoPath);
+          const videoBlob = await videoFile.blob();
+          const { data: { user } } = await supabase.auth.getUser();
+          const fileName = `reel_${Date.now()}.mp4`;
+          const filePath = `${user?.id}/reels/${fileName}`;
+          const { data, error } = await supabase.storage
+            .from('challenge')
+            .upload(filePath, videoBlob, {
+              cacheControl: '3600',
+              upsert: true,
+              contentType: 'video/mp4'
+            });
+
+          if (error) {
+            console.error('Error uploading video:', error);
+            // Optionally handle upload error
+          } else {
+            // Get public URL
+            const signedUrlData = await supabase.storage
+              .from('challenge')
+              .createSignedUrl(filePath, 60 * 60 * 24 * 365); // 1 year expiration
+            if (signedUrlData.error) {
+              console.error('Error creating signed URL:', signedUrlData.error);
+            } else {
+              setVideoPath(signedUrlData.data.signedUrl);
+            }
+          }
+
           setIsGenerating(false);
         } else {
           // Handle any errors from the API
@@ -59,11 +90,11 @@ const GeneratingReelPage: React.FC = () => {
       }
     };
 
-    // Only run if we have media
+    // Only run if we have media and haven't generated before
     if (userSubmittedMedias && userSubmittedMedias.length > 0) {
       generateReel();
     }
-  }, [userSubmittedMedias]);
+  }, [userSubmittedMedias]); // Dependency ensures it runs when media is available
 
 
   return (
@@ -90,6 +121,7 @@ const GeneratingReelPage: React.FC = () => {
             width={300} 
             height={300} 
             style={{ borderRadius: '10px' }}
+            unoptimized
           />
           
           <Typography variant="body1" sx={{ mt: 4 }}>
