@@ -39,7 +39,7 @@ def install(package):
     ])
 
 uninstall('pix2reel')
-install('git+https://github.com/talentedgeai/pix2reel.git@khang/dev')
+install('git+https://github.com/talentedgeai/pix2reel.git')
 
 def main():
     # Receive image paths as command-line arguments

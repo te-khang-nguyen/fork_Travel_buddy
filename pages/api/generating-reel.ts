@@ -42,6 +42,12 @@ const generateReel = async (imageUrls: string[]): Promise<{output: string, error
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Add more comprehensive logging
+  console.log('Received request:', {
+    method: req.method,
+    body: req.body,
+    query: req.query
+  });
   // Set CORS headers to allow cross-origin requests
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -57,21 +63,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'POST': {
         const { images } = req.body;
 
-        // Validate input
+        // Enhanced input validation
         if (!images || !Array.isArray(images) || images.length === 0) {
+          console.error('Invalid images input:', images);
           return res.status(400).json({ 
             success: false,
-            message: 'No images provided or invalid image array' 
+            message: 'No images provided or invalid image array',
+            receivedImages: images
           });
         }
 
-        const reelResult = await generateReel(images);
-        
-        return res.status(200).json({
-          success: true,
-          videoPath: OUTPUT_VIDEO_PATH,
-          ...reelResult
-        });
+        try {
+          const reelResult = await generateReel(images);
+          
+          // Log the result before sending
+          console.log('Reel generation result:', reelResult);
+
+          return res.status(200).json({
+            success: true,
+            videoPath: OUTPUT_VIDEO_PATH,
+            ...reelResult
+          });
+        } catch (reelGenerationError) {
+          console.error('Detailed reel generation error:', reelGenerationError);
+          return res.status(500).json({
+            success: false,
+            message: 'Failed to generate reel',
+            details: reelGenerationError instanceof Error 
+              ? reelGenerationError.message 
+              : 'Unknown reel generation error',
+            images  // Include original images for debugging
+          });
+        }
       }
       case 'GET': {
         const { images } = req.query;
