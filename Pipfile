@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[requires]
+python_version = "3.12"
+
+[packages]
+# Add your project dependencies here
+# e.g., flask = "*"
+
+[dev-packages]
+# Add your development dependencies here
+# e.g., pytest = "*"
+pix2reel = {git = "https://github.com/talentedgeai/pix2reel.git"}
