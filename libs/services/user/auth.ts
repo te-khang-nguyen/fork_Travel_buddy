@@ -26,14 +26,10 @@ const UserAuthApi = createApi({
 
         try {
           // Sign up the user
-          const { data: authData, error: authError } =
-            await supabase.auth.signUp({
-              email,
-              password,
-              options: {
-                emailRedirectTo: "http://localhost:3000",
-              },
-            });
+          const { error: authError } = await supabase.auth.signUp({
+            email,
+            password,
+          });
 
           if (authError) {
             return { error: authError.message };
@@ -62,6 +58,7 @@ const UserAuthApi = createApi({
           if (profileError) {
             return { error: profileError.message };
           }
+          await supabase.auth.signOut();
 
           return { data: { message: "User created successfully!" } };
         } catch (err: any) {

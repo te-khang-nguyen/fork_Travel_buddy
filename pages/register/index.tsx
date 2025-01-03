@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { TextField, Button, Box, Typography, Snackbar, Alert } from "@mui/material";
 import defaultBackground from "@/assets/background.jpg";
 import { useSignUpMutation } from "@/libs/services/user/auth";
+import { useRouter } from "next/router";
 
 const RegistrationForm = () => {
   const {
@@ -12,18 +13,36 @@ const RegistrationForm = () => {
   } = useForm();
 
   const [signUp] = useSignUpMutation();
-
+  const router = useRouter();
   // Snackbar state for errors
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState<"success" | "error">("error");
 
   const onSubmit = async (data) => {
-    const result = await signUp(data);
+    try {
+      const result = await signUp(data);
 
-    if (result.error) {
-      setSnackbarMessage(result.error as string || "Sign up failed");
+      if (result.error) {
+        throw new Error(result.error as string || "Sign up failed");
+      }
+
+      setSnackbarMessage("Account created successfully!");
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
-      return;
+
+      setTimeout(() => {
+        router.push('/');
+      }, 1000);
+
+    } catch (error) {
+      if (error instanceof Error) {
+        setSnackbarMessage(error.message);
+      } else {
+        setSnackbarMessage("An unknown error occurred");
+      }
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -167,7 +186,7 @@ const RegistrationForm = () => {
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

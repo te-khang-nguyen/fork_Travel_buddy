@@ -26,7 +26,7 @@ const MainContent = ({ Component, pageProps }: AppProps) => {
         data: { session },
       } = await supabase.auth.getSession();
 
-      const publicPaths = ["/", "/login/business"]; // Define public paths
+      const publicPaths = ["/", "/login/business", "/register"]; // Define public paths
       if (!session && !publicPaths.includes(router.pathname)) {
         await router.replace("/");
       } else if (session && publicPaths.includes(router.pathname)) {
