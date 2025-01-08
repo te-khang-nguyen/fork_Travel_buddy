@@ -12,14 +12,21 @@ import {
 import { Google, Facebook, Instagram } from "@mui/icons-material";
 import defaultBackground from "@/assets/background.jpg";
 import { useRouter } from "next/router";
-import { useLogInMutation } from "@/libs/services/user/auth";
+import {
+  useLogInMutation,
+  useSignUpWithFacebookMutation,
+  useSignUpWithGoogleMutation,
+} from "@/libs/services/user/auth";
 import { useGlobalContext } from "@/app/GlobalContextProvider";
-import { setCookie } from 'cookies-next';
+import { setCookie } from "cookies-next";
 
 function Login() {
   const { setRole } = useGlobalContext();
   const router = useRouter();
   const [logIn] = useLogInMutation();
+  const [logInWithGG] = useSignUpWithGoogleMutation();
+
+  const [logInWithFB] = useSignUpWithFacebookMutation();
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -36,11 +43,35 @@ function Login() {
       setSnackbarOpen(true);
     } else {
       setRole("user");
-      setCookie('role', 'user');
+      setCookie("role", "user");
       router.push("/dashboard/user");
     }
   };
 
+  const handleLoginWithGoogle = async () => {
+    const result = await logInWithGG().unwrap();
+      if (result.error) {
+        setSnackbarMessage((result.error as string) || "Login failed");
+        setSnackbarOpen(true);
+      } else {
+        setRole("user");
+        setCookie("role", "user");
+        router.push("/dashboard/user");
+      }
+  };
+
+  const handleLoginWithFacebook = async () => {
+    const result = await logInWithFB().unwrap();
+
+    if (result.error) {
+      setSnackbarMessage((result.error as string) || "Login failed");
+      setSnackbarOpen(true);
+    } else {
+      setRole("user");
+      setCookie("role", "user");
+      router.push("/dashboard/user");
+    }
+  };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -61,7 +92,7 @@ function Login() {
       <Box
         sx={{
           width: "100%",
-          maxWidth: "max-content",
+          maxWidth: "600px",
           p: 4,
           boxShadow: 3,
           borderRadius: 2,
@@ -128,7 +159,7 @@ function Login() {
           <Button
             variant="outlined"
             startIcon={<Google />}
-            onClick={() => console.log("Login with Google")}
+            onClick={handleLoginWithGoogle}
             fullWidth={true}
           >
             Google
@@ -136,18 +167,10 @@ function Login() {
           <Button
             variant="outlined"
             startIcon={<Facebook />}
-            onClick={() => console.log("Login with Facebook")}
+            onClick={handleLoginWithFacebook}
             fullWidth={true}
           >
             Facebook
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<Instagram />}
-            onClick={() => console.log("Login with Instagram")}
-            fullWidth={true}
-          >
-            Instagram
           </Button>
         </Box>
 

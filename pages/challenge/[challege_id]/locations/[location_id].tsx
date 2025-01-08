@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import CustomAccordionList from "@/app/components/challenge/SectionWithCustomStyling";
-import { Roboto } from 'next/font/google'
+import { Roboto } from "next/font/google"
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -89,11 +89,11 @@ const MainUI = () => {
   const {
     data: history,
     error: historyError
-  } = useGetProgressQuery({ 
-    challengeId: challenge_id 
-  },{
-      skip: !challenge_id,
-    }
+  } = useGetProgressQuery({
+    challengeId: challenge_id
+  }, {
+    skip: !challenge_id,
+  }
   );
 
   // Update loading state based on locations query
@@ -123,8 +123,6 @@ const MainUI = () => {
     );
   }
 
-  
-
   const handleInputsUpload = async (userInputs) => {
     setIsConfirmClicked(true);
     const result = await uploadInputs({
@@ -144,12 +142,17 @@ const MainUI = () => {
       setSnackbar({
         open: true,
         message:
-          "Great sharings!\n Your notes are saved!\n Let's keep exploring",
+          "Great sharings!\nThis chapter will be wonderful!\nLet's keep exploring while we craft your story!",
         severity: "success",
       });
-      router.push(`/challenge/${challege_id}`);
+      router.prefetch(`/challenge/${challege_id}`);
     }
   };
+
+  // Handle switch page after successful submission snackbar is closed.
+  if (!snackbar.open && snackbar.message !== "" && snackbar.severity == "success") {
+    router.push(`/challenge/${challege_id}`);
+  }
 
   // Find the specific location based on location_id
   const challengeLocations1 = locationsData?.data || [];
@@ -193,9 +196,9 @@ const MainUI = () => {
   } else {
     const matchedLocationSubmission = history?.[0].userChallengeSubmission?.filter((e) => e.locationId == currentLocation?.id);
     lastUserInputs = {
-      lastUploadedTexts: matchedLocationSubmission?.[0]?.userQuestionSubmission, 
-      lastUploadedImgs: matchedLocationSubmission?.[0]?.userMediaSubmission?.map((img, index)=>{
-          return {image: img, name: `Image ${index} for ${currentLocation?.title}`};
+      lastUploadedTexts: matchedLocationSubmission?.[0]?.userQuestionSubmission,
+      lastUploadedImgs: matchedLocationSubmission?.[0]?.userMediaSubmission?.map((img, index) => {
+        return { image: img, name: `Image ${index} for ${currentLocation?.title}` };
       })
     }
   }
@@ -209,7 +212,7 @@ const MainUI = () => {
       lastUploads: lastUserInputs
     },
   ];
-  
+
 
   const instructionSections = currentLocation.location_info || [
     {
@@ -458,7 +461,7 @@ const MainUI = () => {
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        autoHideDuration={20000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >

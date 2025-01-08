@@ -6,18 +6,43 @@ const base64toBinary = (input) => {
   return Uint8Array.from(Buffer.from(input.split(",")[1], "base64"));
 };
 
-export const imgToDB = async (image, bucket) => {
-    const bytesArray = typeof image === "string" ? base64toBinary(image) : image;
-    const toStorageUpload = {
-        bucket: "challenge",
-        title: `${bucket}`,
-        data: bytesArray,
-    };
+const checkAndInsertUserProfile = async () => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "User not found after OAuth sign-in." };
 
-    const uploadResult = await uploadToStorage(toStorageUpload);
-    if (uploadResult.error) {
-        return { error: uploadResult.error };
-    }
+  const { data: userProfile, error: profileError } = await supabase
+    .from("userprofiles")
+    .select("*")
+    .eq("email", user.email)
+    .single();
+
+  if (profileError && profileError.code === "PGRST116") {
+    const { error: insertError } = await supabase.from("userprofiles").insert({
+      email: user.email,
+      userid: user.id,
+      username: user.user_metadata.full_name || user.email,
+    });
+    if (insertError) return { error: insertError.message };
+  } else if (profileError) {
+    return { error: profileError.message };
+  }
+  return { data: userProfile };
+};
+
+export const imgToDB = async (image, bucket) => {
+  const bytesArray = typeof image === "string" ? base64toBinary(image) : image;
+  const toStorageUpload = {
+    bucket: "challenge",
+    title: `${bucket}`,
+    data: bytesArray,
+  };
+
+  const uploadResult = await uploadToStorage(toStorageUpload);
+  if (uploadResult.error) {
+    return { error: uploadResult.error };
+  }
 
     return  uploadResult.data ;
 };
@@ -169,6 +194,7 @@ const uploadToStorage = async (inputobj) => {
 };
 
 export {
+  checkAndInsertUserProfile,
   uploadNewRow,
   upsertNewRow,
   updateRow,

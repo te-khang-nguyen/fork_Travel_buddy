@@ -73,7 +73,7 @@ const ImageUploader: React.FC<ImageUploaderProps> =
                 color: "white",
                 textTransform: "none",
                 padding: "8px 16px",
-                fontSize: "14px",
+                fontSize: {xs:"12px", sm: "14px"},
                 borderRadius: "4px",
                 "&:hover": {
                   backgroundColor: "#357ae8",

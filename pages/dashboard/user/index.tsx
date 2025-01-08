@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, CircularProgress, Typography, Card, CardContent, Button } from "@mui/material";
-import FastForwardIcon from '@mui/icons-material/FastForward';
+import FastForwardIcon from "@mui/icons-material/FastForward";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
 import { useRouter } from "next/router";
@@ -62,12 +62,12 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       };
     })
     totalChallenges = activeChallenges.length;
-    completedChallenges = activeChallenges.filter((item) => item.status == 'Completed').length;
+    completedChallenges = activeChallenges.filter((item) => item.status == "Completed").length;
   }
 
 
   const handleContinue = (challengeId) => {
-    router.push(`/challenge/${challengeId}/locations`);
+    router.push(`/challenge/${challengeId}`);
   };
 
 
@@ -84,11 +84,11 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     >
       {/* Challenge Dashboard */}
       {!challenges ?
-        <Typography></Typography>:
+        <Typography></Typography> :
         <ChallengeCarousel
           challenges={challenges}
           onViewAll={() => {
-            router.push('/challenge')
+            router.push("/challenge")
           }}
         />}
       <Box
@@ -103,63 +103,65 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
           p: 3,
         }}
       >
-        {!activeChallenges ?
-          <Typography></Typography>:
+        <Box>
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{ color: "#4a90e2", fontWeight: "bold" }}
+          >
+            Activity
+          </Typography>
           <Box>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{ color: "#4a90e2", fontWeight: "bold" }}
-            >
-              Activity
+            <Typography variant="h6" gutterBottom>
+              Challenge Dashboard
             </Typography>
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Challenge Dashboard
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-                <Card
-                  sx={{
-                    width: "50%",
-                    backgroundColor: "#dff9e7",
-                    color: "green",
-                    p: 2,
-                    borderRadius: 2,
-                  }}
-                >
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Participated
-                    </Typography>
-                    <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                      {totalChallenges}
-                    </Typography>
-                  </CardContent>
-                </Card>
-                <Card
-                  sx={{
-                    width: "50%",
-                    backgroundColor: "#f3e7fc",
-                    color: "purple",
-                    p: 2,
-                    borderRadius: 2,
-                  }}
-                >
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Completed
-                    </Typography>
-                    <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                      {completedChallenges}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
-              {/* Active Challenges */}
-              <Typography variant="h6" gutterBottom>
-                Active Challenges
-              </Typography>
-              {activeChallenges.length > 0 ? (
+            <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+              <Card
+                sx={{
+                  width: "50%",
+                  backgroundColor: "#dff9e7",
+                  color: "green",
+                  p: 2,
+                  borderRadius: 2,
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Participated
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                    {totalChallenges}
+                  </Typography>
+                </CardContent>
+              </Card>
+              <Card
+                sx={{
+                  width: "50%",
+                  backgroundColor: "#f3e7fc",
+                  color: "purple",
+                  p: 2,
+                  borderRadius: 2,
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Completed
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                    {completedChallenges}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+            {/* Active Challenges */}
+            <Typography variant="h6" gutterBottom>
+              Active Challenges
+            </Typography>
+            {!activeChallenges ?
+              <Typography>
+                {"Welcome traveler! Let's craft your first memory together!"}
+              </Typography> :
+              activeChallenges.length > 0 ? (
                 activeChallenges.map((challenge, index) => (
                   <Card
                     key={index}
@@ -179,8 +181,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                       Link to Reels:{" "}
                       {challenge.link || "Your video is being prepared!"}
                     </Typography>
-                    {challenge.status !== 'Completed' ?
-                      <Typography align='center'>
+                    {challenge.status !== "Completed" ?
+                      <Typography align="center">
                         <Button
                           sx={{
                             borderRadius: 14,
@@ -200,11 +202,10 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                 ))
               ) : (
                 <Typography>No Challenges Currently Available</Typography>
-              )}
-            </Box>
+              )
+            }
           </Box>
-        }
-
+        </Box>
       </Box>
     </Box>
   );
