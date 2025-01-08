@@ -7,9 +7,7 @@ import {
     Alert,
 } from "@mui/material";
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
-import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
-import { truncate } from "fs";
 
 interface VoiceButtonForm {
     language: string;

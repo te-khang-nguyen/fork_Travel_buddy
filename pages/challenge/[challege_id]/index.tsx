@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
-  CircularProgress,
   CardMedia,
   CardContent,
   Link, Typography,
   Container, Button,
   IconButton, Grid
 } from "@mui/material";
+import MaintenancePlaceholder from '@/app/components/challenge/MaintenanceDisplay';
 import { green } from "@mui/material/colors";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -22,7 +22,7 @@ import {
 import { useRouter } from 'next/router';
 import ReviewModal from "@/app/components/challenge/ReviewModal";
 import travelItineraryImage from '@/assets/travelItinerary.png';
-import { Roboto } from 'next/font/google'
+import { Roboto } from 'next/font/google';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -91,11 +91,7 @@ function JoinChallenge() {
   // If there are errors, handle them
   if (ChallengeError || locationsError) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Typography variant="h6" color="error">
-          Error Loading Challenge:
-        </Typography>
-      </Box>
+      <MaintenancePlaceholder/>
     );
   }
 

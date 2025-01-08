@@ -7,7 +7,6 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
-  Paper
 } from "@mui/material";
 import ImageUploader from "../image_picker/ImagePicker";
 import VoiceToTextButton from "./VoiceToTextButton";
@@ -48,30 +47,37 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({
   >([]);
 
   useEffect(() => {
-    const processedPreviousUploads: any = lastUploadedImgs?.map(async (inputObj) => {
-      try {
-        const response = await fetch(inputObj?.image as any);
-        const blob = await response.blob();
-
-        const reader = new FileReader();
-        return new Promise<{ image: string | null; name: string | null }>((resolve) => {
-          reader.onloadend = () => {
-            resolve({ image: reader.result as string, name: inputObj?.name });
-          };
-          reader.onerror = () => {
-            resolve({ image: null, name: inputObj?.name });
-          };
-          reader.readAsDataURL(blob);
-        });
-      } catch (err) {
-        return uploadedImg;
-      }
-    });
-
-    Promise.all(processedPreviousUploads).then((imgArray) => {
+    if (lastInputText !== ""){
       setInputTexts(lastInputText as any);
-      setUploadedImg(imgArray);
-    });
+    }
+  }, [lastInputText]);
+
+  useEffect(() => {
+    if((lastUploadedImgs as any).length > 0){
+      const processedPreviousUploads: any = lastUploadedImgs?.map(async (inputObj) => {
+        try {
+          const response = await fetch(inputObj?.image as any);
+          const blob = await response.blob();
+  
+          const reader = new FileReader();
+          return new Promise<{ image: string | null; name: string | null }>((resolve) => {
+            reader.onloadend = () => {
+              resolve({ image: reader.result as string, name: inputObj?.name });
+            };
+            reader.onerror = () => {
+              resolve({ image: null, name: inputObj?.name });
+            };
+            reader.readAsDataURL(blob);
+          });
+        } catch (err) {
+          return uploadedImg;
+        }
+      });
+  
+      Promise.all(processedPreviousUploads).then((imgArray) => {
+        setUploadedImg(imgArray);
+      });
+    }
   }, [lastUploadedImgs]);
 
   const handleImageUpload = (uploadedImages) => {
@@ -108,7 +114,7 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({
 
   return (
     <Box sx={{ p: 2 }} >
-      <Paper sx={{ p:2, margin:"5px" }}>
+      
       <Typography variant="h6" sx={{ color: "#4285F4" }}>Your Story</Typography>
       <TextField
         variant="outlined"
@@ -125,14 +131,11 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({
         }}
         onChange={(e) => { setInputTexts(e.target.value) }}
       />
-      <VoiceToTextButton language="en-US" onTranscribe={(e) => { setInputTexts(e) }} existingTexts={inputTexts||""}/>
-      </Paper>
-      
-      <Paper sx={{ p:2, margin:"5px" }}>
+      <VoiceToTextButton language="en-US" onTranscribe={(e) => { setInputTexts(e) }} existingTexts={inputTexts as any}/>
+    
       <Typography variant="h6" sx={{ color: "#4285F4", pb: 2 }}>Your Photos</Typography>  
       <ImageUploader allowMultiple onImageUpload={handleImageUpload} fetchImages={uploadedImg} />
-      </Paper>
-
+      
       <Button
         variant="contained"
         color="primary"
