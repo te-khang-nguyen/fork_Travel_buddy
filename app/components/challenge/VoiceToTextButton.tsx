@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useReducer } from "react";
 import {
     Box,
     Fab,
@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import StopIcon from '@mui/icons-material/Stop';
+import PulsingFab from "../kits/PulsingFab";
 
 interface VoiceButtonForm {
     language: string;
@@ -22,8 +23,10 @@ const punctuations = {
     " exclamation mark": "!",
     " semicolon": ";",
     " colon": ":",
-    " dash": "-",
+    " dash": "-"
 }
+
+let persistedListening = false;
 
 const VoiceToTextButton: React.FC<VoiceButtonForm> = ({ language, onTranscribe, existingTexts }) => {
     let cummulativeTranscript = existingTexts;
@@ -38,10 +41,10 @@ const VoiceToTextButton: React.FC<VoiceButtonForm> = ({ language, onTranscribe, 
     });
 
     const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
     const [isListening, setIsListening] = useState(false);
 
-    const SpeechRecognition =
-        typeof window !== 'undefined' && (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
         return (<Box>
@@ -51,42 +54,43 @@ const VoiceToTextButton: React.FC<VoiceButtonForm> = ({ language, onTranscribe, 
         </Box>)
     }
 
-    const recognition = new SpeechRecognition();
+    let recognition = new SpeechRecognition();
     recognition.continous = true; // Keep listening until stop event
     recognition.interimResults = false; // Show only the finalized results
     recognition.lang = language; // Set language
 
-    const startListening = () => {
-        setIsListening(true);
-        recognition.start();
-
-        recognition.onresult = (event) => {
-            const rawTranscription = event.results?.[0]?.[0]?.transcript;
-
-            const currentTranscription = rawTranscription.charAt(0).toUpperCase() + rawTranscription.slice(1);
-
-            const punctuatedTranscript = currentTranscription
-                            .replace(/(\s)(comma|period|question mark|exclamation mark|semicolon|colon|dash)/gi, (matched) => {
-                                return punctuations[matched];
-                            });
-
-            cummulativeTranscript += " " + (punctuatedTranscript || currentTranscription);
-
-            cummulativeTranscript = cummulativeTranscript.replace(/[.!?](\s)(\w)/g, s => s.toUpperCase());
-
-            cummulativeTranscript = cummulativeTranscript.replace(/[-,:;](\s)(\w)/g, s => s.toLowerCase());
-
-            onTranscribe(cummulativeTranscript);
+    const listeningEventTrigger = () => {
+        if (persistedListening) {
+            persistedListening = false;
+            setIsListening(false);
+            recognition.stop();
+            recognition = new SpeechRecognition();
+            return;
+        }
+        
+        recognition.onend = () => {
+            if (persistedListening) {
+                recognition.start();
+                setTimeout(() => {
+                    persistedListening = false;
+                    setIsListening(false);
+                    recognition.stop();
+                    recognition = new SpeechRecognition();
+                }, 300000); // Five minute standy after restart for any speech before termination
+                return;
+            }
         };
-
+    
         recognition.onerror = (event) => {
-            console.error('Speech transcription error:', event.error);
+            let timeout;
             if (event.error == "no-speech") {
-                setSnackbar({
-                    open: true,
-                    message: "Do you want to say something?",
-                    severity: "warning"
-                });
+                timeout = setTimeout(() => {
+                    setSnackbar({
+                        open: true,
+                        message: "Do you want to say something?",
+                        severity: "warning"
+                    });
+                }, 180000);
             } else if (event.error == "aborted") {
                 setSnackbar({
                     open: true,
@@ -94,19 +98,32 @@ const VoiceToTextButton: React.FC<VoiceButtonForm> = ({ language, onTranscribe, 
                     severity: "error"
                 });
             }
-
+            clearTimeout(timeout);
+        };
+    
+        recognition.onresult = (event) => {
+            const rawTranscription = event.results?.[0]?.[0]?.transcript;
+    
+            const currentTranscription = rawTranscription.charAt(0).toUpperCase() + rawTranscription.slice(1);
+    
+            const punctuatedTranscript = currentTranscription
+                .replace(/(\s)(comma|period|question mark|exclamation mark|semicolon|colon|dash)/gi, (matched) => {
+                    return punctuations[matched];
+                });    
+    
+            cummulativeTranscript += " " + (punctuatedTranscript || currentTranscription);
+    
+            cummulativeTranscript = cummulativeTranscript.replace(/[.!?](\s)(\w)/g, s => s.toUpperCase());
+    
+            cummulativeTranscript = cummulativeTranscript.replace(/[-,:;](\s)(\w)/g, s => s.toLowerCase());
+    
+            onTranscribe(cummulativeTranscript);
         };
 
-        recognition.onend = () => {
-            setIsListening(false);
-            recognition.stop();
-        };
+        setIsListening(true);
+        persistedListening = true;
+        recognition.start();
 
-    };
-
-    const stopListening = () => {
-        setIsListening(false);
-        recognition.stop();
     };
 
     return (
@@ -114,29 +131,19 @@ const VoiceToTextButton: React.FC<VoiceButtonForm> = ({ language, onTranscribe, 
             sx={{
                 display: 'flex',
                 justifyContent: 'flex-end', // Aligns the button to the right
-                alignItems: 'center', // Aligns the button vertically in the center of the Box
-                margin: '10px',
+                alignItems: 'flex-end', // Aligns the button vertically at the bottom of the Box
             }}
         >
-            {isListening ?
-                <Fab
-                    variant="circular"
-                    size="small"
-                    color="primary"
-                    onClick={stopListening}
-                >
-                    <StopIcon />
-                </Fab> :
-                <Fab
-                    variant="circular"
-                    size="small"
-                    color="primary"
-                    onClick={startListening}
-                >
-                    {<GraphicEqIcon />}
-                </Fab>
-            }
 
+            <PulsingFab
+                variant="circular"
+                size="small"
+                color="primary"
+                onClick={listeningEventTrigger}
+                isPulsing={isListening} 
+            >
+                {isListening ? <StopIcon/> : <GraphicEqIcon />}
+            </PulsingFab>
 
             <Snackbar
                 open={snackbar.open}
@@ -154,7 +161,8 @@ const VoiceToTextButton: React.FC<VoiceButtonForm> = ({ language, onTranscribe, 
             </Snackbar>
         </Box>
     )
-
 };
+
+
 
 export default VoiceToTextButton;

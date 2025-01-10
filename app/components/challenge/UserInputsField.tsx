@@ -7,9 +7,11 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  InputAdornment
 } from "@mui/material";
 import ImageUploader from "../image_picker/ImagePicker";
 import VoiceToTextButton from "./VoiceToTextButton";
+
 
 interface CunstomInputsFieldProps {
   index: number;
@@ -114,8 +116,9 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({
 
   return (
     <Box sx={{ p: 2 }} >
-      
+
       <Typography variant="h6" sx={{ color: "#4285F4" }}>Your Story</Typography>
+        
       <TextField
         variant="outlined"
         fullWidth
@@ -127,12 +130,26 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({
           backgroundColor: "#fff",
           color: "#000",
           borderRadius: 1,
-          mt: 2,
+          mt: 1,
+          mb: 3
         }}
         onChange={(e) => { setInputTexts(e.target.value) }}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment 
+                position="end" 
+                sx={{
+                  mt: 10
+                }}
+              >
+                <VoiceToTextButton language="en-US" onTranscribe={(e) => { setInputTexts(e) }} existingTexts={inputTexts as any}/>
+              </InputAdornment>
+            ),
+          },
+        }}
       />
-      <VoiceToTextButton language="en-US" onTranscribe={(e) => { setInputTexts(e) }} existingTexts={inputTexts as any}/>
-    
+      
       <Typography variant="h6" sx={{ color: "#4285F4", pb: 2 }}>Your Photos</Typography>  
       <ImageUploader allowMultiple onImageUpload={handleImageUpload} fetchImages={uploadedImg} />
       
