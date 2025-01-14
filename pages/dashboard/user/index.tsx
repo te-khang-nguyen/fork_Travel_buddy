@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, CircularProgress, Typography, Card, CardContent, Button } from "@mui/material";
+import { Box, Link, Typography, Card, CardContent, Button } from "@mui/material";
 import FastForwardIcon from "@mui/icons-material/FastForward";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
@@ -178,8 +178,12 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     </Typography>
                     <Typography>Status: {challenge.status}</Typography>
                     <Typography>
-                      Link to Reels:{" "}
-                      {challenge.link || "Your video is being prepared!"}
+                      <Link 
+                        component="button" 
+                        underline="none"
+                        onClick={()=>{router.push(`/challenge/${challenge.id}/story`)}}>
+                        Visit your story
+                      </Link>
                     </Typography>
                     {challenge.status !== "Completed" ?
                       <Typography align="center">

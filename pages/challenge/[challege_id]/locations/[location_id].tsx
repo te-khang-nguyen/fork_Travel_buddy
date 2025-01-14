@@ -17,13 +17,6 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import CustomAccordionList from "@/app/components/challenge/SectionWithCustomStyling";
-import { Roboto } from "next/font/google"
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["300", "400", "500", "700"],
-});
 
 const MainUI = () => {
   const router = useRouter();
@@ -155,11 +148,10 @@ const MainUI = () => {
   }
 
   // Find the specific location based on location_id
-  const challengeLocations1 = locationsData?.data || [];
-  const challengeLocations = locationsData?.data?.[0]?.location_info || [];
+  const challengeLocations = locationsData?.data || [];
 
   // Use loose equality to handle different types
-  const currentLocation = challengeLocations1.find(
+  const currentLocation = challengeLocations.find(
     (location) => location.id == parsedLocationId
   );
 
@@ -187,7 +179,7 @@ const MainUI = () => {
           Location ID: {parsedLocationId}
           <br />
           Available Locations:{" "}
-          {JSON.stringify(challengeLocations1.map((loc) => loc.id))}
+          {JSON.stringify(challengeLocations.map((loc) => loc.id))}
           <br />
           Location ID Type: {typeof parsedLocationId}
         </Typography>
@@ -202,7 +194,6 @@ const MainUI = () => {
       })
     }
   }
-
 
   const accordionItems = [
     {

@@ -7,10 +7,9 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 import { useRouter } from "next/router";
 import QRModal from "./QRModal";
-import { Share } from "@mui/icons-material";
 
 const ChallengeCard = ({ challenge }) => {
   const router = useRouter();
@@ -47,6 +46,7 @@ const ChallengeCard = ({ challenge }) => {
         open={modalOpen}
         onClose={handleCloseModal}
         chanllengeId={challenge.id}
+        backgroundImage={challenge.image}
         displayText={challengeName}
       />
       <Card
@@ -84,12 +84,12 @@ const ChallengeCard = ({ challenge }) => {
           }}
           onClick={() => handleViewQRCode(challenge)}
         >
-          <Share
+          <QrCode2Icon
             sx={{
-              color: "primary.main",
+              color: "rgb(0, 182, 249)",
 
               "&:hover": {
-                color: "red",
+                color: "rgb(246, 101, 101)",
               },
             }}
           />

@@ -7,11 +7,12 @@ type QRModalComponentProps = {
   chanllengeId: string;
   displayText: string;
   locationId?: string;
+  backgroundImage?: string;
   open: boolean;
   onClose: () => void;
 };
 
-const QRModal: React.FC<QRModalComponentProps> = ({displayText,locationId, chanllengeId, open, onClose }) => {
+const QRModal: React.FC<QRModalComponentProps> = ({displayText, locationId, chanllengeId, backgroundImage, open, onClose }) => {
   const [qr, setQr] = useState<string | null>(null);
 
 
@@ -54,7 +55,8 @@ const QRModal: React.FC<QRModalComponentProps> = ({displayText,locationId, chanl
           maxHeight: "90vh",
           alignItems: "center",
           padding: { xs: 2, sm: 4 },
-          backgroundColor: "#f9f9f9",
+          backgroundColor: !backgroundImage? "#f9f9f9":"transparent",
+          backgroundImage: `url("${backgroundImage}")`||'',
           borderRadius: 2,
           boxShadow: 3,
         }}
@@ -65,7 +67,7 @@ const QRModal: React.FC<QRModalComponentProps> = ({displayText,locationId, chanl
           <p>Loading...</p>
         )}
 
-        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", color: "white"}}>
         {displayText}
         </Typography>
       </Box>

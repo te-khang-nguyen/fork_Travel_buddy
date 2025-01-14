@@ -58,12 +58,20 @@ const ChallengeCarousel: React.FC<Props> = ({ challenges, onViewAll }) => {
         <Typography
           variant="h4"
           gutterBottom
-          sx={{ color: "#4a90e2", fontWeight: "bold" }}
+          sx={{ 
+            color: "#4a90e2", 
+            fontWeight: "bold",
+            fontSize: {xs: "h5.fontSize", sm: "h5.fontSize", md: "h4.fontSize", lg: "h4.fontSize"}
+          }}
         >
           Featured Challenges
         </Typography>
         <Button
-          sx={{ color: "#4a90e2", fontWeight: "bold" }}
+          sx={{ 
+            color: "#4a90e2", 
+            fontWeight: "bold",
+            fontSize: "body1"
+          }}
           variant="outlined"
           onClick={onViewAll}
         >
@@ -106,7 +114,7 @@ const ChallengeCarousel: React.FC<Props> = ({ challenges, onViewAll }) => {
             <Box
               key={challenge.id}
               sx={{
-                minWidth: { xs: "35vw", sm: "300px" }, // Adjust card width for mobile and larger screens
+                minWidth: { xs: "65vw", sm: "300px" }, // Adjust card width for mobile and larger screens
                 maxWidth: "100%",
               }}
             >
