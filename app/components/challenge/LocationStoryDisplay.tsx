@@ -97,8 +97,6 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
     const [imageError, setImageError] = useState(false);
     const [imageIndex, setImageIndex] = useState(null);
 
-    console.log(imageIndex);
-
     useEffect(() => {
         if (!open) {
             setImageIndex(null);
@@ -319,7 +317,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
 
                                 }}
                             >
-                                {content.userQuestionSubmission}
+                                {content.story}
                             </Typography>
                         </Box>
                     </Box>
