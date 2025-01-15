@@ -21,13 +21,14 @@ import {
 import CustomButton from "@/app/components/kits/CustomButton";
 import { useRouter } from "next/router";
 import LocationStoryDisplay from "@/app/components/challenge/LocationStoryDisplay";
-import { 
+import {
     useGetChallengeQuery,
     useGetUserSubmissionsQuery,
-    useGetLocationsQuery 
+    useGetLocationsQuery
 } from "@/libs/services/user/challenge";
 import { baseUrl } from "@/app/constant";
 import { Montserrat } from "next/font/google";
+import { generateLocationStories } from "@/libs/services/storyGen";
 
 const montserrat = Montserrat({
     weight: '400',
@@ -40,8 +41,8 @@ const StoryPageUI = () => {
     const router = useRouter();
     const { challege_id } = router.query;
 
-    const {data: challengeData} = useGetChallengeQuery({challengeId: challege_id})
-    const challengeTitle = challengeData? challengeData?.data?.[0].title : "";
+    const { data: challengeData } = useGetChallengeQuery({ challengeId: challege_id })
+    const challengeTitle = challengeData ? challengeData?.data?.[0].title : "";
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -71,30 +72,30 @@ const StoryPageUI = () => {
         data: locationData,
         error: locationError,
         isLoading: isLocationLoading
-      } = useGetLocationsQuery({
+    } = useGetLocationsQuery({
         challengeId: challege_id
-      });
+    });
     const { data: userSubmissionData, isLoading: isUserSubmissionLoading } = useGetUserSubmissionsQuery();
     const historyData1 = isUserSubmissionLoading ? [] : userSubmissionData?.data.filter(
         submission => submission.challengeId === challege_id
     ).flatMap(submission => submission.userChallengeSubmission);
     const historyData2 = historyData1 ? historyData1.map(({ index, ...rest }) => ({
-        id : index,
+        id: index,
         ...rest,
     })) : [];
-    const historyData = isLocationLoading ? [] :historyData2.map(itemB => {
+    const historyData = isLocationLoading ? [] : historyData2.map(itemB => {
         // Find the corresponding item in arrayA based on id
         const matchingItemA = locationData?.data.find(itemA => itemA.id === itemB.locationId);
-        
+
         // Merge the "name" from arrayA into arrayB's item
         return {
-          ...itemB,
-          title: matchingItemA ? matchingItemA.title : null // Handle cases where no match is found
+            ...itemB,
+            title: matchingItemA ? matchingItemA.title : null // Handle cases where no match is found
         };
-      });
-    
+    });
+
     const [isGenerating, setIsGenerating] = useState(true);
-    const [story, setStory] = useState([{"locationId": "", "story": ""}]);
+    const [story, setStory] = useState([{ locationId: "", story: "" }]);
     const hasGeneratedRef = useRef(false);
     useEffect(() => {
         if (historyData2.length > 0 && locationIndex === null) {
@@ -107,19 +108,21 @@ const StoryPageUI = () => {
                 hasGeneratedRef.current = true;
 
                 try {
-                const response = await fetch('/api/python/generating-location-story', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ notes: historyData }),
-                });
+                    const tourSchedule = `
+                Hanoi Vespa Food Tour Itinerary
+                8:30 AM: Hotel pick-up. Your guide arrives on a vintage Vespa to start your culinary journey through Hanoi’s vibrant streets. Brief introduction and safety instructions before departing.
+                9:00 AM: Pho Ba Muoi on Hang Bai Street. There will be Pho Bo (beef pho) and Pho Ga (chicken pho). Pho Ga will is light-hearted, while Pho Bo is more savory. Guests can enjoy the hot bowl of pho, drink one cup of tea, and soak in the morning atmosphere of Hanoi.
+                10:30 AM: Bun Cha Huong Lien. Famed for being Obama's lunch spot with Anthony Bourdain when he visited Hanoi for a business trip. Relish a plate of Hanoi's iconic Bun Cha with grilled pork patties, fresh vermicelli, and dipping sauce at a family-run restaurant.
+                12:00 PM: Hotel drop-off. Return safely to your hotel with a heart full of memories and a belly full of Hanoi's finest flavors.
+                `
 
-                if (!response.ok) {
-                    throw new Error('Story generation failed');
-                }
-
-                const data = await response.json();
-                setStory(data);
-                setIsGenerating(false);
+                    const response = await generateLocationStories(tourSchedule, historyData);
+                    const cleanedOutput = response
+                        .replace(/^```json\s*/, '')  // Remove leading ```json
+                        .replace(/```\s*$/, '')      // Remove trailing ```
+                        .trim();
+                    setStory(cleanedOutput);
+                    setIsGenerating(false);
                 } catch (error) {
                     console.error('Error generating story:', error);
                     setIsGenerating(false);
@@ -130,17 +133,19 @@ const StoryPageUI = () => {
         }
     }, [historyData2, historyData, locationIndex, isGenerating]);
 
-    const historyDataFinal = isGenerating ? [] :historyData.map(itemB => {
+    const historyDataFinal = isGenerating ? [] : historyData.map(itemB => {
         // Find the corresponding item in arrayA based on id
-        const matchingItemA = story.find(itemA => itemA.locationId === itemB.locationId);
-        
+        const storyArray = JSON.parse(story as any);
+
+        const matchingItemA = storyArray?.find(itemA => itemA.locationId === itemB.locationId);
+
         // Merge the "name" from arrayA into arrayB's item
         return {
-          ...itemB,
-          story: matchingItemA ? matchingItemA.story : null // Handle cases where no match is found
+            ...itemB,
+            story: matchingItemA ? matchingItemA.story : null // Handle cases where no match is found
         };
-      });
-    
+    });
+
     return (
         <Box
             sx={{
@@ -173,7 +178,7 @@ const StoryPageUI = () => {
                         color: "black",
                         textAlign: "center"
                     }}>
-                    {`Your ${challengeTitle||'Travel'} Diaries`}
+                    {`Your ${challengeTitle || 'Travel'} Diaries`}
                 </Typography>
             </Box>
 
@@ -212,7 +217,7 @@ const StoryPageUI = () => {
             ) : historyDataFinal.length === 0 ? (
                 <Typography>No submissions found for this challenge.</Typography>
             ) : (
-                <LocationStoryDisplay 
+                <LocationStoryDisplay
                     content={historyDataFinal.find(item => item.locationId === locationIndex)}
                     open={isOpen}
                     onClose={() => { setIsOpen(false) }}
@@ -247,7 +252,7 @@ const StoryPageUI = () => {
                 open={open}
                 onClose={handleClose}
                 sx={{
-                    
+
                     justifyContent: "center",
                     alignItems: "center",
                 }}
@@ -256,39 +261,39 @@ const StoryPageUI = () => {
                 }}
                 slotProps={{
                     paper: {
-                      elevation: 0,
-                      sx: {
-                        borderRadius: 7,
-                        overflow: 'visible',
-                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                        backgroundColor: "rgb(255, 255, 255)",
-                        ml: 1.6,
-                        mt: 1.5,
-                        '& .MuiAvatar-root': {
-                          width: 32,
-                          height: 32,
-                          ml: -0.5,
-                          mr: 1,
+                        elevation: 0,
+                        sx: {
+                            borderRadius: 7,
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            backgroundColor: "rgb(255, 255, 255)",
+                            ml: 1.6,
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1,
+                            },
+                            '&::before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                left: "43%",
+                                width: 10,
+                                height: 10,
+                                bgcolor: "rgb(255, 255, 255)",
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0,
+                            },
                         },
-                        '&::before': {
-                          content: '""',
-                          display: 'block',
-                          position: 'absolute',
-                          top: 0,
-                          left: "43%",
-                          width: 10,
-                          height: 10,
-                          bgcolor: "rgb(255, 255, 255)",
-                          transform: 'translateY(-50%) rotate(45deg)',
-                          zIndex: 0,
-                        },
-                      },
                     },
-                  }}
-                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem sx={{borderRadius: 100}}>
+                <MenuItem sx={{ borderRadius: 100 }}>
                     <FacebookShareButton
                         url={`${baseUrl + router.asPath}`}
                         quote={`My amazing blog for the ${challengeTitle} trip.`}
@@ -297,8 +302,8 @@ const StoryPageUI = () => {
                         <FacebookIcon size={32} round />
                     </FacebookShareButton>
                 </MenuItem>
-                <MenuItem sx={{borderRadius: 100}}>
-                    <TwitterShareButton 
+                <MenuItem sx={{ borderRadius: 100 }}>
+                    <TwitterShareButton
                         url={`${baseUrl + router.asPath}`}
                         title={`My amazing blog for the ${challengeTitle} trip.`}
                     >
