@@ -18,13 +18,15 @@ async function generateLocationStories(
     Tour Notes: ${transformedData}
     
     Tour Notes Format:
-    Tour Notes is provided as a list of strings. Each string corresponds to a single location and is formatted as:
+    Tour Notes is provided as a Python list of strings. Each string corresponds to a single location and is formatted as:
     location_id;location_name;location_notes
+    Each location string is separated by a comma.
     Example:
     [
         "8bdcbfb6-9b0e-4ca6-92b4-2a3061bbf6ea;Cho Ben Thanh;Ben Thanh photos",
         "d41d8cd9-8f00-3204-a980-98ef41c8e308;Notre Dame Cathedral;Visited the iconic church"
     ]
+    This example has two locations.
     
     location_id: A unique identifier for the location (usually a UUID format).
     location_name: The name of the location (plain text).
@@ -43,15 +45,13 @@ async function generateLocationStories(
     Return the result as a JSON list, where each item is a dictionary with:
     - "locationId": The location_id from the "Tour Notes."
     - "story": A ${storyLength}-word creative story for the corresponding location.
-    This output can have ONLY ONE item if the tour notes only has one location.
+    This output should have the same length as the number of the locations. Note that it can have ONE item if the tour notes only has one location.
     
-    Return exactly this:
+    The format should be like this:
     [
         {"locationId": 1, "story": "Exploring Hanoi's Old Quarter was a feast for the senses..."},
         {"locationId": 2, "story": "A peaceful afternoon in Halong Bay began with a gentle..."}
     ]
-    
-    No yapping.
     `.trim();
   try {
     const messages = [

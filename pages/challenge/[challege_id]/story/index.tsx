@@ -43,6 +43,7 @@ const StoryPageUI = () => {
 
     const { data: challengeData } = useGetChallengeQuery({ challengeId: challege_id })
     const challengeTitle = challengeData ? challengeData?.data?.[0].title : "";
+    const tourSchedule = challengeData ? challengeData?.data?.[0].tourSchedule : "";
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -131,7 +132,7 @@ const StoryPageUI = () => {
 
             generateStory();
         }
-    }, [historyData2, historyData, locationIndex, isGenerating]);
+    }, [historyData2, historyData, locationIndex, isGenerating, tourSchedule]);
 
     const historyDataFinal = isGenerating ? [] : historyData.map(itemB => {
         // Find the corresponding item in arrayA based on id
