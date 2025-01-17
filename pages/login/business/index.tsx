@@ -2,7 +2,6 @@ import React from "react";
 import { Box, TextField, Button, Typography, Alert, Snackbar } from "@mui/material";
 import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/business/auth";
-  import { setCookie } from 'cookies-next';
   import { useGlobalContext } from "@/app/GlobalContextProvider";
 
 function AdminLogin() {
@@ -28,7 +27,7 @@ function AdminLogin() {
       setSnackbarOpen(true);
     } else {
       setRole("business");
-      setCookie('role', 'business');
+      localStorage.setItem('role', 'business');
       router.push("/dashboard/business");
     }
   };

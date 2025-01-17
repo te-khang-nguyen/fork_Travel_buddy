@@ -168,10 +168,10 @@ const uploadToStorage = async (inputobj) => {
   } = await supabase.auth.getUser();
 
   const hash = crypto.randomBytes(16).toString("hex");
-  let fileName = `${inputobj.title.replace(/\s+/g, "")}_${hash}.jpg`;
+  const fileName = `${inputobj.title.replace(/\s+/g, "")}_${hash}.jpg`;
   const storageRef = `${user!.id}/${inputobj.title}/${fileName}`;
 
-  let uploadTask = await supabase.storage
+  const uploadTask = await supabase.storage
     .from(inputobj.bucket)
     .upload(storageRef, inputobj.data, {
       cacheControl: "3600",

@@ -120,7 +120,7 @@ const MainUI = () => {
     setIsConfirmClicked(true);
     const result = await uploadInputs({
       challengeId: challenge_id,
-      userLocationSubmission: [{ locationId: location_id, ...userInputs }],
+      userLocationSubmission: [{ locationId: location_id, ...userInputs }]
     });
 
     if (result.error) {
@@ -186,7 +186,7 @@ const MainUI = () => {
       </Box>
     );
   } else {
-    const matchedLocationSubmission = history?.[0].userChallengeSubmission?.filter((e) => e.locationId == currentLocation?.id);
+    const matchedLocationSubmission = history?.data?.[0]?.userChallengeSubmission?.filter((e) => e.locationId == currentLocation?.id);
     lastUserInputs = {
       lastUploadedTexts: matchedLocationSubmission?.[0]?.userQuestionSubmission,
       lastUploadedImgs: matchedLocationSubmission?.[0]?.userMediaSubmission?.map((img, index) => {
@@ -330,7 +330,7 @@ const MainUI = () => {
             <Box
               sx={{
                 position: "relative",
-                width: "50%",
+                width: {xs:"80%", sm:"70%", md:"50%", lg:"50%"},
                 height: "100%",
                 maxWidth: "400px",
               }}

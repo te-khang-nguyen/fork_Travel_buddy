@@ -18,9 +18,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
-import { useGlobalContext } from "../GlobalContextProvider";
 import { useLogOutMutation } from "@/libs/services/user/auth";
-import { getCookie, setCookie } from "cookies-next";
 
 const drawerWidth = 240;
 const Search = styled("div")(({ theme }) => ({
@@ -66,7 +64,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
 }) => {
   const [logout] = useLogOutMutation();
 
-  const role = getCookie('role');
+  const role = typeof window !== 'undefined' ? localStorage.getItem('role') : null
 
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const router = useRouter();
@@ -125,7 +123,8 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
               // this is so not recommened, enhance later
               if (item.text == "Logout") {
                 logout();
-                setCookie("role", "");
+                localStorage.setItem("jwt", "");
+                localStorage.setItem("role", "");
               }
               router.push(item.route);
               setDrawerOpen(false);

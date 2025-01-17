@@ -7,9 +7,7 @@ import DrawerLayout from "@/app/Layout/SideBarWrapper";
 import { ThemeProvider } from "@mui/material";
 import theme from "@/app/theme";
 import { GlobalContextProvider } from "@/app/GlobalContextProvider";
-import { supabase } from "@/libs/supabase/supabase_client";
-import { useEffect } from "react";
-import { getCookie } from "cookies-next";
+import withAuthRedirect from "@/app/Layout/WithAuthRedirect";
 
 const NO_DRAWER_BUTTON_PAGES = [
   "/recovery",
@@ -20,26 +18,6 @@ const NO_DRAWER_BUTTON_PAGES = [
 
 const MainContent = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
-  useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-
-      const publicPaths = ["/", "/login/business", "/register"]; // Define public paths
-
-      const role = getCookie("role");
-
-      if (!user && !publicPaths.includes(router.pathname)) {
-        await router.replace("/");
-      } else if (user && role && publicPaths.includes(router.pathname)) {
-        await router.replace("/dashboard/user");
-      }
-    };
-
-    checkUser();
-  }, [router.pathname]);
 
   const showDrawerButton = !NO_DRAWER_BUTTON_PAGES.includes(router.pathname);
 
@@ -56,6 +34,9 @@ const MainContent = ({ Component, pageProps }: AppProps) => {
   );
 };
 
+// Wrap the MainContent component with withAuthRedirect HOC
+const MainContentWithAuth = withAuthRedirect(MainContent);
+
 export default function App(props: AppProps) {
-  return <MainContent {...props} />;
+  return <MainContentWithAuth {...props} />;
 }

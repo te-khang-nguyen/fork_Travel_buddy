@@ -22,9 +22,9 @@ const ImageUploader: React.FC<ImageUploaderProps> =
       Array<{ image: string | null; name: string | null }>
     >([]);
 
-    useEffect(()=>{
+    useEffect(() => {
       setSelectedImages(fetchImages);
-    },[fetchImages]);
+    }, [fetchImages]);
 
     const [imageError, setImageError] = useState(false);
 
@@ -73,7 +73,7 @@ const ImageUploader: React.FC<ImageUploaderProps> =
                 color: "white",
                 textTransform: "none",
                 padding: "8px 16px",
-                fontSize: {xs:"12px", sm: "14px"},
+                fontSize: { xs: "12px", sm: "14px" },
                 borderRadius: "4px",
                 "&:hover": {
                   backgroundColor: "#357ae8",
@@ -130,22 +130,25 @@ const ImageUploader: React.FC<ImageUploaderProps> =
                     objectFit: "cover",
                   }}
                 />
-                <IconButton
-                  onClick={() => handleRemoveImage(index)}
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    color: "white",
-                    padding: "4px",
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 0, 0, 0.8)",
-                    },
-                  }}
-                >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
+
+                {!allowAddNew ?
+                  <Typography></Typography> :
+                  <IconButton
+                    onClick={() => handleRemoveImage(index)}
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      color: "white",
+                      padding: "4px",
+                      "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                      },
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>}
               </Box>
             ))}
           </Box>

@@ -1,5 +1,5 @@
-import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import { supabase } from "../../supabase/supabase_client";
+import { baseQuery } from "@/libs/supabase/baseQuery";
+import { createApi } from "@reduxjs/toolkit/query/react";
 
 interface AuthReq {
   firstName?: string;
@@ -14,120 +14,64 @@ interface AuthRes {
   error?: string;
 }
 
-import { Provider } from "@supabase/supabase-js";
-import { baseUrl } from "@/app/constant";
-
-const handleOAuthSignIn = async (provider: Provider) => {
-  const { data: authData, error: authError } =
-    await supabase.auth.signInWithOAuth({ provider,options:{redirectTo:`${baseUrl}/auth/callbackv1`} });
-
-  if (authError) {
-    return { error: authError.message };
-  }
-
-  return { data: authData };
-};
-
 const UserAuthApi = createApi({
   reducerPath: "userauth",
-  baseQuery: fakeBaseQuery(),
+  baseQuery, // Use the reusable baseQuery
   endpoints: (builder) => ({
     signUpWithGoogle: builder.mutation<any, void>({
-      queryFn: () => handleOAuthSignIn("google"),
+      query: () => ({
+        url: "/auth/oauth",
+        method: "POST",
+        body: { provider: "google" },
+      }),
     }),
 
+    fetchUserAfterOAuth: builder.query({
+      query: ({ accessToken, refreshToken }) => ({
+        url: `/auth/callback`,
+        params: { access_token: accessToken, refresh_token: refreshToken },
+      }),
+    }),
     signUpWithFacebook: builder.mutation<any, void>({
-      queryFn: () => handleOAuthSignIn("facebook"),
+      query: () => ({
+        url: "/auth/oauth",
+        method: "POST",
+        body: { provider: "facebook" },
+      }),
     }),
 
     signUp: builder.mutation<AuthRes, AuthReq>({
-      queryFn: async ({ firstName, lastName, email, phone, password }) => {
-        if (!email || !password)
-          return { error: "Email and password are required!" };
-
-        try {
-          const { error: authError } = await supabase.auth.signUp({
-            email,
-            password,
-          });
-          if (authError) return { error: authError.message };
-
-          const userProfile =
-            firstName !== lastName
-              ? {
-                  email,
-                  username: `${firstName}${lastName}`,
-                  firstname: firstName,
-                  lastname: lastName,
-                  phone,
-                }
-              : {
-                  email,
-                  businessname: firstName || lastName || "",
-                  phone: phone || "",
-                };
-
-          const { error: profileError } = await supabase
-            .from("userprofiles")
-            .insert(userProfile);
-          if (profileError) return { error: profileError.message };
-
-          await supabase.auth.signOut();
-          return { data: { message: "User created successfully!" } };
-        } catch (err: any) {
-          return { error: err.message || "An unknown error occurred." };
-        }
-      },
+      query: (body) => ({
+        url: "/auth/sign-up",
+        method: "POST",
+        body,
+      }),
     }),
 
     logIn: builder.mutation<AuthRes, AuthReq>({
-      queryFn: async ({ email, password }) => {
-        if (!email || !password)
-          return { error: "Email and password are required!" };
-
-        try {
-          const { error: authError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          if (authError) return { error: authError.message };
-
-          return { data: { message: "Congrats! You are signed in!" } };
-        } catch (err: any) {
-          return {
-            error: err.message || "Login failed due to an unknown error.",
-          };
-        }
-      },
+      query: (body) => ({
+        url: "/auth/login",
+        method: "POST",
+        body,
+      }),
     }),
 
     logOut: builder.mutation<AuthRes, void>({
-      queryFn: async () => {
-        try {
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-          if (!user) return { error: "No user currently signed in!" };
-
-          const { error } = await supabase.auth.signOut();
-          if (error) return { error: error.message };
-
-          return { data: { message: "User is signed out successfully!" } };
-        } catch (err: any) {
-          return {
-            error: err.message || "An unknown error occurred during sign out.",
-          };
-        }
-      },
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
     }),
   }),
 });
 
 export const {
+  useFetchUserAfterOAuthQuery,
   useSignUpMutation,
   useLogInMutation,
   useLogOutMutation,
   useSignUpWithFacebookMutation,
   useSignUpWithGoogleMutation,
 } = UserAuthApi;
+
 export { UserAuthApi };

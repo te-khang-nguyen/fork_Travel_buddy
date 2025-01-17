@@ -18,10 +18,9 @@ import {
   useSignUpWithGoogleMutation,
 } from "@/libs/services/user/auth";
 import { useGlobalContext } from "@/app/GlobalContextProvider";
-import { setCookie } from "cookies-next";
 
 function Login() {
-  const { setRole } = useGlobalContext();
+  const { setRole, setUserId } = useGlobalContext();
   const router = useRouter();
   const [logIn] = useLogInMutation();
   const [logInWithGG] = useSignUpWithGoogleMutation();
@@ -39,38 +38,34 @@ function Login() {
     const result = await logIn({ email, password });
 
     if (result.error) {
-      setSnackbarMessage((result.error as string) || "Login failed");
+      setSnackbarMessage("Login failed");
       setSnackbarOpen(true);
+      return;
     } else {
+      const accessToken = (result.data as any).access_token;
+      const userId = (result.data as any).userId;
       setRole("user");
-      setCookie("role", "user");
+      localStorage.setItem("role", "user");
+      localStorage.setItem("jwt", accessToken);
+      setUserId(userId);
       router.push("/dashboard/user");
     }
   };
 
   const handleLoginWithGoogle = async () => {
     const result = await logInWithGG().unwrap();
-      if (result.error) {
-        setSnackbarMessage((result.error as string) || "Login failed");
-        setSnackbarOpen(true);
-      } else {
-        setRole("user");
-        setCookie("role", "user");
-        router.push("/dashboard/user");
-      }
+    const {
+      data: { url },
+    } = result;
+    router.push(url);
   };
 
   const handleLoginWithFacebook = async () => {
     const result = await logInWithFB().unwrap();
-
-    if (result.error) {
-      setSnackbarMessage((result.error as string) || "Login failed");
-      setSnackbarOpen(true);
-    } else {
-      setRole("user");
-      setCookie("role", "user");
-      router.push("/dashboard/user");
-    }
+    const {
+      data: { url },
+    } = result;
+    router.push(url);
   };
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);

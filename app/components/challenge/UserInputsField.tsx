@@ -80,15 +80,15 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({
         setUploadedImg(imgArray);
       });
     }
-  }, [lastUploadedImgs]);
+  }, [(lastUploadedImgs as any).length]) ;
 
   const handleImageUpload = (uploadedImages) => {
     setUploadedImg(uploadedImages);
   };
 
   const handleConfirm = () => {
-    if (!uploadedImg || inputTexts == "") {
-      if (!uploadedImg && inputTexts == "") {
+    if ((!uploadedImg || uploadedImg.length == 0) || inputTexts == "") {
+      if ((!uploadedImg || uploadedImg.length == 0) && inputTexts == "") {
         setSnackbar({
           open: true,
           message: "Please share with us your experience! Your story will be amazing with two or more sentences and at least one image!",
@@ -97,7 +97,7 @@ const CunstomInputsField: React.FC<CunstomInputsFieldProps> = ({
       } else {
         setSnackbar({
           open: true,
-          message: !uploadedImg ? "Please share at least one image!" : "Please share with us some notes!",
+          message: !uploadedImg || uploadedImg.length == 0 ? "Please share at least one image!" : "Please share with us some notes!",
           severity: "warning"
         });
       }

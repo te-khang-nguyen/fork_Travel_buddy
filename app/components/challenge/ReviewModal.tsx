@@ -28,10 +28,9 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
 }) => {
   const router = useRouter();
   const { challege_id } = router.query;
-  
 
   const {
-    data: history = [],
+    data: history,
     error: historyError,
     refetch: historyRefetch
   } = useGetProgressQuery({
@@ -44,7 +43,6 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
   } = useGetLocationsQuery({
     challengeId: challege_id
   });
-
 
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -62,7 +60,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
   let historyData;
 
   if (locationData && history) {
-    fetchImages = history?.[0]?.userChallengeSubmission?.map((submission, index) => {
+    fetchImages = history?.data?.[0]?.userChallengeSubmission?.map((submission, index) => {
       const matchedLocation = locationData?.data.filter(e => e.id == submission.locationId)[0];
       return submission.userMediaSubmission?.map((img) => {
         return { image: img, name: `Image for ${!matchedLocation ? `Location ${index + 1}` : matchedLocation?.title}` };
@@ -70,7 +68,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
 
     });
 
-    const userSubmission = history?.[0]?.userChallengeSubmission?.map((submission) => {
+    const userSubmission = history?.data?.[0]?.userChallengeSubmission?.map((submission) => {
       const matchedLocation = locationData?.data.filter(e => e.id == submission.locationId)[0];
       return { title: matchedLocation?.title, ...submission };
     });
@@ -135,7 +133,7 @@ const ReviewNotesComponent: React.FC<ReviewNotesComponentProps> = ({
         <Typography
           variant="h4"
           gutterBottom
-          sx={{ mt: 2,color: "#1976d2", }}
+          sx={{ mt: 2, color: "#1976d2", }}
         >
           Review your notes
         </Typography>

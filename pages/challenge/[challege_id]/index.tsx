@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Card,
@@ -16,8 +16,7 @@ import LoadingSkeleton from '@/app/components/kits/LoadingSkeleton';
 import {
   useGetChallengeQuery,
   useGetLocationsQuery,
-  useGetProgressQuery,
-  useJoinChallengeMutation
+  useGetProgressQuery
 } from "@/libs/services/user/challenge";
 import { useRouter } from 'next/router';
 import ReviewModal from "@/app/components/challenge/ReviewModal";
@@ -57,7 +56,6 @@ function JoinChallenge() {
     }
   }, [router.isReady, router.query]);
   // Mutation and state hooks
-  const [joinChallenge, { }] = useJoinChallengeMutation();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   // Queries with skip option
@@ -114,7 +112,7 @@ function JoinChallenge() {
 
   if (locationsData && history) {
     const userSubmission = challengeLocations?.map((location) => {
-      const matchedLocation = history?.[0]?.userChallengeSubmission?.filter(e => e.locationId == location.id)[0];
+      const matchedLocation = history?.data?.[0]?.userChallengeSubmission?.filter(e => e.locationId == location.id)[0];
       return { status: !matchedLocation ? false : true, ...location };
     });
     challengeLocations = userSubmission;

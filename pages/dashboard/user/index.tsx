@@ -20,7 +20,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   activeChallenges,
 }) => {
   const router = useRouter();
-
   const {
     data: challengeRef,
     error: challengeError,
@@ -52,8 +51,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   }
 
   if (historyRef?.data) {
-    activeChallenges = historyRef?.data.map((item) => {
-      const matchedChallenge = challengeRef?.data.filter(e => e.id == item.challengeId)[0];
+    activeChallenges = historyRef?.data?.map((item) => {
+      const matchedChallenge = challengeRef?.data?.filter(e => e.id == item.challengeId)[0];
       return {
         id: item.challengeId,
         name: matchedChallenge?.title,
@@ -130,7 +129,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     Participated
                   </Typography>
                   <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                    {totalChallenges}
+                    {totalChallenges || 0}
                   </Typography>
                 </CardContent>
               </Card>
@@ -148,7 +147,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     Completed
                   </Typography>
                   <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                    {completedChallenges}
+                    {completedChallenges || 0}
                   </Typography>
                 </CardContent>
               </Card>
@@ -158,8 +157,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
               Active Challenges
             </Typography>
             {!activeChallenges ?
-              <Typography>
-                {"Welcome traveler! Let's craft your first memory together!"}
+              <Typography variant="h6">
+                {"Welcome traveler!\n Let's craft your first memory together!"}
               </Typography> :
               activeChallenges.length > 0 ? (
                 activeChallenges.map((challenge, index) => (
