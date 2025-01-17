@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import isAuthenticated from "@/libs/services/authorization";
 
 const PUBLIC_ROUTES = ["/", "/register", "/login/business", "/recovery", "/auth/callbackv1"];
 
@@ -13,6 +14,7 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
         try {
           const jwt = localStorage.getItem("jwt") || "";
           const role = localStorage.getItem("role") || "";
+          const isValidJwt = await isAuthenticated(jwt);
 
           // Redirect to role-based dashboard if on root path with valid JWT and role
           if (router.pathname === "/" && jwt && role) {
@@ -27,7 +29,7 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           }
 
           // Redirect to login if no JWT
-          if (!jwt) {
+          if (!jwt || !isValidJwt) {
             await router.replace("/");
             return;
           }

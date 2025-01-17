@@ -111,15 +111,14 @@ function JoinChallenge() {
 
 
   if (locationsData && history) {
-    const userSubmission = challengeLocations?.map((location) => {
+    const locationsWithUserSubmission = challengeLocations?.map((location) => {
       const matchedLocation = history?.data?.[0]?.userChallengeSubmission?.filter(e => e.locationId == location.id)[0];
       return { status: !matchedLocation ? false : true, ...location };
     });
-    challengeLocations = userSubmission;
+    challengeLocations = locationsWithUserSubmission.sort((a,b)=> (Date.parse(a?.created)) - (Date.parse(b?.created)));
   }
 
   // Handle functions
-
   const handleSubmit = () => {
     // Open the ReviewModal
     setIsReviewModalOpen(true);

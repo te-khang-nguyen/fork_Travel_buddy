@@ -341,9 +341,11 @@ const MainUI = () => {
             <Box
               sx={{
                 position: "relative",
-                width: {xs:"80%", sm:"70%", md:"50%", lg:"50%"},
+                width: {xs:"80%", sm:"70%", md:"60%", lg:"60%"},
                 height: "100%",
                 maxWidth: "400px",
+                mt: 2,
+                mb: 2
               }}
             >
               <Image

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Link, Typography, Card, CardContent, Button } from "@mui/material";
 import FastForwardIcon from "@mui/icons-material/FastForward";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
@@ -20,6 +20,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   activeChallenges,
 }) => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
   const {
     data: challengeRef,
     error: challengeError,
@@ -31,10 +33,15 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     isLoading: isHistoryLoading
   } = useGetUserSubmissionsQuery();
 
+  useEffect(() => {
+      setIsLoading(isChallengeLoading || isHistoryLoading);
+    }, [isChallengeLoading, isHistoryLoading]);
+  
+
   // If still loading, show loading state
-  if (isChallengeLoading || isHistoryLoading) {
+  if (isLoading) {
     return (
-      <LoadingSkeleton isLoading={true} />
+      <LoadingSkeleton isLoading={isLoading} />
     );
   }
 
