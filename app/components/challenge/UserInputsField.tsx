@@ -229,4 +229,5 @@ const CunstomInputsField = forwardRef<
   );
 });
 
+CunstomInputsField.displayName = "CunstomInputsField";
 export default CunstomInputsField;

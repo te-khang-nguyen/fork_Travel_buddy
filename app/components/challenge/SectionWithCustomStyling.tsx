@@ -37,7 +37,9 @@ const CustomAccordionList = forwardRef<unknown, CustomAccordionListProps>(
     ref
   ) => {
     const handleInputsUpload = async (userInputs) => {
-      onInputsUpload && onInputsUpload(userInputs);
+      if (onInputsUpload) {
+        onInputsUpload(userInputs);
+      }
     };
 
     const defaultSx = {
@@ -88,5 +90,5 @@ const CustomAccordionList = forwardRef<unknown, CustomAccordionListProps>(
     );
   }
 );
-
+CustomAccordionList.displayName = "CustomAccordionList";
 export default CustomAccordionList;
