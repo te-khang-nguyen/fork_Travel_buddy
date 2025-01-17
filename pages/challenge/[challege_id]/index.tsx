@@ -386,8 +386,10 @@ function JoinChallenge() {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'center',
-            mt: 4
+            flexDirection:'column',
+            alignItems: 'center',
+            mt: 4,
+            gap:4,
           }}
         >
           <Button
@@ -406,6 +408,24 @@ function JoinChallenge() {
             }}
           >
             Submit
+          </Button>
+
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={()=> {router.push(`/challenge/${challenge_id}/locations`)}}
+            sx={{
+              width: '200px',
+              py: 1.5,
+              fontSize: '1rem',
+              backgroundColor: '#228B22', // Forest Green
+              '&:hover': {
+                backgroundColor: '#1D6F1D' // Slightly darker green on hover
+              }
+            }}
+          >
+            All in one submit
           </Button>
         </Box>
 

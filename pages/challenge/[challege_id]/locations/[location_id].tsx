@@ -79,14 +79,13 @@ const MainUI = () => {
     }
   );
 
-  const {
-    data: history,
-    error: historyError
-  } = useGetProgressQuery({
-    challengeId: challenge_id
-  }, {
-    skip: !challenge_id,
-  }
+  const { data: history, error: historyError } = useGetProgressQuery(
+    {
+      challengeId: challenge_id,
+    },
+    {
+      skip: !challenge_id,
+    }
   );
 
   // Update loading state based on locations query
@@ -138,28 +137,35 @@ const MainUI = () => {
           "Great sharings!\nThis chapter will be wonderful!\nLet's keep exploring while we craft your story!",
         severity: "success",
       });
-      router.prefetch(`/challenge/${challege_id}`);
+      setTimeout(() => {
+        if (currentLocationIdx !== locationIds.length - 1) {
+          window.location.href = `/challenge/${challege_id}/locations/${
+            locationIds[currentLocationIdx + 1]
+          }`; // Temporary - as currently it not scrolling to top
+        } else {
+          router.push(`/challenge/${challege_id}`);
+        }
+      }, 1000); // Adjust the timeout duration as needed
     }
   };
 
-  // Handle switch page after successful submission snackbar is closed.
-  if (!snackbar.open && snackbar.message !== "" && snackbar.severity == "success") {
-    router.push(`/challenge/${challege_id}`);
-  }
-
   // Find the specific location based on location_id
   const challengeLocations = locationsData?.data || [];
+
+  const locationIds = challengeLocations.map((location) => location.id);
 
   // Use loose equality to handle different types
   const currentLocation = challengeLocations.find(
     (location) => location.id == parsedLocationId
   );
 
+  const currentLocationIdx =
+    locationIds &&
+    locationIds.findIndex((location) => location == currentLocation.id);
+
   // If still loading, show loading state
   if (isLoading) {
-    return (
-      <LoadingSkeleton isLoading={isLoading} />
-    );
+    return <LoadingSkeleton isLoading={isLoading} />;
   }
 
   // If no challenge or locations, show appropriate message
@@ -189,10 +195,16 @@ const MainUI = () => {
     const matchedLocationSubmission = history?.data?.[0]?.userChallengeSubmission?.filter((e) => e.locationId == currentLocation?.id);
     lastUserInputs = {
       lastUploadedTexts: matchedLocationSubmission?.[0]?.userQuestionSubmission,
-      lastUploadedImgs: matchedLocationSubmission?.[0]?.userMediaSubmission?.map((img, index) => {
-        return { image: img, name: `Image ${index} for ${currentLocation?.title}` };
-      })
-    }
+      lastUploadedImgs:
+        matchedLocationSubmission?.[0]?.userMediaSubmission?.map(
+          (img, index) => {
+            return {
+              image: img,
+              name: `Image ${index} for ${currentLocation?.title}`,
+            };
+          }
+        ),
+    };
   }
 
   const accordionItems = [
@@ -200,10 +212,9 @@ const MainUI = () => {
       header: "Write your own story",
       content:
         "Please add some notes about what you found, how you felt, and upload some photos! The more the merrier!",
-      lastUploads: lastUserInputs
+      lastUploads: lastUserInputs,
     },
   ];
-
 
   const instructionSections = currentLocation.location_info || [
     {
@@ -236,8 +247,8 @@ const MainUI = () => {
         justifyContent: "center",
         alignItems: "flex-start", // Changed from center to flex-start
         width: "100%",
-        minHeight: "100vh", // Use minHeight instead of height
-        height: "100%", // Allow content to determine height
+
+        minHeight: "100%",
         py: 2, // Vertical padding
         px: { xs: 1, sm: 2, md: 4 }, // Responsive horizontal padding
         boxSizing: "border-box", // Ensure padding is included in width calculation
