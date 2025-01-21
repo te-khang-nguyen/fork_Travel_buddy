@@ -33,18 +33,6 @@ const wiggle = keyframes`
   }
 `;
 
-// Styled cable
-const Cable = styled('div')(({ theme }) => ({
-    position: 'absolute',
-    top: '10%',
-    left: 50,
-    width: '4px',
-    height: '100%',
-    background: 'linear-gradient(to right, #000, #333, #000)', // Cable appearance
-    transform: 'translateY(-10%)',
-    zIndex: 0,
-}));
-
 // Styled card with tilt and hole
 const StyledCard = styled(Card)(({ theme }) => ({
     position: 'relative',
@@ -90,8 +78,6 @@ interface LocationStoryProps {
 const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onClose }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
-
-    
 
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [imageError, setImageError] = useState(false);
@@ -323,8 +309,8 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
                     </Box>
                     <WoodenCircle
                         sx={{
-                            width: { xs: "100%", sm: "30%", md: "25%", lg: "25%" },
-                            height: { xs: "3%", sm: "3%", md: "7%", lg: "7%" },
+                            width: { xs: "100%", sm: "30%", md: "25%", lg: "20%" },
+                            height: { xs: "3%", sm: "5%", md: "7%", lg: "10%" },
                         }}
                     />
                 </Box>}

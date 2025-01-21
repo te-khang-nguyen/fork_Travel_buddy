@@ -26,8 +26,10 @@ function AdminLogin() {
       setSnackbarMessage((result.error as any)?.data || "Login failed");
       setSnackbarOpen(true);
     } else {
+      const accessToken = (result.data as any).access_token;
       setRole("business");
-      localStorage.setItem('role', 'business');
+      localStorage.setItem("role", "business");
+      localStorage.setItem("jwt", accessToken);
       router.push("/dashboard/business");
     }
   };

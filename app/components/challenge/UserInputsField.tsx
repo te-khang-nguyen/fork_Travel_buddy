@@ -103,7 +103,7 @@ const CunstomInputsField = forwardRef<
         setSnackbar({
           open: true,
           message:
-            "Please share with us your experience! Your story will be amazing with two or more sentences and at least one image!",
+            "Please share with us your experience! Your story will be amazing with two or more sentences and at least one photo!",
           severity: "warning",
         });
       } else {

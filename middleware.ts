@@ -3,16 +3,7 @@ import type { NextRequest } from 'next/server';
 import isAuthenticated from './libs/services/authorization';
 
 export function middleware(req: NextRequest) {
-  // Retrieve the role from cookies
-  const role = req.cookies.get('role')?.value;
-
   const url = req.nextUrl.clone();
-
-  // If the role is 'user' and the path contains 'business', deny access
-  if (role && role === 'user' && url.pathname.includes('business')) {
-    url.pathname = '/no-access'; // Redirect to a no-access page
-    return NextResponse.redirect(url);
-  }
 
   // If path includes '/api' and not include '/auth, trigger API authorization logic
   if (url.pathname.includes('/api') && !url.pathname.includes('/auth')) {

@@ -9,7 +9,6 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   useGetProgressQuery,
   useGetLocationsQuery,
@@ -33,7 +32,7 @@ const MainUI = () => {
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
-    severity: "success" | "error";
+    severity: "success" | "error" | "warning";
   }>({
     open: false,
     message: "",
@@ -65,7 +64,9 @@ const MainUI = () => {
     }
   );
 
-  const challengeLocations = locationsData?.data || [];
+  let challengeLocations = locationsData?.data || [];
+  challengeLocations = [...challengeLocations].sort((a, b) => (Date.parse(a?.created)) - (Date.parse(b?.created)));
+
   useEffect(() => {
     setChildRefs(
       Array.from(
@@ -76,8 +77,6 @@ const MainUI = () => {
   }, [challengeLocations.length]);
 
   const handleParentConfirm = async () => {
-    setIsConfirmClicked(true);
-
     // Collect data from all children
     const collectedData = childRefs
       .map((ref, locationIndex) => {
@@ -85,7 +84,7 @@ const MainUI = () => {
           const childData = ref.current.getData();
           return {
             ...childData,
-            index:locationIndex, // Add locationIndex from the map
+            index: locationIndex, // Add locationIndex from the map
             locationId: challengeLocations[locationIndex]?.id, // Add locationId from the location data
           };
         }
@@ -95,34 +94,61 @@ const MainUI = () => {
 
     // Upload data
 
-
     try {
-      const result = await uploadInputs({
-        challengeId: challenge_id,
-        userLocationSubmission: collectedData,
-      });
+      const isUploaded = collectedData?.map((ref) => {
+        if (!ref?.userMediaSubmission || ref?.userMediaSubmission?.length == 0 || ref?.userQuestionSubmission == "") {
+          return false;
+        } else {
+          return true;
+        }
+      })
 
-      if (result.error) {
-        throw result.error;
-      }
+      console.log(isUploaded);
 
-      setSnackbar({
-        open: true,
-        message:
-          "Great sharings!\nThis chapter will be wonderful!\nLet's keep exploring while we craft your story!",
-        severity: "success",
-      });
+      collectedData?.map(async (ref, index) => {
+        if (isUploaded?.[index] === false) {
+          setSnackbar({
+            open: true,
+            message:
+              `Your story at ${challengeLocations[index]?.title} will be amazing with some ideas and at least one photo!`,
+            severity: "warning",
+          });
+        } else {
+          setIsConfirmClicked(true);
+          const result = await uploadInputs({
+            challengeId: challenge_id,
+            userLocationSubmission: [ref],
+          });
 
-      router.push(`/challenge/${challenge_id}/story`);
+          if (result.error) {
+            throw result.error;
+          }
+
+          setSnackbar({
+            open: true,
+            message:
+              "Great sharings!\nThis chapter will be wonderful!\nLet's keep exploring while we craft your story!",
+            severity: "success",
+          });
+    
+          setTimeout(() => {
+            setIsConfirmClicked(false);
+            router.push(`/challenge/${challenge_id}/story`);
+          }, 20000); // Adjust the timeout duration as needed
+
+        }
+      })
+
     } catch (error) {
       setSnackbar({
         open: true,
         message: "An error occurred while uploading data.",
         severity: "error",
       });
-    } finally {
-      setIsConfirmClicked(false);
     }
+    //finally {
+    //   setIsConfirmClicked(false);
+    // }
   };
 
   useEffect(() => {
@@ -202,7 +228,7 @@ const MainUI = () => {
       >
         {challengeLocations.map((location, index) => {
           const matchedLocationSubmission =
-            history?.data?.[0].userChallengeSubmission?.filter(
+            history?.data?.[0]?.userChallengeSubmission?.filter(
               (e) => e.locationId == location?.id
             );
           const lastUserInputs = {

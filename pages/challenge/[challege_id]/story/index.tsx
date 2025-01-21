@@ -84,14 +84,18 @@ const StoryPageUI = () => {
         id: index,
         ...rest,
     })) : [];
-    const historyData = isLocationLoading ? [] : historyData2.map(itemB => {
+
+    const locationDataUnsorted = isLocationLoading ? [] : locationData?.data;
+    const locationDataSorted = [...locationDataUnsorted].sort((a,b)=> (Date.parse(a?.created)) - (Date.parse(b?.created)));
+    
+    const historyData = locationDataSorted.map(itemB => {
         // Find the corresponding item in arrayA based on id
-        const matchingItemA = locationData?.data.find(itemA => itemA.id === itemB.locationId);
+        const matchingItemA = historyData2.find(itemA => itemA.locationId === itemB.id);
 
         // Merge the "name" from arrayA into arrayB's item
         return {
-            ...itemB,
-            title: matchingItemA ? matchingItemA.title : null // Handle cases where no match is found
+            ...matchingItemA,
+            title: matchingItemA ? itemB.title : null // Handle cases where no match is found
         };
     });
 
@@ -153,10 +157,12 @@ const StoryPageUI = () => {
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: "rgb(252, 241, 216)",
+                backgroundRepeat: "repeat",
                 p: 2,
                 fontSize: '1.2rem',
                 alignItems: "center",
-                height: "100%"
+                height: "100%",
+                overflow:"auto"
             }}
         >
 
@@ -179,7 +185,7 @@ const StoryPageUI = () => {
                         color: "black",
                         textAlign: "center"
                     }}>
-                    {`Your ${challengeTitle || 'Travel'} Diaries`}
+                    {`My ${challengeTitle || 'Travel'} Diaries`}
                 </Typography>
             </Box>
 

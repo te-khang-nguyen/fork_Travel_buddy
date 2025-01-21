@@ -72,8 +72,8 @@ function ChallengeList() {
           <Box
             key={index}
             sx={{
-              flex: {xs: "0 0 100%", sm: "0 0 25%"}, // Each item takes 25% of the container width (4 columns)
-              maxWidth: {xs: "100%", sm: "25%"}, // Ensures consistent column sizing
+              flex: {xs: "0 0 100%",sm: "0 0 50%", md: "0 0 25%", lg: "0 0 25%"}, // Each item takes 25% of the container width (4 columns)
+              maxWidth: {xs: "100%", sm: "50%", md: "25%", lg: "25%"}, // Ensures consistent column sizing
               boxSizing: "border-box",
               padding: "8px", // Add spacing between cards
             }}
