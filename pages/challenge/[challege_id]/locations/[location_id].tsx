@@ -24,6 +24,8 @@ const MainUI = () => {
   const [challenge_id, setChallengeId] = useState<string | undefined>(
     undefined
   );
+  const [locationIds, setLocationIds] = useState<string[]>([]);
+  // const [challengeLocations, setChallengeLocations] = useState<any[]>([]);
   const [isConfirmClicked, setIsConfirmClicked] = useState(false);
   let lastUserInputs: any;
   const [uploadInputs] = useUploadInputsMutation();
@@ -95,6 +97,39 @@ const MainUI = () => {
     }
   }, [challenge_id, isLocationsLoading, isLocationsFetching]);
 
+  let challengeLocations = locationsData?.data?.slice() || [];
+
+  if (locationsData) {
+    challengeLocations = challengeLocations.sort((a, b) => 
+      (Date.parse(a?.created)) - (Date.parse(b?.created))
+    );
+  }
+
+  // Find the specific location based on location_id
+  useEffect(()=>{
+    // setChallengeLocations( 
+    //   locationsData?.data?.slice()
+    //   ?.sort((a: any, b: any)=> 
+    //       (Date.parse(a?.created)) - (Date.parse(b?.created))
+    //   ) || [] );
+    if (locationsData) {
+      setLocationIds(
+        challengeLocations.map((location: any) => location.id)
+      );
+    }
+  }, [locationsData]);
+
+  // Use loose equality to handle different types
+  const currentLocation = challengeLocations.find(
+    (location) => location.id == parsedLocationId
+  );
+
+  const currentLocationIdx =
+    locationIds &&
+    locationIds.findIndex((location) => location == currentLocation.id);
+
+  console.log(currentLocationIdx);
+
   // If there are errors, handle them
   if (locationsError) {
     return (
@@ -148,20 +183,6 @@ const MainUI = () => {
       }, 1000); // Adjust the timeout duration as needed
     }
   };
-
-  // Find the specific location based on location_id
-  const challengeLocations = locationsData?.data || [];
-
-  const locationIds = challengeLocations.map((location) => location.id);
-
-  // Use loose equality to handle different types
-  const currentLocation = challengeLocations.find(
-    (location) => location.id == parsedLocationId
-  );
-
-  const currentLocationIdx =
-    locationIds &&
-    locationIds.findIndex((location) => location == currentLocation.id);
 
   // If still loading, show loading state
   if (isLoading) {
