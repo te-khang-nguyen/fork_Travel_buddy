@@ -115,7 +115,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             gutterBottom
             sx={{ color: "#4a90e2", fontWeight: "bold" }}
           >
-            Activity
+            Activities
           </Typography>
           <Box>
             <Typography variant="h6" gutterBottom>
