@@ -107,7 +107,7 @@ const ProfileForm = () => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-          Profile Information
+          User Information
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box
