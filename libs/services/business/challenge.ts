@@ -1,12 +1,23 @@
-import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import { supabase } from "../../supabase/supabase_client";
-import { imgToDB, upsertNewRow } from "../utils";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQuery } from "@/libs/supabase/baseQuery";
 
 interface ChallengeReq {
   title: string;
   description: string;
-  thumbnail: string;
-  backgroundImage: string | null;
+  thumbnail: string | null | undefined;
+  backgroundImage: string | null | undefined;
+  tourSchedule: string;
+}
+
+interface ImageReq {
+  imageBase64: string | null;
+  title: string;
+  bucket: string;
+}
+
+interface ImageRes {
+  signedUrl?: string;
+  error?: any;
 }
 
 interface ChallengeRes {
@@ -14,79 +25,51 @@ interface ChallengeRes {
   error?: any;
 }
 
+interface AllChallengesRes {
+  data: {
+    id: string;
+    businessid: string;
+    description: string;
+    thumbnailUrl: string;
+    backgroundUrl: string | null;
+    qrurl: string | null;
+    price: number;
+    created: string;
+    title: string;
+    tourSchedule: string | null;
+  }[];
+  error?: any;
+}
+
 const ChallengeApi = createApi({
   reducerPath: "createChallenge",
-  baseQuery: fakeBaseQuery(),
+  baseQuery,
   endpoints: (builder) => ({
-    getAllChallenges: builder.query<any, void>({
-      queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-        .from("challenges")
-        .select("*");
-
-        if (error) {
-        return { error };
-        }
-
-        return { data };
-      } catch (error) {
-        return { error };
-      }
-      },
+    getAllChallenges: builder.query<AllChallengesRes, void>({
+      query: () => ({
+        url: `/challenge/business/get-all-challenges`,
+        method: "GET"
+      }),
     }),
     createChallenge: builder.mutation<ChallengeRes, ChallengeReq>({
-      queryFn: async ({ title, description, thumbnail, backgroundImage }) => {
-        try {
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-
-          if (!user) {
-            throw new Error("User not authenticated");
-          }
-
-          const thumbnailUrl = await imgToDB(thumbnail, title);
-          const backgroundUrl = backgroundImage
-            ? await imgToDB(backgroundImage, title)
-            : null;
-
-          const { data, error } = await supabase
-            .from("challenges")
-            .insert([
-              {
-                title,
-                businessid: user.id,
-                description,
-                thumbnailUrl,
-                backgroundUrl,
-              },
-            ])
-            .select("id")
-            .single();
-
-          if (error) {
-            return { error };
-          }
-
-          return { data: { id: data.id } as ChallengeRes };
-        } catch (error) {
-          return { error };
-        }
-      },
+      query: ({ title, description, thumbnail, backgroundImage, tourSchedule }) => ({
+        url: `/challenge/business/create`,
+        method: "POST",
+        body: {
+          title,
+          description,
+          thumbnailUrl: thumbnail,
+          backgroundUrl: backgroundImage,
+          tourSchedule,
+        },
+      }),
     }),
     updateChallenge: builder.mutation<ChallengeRes, { id: string; data: any }>({
-      queryFn: async ({ id, data }) => {
-        try {
-          const result = await upsertNewRow({ entity: "challenges", id, ...data });
-          if (result.error) {
-            return { error: result.error };
-          }
-          return { data: result.data };
-        } catch (error) {
-          return { error };
-        }
-      },
+      query: ({ id, data }) => ({
+        url: `/challenge/update/${id}`,
+        method: "PUT",
+        body: data,
+      }),
     }),
   }),
 });
@@ -94,6 +77,6 @@ const ChallengeApi = createApi({
 export const { 
   useCreateChallengeMutation, 
   useGetAllChallengesQuery, 
-  useUpdateChallengeMutation 
+  useUpdateChallengeMutation,
 } = ChallengeApi;
 export { ChallengeApi };

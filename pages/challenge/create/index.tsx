@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Box, Typography, TextField, Button, Paper } from "@mui/material";
 import { useCreateChallengeMutation } from "@/libs/services/business/challenge";
+import { useUploadImageMutation } from "@/libs/services/storage/upload";
 import ImagePicker from "@/app/components/image_picker/ImagePicker";
 import { useRouter } from "next/router";
 
@@ -10,10 +11,13 @@ interface ChallengeFormInputs {
   description: string;
   thumbnail: string;
   backgroundImage: string | null;
+  tourSchedule: string;
 }
 
 const CreateChallengeForm: React.FC = () => {
   const router = useRouter();
+  const [uploadImage] = useUploadImageMutation();
+  const [createChallenge] = useCreateChallengeMutation();
   const {
     handleSubmit,
     control,
@@ -25,22 +29,48 @@ const CreateChallengeForm: React.FC = () => {
       description: "",
       thumbnail: "",
       backgroundImage: null,
+      tourSchedule: "",
     },
   });
 
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [background, setBackground] = useState<string | null>(null);
-
-  const [createChallenge] = useCreateChallengeMutation();
+  
 
   const onSubmit = async (data: ChallengeFormInputs) => {
     try {
-      const response = await createChallenge(data);
-      if (response.data) {
-        router.push(`/challenge/create/${(response.data as any).id}`);
+      
+      const thumbnailResponse = await uploadImage({
+        imageBase64: thumbnail,
+        title: "ChallengeThumbnail",
+        bucket: "challenge",
+      }).unwrap();
+      const thumbnailUrl = thumbnailResponse.signedUrl;
+      
+      let backgroundUrl = "";
+      if (background) {
+        const backgroundResponse = await uploadImage({
+          imageBase64: background,
+          title: "ChallengeBackground",
+          bucket: "challenge",
+        }).unwrap();
+        backgroundUrl = backgroundResponse.signedUrl || "";
       }
+      
+      const { 
+        data: newChallengeData 
+      } = await createChallenge({
+        title: data.title,
+        description: data.description,
+        thumbnail: thumbnailUrl,
+        backgroundImage: backgroundUrl,
+        tourSchedule: data.tourSchedule,
+      });
+
+      await router.replace(`/challenge/create/${newChallengeData?.data?.id}`);
+      return;
     } catch (error) {
-      console.error("Failed to create challenge:", error);
+      console.error("Full Error in onSubmit:", error);
     }
   };
 
@@ -53,11 +83,13 @@ const CreateChallengeForm: React.FC = () => {
         height: "100%",
         backgroundColor: "#f4f4f4",
         padding: 2,
+        overflow:"auto"
       }}
     >
       <Paper
         elevation={3}
         sx={{
+          mt: 30,
           padding: 4,
           borderRadius: 2,
           width: "100%",
@@ -186,7 +218,39 @@ const CreateChallengeForm: React.FC = () => {
               />
             </Box>
           </Box>
-
+          {/* Description */}
+          <Box>
+              <Typography
+                variant="body2"
+                sx={{ marginBottom: 0.5, fontWeight: 500 }}
+              >
+                Tour Schedule
+                <Typography
+                  component="span"
+                  color="error"
+                  sx={{ marginLeft: 0.5 }}
+                >
+                  *
+                </Typography>
+              </Typography>
+              <Controller
+                name="tourSchedule"
+                control={control}
+                rules={{ required: "Tour Schedule is required" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={4}
+                    placeholder="Describe your tour schedule"
+                    error={!!errors.tourSchedule}
+                    helperText={errors.tourSchedule?.message}
+                  />
+                )}
+              />
+            </Box>
           {/* Submit Button */}
 
           <Button

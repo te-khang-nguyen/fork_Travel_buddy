@@ -5,7 +5,7 @@ import {
 } from "@/libs/services/utils";
 import crypto from "crypto";
 
-const imageToStorage = async (inputobj, supabase) => {
+export const imageToStorage = async (inputobj, supabase) => {
     const hash = crypto.randomBytes(16).toString("hex");
     const fileName = `${inputobj.title.replace(/\s+/g, "")}_${hash}.jpg`;
     const storageRef = `${inputobj.userId}/${inputobj.title}/${fileName}`;
@@ -28,11 +28,10 @@ const imageToStorage = async (inputobj, supabase) => {
     return { data: data?.signedUrl };
   };
 
-
 export const config = {
     api: {
         bodyParser: {
-            sizeLimit: '1gb', // Increase the body size limit (e.g., 5MB)
+            sizeLimit: '10mb', // Increase the body size limit (e.g., 5MB)
         },
     },
 };
@@ -58,8 +57,10 @@ export default async function handler(
 
         if (items?.userMediaSubmission) {
             for (const [jj, item] of items.userMediaSubmission.entries()) {
+
                 const bytesArray =
                     typeof item === "string" ? base64toBinary(item) : item;
+                
                 const toStorageUpload = {
                     userId: user!.id,
                     bucket: "challenge",

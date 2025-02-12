@@ -11,7 +11,6 @@ import {
 import QRModal from "../../challenge/QRModal";
 import { useRouter } from "next/router";
 import { useGetAllChallengesQuery } from "@/libs/services/business/challenge";
-import { set } from "react-hook-form";
 
 // Define the Challenge interface
 interface Challenge {
@@ -27,7 +26,7 @@ interface Challenge {
 }
 
 const ChallengesTab: React.FC = () => {
-  const { data, isFetching } = useGetAllChallengesQuery();
+  const { data : allChallenge } = useGetAllChallengesQuery();
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const [challengeName, setChallengeName] = useState("");   
@@ -54,6 +53,10 @@ const ChallengesTab: React.FC = () => {
     setChallengeName("");
   };
 
+  const handleOnClickEditChallenge = (challenge) => {
+    router.push(`/challenge/create/${challenge.id}`);
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h6" gutterBottom>
@@ -62,7 +65,7 @@ const ChallengesTab: React.FC = () => {
 
       {/* Challenges List */}
       <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-        {data?.map((challenge: Challenge) => (
+        {allChallenge?.data?.map((challenge) => (
           <Card key={challenge.id} sx={{ width: 300 }}>
             <CardMedia
               component="img"
@@ -79,7 +82,11 @@ const ChallengesTab: React.FC = () => {
               </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
-              <Button variant="contained" color="primary">
+              <Button 
+                variant="contained" 
+                color="primary"
+                onClick={() => handleOnClickEditChallenge(challenge)}
+              >
                 Edit Challenge
               </Button>
               <Button

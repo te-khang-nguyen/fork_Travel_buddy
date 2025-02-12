@@ -6,10 +6,15 @@ export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
 
   // If path includes '/api' and not include '/auth, trigger API authorization logic
+  if (url.pathname == '/api/docs') {
+    return NextResponse.next(); // Allow access for other cases
+  }
+
+
   if (url.pathname.includes('/api') && !url.pathname.includes('/auth')) {
     // Get the stored JWT in the request headers
     const jwt = req.headers.get('authorization')?.split(' ')[1];
-    
+
     return isAuthenticated(jwt).then((result) => {
       // Check the validity of the JWT, if invalid, deny access to API
       if (!result) {

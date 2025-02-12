@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Box, Button, Typography, CardMedia, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -22,9 +22,22 @@ const ImageUploader: React.FC<ImageUploaderProps> =
       Array<{ image: string | null; name: string | null }>
     >([]);
 
+    // Memoize fetchImages to prevent unnecessary re-renders
+    const memoizedFetchImages = useMemo(() => 
+      fetchImages.map(img => ({ 
+        image: img.image, 
+        name: img.name 
+      })), 
+      [JSON.stringify(fetchImages)]
+    );
+
     useEffect(() => {
-      setSelectedImages(fetchImages);
-    }, [fetchImages]);
+      // Only update if the memoized images are different from current selected images
+      const areImagesEqual = JSON.stringify(memoizedFetchImages) !== JSON.stringify(selectedImages);
+      if (areImagesEqual) {
+        setSelectedImages(memoizedFetchImages);
+      }
+    }, [memoizedFetchImages, selectedImages]);
 
     const [imageError, setImageError] = useState(false);
 

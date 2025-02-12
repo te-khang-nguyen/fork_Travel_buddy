@@ -84,9 +84,8 @@ const LocationUI = () => {
   >([
     {
       id: 0,
-      name: "Context",
-      content:
-        "A narrow residential street with a railway running directly through it. Built during the French colonial era, it has become a tourist attraction due to the unique experience of trains passing within inches of houses.",
+      name: "",
+      content:"",
       media: [],
     },
   ]);
@@ -154,22 +153,26 @@ const LocationUI = () => {
 
   const handleSave = async () => {
     try {
+
       await createLocation({
         challengeId: challengeId,
-        title: locationTitle ?? "",
-        backgroundImages: locationImages, // Use the actual background image
-        sections: sections.map((section) => ({
-          title: section.name,
-          instruction: section.content,
-          media: section.media.length > 0 ? section.media : null,
-        })),
+        payload:{
+          title: locationTitle ?? "",
+          backgroundImages: locationImages, // Use the actual background image
+          sections: sections.map((section) => ({
+            title: section.name,
+            instruction: section.content,
+            media: section.media.length > 0 ? section.media : null,
+          })),
+        }
       });
+      
       setSnackbar({
         open: true,
         message: "Create location successfully!",
         severity: "success",
       });
-      router.push(`/challenge/create/${challengeId}`);
+      // router.push(`/challenge/create/${challengeId}`);
     } catch (error) {
       setSnackbar({
         open: true,

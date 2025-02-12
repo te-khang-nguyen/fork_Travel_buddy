@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import isAuthenticated from "@/libs/services/authorization";
 import { JoinInnerTwoTone } from "@mui/icons-material";
 
-const PUBLIC_ROUTES = ["/", "/register", "/login/business", "/recovery", "/auth/callbackv1"];
+const PUBLIC_ROUTES = ["/", "/register", "/login/business", "/recovery", "/auth/callbackv1","/docs"];
 
 const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
   const WithAuthRedirect = (props: P) => {

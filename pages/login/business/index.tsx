@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, TextField, Button, Typography, Alert, Snackbar } from "@mui/material";
+import { Box, TextField, Button, Typography, Alert, Snackbar, Link, Divider } from "@mui/material";
 import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/business/auth";
   import { useGlobalContext } from "@/app/GlobalContextProvider";
@@ -18,12 +18,11 @@ function AdminLogin() {
     setSnackbarOpen(false);
   };
   const {setRole} = useGlobalContext()
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault(); 
+  const handleLogin = async () => {
     const result = await logIn({ email, password });
 
     if (result.error) {
-      setSnackbarMessage((result.error as any)?.data || "Login failed");
+      setSnackbarMessage((result.error as any)?.data?.error || "Login failed");
       setSnackbarOpen(true);
     } else {
       const accessToken = (result.data as any).access_token;
@@ -37,7 +36,6 @@ function AdminLogin() {
   return (
     <Box
       sx={{
-        backgroundColor: "#f0f0f0",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -46,26 +44,20 @@ function AdminLogin() {
       }}
     >
       <Box
-        component="form"
-        onSubmit={handleLogin}
         sx={{
-          width: { xs: "90%", sm: "500px" },
+          width: "100%",
+          maxWidth: "600px",
           p: 4,
           boxShadow: 3,
           borderRadius: 2,
           backgroundColor: "white",
         }}
       >
-        <Box sx={{ textAlign: "center" }}>
-          <Typography variant="h4" gutterBottom>
-            Admin Portal
-          </Typography>
-          <Typography variant="h6" color="textSecondary" gutterBottom>
-            Sign in to manage your business
-          </Typography>
-        </Box>
+        <Typography variant="h4" color="primary" align="center" gutterBottom>
+          Business Login
+        </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Box>
             <Typography>Email</Typography>
             <TextField
@@ -89,23 +81,50 @@ function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </Box>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2 }}
-          >
-            Login
-          </Button>
+        </Box>
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          onClick={handleLogin}
+        >
+          Login
+        </Button>
+
+        <Box textAlign="center" mt={2}>
+          <Link href="/recovery">Forgot Password?</Link>
+        </Box>
+
+        <Divider sx={{ my: 3 }} />
+
+        <Typography variant="body1" align="center" gutterBottom>
+          Or sign in with:
+        </Typography>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            justifyContent: "center",
+          }}
+        >
+        </Box>
+
+        <Box textAlign="center" mt={3}>
+          <Link href="/register" sx={{ textDecoration: "none" }}>
+            Have not registered yet? Join us!
+          </Link>
         </Box>
       </Box>
+
+      {/* Snackbar for error messages */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        sx={{border:'1px solid red' }}
       >
         <Alert
           onClose={handleSnackbarClose}

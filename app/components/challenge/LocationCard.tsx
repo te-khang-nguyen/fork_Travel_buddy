@@ -4,11 +4,18 @@ import { useRouter } from "next/router";
 
 const LocationCard = ({ location }) => {
   const router = useRouter();
-  const { challege_id } = router.query;
+  const params = router.query;
   const [imageError, setImageError] = useState(false);
 
+  console.log(location);
+
   const handleClick = (value) => {
-    router.push(`/challenge/${challege_id}/locations/${value}`);
+    const role = localStorage.getItem("role");
+    if(role === 'user'){
+      router.push(`/challenge/${params?.challege_id}/locations/${value}`);
+    } else {
+      router.push(`/challenge/create/${params?.id}/location`);
+    }
   };
 
   // Fallback image URL
