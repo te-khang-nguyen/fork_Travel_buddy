@@ -38,4 +38,7 @@ export const swaggerOptions = {
     process.env.VERCEL ? '/vercel/path/pages/api/**/*.ts' : null,
     process.cwd() + '/pages/api/**/*.ts',
   ].filter(Boolean), // Remove any null values
+  // Additional options for more robust spec generation
+  failOnErrors: false, // Continue even if some routes can't be parsed
+  verbose: true // Provide more detailed logging
 };
