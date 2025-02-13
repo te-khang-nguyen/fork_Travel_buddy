@@ -7,12 +7,12 @@ const swaggerDefinition = {
     version: '1.0.0',
     description: 'API documentation for the Travel Buddy application',
   },
-  servers: [
-    {
-      url: 'https://fork-travel-buddy.vercel.app', // Add your production URL
-      description: 'Production server'
-    }
-  ],
+  // servers: [
+  //   {
+  //     url: 'https://fork-travel-buddy.vercel.app', // Add your production URL
+  //     description: 'Production server'
+  //   }
+  // ],
   components: {
     securitySchemes: {
       bearerAuth: {
@@ -37,7 +37,7 @@ export const swaggerOptions = {
     // './pages/api/**/*.ts',
     // process.env.VERCEL ? '/vercel/path/pages/api/**/*.ts' : null,
     // process.cwd() + '/pages/api/**/*.ts',
-    process.cwd() + '/swagger.yml',
+    process.cwd() + '/swagger.yaml',
   ].filter(Boolean), // Remove any null values
   // Additional options for more robust spec generation
   failOnErrors: false, // Continue even if some routes can't be parsed
