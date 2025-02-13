@@ -11,7 +11,7 @@ export function middleware(req: NextRequest) {
   }
 
 
-  if (url.pathname.includes('/api') && !url.pathname.includes('/auth')) {
+  if (url.pathname.includes('/api') && !url.pathname.includes('/auth') && !url.pathname.includes('/docs')) {
     // Get the stored JWT in the request headers
     const jwt = req.headers.get('authorization')?.split(' ')[1];
 
