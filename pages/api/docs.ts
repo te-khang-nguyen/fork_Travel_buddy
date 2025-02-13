@@ -38,8 +38,8 @@ const swaggerDefinition = {
 export const swaggerOptions = {
   swaggerDefinition,
   apis: [
-    './pages/api/**/*.js',
-    './pages/api/**/*.ts',
+    'pages/api/**/*.js',
+    'pages/api/**/*.ts',
   ],
 };
 
