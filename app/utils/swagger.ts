@@ -32,13 +32,5 @@ const swaggerDefinition = {
 
 export const swaggerOptions = {
   swaggerDefinition,
-  apis: ['./pages/api/**/*.ts'],
-    // Multiple paths to ensure Swagger works in different environments
-    // './pages/api/**/*.ts',
-    // './pages/swagger.yaml',
-    // process.cwd(),
-  // ]
-  // .filter(Boolean), // Remove any null values
-  // failOnErrors: false,
-  // verbose: true
+  apis: ['./pages/api/**/*.ts', './pages/api/**/*.js',],
 };
