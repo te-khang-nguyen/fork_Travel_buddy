@@ -35,10 +35,10 @@ export const swaggerOptions = {
   apis: [
     // Multiple paths to ensure Swagger works in different environments
     // './pages/api/**/*.ts',
-    process.cwd() + '/pages/swagger.json',
     process.cwd() + '/var/task/.next/server/pages/api/swagger.json',
+    process.cwd() + '/var/task/.next/server/pages/swagger.yaml',
     './pages/api/**/*.ts',
-    process.cwd() + '.next/server/pages/api/**/*.js',
+    process.cwd() + '/.next/server/pages/api/**/*.js',
   ].filter(Boolean), // Remove any null values
   failOnErrors: false,
   verbose: true
