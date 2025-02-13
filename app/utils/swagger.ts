@@ -33,9 +33,18 @@ const swaggerDefinition = {
 export const swaggerOptions = {
   swaggerDefinition,
   apis: [
-    // Use path.resolve to handle different environments
-    path.resolve(process.cwd(), 'pages', 'api', 'swagger.yaml'),
-    path.resolve(process.cwd(), 'pages', 'swagger.yaml'),
+    // Use multiple potential paths
+    path.join(process.cwd(), 'swagger.yaml'),
+    path.join(process.cwd(), 'pages', 'swagger.yaml'),
+    path.join(process.cwd(), 'pages', 'api', 'swagger.yaml'),
+
+    path.join(__dirname, 'swagger.yaml'),
+    path.join(__dirname, 'pages', 'swagger.yaml'),
+    path.join(__dirname, 'pages', 'api', 'swagger.yaml'),
+    // Absolute paths for Vercel
+    '/var/task/swagger.yaml',
+    '/var/task/pages/swagger.yaml',
+    '/var/task/pages/api/swagger.yaml',
     // Fallback to wildcard pattern for API routes
     './pages/api/**/*.ts',
   ].filter(Boolean), // Remove any null values
