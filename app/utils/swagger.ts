@@ -33,13 +33,10 @@ const swaggerDefinition = {
 export const swaggerOptions = {
   swaggerDefinition,
   apis: [
-    './pages/api/**/*.ts', 
-    './pages/api/auth/callback.ts', 
-    './pages/api/auth/callback.js',
     path.join(process.cwd(), 'pages/api/**/*.js'),
     path.join(process.cwd(), 'pages/api/**/*.ts'), 
-    path.join(__dirname, 'pages/api/auth/callback.js'), 
-    path.join(__dirname, 'pages/api/auth/callback.ts'),
+    path.join(__dirname, 'pages/api/**/*.js'), 
+    path.join(__dirname, 'pages/api/**/*.ts'),
     path.join(process.cwd(), '**/*.js'),
     path.join(__dirname, '**/*.js'),
   ],
