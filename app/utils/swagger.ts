@@ -33,6 +33,15 @@ const swaggerDefinition = {
 export const swaggerOptions = {
   swaggerDefinition,
   apis: [
+    // Multiple paths to ensure Swagger works in different environments
+    // './pages/api/**/*.ts',
+    // process.env.VERCEL ? '/vercel/path/pages/api/**/*.ts' : null,
+    // process.cwd() + '/pages/api/**/*.ts',
+    process.cwd() + '/pages/swagger.json',
+    process.cwd() + '/var/task/pages/swagger.json',
+    // Use path.resolve to handle different environments
+    path.resolve(process.cwd(), 'pages', 'api', 'swagger.yaml'),
+    path.resolve(process.cwd(), 'pages', 'swagger.yaml'),
     // Use multiple potential paths
     path.join(process.cwd(), 'swagger.yaml'),
     path.join(process.cwd(), 'pages', 'swagger.yaml'),
