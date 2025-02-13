@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'https://fork-travel-buddy.vercel.app/api', // Add your production URL
+      url: 'https://fork-travel-buddy.vercel.app/', // Add your production URL
       description: 'Production server'
     }
   ],
@@ -32,5 +32,10 @@ const swaggerDefinition = {
 
 export const swaggerOptions = {
   swaggerDefinition,
-  apis: ['./pages/api/**/*.ts', './pages/api/**/*.js',],
+  apis: [
+    './pages/api/**/*.ts', 
+    './pages/api/**/*.js', 
+    path.join(__dirname, 'pages/api/**/*.js'), 
+    path.join(__dirname, 'pages/api/**/*.ts'),
+  ],
 };
