@@ -35,12 +35,12 @@ export default function handler(req, res) {
           const files = fs.readdirSync(fullPath);
           safeLog(`Files in ${fullPath}:`, files);
         } catch (dirError) {
-          safeLog(`Error reading directory ${fullPath}:`);
+          safeLog(`Error reading directory ${fullPath}: ${dirError}`);
         }
         
         return fullPath;
       } catch (pathError) {
-        safeLog(`Path resolution error for ${apiPath}:`);
+        safeLog(`Path resolution error for ${apiPath}: ${pathError}`);
         return null;
       }
     }).filter(Boolean);

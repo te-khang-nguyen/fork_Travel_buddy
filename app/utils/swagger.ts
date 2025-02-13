@@ -1,4 +1,4 @@
-import { version } from "os";
+import * as path from 'path';
 
 const swaggerDefinition = {
   openapi: '3.0.0',
@@ -33,13 +33,12 @@ const swaggerDefinition = {
 export const swaggerOptions = {
   swaggerDefinition,
   apis: [
-    // Multiple paths to ensure Swagger works in different environments
-    // './pages/api/**/*.ts',
-    // process.env.VERCEL ? '/vercel/path/pages/api/**/*.ts' : null,
-    // process.cwd() + '/pages/api/**/*.ts',
-    process.cwd() + '/swagger.yaml',
+    // Use path.resolve to handle different environments
+    path.resolve(process.cwd(), 'pages', 'api', 'swagger.yaml'),
+    path.resolve(process.cwd(), 'pages', 'swagger.yaml'),
+    // Fallback to wildcard pattern for API routes
+    './pages/api/**/*.ts',
   ].filter(Boolean), // Remove any null values
-  // Additional options for more robust spec generation
-  failOnErrors: false, // Continue even if some routes can't be parsed
-  verbose: true // Provide more detailed logging
+  failOnErrors: false,
+  verbose: true
 };
