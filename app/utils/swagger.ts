@@ -35,27 +35,10 @@ export const swaggerOptions = {
   apis: [
     // Multiple paths to ensure Swagger works in different environments
     // './pages/api/**/*.ts',
-    // process.env.VERCEL ? '/vercel/path/pages/api/**/*.ts' : null,
-    // process.cwd() + '/pages/api/**/*.ts',
     process.cwd() + '/pages/swagger.json',
-    process.cwd() + '/var/task/pages/swagger.json',
-    // Use path.resolve to handle different environments
-    path.resolve(process.cwd(), 'pages', 'api', 'swagger.yaml'),
-    path.resolve(process.cwd(), 'pages', 'swagger.yaml'),
-    // Use multiple potential paths
-    path.join(process.cwd(), 'swagger.yaml'),
-    path.join(process.cwd(), 'pages', 'swagger.yaml'),
-    path.join(process.cwd(), 'pages', 'api', 'swagger.yaml'),
-
-    path.join(__dirname, 'swagger.yaml'),
-    path.join(__dirname, 'pages', 'swagger.yaml'),
-    path.join(__dirname, 'pages', 'api', 'swagger.yaml'),
-    // Absolute paths for Vercel
-    '/var/task/swagger.yaml',
-    '/var/task/pages/swagger.yaml',
-    '/var/task/pages/api/swagger.yaml',
-    // Fallback to wildcard pattern for API routes
+    process.cwd() + '/var/task/.next/server/pages/api/swagger.json',
     './pages/api/**/*.ts',
+    process.cwd() + '.next/server/pages/api/**/*.js',
   ].filter(Boolean), // Remove any null values
   failOnErrors: false,
   verbose: true
