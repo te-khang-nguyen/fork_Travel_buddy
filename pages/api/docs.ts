@@ -32,23 +32,18 @@ export default function handler(req, res) {
         safeLog(`Resolving path: ${apiPath} -> ${fullPath}`);
         
         try {
-          const fullPath = path.resolve(apiPath);
-          safeLog(`Resolving path: ${apiPath} -> ${fullPath}`);
-          
-          try {
-            const files = fs.readdirSync(fullPath);
-            safeLog(`Files in ${fullPath}:`, files);
-          } catch (dirError) {
-            safeLog(`Error reading directory ${fullPath}:`);
-          }
-          
-          return fullPath;
-        } catch (pathError) {
-          safeLog(`Error resolving path: ${apiPath}`, pathError);
-          return null;
+          const files = fs.readdirSync(fullPath);
+          safeLog(`Files in ${fullPath}:`, files);
+        } catch (dirError) {
+          safeLog(`Error reading directory ${fullPath}:`);
         }
-      })
-      .filter(path => path != null); // Remove any paths that failed to resolve
+        
+        return fullPath;
+      } catch (pathError) {
+        safeLog(`Path resolution error for ${apiPath}:`);
+        return null;
+      }
+    }).filter(Boolean);
 
     // Generate Swagger spec with more detailed error tracking
     const swaggerSpec = swaggerJsdoc(swaggerOptions);
