@@ -1,6 +1,50 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
 
+/**
+ * @swagger
+ * /api/auth/business/sign-up:
+ *   post:
+ *     tags:
+ *       - auth/business
+ *     summary: Sign up a new business user
+ *     description: Create a new business user account.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               businessName:
+ *                 type: string
+ *                 description: The name of the business
+ *               email:
+ *                 type: string
+ *                 description: The email of the business user
+ *               phone:
+ *                 type: string
+ *                 description: The phone number of the business user
+ *               password:
+ *                 type: string
+ *                 description: The password for the business user account
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {

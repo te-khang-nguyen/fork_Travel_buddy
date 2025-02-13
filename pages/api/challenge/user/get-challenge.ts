@@ -1,6 +1,42 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
 
+/**
+ * @swagger
+ * /api/challenge/user/get-challenge:
+ *   get:
+ *     tags:
+ *       - challenge/user
+ *     summary: Retrieve a challenge by ID
+ *     description: Retrieve a challenge by its ID. If no ID is provided, it retrieves challenges with price 0.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: challengeId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The ID of the challenge to retrieve
+ *     responses:
+ *       200:
+ *         description: A list of challenges
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       400:
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
 
 export default async function handler(
     req: NextApiRequest,

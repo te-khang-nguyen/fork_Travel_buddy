@@ -5,6 +5,8 @@ import { NextApiRequest, NextApiResponse } from "next";
  * @swagger
  * /api/challenge/business/create:
  *   post:
+ *     tags:
+ *      - challenge/business
  *     summary: Create a New Challenge
  *     description: Allows a business user to create a new travel challenge
  *     security:

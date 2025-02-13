@@ -6,6 +6,8 @@ import { NextApiRequest, NextApiResponse } from "next";
  * @swagger
  * /api/auth/login:
  *   post:
+ *     tags:
+ *       - auth
  *     summary: User Login
  *     description: Authenticate user with email and password
  *     requestBody:

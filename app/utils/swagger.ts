@@ -7,6 +7,12 @@ const swaggerDefinition = {
     version: '1.0.0',
     description: 'API documentation for the Travel Buddy application',
   },
+  servers: [
+    {
+      url: 'https://fork-travel-buddy.vercel.app', // Add your production URL
+      description: 'Production server'
+    }
+  ],
   components: {
     securitySchemes: {
       bearerAuth: {
@@ -26,5 +32,10 @@ const swaggerDefinition = {
 
 export const swaggerOptions = {
   swaggerDefinition,
-  apis: ['./pages/api/**/*.ts'], // Path to API route files for documentation
+  apis: [
+    // Multiple paths to ensure Swagger works in different environments
+    './pages/api/**/*.ts',
+    process.env.VERCEL ? '/vercel/path/pages/api/**/*.ts' : null,
+    process.cwd() + '/pages/api/**/*.ts',
+  ].filter(Boolean), // Remove any null values
 };

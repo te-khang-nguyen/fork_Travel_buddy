@@ -5,6 +5,72 @@ import {
     base64toBinary,
 } from "@/libs/services/utils";
 
+/**
+ * @swagger
+ * /api/location/create-location:
+ *   post:
+ *     tags:
+ *       - location
+ *     summary: Create location
+ *     description: Create a new location for a challenge.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: challengeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the challenge
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The name of the location
+ *               backgroundImages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: The background image of the location
+ *               sections:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     title:
+ *                       type: string
+ *                       description: The title of the section
+ *                     instruction:
+ *                       type: string
+ *                       description: The instruction of the section
+ *                     media:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       description: The media of the section
+ *     responses:
+ *       200:
+ *         description: Location created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
 export const config = {
     api: {
         bodyParser: {

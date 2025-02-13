@@ -1,6 +1,36 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
 
+/**
+ * @swagger
+ * /api/location/get-all-locations:
+ *   get:
+ *     tags:
+ *       - location
+ *     summary: Get all locations
+ *     description: Retrieve all locations.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of locations
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       400:
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse

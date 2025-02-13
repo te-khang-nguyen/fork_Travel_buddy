@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import 'swagger-ui-react/swagger-ui.css'; // Import Swagger UI CSS
 
-const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false });
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: true });
 
 export default function SwaggerPage() {
   const [spec, setSpec] = useState(null);

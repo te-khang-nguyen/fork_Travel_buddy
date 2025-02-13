@@ -2,6 +2,22 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
 
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     tags:
+ *       - auth
+ *     summary: User Login
+ *     description: Authenticate user with email and password
+ *     responses:
+ *       200:
+ *         description: Successful logout
+ *       400:
+ *         description: Invalid credentials
+ *       500:
+ *         description: Server error
+ */
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {

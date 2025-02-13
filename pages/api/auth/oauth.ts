@@ -1,8 +1,43 @@
 import { NextApiRequest, NextApiResponse } from "next";
-
 import { Provider } from "@supabase/supabase-js";
 import { baseUrl } from "@/app/constant";
 import { supabase } from "@/libs/supabase/supabase_client";
+
+/**
+ * @swagger
+ * /api/auth/oauth:
+ *   post:
+ *     tags:
+ *       - auth
+ *     summary: Sign in with OAuth
+ *     description: Sign in a user using OAuth provider.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               provider:
+ *                 type: string
+ *                 description: The OAuth provider
+ *     responses:
+ *       200:
+ *         description: Successfully signed in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {

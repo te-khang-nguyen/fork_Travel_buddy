@@ -2,6 +2,44 @@ import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
 //import { createApiClient } from "@/libs/supabase/supabaseApi";
 
+/**
+ * @swagger
+ * /api/challenge/user/get-user-progress:
+ *   get:
+ *     tags:
+ *       - challenge/user
+ *     summary: Retrieve user progress by challenge ID
+ *     description: Retrieve the progress of a user for a specific challenge ID.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: challengeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the challenge to retrieve user progress for
+ *     responses:
+ *       200:
+ *         description: A list of user progress
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       400:
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse

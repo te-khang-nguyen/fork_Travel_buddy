@@ -66,7 +66,7 @@ const ChallengeApi = createApi({
     }),
     updateChallenge: builder.mutation<ChallengeRes, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `/challenge/update/${id}`,
+        url: `/challenge/business/update/${id}`,
         method: "PUT",
         body: data,
       }),

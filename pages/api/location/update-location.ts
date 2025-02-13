@@ -5,6 +5,54 @@ import {
     base64toBinary,
 } from "@/libs/services/utils";
 
+/**
+ * @swagger
+ * /api/location/update-location:
+ *   post:
+ *     tags:
+ *       - location
+ *     summary: Update location
+ *     description: Update the details of a location.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: locationId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the location to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the location
+ *               description:
+ *                 type: string
+ *                 description: The description of the location
+ *     responses:
+ *       200:
+ *         description: Location updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
 export const config = {
     api: {
         bodyParser: {

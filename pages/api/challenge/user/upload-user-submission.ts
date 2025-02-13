@@ -5,6 +5,48 @@ import {
 } from "@/libs/services/utils";
 import crypto from "crypto";
 
+/**
+ * @swagger
+ * /api/challenge/user/upload-user-submission:
+ *   post:
+ *     tags:
+ *       - challenge/user
+ *     summary: Upload user submission
+ *     description: Upload a user's submission for a challenge.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               challengeId:
+ *                 type: string
+ *                 description: The ID of the challenge
+ *               userLocationSubmission:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *     responses:
+ *       200:
+ *         description: Submission uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
 export const imageToStorage = async (inputobj, supabase) => {
     const hash = crypto.randomBytes(16).toString("hex");
     const fileName = `${inputobj.title.replace(/\s+/g, "")}_${hash}.jpg`;
