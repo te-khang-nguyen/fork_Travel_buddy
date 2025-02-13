@@ -29,6 +29,15 @@ import crypto from "crypto";
  *                 type: array
  *                 items:
  *                   type: object
+ *                   properties:
+ *                       locationId:
+ *                         type: string
+ *                       userQuestionSubmission:
+ *                         type: string
+ *                       userMediaSubmission:
+ *                         type: array
+ *                         items:
+ *                            type: string
  *     responses:
  *       200:
  *         description: Submission uploaded successfully
@@ -39,6 +48,30 @@ import crypto from "crypto";
  *               properties:
  *                 data:
  *                   type: object
+ *                   properties:
+ *                       id:
+ *                         type: string
+ *                       challengeId:
+ *                         type: string
+ *                       userId:
+ *                         type: string
+ *                       userChallengeSubmission:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             index:
+ *                               type: number
+ *                             locationId:
+ *                               type: string
+ *                             userQuestionSubmission:
+ *                               type: string
+ *                             userMediaSubmission:
+ *                               type: array
+ *                               items:
+ *                                 type: string
+ *                       created:
+ *                         type: string 
  *       400:
  *         description: Bad request
  *       405:

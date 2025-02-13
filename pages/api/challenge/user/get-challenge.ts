@@ -30,6 +30,23 @@ import { NextApiRequest, NextApiResponse } from "next";
  *                   type: array
  *                   items:
  *                     type: object
+ *                     properties:
+ *                      id:
+ *                          type: string
+ *                      businessId:
+ *                          type: string
+ *                      description:
+ *                          type: string
+ *                      thumbnailUrl:
+ *                          type: string
+ *                      backgroundUrl:
+ *                          type: string
+ *                      created:
+ *                          type: string
+ *                      title:
+ *                          type: string
+ *                      tourSchedule:
+ *                          type: string
  *       400:
  *         description: Bad request
  *       405:

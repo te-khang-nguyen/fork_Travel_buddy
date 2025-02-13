@@ -26,24 +26,27 @@ export default function handler(req, res) {
     safeLog('Swagger API Paths:', swaggerOptions.apis);
 
     // Detailed path resolution and file logging
-    const resolvedPaths = swaggerOptions.apis.map(apiPath => {
-      try {
-        const fullPath = path.resolve(apiPath);
-        safeLog(`Resolving path: ${apiPath} -> ${fullPath}`);
-        
+    const resolvedPaths = swaggerOptions.apis
+      .filter(apiPath => apiPath != null) // Filter out null/undefined paths
+      .map(apiPath => {
         try {
-          const files = fs.readdirSync(fullPath);
-          safeLog(`Files in ${fullPath}:`, files);
-        } catch (dirError) {
-          safeLog(`Error reading directory ${fullPath}:`);
+          const fullPath = path.resolve(apiPath);
+          safeLog(`Resolving path: ${apiPath} -> ${fullPath}`);
+          
+          try {
+            const files = fs.readdirSync(fullPath);
+            safeLog(`Files in ${fullPath}:`, files);
+          } catch (dirError) {
+            safeLog(`Error reading directory ${fullPath}:`);
+          }
+          
+          return fullPath;
+        } catch (pathError) {
+          safeLog(`Error resolving path: ${apiPath}`, pathError);
+          return null;
         }
-        
-        return fullPath;
-      } catch (pathError) {
-        safeLog(`Path resolution error for ${apiPath}:`);
-        return null;
-      }
-    }).filter(Boolean);
+      })
+      .filter(path => path != null); // Remove any paths that failed to resolve
 
     // Generate Swagger spec with more detailed error tracking
     const swaggerSpec = swaggerJsdoc(swaggerOptions);

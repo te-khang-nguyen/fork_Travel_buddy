@@ -50,12 +50,26 @@ import { NextApiRequest, NextApiResponse } from "next";
  *                   type: boolean
  *                   example: true
  *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       description: Unique identifier of the created challenge
- *                       example: "chg_123456"
+ *                   type: array
+ *                   items:
+ *                    type: object   
+ *                    properties:
+ *                      id:
+ *                          type: string
+ *                      businessId:
+ *                          type: string
+ *                      description:
+ *                          type: string
+ *                      thumbnailUrl:
+ *                          type: string
+ *                      backgroundUrl:
+ *                          type: string
+ *                      created:
+ *                          type: string
+ *                      title:
+ *                          type: string
+ *                      tourSchedule:
+ *                          type: string
  *       400:
  *         description: Bad request or validation error
  *       401:

@@ -45,6 +45,32 @@ import {
  *               properties:
  *                 data:
  *                   type: object
+ *                   properties:
+ *                       id:
+ *                         type: string
+ *                       challengeId:
+ *                         type: string
+ *                       title:
+ *                         type: string
+ *                       location_info:
+ *                         type: array
+ *                         items:
+ *                          type: object
+ *                          properties:
+ *                           title:
+ *                             type: string
+ *                           instruction:
+ *                             type: string
+ *                           media:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                       imageUrls:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                       created:
+ *                         type: string 
  *       400:
  *         description: Bad request
  *       405:

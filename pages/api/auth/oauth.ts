@@ -31,6 +31,13 @@ import { supabase } from "@/libs/supabase/supabase_client";
  *               properties:
  *                 data:
  *                   type: object
+ *                   properties:
+ *                    provider: 
+ *                     type: string
+ *                     description: The OAuth provider
+ *                    url:
+ *                     type: string
+ *                     description: The URL to redirect to
  *       400:
  *         description: Bad request
  *       405:
