@@ -1,6 +1,5 @@
 // /* eslint-disable */
 import { supabase } from "../supabase/supabase_client";
-import { createSwaggerSpec } from "next-swagger-doc";
 const crypto = require("crypto");
 
 const base64toBinary = (input) => {
@@ -192,35 +191,6 @@ const uploadToStorage = async (inputobj) => {
   }
 
   return { data: data.signedUrl };
-};
-
-export const getApiDocs = async () => {
-  const spec = createSwaggerSpec({
-    apiFolder: "pages/api", // define api folder under app folder
-    definition: {
-      openapi: "3.0.0",
-      info: {
-        title: "Travel Buddy API",
-        version: "1.0.0",
-        description: "API documentation for the Travel Buddy project",
-      },
-      components: {
-        securitySchemes: {
-          BearerAuth: {
-            type: "http",
-            scheme: "bearer",
-            bearerFormat: "JWT",
-          },
-        },
-      },
-      security: [
-        {
-          BearerAuth: [],
-        },
-      ],
-    },
-  });
-  return spec;
 };
 
 export {

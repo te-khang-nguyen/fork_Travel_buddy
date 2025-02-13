@@ -1,12 +1,11 @@
 // pages/swagger.js
 
 import { useEffect, useState } from 'react';
-import { getApiDocs } from '@/libs/services/utils';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import 'swagger-ui-react/swagger-ui.css'; // Import Swagger UI CSS
 
-const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false });
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: true });
 
 export default function SwaggerPage() {
   const [spec, setSpec] = useState({});
@@ -17,10 +16,9 @@ export default function SwaggerPage() {
     async function fetchSwaggerSpec() {
       try {
         setIsLoading(true);
-        // const response = await fetch('/api/docs');
-        // if (!response.ok) throw new Error('Failed to load Swagger JSON');
-        // const data = await response.json();
-        const data = await getApiDocs();
+        const response = await fetch('/api/docs');
+        if (!response.ok) throw new Error('Failed to load Swagger JSON');
+        const data = await response.json();
         setSpec(data);
       } catch (error) {
         console.error(error);
