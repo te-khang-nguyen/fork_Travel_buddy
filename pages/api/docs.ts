@@ -26,9 +26,11 @@ export default function handler(req, res) {
     safeLog('Swagger API Paths:', swaggerOptions.apis);
 
     // Detailed path resolution and file logging
-    const resolvedPaths = swaggerOptions.apis
-      .filter(apiPath => apiPath != null) // Filter out null/undefined paths
-      .map(apiPath => {
+    const resolvedPaths = swaggerOptions.apis.map(apiPath => {
+      try {
+        const fullPath = path.resolve(apiPath!);
+        safeLog(`Resolving path: ${apiPath} -> ${fullPath}`);
+        
         try {
           const fullPath = path.resolve(apiPath);
           safeLog(`Resolving path: ${apiPath} -> ${fullPath}`);

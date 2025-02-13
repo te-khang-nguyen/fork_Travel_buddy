@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * @swagger
- * /api/challenge/business/create:
+ * /api/challenge/business/get-all-challenges:
  *   post:
  *     tags:
  *       - challenge/business
@@ -11,33 +11,6 @@ import { NextApiRequest, NextApiResponse } from "next";
  *     description: Allows a business user to create a new travel challenge
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: Title of the challenge
- *                 example: "Mountain Hiking Adventure"
- *               description:
- *                 type: string
- *                 description: Detailed description of the challenge
- *                 example: "Explore breathtaking mountain trails and scenic landscapes"
- *               thumbnailUrl:
- *                 type: string
- *                 description: URL of the challenge thumbnail image
- *                 example: "https://example.com/mountain-challenge-thumb.jpg"
- *               backgroundUrl:
- *                 type: string
- *                 description: URL of the challenge background image
- *                 example: "https://example.com/mountain-challenge-bg.jpg"
- *               tourSchedule:
- *                 type: string
- *                 description: Schedule or timing of the tour
- *                 example: "Weekends, 8 AM - 5 PM"
  *     responses:
  *       200:
  *         description: Challenge created successfully
