@@ -35,11 +35,12 @@ const swaggerDefinition = {
   ]
 };
 
+
 export const swaggerOptions = {
   swaggerDefinition,
   apis: [
-    'pages/api/**/*.js',
-    'pages/api/**/*.ts',
+    path.join(process.cwd(), 'pages/api/**/*.js'),
+    path.join(process.cwd(), 'pages/api/**/*.ts'),
   ],
 };
 
