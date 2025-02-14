@@ -1,6 +1,81 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, ChangeEvent } from "react";
 import { Box, Button, Typography, CardMedia, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { File } from "openai/_shims/index.mjs";
+
+export function blobToBase64(file: File): Promise<string> {
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
+    reader.onerror = (e) => reject(e);
+    reader.readAsDataURL(file);
+  });
+};
+
+export function calculateSize(img: any, numberOfImgs: number = 1){
+  let scale = 1;
+  const width = img?.width;
+  const height = img?.height;
+  const threshold = 3 / numberOfImgs; // in MB
+  const buffer = Buffer.from(img.src.split(",")[1], "base64");
+  const size = buffer.length / Math.pow(1024, 2); // in MB
+  if(size > threshold){
+    scale = threshold / size;
+  }
+
+  // console.log(`Original size - ${size.toFixed(3)} MB`);
+
+  const newWidth = Math.round(width * scale);
+  const newHeight = Math.round(height * scale);
+
+  return [newWidth, newHeight]
+};
+
+export function handleResize(file: File, numberOfImgs: number): Promise<
+  {image: string, name: string, uploadString?: string}
+> {
+  return new Promise(async (resolve, reject) => {
+    const imageString = await blobToBase64(file);
+
+    const img = new Image();
+    img.src = imageString;
+
+    img.onload = () => {
+      const [newWidth, newHeight] = calculateSize(img, numberOfImgs);
+      const canvas = document.createElement("canvas");
+
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+
+      // context is where the canvas references to know what data to render
+      const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+      // "compression" occurs below, where the new image is drawn onto the canvas based on the parameters we pass in
+      // the second and third parameters tell the canvas where to place the image within its render, starting from the top left corner (i.e. a value greater than 0 will add whitespace from top-down, left-to-right
+      // referencing https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob((blob) => {
+        // Embedd original size into image tag
+        const displayTag = document.createElement('h6');
+        displayTag.innerText = `Original dimensions - W${img?.width} x H${img?.height}`;
+      })
+
+      // here we specify the quality, which is the second argument in .toDataUrl(...) | here the output should be 50% the quality of the original, lowering the detail and file size
+      const newImageUrl = ctx.canvas.toDataURL("image/jpg", 1); // quality ranges 0-1
+      // below is not necessary (used for testing)
+      const buffer = Buffer.from(newImageUrl.split(",")[1], "base64");
+      const size = buffer.length / Math.pow(1024, 2); // in MB
+      // console.log(`New size - ${size.toFixed(3)} MB`);
+      // const uploadString = `W${img.width},H${img.height},${newImageUrl.split(",")[1]}`;
+      resolve({image: newImageUrl, name: file.name});
+    }
+    img.onerror = (e) => reject(e);
+
+  })
+}
 
 interface ImageUploaderProps {
   onImageUpload: (images: Array<{ image: string | null; name: string | null }>) => void;
@@ -8,6 +83,7 @@ interface ImageUploaderProps {
   allowMultiple?: boolean; // New prop for choosing and displaying multiple images
   allowAddNew?: boolean;
   fetchImages?: Array<{ image: string | null; name: string | null }>;
+  withResize?: boolean;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> =
@@ -16,14 +92,15 @@ const ImageUploader: React.FC<ImageUploaderProps> =
     variant = "image",
     allowMultiple = false,
     allowAddNew = true,
-    fetchImages = []
+    fetchImages = [],
+    withResize = false
   }) => {
     const [selectedImages, setSelectedImages] = useState<
       Array<{ image: string | null; name: string | null }>
     >([]);
 
     // Memoize fetchImages to prevent unnecessary re-renders
-    const memoizedFetchImages = useMemo(() => 
+    const memorizedFetchImages = useMemo(() => 
       fetchImages.map(img => ({ 
         image: img.image, 
         name: img.name 
@@ -33,29 +110,41 @@ const ImageUploader: React.FC<ImageUploaderProps> =
 
     useEffect(() => {
       // Only update if the memoized images are different from current selected images
-      const areImagesEqual = JSON.stringify(memoizedFetchImages) !== JSON.stringify(selectedImages);
+      const areImagesEqual = JSON.stringify(memorizedFetchImages) !== JSON.stringify(selectedImages);
       if (areImagesEqual) {
-        setSelectedImages(memoizedFetchImages);
+        setSelectedImages(memorizedFetchImages);
       }
-    }, [memoizedFetchImages, selectedImages]);
+    }, [memorizedFetchImages, selectedImages]);
 
     const [imageError, setImageError] = useState(false);
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files.length > 0) {
         const files = Array.from(event.target.files);
+        const numberOfFiles = files.length;
         const images = files.map((file) => {
           const reader = new FileReader();
-          return new Promise<{ image: string | null; name: string | null }>((resolve) => {
-            reader.onload = () => {
-              resolve({ image: reader.result as string, name: file.name });
-            };
-            reader.onerror = () => {
-              setImageError(true);
-              resolve({ image: null, name: file.name });
-            };
-            reader.readAsDataURL(file);
-          });
+          if(!withResize){
+            return new Promise<{ image: string | null; name: string | null }>((resolve) => {
+              reader.onload = () => {
+                resolve({ image: reader.result as string, name: file.name });
+              };
+              reader.onerror = () => {
+                setImageError(true);
+                resolve({ image: null, name: file.name });
+              };
+              reader.readAsDataURL(file);
+            });
+          } else {
+            // Resize image
+            return new Promise<{ 
+              image: string | null; 
+              name: string | null;
+            }>(async (resolve) => {
+              const image = await handleResize(file, numberOfFiles);
+              resolve(image);
+            })
+          }
         });
 
         Promise.all(images).then((uploadedImages) => {

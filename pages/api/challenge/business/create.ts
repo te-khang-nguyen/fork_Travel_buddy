@@ -93,6 +93,7 @@ export default async function handler(
                 thumbnailUrl,
                 backgroundUrl,
                 tourSchedule,
+                status: "ACTIVE",
             },
         ])
         .select("id")

@@ -192,6 +192,7 @@ const CunstomInputsField = forwardRef<
         allowMultiple
         onImageUpload={handleImageUpload}
         fetchImages={uploadedImg}
+        withResize={true}
       />
 
     {withConfirmButton &&  <Button

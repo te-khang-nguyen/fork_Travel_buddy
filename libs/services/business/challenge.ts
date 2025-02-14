@@ -37,6 +37,7 @@ interface AllChallengesRes {
     created: string;
     title: string;
     tourSchedule: string | null;
+    status: string;
   }[];
   error?: any;
 }
@@ -71,6 +72,12 @@ const ChallengeApi = createApi({
         body: data,
       }),
     }),
+    deleteChallenge: builder.mutation<ChallengeRes, { id: string }>({
+      query: ({ id }) => ({
+        url: `/challenge/business/delete/${id}`,
+        method: "PUT",
+      }),
+    }),
   }),
 });
 
@@ -78,5 +85,6 @@ export const {
   useCreateChallengeMutation, 
   useGetAllChallengesQuery, 
   useUpdateChallengeMutation,
+  useDeleteChallengeMutation,
 } = ChallengeApi;
 export { ChallengeApi };

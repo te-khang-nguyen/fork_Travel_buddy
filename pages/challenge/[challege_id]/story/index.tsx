@@ -9,7 +9,8 @@ import {
     Stack,
     Fab,
     Menu,
-    MenuItem
+    MenuItem,
+    CircularProgress
 } from "@mui/material";
 import { Share } from "@mui/icons-material";
 import {
@@ -34,6 +35,29 @@ const montserrat = Montserrat({
     weight: '400',
     subsets: ['latin']
 });
+
+function GradientCircularProgress() {
+    return (
+      <React.Fragment>
+        <svg width={0} height={0}>
+          <defs>
+            <linearGradient id="my_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#e01cd5" />
+              <stop offset="100%" stopColor="#1CB5E0" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <CircularProgress
+            size="2rem"
+            sx={{ 
+                'svg circle': { stroke: 'url(#my_gradient)' },
+                size: {xs:"30px", sm: "30px", md: "70px", lg: "100px"},
+                mb:10,
+            }} 
+        />
+      </React.Fragment>
+    );
+  }
 
 const StoryPageUI = () => {
     const [locationIndex, setLocationIndex] = useState(null);
@@ -220,7 +244,25 @@ const StoryPageUI = () => {
                 </Stack>
             </Box>
             {isGenerating ? (
-                <Typography>Loading submissions...</Typography>
+                <Box
+                    display='flex'
+                    flexDirection='row'
+                    gap={2}
+                >
+                    {GradientCircularProgress()}
+                    <Typography
+                        variant='h5'
+                        sx={{
+                            fontSize: { xs: "body1.fontSize", sm: "h6.fontSize", md: "h5.fontSize", lg: "h5.fontSize" },
+                            fontFamily: montserrat.style.fontFamily,
+                            color: "black",
+                            textAlign: "center"
+                        }}
+                    >
+                        Loading submissions...
+                    </Typography>
+                </Box>
+                
             ) : historyDataFinal.length === 0 ? (
                 <Typography>No submissions found for this challenge.</Typography>
             ) : (

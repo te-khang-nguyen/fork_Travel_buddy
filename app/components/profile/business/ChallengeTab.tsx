@@ -66,7 +66,13 @@ const ChallengesTab: React.FC = () => {
       {/* Challenges List */}
       <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
         {allChallenge?.data?.map((challenge) => (
-          <Card key={challenge.id} sx={{ width: 300 }}>
+            <Card
+              key={challenge.id}
+              sx={{
+                width: 300,
+                opacity: challenge.status==='ACTIVE' ? 1 : 0.3,
+              }}
+            >
             <CardMedia
               component="img"
               height="140"

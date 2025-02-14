@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import CustomAccordionList from "@/app/components/challenge/SectionWithCustomStyling";
+import { getPayLoadSize } from "@/libs/services/utils";
 
 const MainUI = () => {
   const router = useRouter();
@@ -107,11 +108,6 @@ const MainUI = () => {
 
   // Find the specific location based on location_id
   useEffect(()=>{
-    // setChallengeLocations( 
-    //   locationsData?.data?.slice()
-    //   ?.sort((a: any, b: any)=> 
-    //       (Date.parse(a?.created)) - (Date.parse(b?.created))
-    //   ) || [] );
     if (locationsData) {
       setLocationIds(
         challengeLocations.map((location: any) => location.id)
@@ -127,8 +123,6 @@ const MainUI = () => {
   const currentLocationIdx =
     locationIds &&
     locationIds.findIndex((location) => location == currentLocation.id);
-
-  console.log(currentLocationIdx);
 
   // If there are errors, handle them
   if (locationsError) {
@@ -152,6 +146,7 @@ const MainUI = () => {
 
   const handleInputsUpload = async (userInputs) => {
     setIsConfirmClicked(true);
+    getPayLoadSize([{ locationId: location_id, ...userInputs }]);
     const result = await uploadInputs({
       challengeId: challenge_id,
       userLocationSubmission: [{ locationId: location_id, ...userInputs }]

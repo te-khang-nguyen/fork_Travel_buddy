@@ -27,7 +27,7 @@ function ChallengeList() {
     
     if (challengeData?.data) {
       setChallenges(challengeData?.data.map((item) => {
-        return { id: item.id, name: item.title, image: item.thumbnailUrl };
+        return { id: item.id, name: item.title, image: item.thumbnailUrl, status: item.status };
       }));
     }
   }, [isChallengeLoading, challengeData]);
@@ -68,7 +68,9 @@ function ChallengeList() {
             No Existing Challenge
           </Typography>
         </Box> :
-        (challenges as any).map((challenge, index) => (
+        (challenges as any)
+        .filter((challenge) => challenge.status === "ACTIVE")
+        .map((challenge, index) => (
           <Box
             key={index}
             sx={{

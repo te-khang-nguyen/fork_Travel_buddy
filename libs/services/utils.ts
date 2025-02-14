@@ -193,6 +193,12 @@ const uploadToStorage = async (inputobj) => {
   return { data: data.signedUrl };
 };
 
+const getPayLoadSize = (payload) => {
+  const payloadString = JSON.stringify(payload);
+  const payloadSize = new Blob([payloadString]).size / Math.pow(1024, 2);
+  console.log("Payload size: ", payloadSize.toFixed(4));
+};
+
 export {
   checkAndInsertUserProfile,
   uploadNewRow,
@@ -202,4 +208,5 @@ export {
   getRowById,
   uploadToStorage,
   base64toBinary,
+  getPayLoadSize,
 };

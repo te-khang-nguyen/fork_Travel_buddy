@@ -106,7 +106,7 @@ export const imageToStorage = async (inputobj, supabase) => {
 export const config = {
     api: {
         bodyParser: {
-            sizeLimit: '10mb', // Increase the body size limit (e.g., 5MB)
+            sizeLimit: '4.5mb', // Increase the body size limit (e.g., 5MB)
         },
     },
 };

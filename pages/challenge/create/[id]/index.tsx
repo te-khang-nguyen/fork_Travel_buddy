@@ -14,7 +14,10 @@ import {
   useUploadImageMutation
 } from "@/libs/services/storage/upload";
 
-import { useUpdateChallengeMutation } from "@/libs/services/business/challenge";
+import {
+  useUpdateChallengeMutation,
+  useDeleteChallengeMutation,
+} from "@/libs/services/business/challenge";
 
 interface Challenge {
   title: string;
@@ -137,6 +140,16 @@ const ChallengeLocations = () => {
       router.push(`/challenge/create/${challengeId}/location`);
   }
 
+  const [deleteChallenge] = useDeleteChallengeMutation();
+  const handleDeleteChallenge = async () => {
+    if (!challengeId) {
+      console.error('Challenge ID is undefined');
+      return;
+    }
+    await deleteChallenge({id: challengeId}).unwrap();
+    router.replace('/challenge');
+  }
+
   return (
     <Box
       sx={{ padding: "2rem", backgroundColor: "#f8f9fa", minHeight: "100vh" }}
@@ -162,6 +175,14 @@ const ChallengeLocations = () => {
             onClick={()=>{router.replace('/dashboard/business')}}
           >
             Submit Challenge
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ marginRight: "1rem", marginBottom: { xs: "0.5rem", sm: 0 } }}
+            onClick={handleDeleteChallenge}
+          >
+            Delete Challenge
           </Button>
           <Button 
             variant="outlined" 
