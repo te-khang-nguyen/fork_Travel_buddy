@@ -146,7 +146,7 @@ const MainUI = () => {
 
   const handleInputsUpload = async (userInputs) => {
     setIsConfirmClicked(true);
-    getPayLoadSize([{ locationId: location_id, ...userInputs }]);
+    // getPayLoadSize([{ locationId: location_id, ...userInputs }]);
     const result = await uploadInputs({
       challengeId: challenge_id,
       userLocationSubmission: [{ locationId: location_id, ...userInputs }]

@@ -27,7 +27,7 @@ const ChallengeCard = ({ challenge }) => {
     setChallengeName("");
   };
   const handleClick = (value) => {
-    router.push(`/challenge/${value}`);
+    router.push(`/challenge/${value}/locations`);
   };
 
   // Fallback image URL

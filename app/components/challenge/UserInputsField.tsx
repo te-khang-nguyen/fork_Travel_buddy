@@ -8,11 +8,14 @@ import {
   Alert,
   CircularProgress,
   InputAdornment,
+  SxProps,
+  Theme
 } from "@mui/material";
 import ImageUploader from "../image_picker/ImagePicker";
 import VoiceToTextButton from "./VoiceToTextButton";
+import { handleResize } from "../image_picker/ImagePicker";
 
-interface CunstomInputsFieldProps {
+interface CustomInputsFieldProps {
   index: number;
   onInputsUpload: (locationInputs: {
     index: number;
@@ -23,11 +26,13 @@ interface CunstomInputsFieldProps {
   lastUploadedImgs?: Array<{ image: string | null; name: string | null }>;
   confirmStatus?: boolean;
   withConfirmButton?: boolean;
+  sx?: SxProps<Theme>; // Add optional sx prop
+  buttonText?: string;
 }
 
-const CunstomInputsField = forwardRef<
+const CustomInputsField = forwardRef<
   unknown,
-  CunstomInputsFieldProps
+  CustomInputsFieldProps
 >(({
   index,
   onInputsUpload,
@@ -35,6 +40,8 @@ const CunstomInputsField = forwardRef<
   lastUploadedImgs = [],
   confirmStatus = false,
   withConfirmButton = true,
+  sx,
+  buttonText,
 }, ref) => {
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -65,6 +72,14 @@ const CunstomInputsField = forwardRef<
           try {
             const response = await fetch(inputObj?.image as any);
             const blob = await response.blob();
+                // Resize image
+            // return new Promise<{ 
+            //   image: string | null; 
+            //   name: string | null;
+            // }>(async (resolve) => {
+            //   const image = await handleResize(blob);
+            //   resolve(image);
+            // })
 
             const reader = new FileReader();
             return new Promise<{ image: string | null; name: string | null }>(
@@ -139,7 +154,7 @@ const CunstomInputsField = forwardRef<
   
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={sx ?? { p: 2 }}>
       <Typography variant="h6" sx={{ color: "#4285F4" }}>
         Your Story
       </Typography>
@@ -200,13 +215,14 @@ const CunstomInputsField = forwardRef<
         color="primary"
         sx={{
           mt: 2,
+          left: "45%",
           display: "block",
         }}
         onClick={handleConfirm}
         disabled={confirmStatus}
       >
         {!confirmStatus ? (
-          "Confirm"
+          buttonText ?? "Confirm"
         ) : (
           <CircularProgress size="20px" thickness={6.0} />
         )}
@@ -230,5 +246,5 @@ const CunstomInputsField = forwardRef<
   );
 });
 
-CunstomInputsField.displayName = "CunstomInputsField";
-export default CunstomInputsField;
+CustomInputsField.displayName = "CustomInputsField";
+export default CustomInputsField;

@@ -3,7 +3,7 @@ import { Box, Button, Typography, CardMedia, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { File } from "openai/_shims/index.mjs";
 
-export function blobToBase64(file: File): Promise<string> {
+export function blobToBase64(file: File | Blob): Promise<string> {
   const reader = new FileReader();
   return new Promise((resolve, reject) => {
     reader.onload = () => {
@@ -33,7 +33,7 @@ export function calculateSize(img: any, numberOfImgs: number = 1){
   return [newWidth, newHeight]
 };
 
-export function handleResize(file: File, numberOfImgs: number): Promise<
+export function handleResize(file: File | Blob, fileName?: string, numberOfImgs: number = 1): Promise<
   {image: string, name: string, uploadString?: string}
 > {
   return new Promise(async (resolve, reject) => {
@@ -70,7 +70,10 @@ export function handleResize(file: File, numberOfImgs: number): Promise<
       const size = buffer.length / Math.pow(1024, 2); // in MB
       // console.log(`New size - ${size.toFixed(3)} MB`);
       // const uploadString = `W${img.width},H${img.height},${newImageUrl.split(",")[1]}`;
-      resolve({image: newImageUrl, name: file.name});
+      resolve({
+        image: newImageUrl, 
+        name: typeof file === File? (file as File).name : fileName as string
+      });
     }
     img.onerror = (e) => reject(e);
 
@@ -141,7 +144,7 @@ const ImageUploader: React.FC<ImageUploaderProps> =
               image: string | null; 
               name: string | null;
             }>(async (resolve) => {
-              const image = await handleResize(file, numberOfFiles);
+              const image = await handleResize(file, undefined, numberOfFiles);
               resolve(image);
             })
           }
@@ -192,7 +195,8 @@ const ImageUploader: React.FC<ImageUploaderProps> =
             color="textSecondary"
           >
             {selectedImages.length > 0
-              ? selectedImages.map((img) => img.name).join(", ")
+              ? <></>
+              // selectedImages.map((img) => img.name).join(", ")
               : "No files chosen"}
           </Typography>
         </Box>
