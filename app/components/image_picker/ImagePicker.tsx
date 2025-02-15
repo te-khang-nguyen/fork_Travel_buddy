@@ -14,27 +14,41 @@ export function blobToBase64(file: File | Blob): Promise<string> {
   });
 };
 
-export function calculateSize(img: any, numberOfImgs: number = 1){
+export function calculateSize(img: any, numberOfImgs: number){
   let scale = 1;
   const width = img?.width;
   const height = img?.height;
-  const threshold = 3 / numberOfImgs; // in MB
+  const threshold = 1 / numberOfImgs; // in MB
   const buffer = Buffer.from(img.src.split(",")[1], "base64");
   const size = buffer.length / Math.pow(1024, 2); // in MB
-  if(size > threshold){
-    scale = threshold / size;
+  if (width < 600 || height < 600) {
+    scale = size < 1? 0.7 : 1;
+  } else if (width > 600 || height > 600) {
+    scale = size < 1 ? 0.2 : threshold / size;
   }
+  
+  // console.log(`Old dimensions - W${width} x H${height}`);
 
+  // console.log(`size - ${size}`);
+  // console.log(`Threshold - ${threshold}`);
+  // console.log(`Scale - ${scale}`);
+  // console.log(`No Imgs - ${numberOfImgs}`);
   // console.log(`Original size - ${size.toFixed(3)} MB`);
 
   const newWidth = Math.round(width * scale);
   const newHeight = Math.round(height * scale);
 
+  // console.log(`New dimensions - W${newWidth} x H${newHeight}`);
+
   return [newWidth, newHeight]
 };
 
-export function handleResize(file: File | Blob, fileName?: string, numberOfImgs: number = 1): Promise<
-  {image: string, name: string, uploadString?: string}
+export function handleResize(
+  file: File | Blob, 
+  numberOfImgs: number,
+  fileName?: string, 
+): Promise<
+  {image: string, name: string}
 > {
   return new Promise(async (resolve, reject) => {
     const imageString = await blobToBase64(file);
@@ -57,18 +71,18 @@ export function handleResize(file: File | Blob, fileName?: string, numberOfImgs:
       // referencing https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob((blob) => {
-        // Embedd original size into image tag
-        const displayTag = document.createElement('h6');
-        displayTag.innerText = `Original dimensions - W${img?.width} x H${img?.height}`;
-      })
+      // canvas.toBlob((blob) => {
+      //   // Embedd original size into image tag
+      //   const displayTag = document.createElement('h6');
+      //   displayTag.innerText = `Original dimensions - W${img?.width} x H${img?.height}`;
+      // })
 
       // here we specify the quality, which is the second argument in .toDataUrl(...) | here the output should be 50% the quality of the original, lowering the detail and file size
       const newImageUrl = ctx.canvas.toDataURL("image/jpg", 1); // quality ranges 0-1
       // below is not necessary (used for testing)
       const buffer = Buffer.from(newImageUrl.split(",")[1], "base64");
       const size = buffer.length / Math.pow(1024, 2); // in MB
-      // console.log(`New size - ${size.toFixed(3)} MB`);
+      console.log(`New size - ${size.toFixed(3)} MB`);
       // const uploadString = `W${img.width},H${img.height},${newImageUrl.split(",")[1]}`;
       resolve({
         image: newImageUrl, 
@@ -128,7 +142,10 @@ const ImageUploader: React.FC<ImageUploaderProps> =
         const images = files.map((file) => {
           const reader = new FileReader();
           if(!withResize){
-            return new Promise<{ image: string | null; name: string | null }>((resolve) => {
+            return new Promise<{ 
+              image: string | null; 
+              name: string | null 
+            }>((resolve) => {
               reader.onload = () => {
                 resolve({ image: reader.result as string, name: file.name });
               };
@@ -144,7 +161,7 @@ const ImageUploader: React.FC<ImageUploaderProps> =
               image: string | null; 
               name: string | null;
             }>(async (resolve) => {
-              const image = await handleResize(file, undefined, numberOfFiles);
+              const image = await handleResize(file, numberOfFiles);
               resolve(image);
             })
           }
@@ -186,7 +203,12 @@ const ImageUploader: React.FC<ImageUploaderProps> =
               }}
             >
               {allowMultiple ? "Choose Files" : "Choose File"}
-              <input type="file" multiple={allowMultiple} hidden onChange={handleImageUpload} />
+              <input 
+                type="file" 
+                multiple={allowMultiple} 
+                hidden 
+                onChange={handleImageUpload} 
+              />
             </Button>}
 
           <Typography

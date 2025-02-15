@@ -66,36 +66,38 @@ const CustomInputsField = forwardRef<
   }, [lastInputText]);
 
   useEffect(() => {
-    if ((lastUploadedImgs as any).length > 0) {
+    if (lastUploadedImgs && (lastUploadedImgs as any).length > 0) {
+      const lastUploadsImgsLen = (lastUploadedImgs as any).length;
       const processedPreviousUploads: any = lastUploadedImgs?.map(
         async (inputObj) => {
           try {
             const response = await fetch(inputObj?.image as any);
             const blob = await response.blob();
-                // Resize image
-            // return new Promise<{ 
-            //   image: string | null; 
-            //   name: string | null;
-            // }>(async (resolve) => {
-            //   const image = await handleResize(blob);
-            //   resolve(image);
-            // })
+            // Resize image
+            return new Promise<{ 
+              image: string | null; 
+              name: string | null;
+            }>(async (resolve) => {
+              const image = await handleResize(blob, lastUploadsImgsLen, inputObj?.name ?? "");
+              // console.log(image);
+              resolve(image);
+            })
 
-            const reader = new FileReader();
-            return new Promise<{ image: string | null; name: string | null }>(
-              (resolve) => {
-                reader.onloadend = () => {
-                  resolve({
-                    image: reader.result as string,
-                    name: inputObj?.name,
-                  });
-                };
-                reader.onerror = () => {
-                  resolve({ image: null, name: inputObj?.name });
-                };
-                reader.readAsDataURL(blob);
-              }
-            );
+            // const reader = new FileReader();
+            // return new Promise<{ image: string | null; name: string | null }>(
+            //   (resolve) => {
+            //     reader.onloadend = () => {
+            //       resolve({
+            //         image: reader.result as string,
+            //         name: inputObj?.name,
+            //       });
+            //     };
+            //     reader.onerror = () => {
+            //       resolve({ image: null, name: inputObj?.name });
+            //     };
+            //     reader.readAsDataURL(blob);
+            //   }
+            // );
           } catch (err) {
             return uploadedImg;
           }
@@ -215,7 +217,6 @@ const CustomInputsField = forwardRef<
         color="primary"
         sx={{
           mt: 2,
-          left: "45%",
           display: "block",
         }}
         onClick={handleConfirm}

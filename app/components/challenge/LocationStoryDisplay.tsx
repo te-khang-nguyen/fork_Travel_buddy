@@ -35,6 +35,7 @@ const wiggle = keyframes`
 
 // Styled card with tilt and hole
 const StyledCard = styled(Card)(({ theme }) => ({
+    borderRadius: '10%',
     position: 'relative',
     transform: 'rotate(-5deg)', // Tilt the card to the left
     animation: `${wiggle} 5s infinite ease-in-out`, // Slow wiggle animation
@@ -42,9 +43,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
         content: '""',
         position: 'absolute',
         top: '3%',
-        left: '43%',
-        width: '20px',
-        height: '20px',
+        left: '47%',
+        width: '13px',
+        height: '13px',
         borderRadius: '50%',
         background: `radial-gradient(circle, #b87333 0%, #8b5a2b 70%, #3e2723 100%)`,
         boxShadow: `
@@ -71,11 +72,11 @@ const WoodenCircle = styled(Box)(({ theme }) => ({
 
 interface LocationStoryProps {
     content: any;
-    open: boolean;
-    onClose: () => void;
+    // open: boolean;
+    // onClose: () => void;
 }
 
-const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onClose }) => {
+const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
 
@@ -84,10 +85,10 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
     const [imageIndex, setImageIndex] = useState(null);
 
     useEffect(() => {
-        if (!open) {
+        if (!content) {
             setImageIndex(null);
         }
-    }, [open]);
+    }, [content]);
 
     // Scroll to the left
     const handlePrev = () => {
@@ -104,19 +105,21 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
     };
 
     return (
-        <Modal
-            open={open}
-            onClose={onClose}
-            sx={{
-                alignItems: "center",
-                justifyContent: "center",
-                alignSelf: "center",
-                justifySelf: "center",
-                width: "100%",
-                height: "70%"
-            }}
-        >
-            {imageIndex ?
+        // <Modal
+        //     open={open}
+        //     onClose={onClose}
+        //     sx={{
+        //         alignItems: "center",
+        //         justifyContent: "center",
+        //         alignSelf: "center",
+        //         justifySelf: "center",
+        //         width: "100%",
+        //         height: "70%"
+        //     }}
+        // >
+        
+        <>
+             {imageIndex ?
                 <Box
                     display="flex"
                     alignItems="flex-start"
@@ -127,15 +130,19 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
                         flexDirection: "row",
                         p: 1,
                         height: "100%",
-                        boxShadow: 10
-                    }}>
+                        boxShadow: 10,
+                        mt: 2,
+                        borderRadius: 2,
+                    }}
+                >
                     <CardMedia
                         component="img"
                         image={content?.userMediaSubmission?.[imageIndex - 1]}
                         alt={`Image ${imageIndex}`}
                         sx={{
                             height:"100%",
-                            width:"80%"
+                            width:"100%",
+                            borderRadius: 2,
                         }}
                     />
                     <Fab
@@ -145,7 +152,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
                             alignItems: "center",
                             justifyContent: "center",
                             backgroundColor: "rgba(255, 250, 247, 0.66)",
-                            left: 4
+                            ml: 2
                         }}
                         onClick={() => { setImageIndex(null) }}
                     >
@@ -159,11 +166,12 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
                     alignItems="flex-start"
                     position="absolute"
                     sx={{
-                        backgroundColor: "rgba(250, 221, 180, 0.97)",
+                        // backgroundColor: "rgba(250, 221, 180, 0.97)",
                         flexDirection: "row",
                         p: 1,
-                        height: "100%",
-                        boxShadow: 10
+                        height: "70%",
+                        mt: 15,
+                        //boxShadow: 10
                     }}
                 >
 
@@ -205,13 +213,13 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
                             sx={{
                                 display: "flex",
                                 flexDirection: "column",
-                                gap: "1rem",
+                                gap: "0.01rem",
                                 scrollBehavior: "smooth",
                                 height: "100%",
                                 width: { xs: "80%", sm: "80%", lg: "100%" },
                                 overflowY: "auto",
                                 "&::-webkit-scrollbar": { display: "none" }, // Optional: Hide scrollbar
-                                pb: 1,
+                                pb: "0.5rem",
                                 alignItems: "center"
                             }}
                         >
@@ -220,19 +228,26 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
                                 <Box
                                     key={index}
                                     sx={{
-                                        minWidth: { xs: '45vw', sm: '300px', lg: '300px' }, // Adjust card width
+                                        minWidth: { 
+                                            xs: '45vw', 
+                                            sm: '300px', 
+                                            lg: '300px' 
+                                        }, // Adjust card width
                                         maxWidth: '100%',
+                                        width:"100%",
                                         position: 'relative',
-                                        p: 2,
+                                        p: 1,
                                         zIndex: 1,
                                     }}
                                 >
                                     
-                                    <StyledCard >
-                                        <CardActionArea onClick={() => { setImageIndex(index + 1) }}>
+                                    <StyledCard>
+                                        <CardActionArea onClick={() => 
+                                            { setImageIndex(index + 1) }
+                                        }>
                                             <CardMedia
                                                 component="img"
-                                                height="150px"
+                                                height="100%"
                                                 image={img}
                                                 alt="Location Image"
                                             />
@@ -271,7 +286,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
                             p: { xs: 1, lg: 5 },
                         }}
                     >
-                        <Typography
+                        {/* <Typography
                             variant='h3'
                             sx={{
                                 fontWeight: "bold",
@@ -282,40 +297,52 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content, open, onC
                             }}
                         >
                             {content.title}
-                        </Typography>
+                        </Typography> */}
                         <Box
                             sx={{
                                 overflow: "auto",
                                 textOverflow: 'clip', // Cut off the text without showing ellipsis
                                 whiteSpace: 'normal', // Allow text to wrap to the next line
                                 wordBreak: 'break-word', // Ensure long words break to fit inside the box
-                                backgroundColor: "rgba(255, 238, 214, 0.69)",
+                                backgroundColor: "rgba(246, 224, 188, 0.43)",
                                 p: 2,
-                                borderRadius: 3
+                                borderRadius: 3,
+                                boxShadow: 2,
                             }}
                         >
-                            <Typography
-                                variant='body1'
-                                sx={{
-                                    fontFamily: montserrat.style.fontFamily,
-                                    color: "black",
-                                    fontSize: { xs: "body1.fontSize", lg: "h5.fontSize" }
 
-                                }}
-                            >
-                                {content.story}
-                            </Typography>
+                            {content?.story?.split("\n").map((line, index) => (
+                                <Typography 
+                                    key={index}
+                                    variant='body1'
+                                    sx={{
+                                        fontFamily: montserrat.style.fontFamily,
+                                        color: "black",
+                                        fontSize: { 
+                                            xs: "body1.fontSize", 
+                                            lg: "h5.fontSize" 
+                                        },
+                                        wordWrap: "break-word"
+                                    }}
+                                >
+                                    {line}<br/>
+                                </Typography>
+                            ))
+                            }
+                            
                         </Box>
                     </Box>
-                    <WoodenCircle
+                    {/* <WoodenCircle
                         sx={{
                             width: { xs: "100%", sm: "30%", md: "25%", lg: "20%" },
                             height: { xs: "3%", sm: "5%", md: "7%", lg: "10%" },
                         }}
-                    />
+                    /> */}
                 </Box>}
+        </>
+        //         </Box>}
 
-        </Modal>
+        // </Modal>
     );
 };
 

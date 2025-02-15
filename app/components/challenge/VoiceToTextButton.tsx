@@ -28,7 +28,11 @@ const punctuations = {
 
 let persistedListening = false;
 
-const VoiceToTextButton: React.FC<VoiceButtonForm> = ({ language, onTranscribe, existingTexts }) => {
+const VoiceToTextButton: React.FC<VoiceButtonForm> = ({ 
+    language, 
+    onTranscribe, 
+    existingTexts 
+}) => {
     let cummulativeTranscript = existingTexts;
     const [snackbar, setSnackbar] = useState<{
         open: boolean;

@@ -100,57 +100,60 @@ const StoryPageUI = () => {
     } = useGetLocationsQuery({
         challengeId: challege_id
     });
-    const { data: userSubmissionData, isLoading: isUserSubmissionLoading } = useGetUserSubmissionsQuery();
-    const historyData1 = isUserSubmissionLoading ? [] : userSubmissionData?.data.filter(
-        submission => submission.challengeId === challege_id
-    ).flatMap(submission => submission.userChallengeSubmission);
+    const { 
+        data: userSubmissionData, 
+        isLoading: isUserSubmissionLoading 
+    } = useGetUserSubmissionsQuery();
+
+    const historyData1 = isUserSubmissionLoading ? [] : 
+        userSubmissionData?.data.filter(
+            submission => submission.challengeId === challege_id
+        ).flatMap(submission => submission.userChallengeSubmission);
+
     const historyData2 = historyData1 ? historyData1.map(({ index, ...rest }) => ({
         id: index,
         ...rest,
     })) : [];
 
     const locationDataUnsorted = isLocationLoading ? [] : locationData?.data;
-    const locationDataSorted = [...locationDataUnsorted].sort((a,b)=> (Date.parse(a?.created)) - (Date.parse(b?.created)));
+    const locationDataSorted = [...locationDataUnsorted].sort(
+        (a,b)=> (Date.parse(a?.created)) - (Date.parse(b?.created)));
     
-    const historyData = locationDataSorted.map(itemB => {
-        // Find the corresponding item in arrayA based on id
-        const matchingItemA = historyData2.find(itemA => itemA.locationId === itemB.id);
-
-        // Merge the "name" from arrayA into arrayB's item
-        return {
-            ...matchingItemA,
-            title: matchingItemA ? itemB.title : null // Handle cases where no match is found
-        };
-    });
+    const locationTitles = locationDataSorted.map(item => item.title).join("\n");
+    
+    const matchItem = historyData2.find(itemA => itemA.locationId === undefined);
+    const historyData = {
+        locations: locationTitles,
+        notes: matchItem?.userQuestionSubmission,
+        userMediaSubmission: matchItem?.userMediaSubmission
+    }
 
     const [isGenerating, setIsGenerating] = useState(true);
-    const [story, setStory] = useState([{ locationId: "", story: "" }]);
+    const [story, setStory] = useState([{locationId: '', story: ''}]);
     const hasGeneratedRef = useRef(false);
     useEffect(() => {
         if (historyData2.length > 0 && locationIndex === null) {
             setLocationIndex(historyData2[0].locationId);
         }
-        // Only run if historyData is not null and not an empty array
-        if (historyData && historyData.length > 0) {
+        // Only run if historyData is not null
+        if (historyData.locations 
+            && historyData.notes 
+            && historyData.userMediaSubmission 
+            && tourSchedule !== "") {
             const generateStory = async () => {
                 if (hasGeneratedRef.current) return;
                 hasGeneratedRef.current = true;
 
                 try {
-                    const tourSchedule = `
-                Hanoi Vespa Food Tour Itinerary
-                8:30 AM: Hotel pick-up. Your guide arrives on a vintage Vespa to start your culinary journey through Hanoi’s vibrant streets. Brief introduction and safety instructions before departing.
-                9:00 AM: Pho Ba Muoi on Hang Bai Street. There will be Pho Bo (beef pho) and Pho Ga (chicken pho). Pho Ga will is light-hearted, while Pho Bo is more savory. Guests can enjoy the hot bowl of pho, drink one cup of tea, and soak in the morning atmosphere of Hanoi.
-                10:30 AM: Bun Cha Huong Lien. Famed for being Obama's lunch spot with Anthony Bourdain when he visited Hanoi for a business trip. Relish a plate of Hanoi's iconic Bun Cha with grilled pork patties, fresh vermicelli, and dipping sauce at a family-run restaurant.
-                12:00 PM: Hotel drop-off. Return safely to your hotel with a heart full of memories and a belly full of Hanoi's finest flavors.
-                `
-
-                    const response = await generateLocationStories(tourSchedule, historyData);
+                    const response = await generateLocationStories(
+                        tourSchedule, 
+                        historyData
+                    );
                     const cleanedOutput = response
                         .replace(/^```json\s*/, '')  // Remove leading ```json
                         .replace(/```\s*$/, '')      // Remove trailing ```
                         .trim();
-                    setStory(cleanedOutput);
+                    setStory(JSON.parse(cleanedOutput));
                     setIsGenerating(false);
                 } catch (error) {
                     console.error('Error generating story:', error);
@@ -162,18 +165,11 @@ const StoryPageUI = () => {
         }
     }, [historyData2, historyData, locationIndex, isGenerating, tourSchedule]);
 
-    const historyDataFinal = isGenerating ? [] : historyData.map(itemB => {
-        // Find the corresponding item in arrayA based on id
-        const storyArray = JSON.parse(story as any);
-
-        const matchingItemA = storyArray?.find(itemA => itemA.locationId === itemB.locationId);
-
-        // Merge the "name" from arrayA into arrayB's item
-        return {
-            ...itemB,
-            story: matchingItemA ? matchingItemA.story : null // Handle cases where no match is found
+    const historyDataFinal = isGenerating ? {} : 
+        {
+            ...historyData,
+            story: story.map((item)=>item.story).join("\n\n") ?? null
         };
-    });
 
     return (
         <Box
@@ -186,7 +182,7 @@ const StoryPageUI = () => {
                 fontSize: '1.2rem',
                 alignItems: "center",
                 height: "100%",
-                overflow:"auto"
+                overflow:"auto",
             }}
         >
 
@@ -204,44 +200,18 @@ const StoryPageUI = () => {
                 <Typography
                     variant="h2"
                     sx={{
-                        fontSize: { xs: "h5.fontSize", sm: "h4.fontSize", md: "h3.fontSize", lg: "h2.fontSize" },
+                        fontSize: { 
+                            xs: "h5.fontSize", 
+                            sm: "h4.fontSize", 
+                            md: "h3.fontSize", 
+                            lg: "h2.fontSize" 
+                        },
                         fontFamily: montserrat.style.fontFamily,
                         color: "black",
-                        textAlign: "center"
+                        textAlign: "center",
                     }}>
                     {`My ${challengeTitle || 'Travel'} Diaries`}
                 </Typography>
-            </Box>
-
-            {/* Location Cards Container */}
-            <Box display="flex" alignItems="center" justifyContent="center" position="relative" width="80%">
-
-                {/* Stack Image Buttons */}
-                <Stack
-                    spacing={{ xs: 1, sm: 1, md: 1, lg: 2 }}
-                    direction={{ xs: 'column', sm: 'column', md: 'column', lg: 'row' }}
-                    useFlexGap
-                    alignItems="center"
-                    justifyContent="center"
-                    sx={{
-                        display: "flex",
-                        gap: "1rem",
-                        scrollBehavior: "smooth",
-                        width: "80%",
-                        overflowX: "auto",
-                        "&::-webkit-scrollbar": { display: "none" }, // Optional: Hide scrollbar
-                        pb: 1,
-                        flexWrap: 'wrap'
-                    }}
-                >
-                    {historyDataFinal?.map((content, index) => (
-                        <CustomButton
-                            key={index}
-                            content={content}
-                            onClick={() => { handleClick(content.locationId) }}
-                        />
-                    ))}
-                </Stack>
             </Box>
             {isGenerating ? (
                 <Box
@@ -263,13 +233,11 @@ const StoryPageUI = () => {
                     </Typography>
                 </Box>
                 
-            ) : historyDataFinal.length === 0 ? (
+            ) : !historyDataFinal? (
                 <Typography>No submissions found for this challenge.</Typography>
             ) : (
                 <LocationStoryDisplay
-                    content={historyDataFinal.find(item => item.locationId === locationIndex)}
-                    open={isOpen}
-                    onClose={() => { setIsOpen(false) }}
+                    content={historyDataFinal}
                 />
             )}
             <Fab

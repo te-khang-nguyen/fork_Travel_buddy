@@ -68,19 +68,20 @@ const MainUI = () => {
 
   useEffect(() => {
     const userLastSubmission = history?.data?.[0]?.userChallengeSubmission;
-    console.log("userLastSubmission", userLastSubmission);
     if(userLastSubmission?.length === 1) {
-      console.log("Here")
       setItem({
-        lastUploadedTexts: userLastSubmission?.userQuestionSubmission || "",
-        lastUploadedImgs: userLastSubmission?.userMediaSubmission || [],
+        lastUploadedTexts: userLastSubmission?.[0]?.userQuestionSubmission || "",
+        lastUploadedImgs: userLastSubmission?.[0]?.userMediaSubmission
+          .map((img, index)=>({
+              image: img, 
+              name: `image-${index}`
+          })) || [],
       })
     } else if (userLastSubmission?.length > 1){
       
       const concatenatedTexts = userLastSubmission?.map(
         (item) => item.userQuestionSubmission
       ).join("\n");
-      console.log("Here", concatenatedTexts);
       const collectedImgs = userLastSubmission?.map(
         (item, index) => {
           return (item.userMediaSubmission || []).map(
@@ -163,14 +164,17 @@ const MainUI = () => {
           confirmStatus={isConfirmClicked}
           buttonText="Submit"
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "flex-start",
+            // display: "flex",
+            // flexDirection: "column",
+            // justifyContent: "center",
+            // alignItems: "flex-start",
+            maxHeight: "90vh",
             width: "80%",
+            // height: "80%",
             p: 2,
             backgroundColor: "rgba(246, 216, 174, 0.86)",
-            borderRadius: 2,
+            borderRadius: 1,
+            overflowY: "auto",
           }}
         />
     )
@@ -277,10 +281,10 @@ const MainUI = () => {
         open={modalTrigger}
         onClose={() => setModalTrigger(false)}
         sx={{
-            width: "70%",
-            height: "60%",
-            mt: 10,
-            left: "23%",
+            width: "95%",
+            height: "70%",
+            mt: 3,
+            left: "15%",
             borderRadius: 2,
           }}
       >
