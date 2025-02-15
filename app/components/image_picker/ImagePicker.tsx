@@ -18,27 +18,27 @@ export function calculateSize(img: any, numberOfImgs: number){
   let scale = 1;
   const width = img?.width;
   const height = img?.height;
-  const threshold = 1 / numberOfImgs; // in MB
+  const threshold = 2 / numberOfImgs; // in MB
   const buffer = Buffer.from(img.src.split(",")[1], "base64");
   const size = buffer.length / Math.pow(1024, 2); // in MB
-  if (width < 600 || height < 600) {
-    scale = size < 1? 0.7 : 1;
-  } else if (width > 600 || height > 600) {
-    scale = size < 1 ? 0.2 : threshold / size;
+  if (width < 700 || height < 700) {
+    scale = size < 0.4? 1 : 0.7;
+  } else if (width > 700 || height > 700) {
+    scale = size < threshold? 0.2 / size : threshold / size;
   }
   
-  // console.log(`Old dimensions - W${width} x H${height}`);
+  console.log(`Old dimensions - W${width} x H${height}`);
 
   // console.log(`size - ${size}`);
   // console.log(`Threshold - ${threshold}`);
   // console.log(`Scale - ${scale}`);
   // console.log(`No Imgs - ${numberOfImgs}`);
-  // console.log(`Original size - ${size.toFixed(3)} MB`);
+  console.log(`Original size - ${size.toFixed(3)} MB`);
 
   const newWidth = Math.round(width * scale);
   const newHeight = Math.round(height * scale);
 
-  // console.log(`New dimensions - W${newWidth} x H${newHeight}`);
+  console.log(`New dimensions - W${newWidth} x H${newHeight}`);
 
   return [newWidth, newHeight]
 };
