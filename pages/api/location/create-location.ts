@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { imageToStorage } from "../challenge/user/upload-user-submission";
+import { imageToStorage } from "../storage/upload_image";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
 import {
     base64toBinary,
@@ -134,7 +134,6 @@ export default async function handler(
                             userId: user!.id,
                             bucket: "challenge",
                             title: `${challengeId}loc=${title}`,
-                            location: `bgFor${title}`,
                             data: typeof backgroundImages[0] === 'string'?
                                 base64toBinary(backgroundImages[0])
                                 :backgroundImages[0],

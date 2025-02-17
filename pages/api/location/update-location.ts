@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { imageToStorage } from "../challenge/user/upload-user-submission";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
 import {
     base64toBinary,

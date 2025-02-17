@@ -73,31 +73,25 @@ const CustomInputsField = forwardRef<
           try {
             const response = await fetch(inputObj?.image as any);
             const blob = await response.blob();
-            // Resize image
-            return new Promise<{ 
-              image: string | null; 
-              name: string | null;
-            }>(async (resolve) => {
-              const image = await handleResize(blob, lastUploadsImgsLen, inputObj?.name ?? "");
-              // console.log(image);
-              resolve(image);
-            })
+        
+            const reader = new FileReader();
+            return new Promise<{ image: string | null; name: string | null }>(
+              (resolve) => {
+                reader.onloadend = () => {
+                  resolve({
+                    image: reader.result as string,
+                    name: inputObj?.name,
+                  });
+                };
+                
+                reader.onerror = () => {
+                  resolve({ image: null, name: inputObj?.name });
+                };
 
-            // const reader = new FileReader();
-            // return new Promise<{ image: string | null; name: string | null }>(
-            //   (resolve) => {
-            //     reader.onloadend = () => {
-            //       resolve({
-            //         image: reader.result as string,
-            //         name: inputObj?.name,
-            //       });
-            //     };
-            //     reader.onerror = () => {
-            //       resolve({ image: null, name: inputObj?.name });
-            //     };
-            //     reader.readAsDataURL(blob);
-            //   }
-            // );
+                reader.readAsDataURL(blob);
+              }
+            );
+            
           } catch (err) {
             return uploadedImg;
           }

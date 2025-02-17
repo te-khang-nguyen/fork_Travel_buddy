@@ -1,9 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
-import {
-    base64toBinary,
-} from "@/libs/services/utils";
-import crypto from "crypto";
 
 /**
  * @swagger
@@ -79,30 +75,6 @@ import crypto from "crypto";
  *       500:
  *         description: Internal server error
  */
-
-export const imageToStorage = async (inputobj, supabase) => {
-    const hash = crypto.randomBytes(16).toString("hex");
-    const fileName = `${inputobj.title.replace(/\s+/g, "")}_${hash}.jpg`;
-    const storageRef = `${inputobj.userId}/${inputobj.title}/${fileName}`;
-  
-    const uploadTask = await supabase.storage
-      .from(inputobj.bucket)
-      .upload(storageRef, inputobj.data, {
-        cacheControl: "3600",
-        upsert: true,
-        contentType: "image/jpg",
-      });
-  
-    if (uploadTask.error) {
-      return { error: uploadTask.error };
-    }
-    const { data, error } = await supabase.storage
-      .from(inputobj.bucket)
-      .createSignedUrl(uploadTask.data.path, 60 * 60 * 24 * 365);
-  
-    return { data: data?.signedUrl };
-  };
-
 export const config = {
     api: {
         bodyParser: {
@@ -127,69 +99,51 @@ export default async function handler(
         data: { user },
     } = await supabase.auth.getUser();
 
-    for (const [ii, items] of userLocationSubmission.entries()) {
-        let imgUrls: (string | undefined)[] | null = [];
-
-        if (items?.userMediaSubmission) {
-            for (const [jj, item] of items.userMediaSubmission.entries()) {
-
-                const bytesArray =
-                    typeof item === "string" ? base64toBinary(item) : item;
-                
-                const toStorageUpload = {
-                    userId: user!.id,
-                    bucket: "challenge",
-                    title: `${challengeId}id=${jj}`,
-                    location: `userSubmit${jj}`,
-                    data: bytesArray,
-                };
-
-                try {
-                    const storageURL = await imageToStorage(toStorageUpload, supabase);
-                    imgUrls.push(storageURL.data);
-                } catch (error) {
-                    console.error(
-                        `Error uploading to storage for item ${jj}:`,
-                        error
-                    );
-                    imgUrls.push(undefined); // Add undefined if upload fails
-                }
-            }
-        } else {
-            imgUrls = null;
-        }
-
-        // Update userMediaSubmission for the current item
-        userLocationSubmission[ii].userMediaSubmission = imgUrls;
-    }
-
     try {
-        const { data: historyData, error: historyError } =
-            await await supabase
+        const { data: existingData } = await supabase
                 .from("challengeHistories")
                 .select()
                 .eq("challengeId", challengeId)
                 .eq("userId", user!.id)
                 .single();
 
+        const resetMedia = {
+            challengeId: challengeId,
+            userId: user!.id,
+            userChallengeSubmission: [],
+        
+            ...(existingData ? { id: existingData.id } : {}),
+        };
+        
+        await supabase.from("challengeHistories")
+                      .upsert(resetMedia)
+                      .select()
+                      .single();
+
+        const { 
+            data: historyData
+        } = await supabase
+                .from("challengeHistories")
+                .select()
+                .eq("challengeId", challengeId)
+                .eq("userId", user!.id)
+                .single();        
+        
         const oldSubmissions = historyData?.userChallengeSubmission || [];
 
         const mergedSubmissions = [
             ...userLocationSubmission,
             ...oldSubmissions.filter(
-                (oldItem) =>
+                () =>
                     !userLocationSubmission.some(
-                        (newItem) => newItem.locationId === oldItem.locationId
+                        (newItem) => newItem.locationId === undefined
                     )
             ),
         ];
 
         const insertData = {
-            challengeId: challengeId,
-            userId: user!.id,
+            id: historyData.id,
             userChallengeSubmission: mergedSubmissions,
-
-            ...(historyData ? { id: historyData.id } : {}),
         };
 
         const { data: updateData, error: updateError } = await supabase

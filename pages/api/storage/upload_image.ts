@@ -69,8 +69,7 @@ interface SignedUrlResponse {
   error?: any;
 }
 
-
-const imageToStorage = async (
+export const imageToStorage = async (
   inputobj: ImageUploadInput,
   supabase: SupabaseClient
 ): Promise<SignedUrlResponse> => {
@@ -94,6 +93,15 @@ const imageToStorage = async (
 
   return { data: data?.signedUrl };
 };
+
+export const config = {
+  api: {
+      bodyParser: {
+          sizeLimit: '4.5mb', // Increase the body size limit (e.g., 5MB)
+      },
+  },
+};
+
 
 export default async function handler(
   req:NextApiRequest, res:NextApiResponse
@@ -127,9 +135,6 @@ export default async function handler(
       let bytesArray;
       if (typeof imageBase64 === "string") {
         // Ensure it's a base64 data URL
-        if (!imageBase64.startsWith('data:image/')) {
-          throw new Error('Invalid base64 format. Must start with data:image/');
-        }
         bytesArray = base64toBinary(imageBase64);
       } else if (imageBase64 instanceof Uint8Array) {
         bytesArray = imageBase64;

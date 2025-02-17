@@ -14,18 +14,20 @@ import {
   useGetLocationsQuery,
   useUploadInputsMutation,
 } from "@/libs/services/user/challenge";
+import { useUploadImageMutation } from "@/libs/services/storage/upload";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import LocationDetail from "@/app/components/challenge/LocationDetail";
 import GenericModal from "@/app/components/kits/Modal";
 import CustomInputsField from "@/app/components/challenge/UserInputsField";
 import { getPayLoadSize } from "@/libs/services/utils";
-import CustomAccordionList from "@/app/components/challenge/SectionWithCustomStyling";
 
 const MainUI = () => {
   const router = useRouter();
+  const challengeId = router.query.challege_id;
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [ uploadInputs ] = useUploadInputsMutation();
+  const [ uploadImage ] = useUploadImageMutation();
 
   const [item, setItem] = useState<{
       lastUploadedTexts: string;
@@ -129,29 +131,56 @@ const MainUI = () => {
   const handleInputsUpload = async (userInputs) => {
     setIsConfirmClicked(true);
     getPayLoadSize([userInputs]);
-    const result = await uploadInputs({
+
+    const results = Promise.all(userInputs.userMediaSubmission.map(async (img, index) => {
+      // getPayLoadSize([img]);
+      const result = await uploadImage({
+        imageBase64: img,
+        title: `${challengeId}-ind${index}`,
+        bucket: 'challenge',
+      });
+
+      if (result.error) {
+        return false;
+      }
+
+      if (result.data) {
+        return result.data?.signedUrl;
+      }
+    }));
+
+    const storageUrls = await results;
+
+    getPayLoadSize(storageUrls);
+
+    const submissionResult = await uploadInputs({
       challengeId: challenge_id,
-      userLocationSubmission: [userInputs],
+      userLocationSubmission: [{
+        userQuestionSubmission: userInputs.userQuestionSubmission,
+        userMediaSubmission: storageUrls,
+      }],
     });
 
-    if (result.error) {
+    if (submissionResult.data) {
       setIsConfirmClicked(false);
-      setSnackbar({
-        open: true,
-        message: (result.error as any).data,
-        severity: "error",
-      });
+        setSnackbar({
+          open: true,
+          message:
+            `Great sharings!${<br/>}
+            This chapter will be wonderful!${<br/>}
+            Let's keep exploring while we craft your story!`,
+          severity: "success",
+        });
+      // router.push(`/challenge/${challenge_id}/story/`);
     } else {
       setIsConfirmClicked(false);
       setSnackbar({
         open: true,
-        message:
-          "Great sharings!\nThis chapter will be wonderful!\nLet's keep exploring while we craft your story!",
-        severity: "success",
+        message: submissionResult.error as string,
+        severity: "error",
       });
-      router.push(`/challenge/${challenge_id}/story/`);
     }
-  };
+  } 
 
   const modalChild = () => {
     return (
@@ -197,8 +226,6 @@ const MainUI = () => {
       setIsLoading(isLocationsLoading || isLocationsFetching);
     }
   }, [challenge_id, isLocationsLoading, isLocationsFetching]);
-
-  const [uploadInputs] = useUploadInputsMutation();
 
   if (locationsError) {
     return (
