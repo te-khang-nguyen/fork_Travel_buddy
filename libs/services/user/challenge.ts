@@ -30,33 +30,40 @@ const JoinChallengeApi = createApi({
   reducerPath: "joinchallenge",
   baseQuery,
   endpoints: (builder) => ({
-    // ------------------QUERY CHALLENGE--------------------------
+    // ------------------QUERY CHALLENGE BY ID--------------------------
     getChallenge: builder.query<ChallengeRes, ChallengeReq>({
       query: ({ challengeId }) => ({
-        url: `/challenge/user/get-challenge`,
-        params: {challengeId: challengeId? challengeId : undefined}
+        url: `/challenge/user`,
+        params: {challengeId}
+      })
+    }),
+
+    // ------------------QUERY ALL AVAILABLE CHALLENGES--------------------------
+    getAllChallenges: builder.query<ChallengeRes, void>({
+      query: () => ({
+        url: `/challenge/user`
       })
     }),
 
     // ------------------QUERY LOCATIONS--------------------------
     getLocations: builder.query<ChallengeRes, ChallengeReq>({
       query: ({ challengeId }) => ({
-          url: `/challenge/user/get-locations`,
-          params: {challengeId: challengeId}
+          url: `/location`,
+          params: {challengeId}
         })
     }),
 
     // ------------------QUERY CHALLENGE HISTORY--------------------------
     getUserSubmissions: builder.query<ChallengeRes, void>({
       query: () => ({
-        url: "/challenge/user/get-user-submissions",
+        url: "/submission",
       })
     }),
 
     //  ----------------UPLOAD USER SUBMISSION DATA--------------------------------
     uploadInputs: builder.mutation<ChallengeRes, ChallengeReq>({
       query: ({ challengeId, userLocationSubmission }) => ({
-        url: `/challenge/user/upload-user-submission`,
+        url: `/submission`,
         method: "POST",
         body: JSON.stringify({challengeId: challengeId, userLocationSubmission: userLocationSubmission})
       }),
@@ -65,8 +72,8 @@ const JoinChallengeApi = createApi({
     //  ----------------QUERY USERS' PROGRESS BY CHALLENGE ID--------------------------------
     getProgress: builder.query<ChallengeRes, ChallengeReq>({
       query: ({ challengeId }) => ({
-        url: `/challenge/user/get-user-progress`,
-        params: {challengeId: challengeId}
+        url: `/submission`,
+        params: {challengeId}
       })
     }),
   }),
@@ -74,6 +81,7 @@ const JoinChallengeApi = createApi({
 
 export const {
   useGetChallengeQuery,
+  useGetAllChallengesQuery,
   useGetLocationsQuery,
   useGetUserSubmissionsQuery,
   useUploadInputsMutation,

@@ -38,7 +38,15 @@ const BusinessTabs = () => {
   };
 
   return (
-    <Box sx={{ width: "100%", p: 2, height: "100%", backgroundColor: "#f4f4f4" }}>
+    <Box 
+      sx={{ 
+        width: "100%",
+        p: 2, 
+        height: "100%", 
+        backgroundColor: "#f4f4f4",
+        overflow: 'auto' 
+      }}
+    >
       {/* Tabs */}
       <Tabs value={tabValue} onChange={handleTabChange} centered>
         <Tab label="Business Info" />

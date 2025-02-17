@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Skeleton} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import ChallengeCard from "@/app/components/challenge/ChallengeCard";
-import { useGetChallengeQuery } from "@/libs/services/user/challenge";
+import { useGetAllChallengesQuery } from "@/libs/services/user/challenge";
 
 
 interface Challenge {
@@ -17,7 +17,7 @@ function ChallengeList() {
     data: challengeData, 
     isLoading: isChallengeLoading, 
     error: challengeError 
-  } = useGetChallengeQuery({});
+  } = useGetAllChallengesQuery();
 
   const [isLoading, setIsLoading] = useState(true);
   const [challenges, setChallenges] = useState();

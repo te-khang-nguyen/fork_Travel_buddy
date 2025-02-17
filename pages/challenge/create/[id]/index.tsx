@@ -1,4 +1,20 @@
-import { Box, Card, CardContent, TextField, Button, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography } from "@mui/material";
+import { 
+  Box, 
+  Card, 
+  CardContent, 
+  TextField, 
+  Button, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableRow, 
+  Paper, 
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
 import LocationCard from "@/app/components/challenge/LocationCard";
 import { useRouter } from "next/router";
@@ -46,6 +62,17 @@ const ImagePreview = styled("img")({
 
 const ChallengeLocations = () => {
   const router = useRouter();
+  const [snackbar, setSnackbar] = useState<{
+      open: boolean;
+      message: string;
+      severity: "success" | "error";
+    }>({
+      open: false,
+      message: "",
+      severity: "success",
+    });
+  
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
   const challengeId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
   const {
     data: locationData
@@ -106,7 +133,14 @@ const ChallengeLocations = () => {
           fileReader.readAsDataURL(e.target.files[0]);
       }
   };
-  const { data: challengeData } = useGetChallengeQuery({challengeId: challengeId}, {skip: !challengeId});
+  const { 
+    data: challengeData 
+  } = useGetChallengeQuery({
+    challengeId: challengeId
+  }, {
+    skip: !challengeId
+  });
+
   useEffect(() => {
       if (challengeData?.data && challengeData.data.length > 0) {
           const { 
@@ -130,15 +164,33 @@ const ChallengeLocations = () => {
       };
       try {
           await updateChallenge(updatedChallengeData).unwrap();
-          router.replace('/challenge');
       } catch (error) {
           console.error("Error updating challenge:", error);
       }
+      setSnackbar({
+        open: true,
+        message: "Changes is saved successfully",
+        severity: "success",
+      });
   };
 
   const handleAddLocation = async () => {
       router.push(`/challenge/create/${challengeId}/location`);
   }
+
+  const handleSubmitChallenge = async () => {
+    await updateChallenge({
+      id: challengeId || '',
+      data: { status: "ACTIVE" }
+    }).unwrap();
+    setSnackbar({
+      open: true,
+      message: "Challenge is PUSBLISHED",
+      severity: "success",
+    });
+    router.prefetch('/profile/business#challenges');
+    router.push('/profile/business#challenges');
+  };
 
   const [deleteChallenge] = useDeleteChallengeMutation();
   const handleDeleteChallenge = async () => {
@@ -147,12 +199,22 @@ const ChallengeLocations = () => {
       return;
     }
     await deleteChallenge({id: challengeId}).unwrap();
-    router.replace('/challenge');
+    setSnackbar({
+      open: true,
+      message: "Challenge is now DISABLE for the PUBLIC!",
+      severity: "success",
+    });
   }
 
   return (
     <Box
-      sx={{ padding: "2rem", backgroundColor: "#f8f9fa", minHeight: "100vh" }}
+      sx={{ 
+        display:'flex',
+        flexDirection: 'column',
+        padding: "2rem", 
+        backgroundColor: "#f8f9fa", 
+        minHeight: "100vh" 
+      }}
     >
       {/* Header */}
       <Box
@@ -172,7 +234,7 @@ const ChallengeLocations = () => {
             variant="contained"
             color="success"
             sx={{ marginRight: "1rem", marginBottom: { xs: "0.5rem", sm: 0 } }}
-            onClick={()=>{router.replace('/dashboard/business')}}
+            onClick={handleSubmitChallenge}
           >
             Submit Challenge
           </Button>
@@ -231,7 +293,11 @@ const ChallengeLocations = () => {
 
         {/* Location Cards */}
         {locationData?.data?.map((location, index) => (
-          <LocationCard key={index} location={location} />
+          <LocationCard
+            key={index}
+            location={location}
+            onClick={() => router.push(`/challenge/create/${challengeId}/location/${location.id}`)} 
+          />
         ))}
       </Box>
       {/* Challenge Details */}
@@ -240,7 +306,10 @@ const ChallengeLocations = () => {
           display: "flex",
           flexWrap: "wrap",
           gap: "1.5rem",
-          justifyContent: { xs: "center", sm: "space-between" },
+          justifyContent: { 
+            xs: "center", 
+            sm: "space-between" 
+          },
           mt: 4,
         }}
       >
@@ -352,6 +421,20 @@ const ChallengeLocations = () => {
             </CardContent>
         </Card>
         </Box>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={20000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            sx={{ width: "100%" }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
     </Box>
   );
 };

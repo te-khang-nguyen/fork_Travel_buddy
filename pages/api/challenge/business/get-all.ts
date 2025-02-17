@@ -1,12 +1,12 @@
-import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 
 /**
  * @swagger
  * /api/v1/challenge/business:
  *   post:
  *     tags:
- *      - challenge/business
+ *       - challenge/business
  *     summary: Create a New Challenge
  *     description: Allows a business user to create a new travel challenge
  *     security:
@@ -50,12 +50,26 @@ import { NextApiRequest, NextApiResponse } from "next";
  *                   type: boolean
  *                   example: true
  *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       description: Unique identifier of the created challenge
- *                       example: "chg_123456"
+ *                   type: array
+ *                   items:
+ *                    type: object   
+ *                    properties:
+ *                      id:
+ *                          type: string
+ *                      businessId:
+ *                          type: string
+ *                      description:
+ *                          type: string
+ *                      thumbnailUrl:
+ *                          type: string
+ *                      backgroundUrl:
+ *                          type: string
+ *                      created:
+ *                          type: string
+ *                      title:
+ *                          type: string
+ *                      tourSchedule:
+ *                          type: string
  *       400:
  *         description: Bad request or validation error
  *       401:
@@ -64,64 +78,33 @@ import { NextApiRequest, NextApiResponse } from "next";
  *         description: Internal server error
  */
 
-
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
-        res.status(405).send({ message: 'Only POST requests allowed' })
+    if (req.method !== 'GET') {
+        res.status(405).send({ message: 'Only GET requests allowed' })
         return
     }
 
+    const token = req.headers.authorization?.split(' ')[1];
+    const supabase = createApiClient(token);
+    
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-
-        const {
-            data: { user },
-        } = await supabase.auth.getUser(token);
-
-        const { 
-            title, 
-            description, 
-            thumbnailUrl, 
-            backgroundUrl, 
-            tourSchedule 
-        } = req.body;
-
-        const userId = user?.id;
-
         const { data, error } = await supabase
-        .from("challenges")
-        .insert([
-            {
-                title,
-                businessid: userId,
-                description,
-                thumbnailUrl,
-                backgroundUrl,
-                tourSchedule,
-                status: "PASSIVE",
-            },
-        ])
-        .select("id")
-        .single();
+            .from("challenges")
+            .select("*");
+            // .eq('businessid', user!.id);
 
         if (error) {
-            return res.status(400).json({
-                success: false,
-                error: error.message
-            });
+            return res.status(400).json({ error: error.message });
         }
-
-        return res.status(200).json({
-            data: { id: data.id },
-            success: true
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            error: 'Internal server error'
-        });
+        return res.status(200).json({ data });
+    } catch (err: any) {
+        return res.status(500).json({ error: err.message || "An error has occurred while retrieving the challenge information."});
     }
 }

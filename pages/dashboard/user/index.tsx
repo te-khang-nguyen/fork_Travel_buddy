@@ -4,7 +4,7 @@ import FastForwardIcon from "@mui/icons-material/FastForward";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
 import { useRouter } from "next/router";
-import { useGetChallengeQuery, useGetUserSubmissionsQuery } from "@/libs/services/user/challenge";
+import { useGetAllChallengesQuery, useGetUserSubmissionsQuery } from "@/libs/services/user/challenge";
 import { send } from "process";
 
 interface UserDashboardProps {
@@ -26,7 +26,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     data: challengeRef,
     error: challengeError,
     isLoading: isChallengeLoading
-  } = useGetChallengeQuery({});
+  } = useGetAllChallengesQuery();
   const {
     data: historyRef,
     error: historyError,

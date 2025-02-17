@@ -48,13 +48,13 @@ const ChallengeApi = createApi({
   endpoints: (builder) => ({
     getAllChallenges: builder.query<AllChallengesRes, void>({
       query: () => ({
-        url: `/challenge/business/get-all-challenges`,
+        url: `/challenge/business`,
         method: "GET"
       }),
     }),
     createChallenge: builder.mutation<ChallengeRes, ChallengeReq>({
       query: ({ title, description, thumbnail, backgroundImage, tourSchedule }) => ({
-        url: `/challenge/business/create`,
+        url: `/challenge/business`,
         method: "POST",
         body: {
           title,
@@ -67,15 +67,17 @@ const ChallengeApi = createApi({
     }),
     updateChallenge: builder.mutation<ChallengeRes, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `/challenge/business/update/${id}`,
+        url: `/challenge/business`,
+        params: {challenge_id: id},
         method: "PUT",
         body: data,
       }),
     }),
     deleteChallenge: builder.mutation<ChallengeRes, { id: string }>({
       query: ({ id }) => ({
-        url: `/challenge/business/delete/${id}`,
-        method: "PUT",
+        url: `/challenge/business`,
+        params: {challenge_id: id},
+        method: "DELETE",
       }),
     }),
   }),

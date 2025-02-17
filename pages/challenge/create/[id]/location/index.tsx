@@ -172,7 +172,7 @@ const LocationUI = () => {
         message: "Create location successfully!",
         severity: "success",
       });
-      // router.push(`/challenge/create/${challengeId}`);
+      router.push(`/challenge/create/${challengeId}`);
     } catch (error) {
       setSnackbar({
         open: true,

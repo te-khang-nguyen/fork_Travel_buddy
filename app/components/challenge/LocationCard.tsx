@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
-const LocationCard = ({ location }) => {
+const LocationCard = ({ location, onClick }) => {
   const router = useRouter();
   const params = router.query;
   const [imageError, setImageError] = useState(false);
@@ -39,9 +39,10 @@ const LocationCard = ({ location }) => {
           borderRadius: "8px",
           boxShadow: 3,
           height: "100%",
+          opacity: location.status==='ACTIVE' ? 1 : 0.3,
         }}
       >
-        <CardActionArea onClick={() => handleClick(location.id)}>
+        <CardActionArea onClick={onClick}>
           <CardMedia
             component="img"
             height='250px'

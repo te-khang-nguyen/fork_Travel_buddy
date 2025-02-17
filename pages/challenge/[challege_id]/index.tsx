@@ -113,7 +113,7 @@ function JoinChallenge() {
   if (locationsData && history) {
     const locationsWithUserSubmission = challengeLocations?.map((location) => {
       const matchedLocation = history?.data?.[0]?.userChallengeSubmission?.filter(e => e.locationId == location.id)[0];
-      return { status: !matchedLocation ? false : true, ...location };
+      return { matchStatus: !matchedLocation ? false : true, ...location };
     });
     challengeLocations = locationsWithUserSubmission.sort((a,b)=> (Date.parse(a?.created)) - (Date.parse(b?.created)));
   }
@@ -225,7 +225,9 @@ function JoinChallenge() {
           </Grid>
         </Box>
 
-        {challengeLocations.map((location) => (
+        {challengeLocations
+        .filter((location) => location.status === "ACTIVE") // Only display ACTIVE 
+        .map((location) => (
           <Link
             href={location?.id ? `/challenge/${challenge_id}/locations/${location?.id}` : '#'}
             key={location?.id || 'default-location'}
@@ -307,7 +309,7 @@ function JoinChallenge() {
                           }}
                         >
                           {location.title}
-                          {!location.status ?
+                          {!location.matchStatus ?
                             <Typography></Typography> :
                             <Typography>
                               <CheckCircleIcon sx={{ color: green[700] }} /> Submission received

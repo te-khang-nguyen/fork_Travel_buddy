@@ -27,19 +27,19 @@ const LocationApi = createApi({
   endpoints: (builder) => ({
     getAllLocations: builder.query<any, void>({
       query: () =>({
-        url: `/location/get-all-locations`
+        url: `/location`
       }),
     }),
     getLocationsByChallengeId: builder.query<any, string>({
       query: (challengeId) => ({
-        url: `/challenge/user/get-locations`,
+        url: `/location`,
         params: { challengeId: challengeId }
       })
     }),
 
     createLocation: builder.mutation<LocationRes, LocationReq>({
       query: ({ challengeId, payload }) => ({
-        url: `/location/create-location/`,
+        url: `/location`,
         method: "POST",
         params: { challengeId: challengeId },
         body: payload,
@@ -48,10 +48,18 @@ const LocationApi = createApi({
 
     updateLocation: builder.mutation<LocationRes, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `/location/update-location`,
-        method: "POST",
+        url: `/location`,
+        method: "PUT",
         param: { locationId: id },
         body: data
+      }),
+    }),
+
+    deleteLocation: builder.mutation<any, {id: string}>({
+      query: ({ id }) => ({
+        url: `location`,
+        params: { locationId: id },
+        method: "DELETE",
       }),
     }),
   }),
@@ -61,6 +69,7 @@ export const {
   useGetLocationsByChallengeIdQuery,
   useCreateLocationMutation,
   useGetAllLocationsQuery, 
-  useUpdateLocationMutation
+  useUpdateLocationMutation,
+  useDeleteLocationMutation,
 } = LocationApi;
 export { LocationApi };
