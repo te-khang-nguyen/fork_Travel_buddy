@@ -103,7 +103,7 @@ export default async function handler(
 };
 
 export const swaggerSubmissionGet =
-`"/api/v1/submission/get": {
+`"/api/v1/submission  ": {
     "get": {
       "tags": ["submission"],
       "summary": "Retrieve user progress by challenge ID",

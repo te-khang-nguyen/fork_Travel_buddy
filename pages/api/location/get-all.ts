@@ -93,7 +93,7 @@ export default async function handler(
 };
 
 export const swaggerLocGetAll = 
-`"/api/v1/location": {
+`"/api/v1/location  ": {
     "get": {
       "tags": ["location"],
       "summary": "Get all locations",

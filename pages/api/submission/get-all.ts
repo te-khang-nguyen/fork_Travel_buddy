@@ -90,7 +90,7 @@ export default async function handler(
 };
 
 export const swaggerSubmissionGetAll = 
-`"/api/v1/submission/get-all": {
+`"/api/v1/submission ": {
     "get": {
       "tags": ["submission"],
       "summary": "Retrieve user submissions",

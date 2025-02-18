@@ -49,7 +49,7 @@ export default async function handler(
 };
 
 export const swaggerLocDel = 
-`"/api/location": {
+`"/api/v1/location     ": {
     "put": {
       "tags": ["location"],
       "summary": "Delete location",

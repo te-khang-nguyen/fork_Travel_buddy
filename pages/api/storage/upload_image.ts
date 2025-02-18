@@ -175,7 +175,7 @@ export default async function handler(
 }
 
 export const swaggerStorageImgUpload = 
-`"/api/storage/upload_image": {
+`"/api/storage": {
     "post": {
       "tags": ["storage"],
       "summary": "Upload an image to storage",

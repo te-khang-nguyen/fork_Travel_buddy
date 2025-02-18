@@ -97,7 +97,7 @@ export default async function handler(
 };
 
 export const swaggerLocGet =   
-`"/api/v1/location/get": {
+`"/api/v1/location ": {
     "get": {
       "tags": ["location"],
       "summary": "Retrieve locations by challenge ID",
