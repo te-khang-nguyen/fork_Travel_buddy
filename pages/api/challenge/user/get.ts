@@ -84,11 +84,11 @@ export default async function handler(
 };
 
 export const swaggerUserGet = 
-    `"/api/v1/challenge/user": {
+    `"/api/v1/challenge/user ": {
       "get": {
         "tags": ["challenge/user"],
         "summary": "Retrieve a challenge by ID",
-        "description": "Retrieve a challenge by its ID. If no ID is provided, it retrieves challenges with price 0.",
+        "description": "Retrieve a challenge by its ID.",
         "parameters": [
           {
             "in": "query",

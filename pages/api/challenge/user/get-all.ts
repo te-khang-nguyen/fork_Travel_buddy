@@ -4,54 +4,24 @@ import { NextApiRequest, NextApiResponse } from "next";
 /**
  * @swagger
  * /api/challenge/user:
- *   post:
+ *   get:
  *     tags:
  *       - challenge/user
- *     summary: Create a New Challenge
- *     description: Allows a business user to create a new travel challenge
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: Title of the challenge
- *                 example: "Mountain Hiking Adventure"
- *               description:
- *                 type: string
- *                 description: Detailed description of the challenge
- *                 example: "Explore breathtaking mountain trails and scenic landscapes"
- *               thumbnailUrl:
- *                 type: string
- *                 description: URL of the challenge thumbnail image
- *                 example: "https://example.com/mountain-challenge-thumb.jpg"
- *               backgroundUrl:
- *                 type: string
- *                 description: URL of the challenge background image
- *                 example: "https://example.com/mountain-challenge-bg.jpg"
- *               tourSchedule:
- *                 type: string
- *                 description: Schedule or timing of the tour
- *                 example: "Weekends, 8 AM - 5 PM"
+ *     summary: Retrieve a challenge by ID
+ *     description: Retrieve a challenge by its ID. If no ID is provided, it retrieves challenges with price 0.
  *     responses:
  *       200:
- *         description: Challenge created successfully
+ *         description: A list of challenges
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
  *                 data:
  *                   type: array
  *                   items:
- *                    type: object   
- *                    properties:
+ *                     type: object
+ *                     properties:
  *                      id:
  *                          type: string
  *                      businessId:
@@ -69,9 +39,9 @@ import { NextApiRequest, NextApiResponse } from "next";
  *                      tourSchedule:
  *                          type: string
  *       400:
- *         description: Bad request or validation error
- *       401:
- *         description: Unauthorized - Invalid or missing authentication token
+ *         description: Bad request
+ *       405:
+ *         description: Method not allowed
  *       500:
  *         description: Internal server error
  */
@@ -101,60 +71,19 @@ export default async function handler(
 }
 
 export const swaggerUserGetAll = 
-    `"/api/v1/challenge/user ": {
-      "post": {
+    `"/api/v1/challenge/user": {
+      "get": {
         "tags": ["challenge/user"],
-        "summary": "Create a New Challenge",
-        "description": "Allows a business user to create a new travel challenge",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "description": "Title of the challenge",
-                    "example": "Mountain Hiking Adventure"
-                  },
-                  "description": {
-                    "type": "string",
-                    "description": "Detailed description of the challenge",
-                    "example": "Explore breathtaking mountain trails and scenic landscapes"
-                  },
-                  "thumbnailUrl": {
-                    "type": "string",
-                    "description": "URL of the challenge thumbnail image",
-                    "example": "https://example.com/mountain-challenge-thumb.jpg"
-                  },
-                  "backgroundUrl": {
-                    "type": "string",
-                    "description": "URL of the challenge background image",
-                    "example": "https://example.com/mountain-challenge-bg.jpg"
-                  },
-                  "tourSchedule": {
-                    "type": "string",
-                    "description": "Schedule or timing of the tour",
-                    "example": "Weekends, 8 AM - 5 PM"
-                  }
-                }
-              }
-            }
-          }
-        },
+        "summary": "Retrieve a challenge by ID",
+        "description": "Retrieve all challenges with status as ACTIVE.",
         "responses": {
           "200": {
-            "description": "Challenge created successfully",
+            "description": "A list of challenges",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -193,10 +122,10 @@ export const swaggerUserGetAll =
             }
           },
           "400": {
-            "description": "Bad request or validation error"
+            "description": "Bad request"
           },
-          "401": {
-            "description": "Unauthorized - Invalid or missing authentication token"
+          "405": {
+            "description": "Method not allowed"
           },
           "500": {
             "description": "Internal server error"
