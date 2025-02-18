@@ -1,15 +1,16 @@
+ // Your API slices
 import { configureStore} from '@reduxjs/toolkit';
-import { UsersApi } from './services/user'; // Your API slice
-import { UserAuthApi } from './services/user/auth'; // Your API slice
-import { BusinessAuthApi } from './services/business/auth'; // Your API slice
-import { UserProfileApi } from './services/user/profile'; // Your API slice
-import { BusinessProfileApi } from './services/business/profile'; // Your API slice
+import { UsersApi } from './services/user';
+import { UserAuthApi } from './services/user/auth';
+import { BusinessAuthApi } from './services/business/auth';
+import { UserProfileApi } from './services/user/profile';
+import { StoryApi } from './services/user/story';
+import { BusinessProfileApi } from './services/business/profile';
 import { JoinChallengeApi } from './services/user/challenge';
 import { ChallengeApi } from './services/business/challenge';
 import { StorageApi } from './services/storage/upload';
 import { LocationApi } from './services/business/location';
-//import { ManageChallengeApi } from './services/business/challenge'; 
-//import { BusinessDashboardApi } from './services/business/dashboard';
+
 
 
 
@@ -24,10 +25,7 @@ export const store = configureStore({
     [ChallengeApi.reducerPath]: ChallengeApi.reducer,
     [StorageApi.reducerPath]: StorageApi.reducer,
     [LocationApi.reducerPath]: LocationApi.reducer,
-
-
-    //[ManageChallengeApi.reducerPath]: ManageChallengeApi.reducer,
-    //[BusinessDashboardApi.reducerPath]: BusinessDashboardApi.reducer,
+    [StoryApi.reducerPath]: StoryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -41,9 +39,6 @@ export const store = configureStore({
       .concat(ChallengeApi.middleware)
       .concat(StorageApi.middleware)
       .concat(LocationApi.middleware)
-
-
-      //.concat(ManageChallengeApi.middleware)
-      //.concat(BusinessDashboardApi.middleware), // Adding middleware for the API slice
+      .concat(StoryApi.middleware)
 });
 

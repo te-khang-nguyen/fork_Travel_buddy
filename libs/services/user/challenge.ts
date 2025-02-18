@@ -77,6 +77,27 @@ const JoinChallengeApi = createApi({
         params: {challenge_id: challengeId}
       })
     }),
+
+    generateStory: builder.mutation<any, any>({
+      query: ({ challengeId, challengeHistoryId, user_notes, story, media_submitted }) => ({
+        url: `/story`,
+        method: "POST",
+        params: { challengeId, challengeHistoryId },
+        body: {
+          user_notes,
+          story,
+          media_submitted,
+        }
+      })
+    }),
+
+    getStory: builder.query<any, any>({
+      query: ({ story_id }) => ({
+        url: `/story`,
+        method: "GET",
+        params: { story_id }
+      })
+    })
   }),
 });
 
@@ -87,5 +108,7 @@ export const {
   useGetUserSubmissionsQuery,
   useUploadInputsMutation,
   useGetProgressQuery,
+  useGenerateStoryMutation,
+  useGetStoryQuery,
 } = JoinChallengeApi;
 export { JoinChallengeApi };

@@ -171,7 +171,10 @@ const MainUI = () => {
             Let's keep exploring while we craft your story!`,
           severity: "success",
         });
-      router.push(`/challenge/${challenge_id}/story/`);
+      router.push({
+        pathname:`/challenge/${challenge_id}/story/`,
+        query: {challengeHistoryId: submissionResult?.data?.data?.id}
+      });
     } else {
       setIsConfirmClicked(false);
       setSnackbar({

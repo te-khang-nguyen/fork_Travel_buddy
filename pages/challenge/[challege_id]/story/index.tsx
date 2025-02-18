@@ -10,7 +10,9 @@ import {
     Fab,
     Menu,
     MenuItem,
-    CircularProgress
+    CircularProgress,
+    TextField,
+    Button,
 } from "@mui/material";
 import { Share } from "@mui/icons-material";
 import {
@@ -25,8 +27,13 @@ import LocationStoryDisplay from "@/app/components/challenge/LocationStoryDispla
 import {
     useGetChallengeQuery,
     useGetUserSubmissionsQuery,
-    useGetLocationsQuery
+    useGetLocationsQuery,
+    useGenerateStoryMutation
 } from "@/libs/services/user/challenge";
+import {
+    useUpdateStoryMutation,
+    useDeleteStoryMutation
+} from "@/libs/services/user/story"
 import { baseUrl } from "@/app/constant";
 import { Montserrat } from "next/font/google";
 import { generateLocationStories } from "@/libs/services/storyGen";
@@ -60,10 +67,15 @@ function GradientCircularProgress() {
   }
 
 const StoryPageUI = () => {
+    const router = useRouter();
+    const { challege_id, challengeHistoryId } = router.query;
+
+    const [updateStory] = useUpdateStoryMutation();
+    const [deleteStory] = useDeleteStoryMutation();
+
     const [locationIndex, setLocationIndex] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
-    const router = useRouter();
-    const { challege_id } = router.query;
+    const [isArchived, setIsArchived] = useState<boolean>(false);
 
     const { data: challengeData } = useGetChallengeQuery({ challengeId: challege_id })
     const challengeTitle = challengeData ? challengeData?.data?.[0].title : "";
@@ -105,10 +117,12 @@ const StoryPageUI = () => {
         isLoading: isUserSubmissionLoading 
     } = useGetUserSubmissionsQuery();
 
+    const matchedSubmission = userSubmissionData?.data?.find(
+        submission => submission.challengeId === challege_id
+    );
+
     const historyData1 = isUserSubmissionLoading ? [] : 
-        userSubmissionData?.data.filter(
-            submission => submission.challengeId === challege_id
-        ).flatMap(submission => submission.userChallengeSubmission);
+                        matchedSubmission?.userChallengeSubmission
 
     const historyData2 = historyData1 ? historyData1.map(({ index, ...rest }) => ({
         id: index,
@@ -123,6 +137,7 @@ const StoryPageUI = () => {
     
     const matchItem = historyData2.find(itemA => itemA.locationId === undefined);
     const historyData = {
+        
         locations: locationTitles,
         notes: matchItem?.userQuestionSubmission,
         userMediaSubmission: matchItem?.userMediaSubmission
@@ -130,6 +145,7 @@ const StoryPageUI = () => {
 
     const [isGenerating, setIsGenerating] = useState(true);
     const [story, setStory] = useState([{locationId: '', story: ''}]);
+    const [createStory] = useGenerateStoryMutation();
     const hasGeneratedRef = useRef(false);
     useEffect(() => {
         if (historyData2.length > 0 && locationIndex === null) {
@@ -153,6 +169,14 @@ const StoryPageUI = () => {
                         .replace(/^```json\s*/, '')  // Remove leading ```json
                         .replace(/```\s*$/, '')      // Remove trailing ```
                         .trim();
+                    const finalStory = JSON.parse(cleanedOutput).map((item) => item.story).join('\n\n')
+                    await createStory({
+                        challengeId: challege_id,
+                        challengeHistoryId,
+                        user_notes: historyData.notes,
+                        story: finalStory,
+                        media_submitted: historyData.userMediaSubmission,
+                    });
                     setStory(JSON.parse(cleanedOutput));
                     setIsGenerating(false);
                 } catch (error) {
@@ -171,6 +195,86 @@ const StoryPageUI = () => {
             story: story.map((item)=>item.story).join("\n\n") ?? null
         };
 
+    const handleSaveChanges = async (updatedStory: string) => {
+        const result = await updateStory({
+            storyId: "76a83d09-b1c0-49bc-af09-0bd0f8a0ff3d",
+            // challengeHistoryId: matchedSubmission?.id,
+            payload: {
+                storyFull: updatedStory
+            }
+        })
+
+        if(result?.error){
+            setSnackbar({
+                open: true,
+                message:
+                  "Fail to save the latest changes!",
+                severity: "error",
+            });
+        } else {
+            setSnackbar({
+                open: true,
+                message:
+                  "Your story is updated!",
+                severity: "success",
+            });
+        }
+    }
+
+    const handleDeleteStory = async () => {
+        const result = await deleteStory({
+            storyId: "76a83d09-b1c0-49bc-af09-0bd0f8a0ff3d",
+            // challengeHistoryId: matchedSubmission?.id
+        });
+
+        setIsArchived(true);
+
+        if(result?.error){
+            setSnackbar({
+                open: true,
+                message:
+                  `Fail to archive story due to ${result?.error}`,
+                severity: "error",
+            });
+        } else {
+            setSnackbar({
+                open: true,
+                message:
+                  "Your story is put to Archive mode and will not be displayed publically!",
+                severity: "success",
+            });
+        }
+    };
+
+    const handleReactivate = async () => {
+        const result = await updateStory({
+            storyId: "76a83d09-b1c0-49bc-af09-0bd0f8a0ff3d",
+            // challengeHistoryId: matchedSubmission?.id,
+            payload: {
+                status: "ACTIVE"
+            }
+        });
+
+        setIsArchived(false);
+
+        if(result?.error){
+            setSnackbar({
+                open: true,
+                message:
+                  "Fail to reactivate your story!",
+                severity: "error",
+            });
+        } else {
+            setSnackbar({
+                open: true,
+                message:
+                  `Your story is reactivated! 
+                  You can now edit the story and share it!`,
+                severity: "success",
+            });
+        }
+    }
+
     return (
         <Box
             sx={{
@@ -185,6 +289,7 @@ const StoryPageUI = () => {
                 overflow:"auto",
             }}
         >
+            
 
             <Box
                 position="relative"
@@ -238,8 +343,14 @@ const StoryPageUI = () => {
             ) : (
                 <LocationStoryDisplay
                     content={historyDataFinal}
+                    onSaveChanges={(e)=>handleSaveChanges(e)}
+                    onArchive={isArchived? handleReactivate : handleDeleteStory}
+                    isArchived={isArchived}
                 />
             )}
+
+            {/* Sharing To Social Channels*/ }
+
             <Fab
                 size="small"
                 sx={{
@@ -252,6 +363,7 @@ const StoryPageUI = () => {
                     backgroundColor: "rgba(251, 146, 0, 0.2)"
                 }}
                 onClick={handleShareClick}
+                disabled={isArchived}
             >
                 <Share
                     sx={{
@@ -263,6 +375,7 @@ const StoryPageUI = () => {
 
                 />
             </Fab>
+
             <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
@@ -328,6 +441,22 @@ const StoryPageUI = () => {
                     </TwitterShareButton>
                 </MenuItem>
             </Menu>
+            
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={20000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={snackbar.severity}
+                    sx={{ width: "100%" }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

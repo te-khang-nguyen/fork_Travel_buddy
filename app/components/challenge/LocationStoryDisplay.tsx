@@ -8,15 +8,15 @@ import {
     CardMedia,
     CardActionArea,
     IconButton,
-    Modal,
-    Fab
+    Fab,
+    Button,
+    TextField
 } from "@mui/material";
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled, keyframes } from '@mui/system';
 import { Montserrat } from "next/font/google";
-import Image from 'next/image';
 
 const montserrat = Montserrat({
     weight: '400',
@@ -72,21 +72,33 @@ const WoodenCircle = styled(Box)(({ theme }) => ({
 
 interface LocationStoryProps {
     content: any;
-    // open: boolean;
-    // onClose: () => void;
+    onSaveChanges: (storyUpdated: string) => void;
+    onArchive: () => void;
+    isArchived: boolean;
 }
 
-const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
+const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ 
+    content,
+    onSaveChanges,
+    onArchive,
+    isArchived 
+}) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
 
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [imageError, setImageError] = useState(false);
     const [imageIndex, setImageIndex] = useState(null);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [travelStory, setTravelStory] = useState<string>('');
+    
 
     useEffect(() => {
         if (!content) {
             setImageIndex(null);
+        }
+        if(content?.story){
+            setTravelStory(content?.story);
         }
     }, [content]);
 
@@ -104,20 +116,15 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
         }
     };
 
+    const handleSaveChanges = () => {
+        onSaveChanges(travelStory);
+    };
+
+    const handleArchive = () => {
+        onArchive();
+    };
+
     return (
-        // <Modal
-        //     open={open}
-        //     onClose={onClose}
-        //     sx={{
-        //         alignItems: "center",
-        //         justifyContent: "center",
-        //         alignSelf: "center",
-        //         justifySelf: "center",
-        //         width: "100%",
-        //         height: "70%"
-        //     }}
-        // >
-        
         <>
              {imageIndex ?
                 <Box
@@ -165,16 +172,17 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
                     display="flex"
                     alignItems="flex-start"
                     position="absolute"
+                    overflow= "auto"
                     sx={{
                         // backgroundColor: "rgba(250, 221, 180, 0.97)",
                         flexDirection: "row",
-                        p: 1,
+                        p: {xs: 0, sm: 0, md: 1, lg: 1},
                         height: "70%",
                         mt: 15,
+                        bottom: 5
                         //boxShadow: 10
                     }}
                 >
-
                     <Box
                         display="flex"
                         alignItems="center"
@@ -187,7 +195,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
                             backgroundColor: "rgba(232, 182, 113, 0.86)",
                             borderRadius: 5,
                             p: { xs: 0, lg: 2 },
-                            mr: 2
+                            mr: 2,
                         }}
                     >
                         {/* Upward Navigation Button */}
@@ -219,8 +227,9 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
                                 width: { xs: "80%", sm: "80%", lg: "100%" },
                                 overflowY: "auto",
                                 "&::-webkit-scrollbar": { display: "none" }, // Optional: Hide scrollbar
-                                pb: "0.5rem",
-                                alignItems: "center"
+                                pb: "0.75rem",
+                                alignItems: "center",
+                                mb: 1
                             }}
                         >
                             {/*<Cable /> Add the cable */}
@@ -283,21 +292,118 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
                         flexDirection="column"
                         sx={{
                             height: "100%",
-                            p: { xs: 1, lg: 5 },
+                            p: { xs: 0, lg: 5 },
                         }}
                     >
-                        {/* <Typography
-                            variant='h3'
+                        {!isEditing?
+                        <Box
                             sx={{
-                                fontWeight: "bold",
-                                fontFamily: montserrat.style.fontFamily,
-                                color: "black",
-                                p: 2,
-                                fontSize: { xs: "h5.fontSize", sm: "h5.fontSize", lg: "h4.fontSize" }
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems:"center",
+                                justifyContent:"center",
+                                position:"relative",
+                                gap: 1,
                             }}
                         >
-                            {content.title}
-                        </Typography> */}
+                            <Button
+                                sx={{
+                                    backgroundColor: isArchived?"rgba(15, 148, 10, 0.84)"
+                                                                :"rgba(228, 17, 17, 0.73)",
+                                    color: "rgb(255, 255, 255)",
+                                    fontFamily: montserrat.style.fontFamily,
+                                    fontSize: {
+                                        xs:"body2.fontSize",
+                                        sm:"body1.fontSize",
+                                        md:"body1.fontSize",
+                                        lg:"body1.fontSize",
+                                    },
+                                    borderRadius: 3,
+                                    boxShadow: 3,
+                                    mb: 2
+                                }}
+                                onClick={handleArchive}
+                            >
+                                {isArchived? "Reactivate" : "Archive"}
+                            </Button>
+                            {isArchived?<></>:<Button
+                                sx={{
+                                    backgroundColor: "rgba(0, 0, 0, 0.85)",
+                                    color: "rgb(255, 255, 255)",
+                                    fontFamily: montserrat.style.fontFamily,
+                                    fontSize: {
+                                        xs:"body2.fontSize",
+                                        sm:"body1.fontSize",
+                                        md:"body1.fontSize",
+                                        lg:"body1.fontSize",
+                                    },
+                                    borderRadius: 3,
+                                    boxShadow: 3,
+                                    ml:{xs:5,sm:30,md:50,lg:50},
+                                    mb: 2
+                                }}
+                                onClick={()=>setIsEditing(true)}
+                                disabled={isArchived}
+                            >
+                                Edit
+                            </Button>}
+                            
+                        </Box>
+                        :
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems:"center",
+                                justifyContent:"center",
+                                position:"relative",
+                                gap: 1,
+                            }}
+                        >
+                            <Button
+                                sx={{
+                                    backgroundColor: "rgb(242, 183, 105)",
+                                    color: "rgb(0, 0, 0)",
+                                    fontFamily: montserrat.style.fontFamily,
+                                    fontSize: {
+                                        xs:"body2.fontSize",
+                                        sm:"body1.fontSize",
+                                        md:"body1.fontSize",
+                                        lg:"body1.fontSize",
+                                    },
+                                    borderRadius: 3,
+                                    boxShadow: 3,
+                                    ml:{xs:5,sm:30,md:50,lg:50},
+                                    mb: 2
+                                }}
+                                onClick={handleSaveChanges}
+                            >
+                                Save
+                            </Button>
+                            <Button
+                                sx={{
+                                    backgroundColor: "rgba(0, 0, 0, 0.52)",
+                                    color: "rgb(255, 255, 255)",
+                                    fontFamily: montserrat.style.fontFamily,
+                                    fontSize: {
+                                        xs:"body2.fontSize",
+                                        sm:"body1.fontSize",
+                                        md:"body1.fontSize",
+                                        lg:"body1.fontSize",
+                                    },
+                                    borderRadius: 3,
+                                    boxShadow: 3,
+                                    mb: 2
+                                }}
+                                onClick={()=>setIsEditing(false)}
+                            >
+                                Cancel
+                            </Button>
+
+                        </Box>
+                        }
+                        
+
                         <Box
                             sx={{
                                 overflow: "auto",
@@ -308,12 +414,12 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
                                 p: 2,
                                 borderRadius: 3,
                                 boxShadow: 2,
+                                width: {xs: "100%", lg: "100%"}
                             }}
                         >
-
-                            {content?.story?.split("\n").map((line, index) => (
+                                {!isEditing?
                                 <Typography 
-                                    key={index}
+                                    // display="block"
                                     variant='body1'
                                     sx={{
                                         fontFamily: montserrat.style.fontFamily,
@@ -322,14 +428,35 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
                                             xs: "body1.fontSize", 
                                             lg: "h5.fontSize" 
                                         },
-                                        wordWrap: "break-word"
+                                        wordWrap: "break-word",
+                                        whiteSpace: "pre-wrap",
                                     }}
                                 >
-                                    {line}<br/>
-                                </Typography>
-                            ))
-                            }
-                            
+                                    {content?.story}
+                                </Typography>:
+                                <TextField
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={12}
+                                    value={travelStory}
+                                    sx={{
+                                        backgroundColor: "#fff",
+                                        color: "#000",
+                                        borderRadius: 3,
+                                        mt: 1,
+                                        mb: 3,
+                                        width: {xs: 160, sm: 300, md: 600, lg:600},
+                                        '.MuiInputBase-input': {
+                                            fontFamily: montserrat.style.fontFamily, 
+                                            fontSize: {xs:'0.7rem',lg:'1.2rem'}
+                                        },
+                                    }}
+
+                                    onChange={(e) => {
+                                        setTravelStory(e.target.value);
+                                    }}
+                                />}
                         </Box>
                     </Box>
                     {/* <WoodenCircle
@@ -340,9 +467,6 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ content }) => {
                     /> */}
                 </Box>}
         </>
-        //         </Box>}
-
-        // </Modal>
     );
 };
 
