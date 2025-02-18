@@ -91,3 +91,86 @@ export default async function handler(
         return res.status(500).json({ error: err.message || "An error has occurred while retrieving the locations information." });
     }
 };
+
+export const swaggerLocGetAll = 
+`"/api/v1/location": {
+    "get": {
+      "tags": ["location"],
+      "summary": "Get all locations",
+      "description": "Retrieve all locations.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "A list of locations",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "challengeId": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "location_info": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              },
+                              "instruction": {
+                                "type": "string"
+                              },
+                              "media": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "imageUrls": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "created": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`

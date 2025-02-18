@@ -7,7 +7,7 @@ import {
 
 /**
  * @swagger
- * /api/v1/location/update:
+ * /api/v1/location:
  *   post:
  *     tags:
  *       - location
@@ -125,3 +125,114 @@ export default async function handler(
     }
 
 };
+
+export const swaggerLocUpdate = 
+`"/api/v1/location": {
+    "post": {
+      "tags": ["location"],
+      "summary": "Update location",
+      "description": "Update the details of a location.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "locationId",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "The ID of the location to update"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the location"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "The description of the location"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Location updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "challengeId": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "location_info": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "string"
+                            },
+                            "instruction": {
+                              "type": "string"
+                            },
+                            "media": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "imageUrls": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "created": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`

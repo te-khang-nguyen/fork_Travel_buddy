@@ -130,7 +130,7 @@ const MainUI = () => {
 
   const handleInputsUpload = async (userInputs) => {
     setIsConfirmClicked(true);
-    getPayLoadSize([userInputs]);
+    // getPayLoadSize([userInputs]);
 
     const results = Promise.all(userInputs.userMediaSubmission.map(async (img, index) => {
       // getPayLoadSize([img]);
@@ -151,7 +151,7 @@ const MainUI = () => {
 
     const storageUrls = await results;
 
-    getPayLoadSize(storageUrls);
+    // getPayLoadSize(storageUrls);
 
     const submissionResult = await uploadInputs({
       challengeId: challenge_id,

@@ -147,7 +147,7 @@ export default async function handler(
         const cleanMergeSubmission = [
             newSubmission,
             ...oldSubmissions.filter(
-                (oldItem) =>
+                () =>
                     !userLocationSubmission.some(
                         (newItem) => newItem.locationId === undefined
                     )
@@ -172,9 +172,9 @@ export default async function handler(
         const mergedSubmissions = [
             ...userLocationSubmission,
             ...oldSubmissions.filter(
-                (oldItem) =>
+                () =>
                     !userLocationSubmission.some(
-                        (newItem) => newItem.locationId === oldItem.locationId
+                        (newItem) => newItem.locationId === undefined
                     )
             ),
         ];
@@ -203,3 +203,116 @@ export default async function handler(
     }
 
 };
+
+export const swaggerSubmissionCreate = 
+`"/api/v1/submission": {
+    "post": {
+      "tags": ["submission"],
+      "summary": "Upload user submission",
+      "description": "Upload a user's submission for a challenge.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "challengeId": {
+                  "type": "string",
+                  "description": "The ID of the challenge"
+                },
+                "userLocationSubmission": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "locationId": {
+                        "type": "string"
+                      },
+                      "userQuestionSubmission": {
+                        "type": "string"
+                      },
+                      "userMediaSubmission": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Submission uploaded successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "challengeId": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "userChallengeSubmission": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "number"
+                            },
+                            "locationId": {
+                              "type": "string"
+                            },
+                            "userQuestionSubmission": {
+                              "type": "string"
+                            },
+                            "userMediaSubmission": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "created": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`

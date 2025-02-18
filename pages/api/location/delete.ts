@@ -47,3 +47,62 @@ export default async function handler(
     }
 
 };
+
+export const swaggerLocDel = 
+`"/api/location": {
+    "put": {
+      "tags": ["location"],
+      "summary": "Delete location",
+      "description": "Move a location into 'Archived' status.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "location_id",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "The ID of the location to update"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Location deleted successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`

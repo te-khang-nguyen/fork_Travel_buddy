@@ -88,3 +88,83 @@ export default async function handler(
     }
 
 };
+
+export const swaggerSubmissionGetAll = 
+`"/api/v1/submission/get-all": {
+    "get": {
+      "tags": ["submission"],
+      "summary": "Retrieve user submissions",
+      "description": "Retrieve the submissions of a user.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "A list of user submissions",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "challengeId": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "userChallengeSubmission": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "index": {
+                                "type": "number"
+                              },
+                              "locationId": {
+                                "type": "string"
+                              },
+                              "userQuestionSubmission": {
+                                "type": "string"
+                              },
+                              "userMediaSubmission": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "created": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`

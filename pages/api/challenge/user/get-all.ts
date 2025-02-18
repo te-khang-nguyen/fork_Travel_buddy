@@ -74,8 +74,8 @@ export const swaggerUserGetAll =
     `"/api/v1/challenge/user": {
       "get": {
         "tags": ["challenge/user"],
-        "summary": "Retrieve a challenge by ID",
-        "description": "Retrieve all challenges with status as ACTIVE.",
+        "summary": "Retrieve all pusblished challenges",
+        "description": "Retrieve all challenges with the status ACTIVE.",
         "responses": {
           "200": {
             "description": "A list of challenges",

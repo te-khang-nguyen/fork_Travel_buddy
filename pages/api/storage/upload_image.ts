@@ -8,7 +8,7 @@ import crypto from "crypto";
 
 /**
  * @swagger
- * /api/storage/upload_image:
+ * /api/storage:
  *   post:
  *     tags:
  *       - storage
@@ -173,3 +173,76 @@ export default async function handler(
       });
     }
 }
+
+export const swaggerStorageImgUpload = 
+`"/api/storage/upload_image": {
+    "post": {
+      "tags": ["storage"],
+      "summary": "Upload an image to storage",
+      "description": "Upload an image to the specified storage bucket.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "imageBase64": {
+                  "type": "string",
+                  "description": "The base64 encoded image data"
+                },
+                "bucket": {
+                  "type": "string",
+                  "description": "The storage bucket name"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The title for the image"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "File uploaded successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "signedUrl": {
+                    "type": "string",
+                    "description": "The signed URL of the uploaded image"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "File uploaded successfully!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`
