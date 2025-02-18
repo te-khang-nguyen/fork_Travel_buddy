@@ -4,7 +4,7 @@ import { supabase } from "@/libs/supabase/supabase_client";
 
 /**
  * @swagger
- * /api/v1/challenge/business/:challenge_id:
+ * /api/v1/challenge/business:
  *   put:
  *     tags:
  *       - challenge/business
@@ -114,3 +114,113 @@ export default async function handler(
         });
     }
 }
+
+
+export const swaggerBussUpdate = 
+    `"/api/v1/challenge/business  ": {
+      "put": {
+        "tags": ["challenge/business"],
+        "summary": "Update a challenge",
+        "description": "Update the details of an existing challenge.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "challenge_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the challenge to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the challenge"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Detailed description of the challenge"
+                  },
+                  "thumbnailUrl": {
+                    "type": "string",
+                    "description": "URL of the challenge thumbnail image"
+                  },
+                  "backgroundUrl": {
+                    "type": "string",
+                    "description": "URL of the challenge background image"
+                  },
+                  "tourSchedule": {
+                    "type": "string",
+                    "description": "Schedule or timing of the tour"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Challenge updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "businessId": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "thumbnailUrl": {
+                          "type": "string"
+                        },
+                        "backgroundUrl": {
+                          "type": "string"
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "tourSchedule": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }`

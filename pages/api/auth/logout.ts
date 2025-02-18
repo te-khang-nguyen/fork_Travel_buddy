@@ -40,3 +40,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: err.message || "An unknown error occurred during sign out." });
   }
 }
+
+
+export const swaggerUserLogout = 
+  `"/api/v1/auth/logout": {
+    "post": {
+      "tags": ["auth"],
+      "summary": "User Login",
+      "description": "Authenticate user with email and password",
+      "responses": {
+        "200": {
+          "description": "Successful logout"
+        },
+        "400": {
+          "description": "Invalid credentials"
+        },
+        "500": {
+          "description": "Server error"
+        }
+      }
+    }
+  }`

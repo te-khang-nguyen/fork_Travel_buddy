@@ -33,7 +33,7 @@ const LocationApi = createApi({
     getLocationsByChallengeId: builder.query<any, string>({
       query: (challengeId) => ({
         url: `/location`,
-        params: { challengeId: challengeId }
+        params: { challenge_id: challengeId }
       })
     }),
 
@@ -41,7 +41,7 @@ const LocationApi = createApi({
       query: ({ challengeId, payload }) => ({
         url: `/location`,
         method: "POST",
-        params: { challengeId: challengeId },
+        params: { challenge_id: challengeId },
         body: payload,
       }),
     }),
@@ -50,7 +50,7 @@ const LocationApi = createApi({
       query: ({ id, data }) => ({
         url: `/location`,
         method: "PUT",
-        param: { locationId: id },
+        param: { location_id: id },
         body: data
       }),
     }),
@@ -58,7 +58,7 @@ const LocationApi = createApi({
     deleteLocation: builder.mutation<any, {id: string}>({
       query: ({ id }) => ({
         url: `location`,
-        params: { locationId: id },
+        params: { location_id: id },
         method: "DELETE",
       }),
     }),

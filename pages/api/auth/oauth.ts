@@ -72,3 +72,64 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: err.message || "An unknown error occurred." });
   }
 }
+
+export const swaggerOAuth = 
+  `"/api/v1/auth/oauth": {
+    "post": {
+      "tags": ["auth"],
+      "summary": "Sign in with OAuth",
+      "description": "Sign in a user using OAuth provider.",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "description": "The OAuth provider"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successfully signed in",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "provider": {
+                        "type": "string",
+                        "description": "The OAuth provider"
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "The URL to redirect to"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`

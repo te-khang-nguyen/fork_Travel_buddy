@@ -95,7 +95,7 @@ export default async function handler(
         return res.status(405).json({ error: "Method not allowed!" });
     }
 
-    const { locationId } = req.query;
+    const locationId = req.query?.location_id;
     const updatedData = req.body;
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token);

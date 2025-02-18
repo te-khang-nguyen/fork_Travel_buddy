@@ -109,3 +109,74 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+
+export const swaggerCallback = 
+  `"/api/v1/auth/callback": {
+    "get": {
+      "tags": ["auth"],
+      "summary": "OAuth callback",
+      "description": "Handle the OAuth callback and set the Supabase session.",
+      "parameters": [
+        {
+          "in": "query",
+          "name": "access_token",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "The access token from the OAuth provider"
+        },
+        {
+          "in": "query",
+          "name": "refresh_token",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "The refresh token from the OAuth provider"
+        },
+        {
+          "in": "query",
+          "name": "error",
+          "schema": {
+            "type": "string"
+          },
+          "required": false,
+          "description": "Error message from the OAuth provider"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successfully authenticated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "access_token": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`

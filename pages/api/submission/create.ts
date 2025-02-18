@@ -119,7 +119,8 @@ export default async function handler(
         return res.status(405).json({ error: "Method not allowed!" });
     }
 
-    const { challengeId, userLocationSubmission } = req.body;
+    const challengeId = req.query?.challenge_id;
+    const { userLocationSubmission } = req.body;
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token);
 
@@ -127,44 +128,8 @@ export default async function handler(
         data: { user },
     } = await supabase.auth.getUser();
 
-    for (const [ii, items] of userLocationSubmission.entries()) {
-        let imgUrls: (string | undefined)[] | null = [];
-
-        if (items?.userMediaSubmission) {
-            for (const [jj, item] of items.userMediaSubmission.entries()) {
-
-                const bytesArray =
-                    typeof item === "string" ? base64toBinary(item) : item;
-                
-                const toStorageUpload = {
-                    userId: user!.id,
-                    bucket: "challenge",
-                    title: `${challengeId}id=${jj}`,
-                    location: `userSubmit${jj}`,
-                    data: bytesArray,
-                };
-
-                try {
-                    const storageURL = await imageToStorage(toStorageUpload, supabase);
-                    imgUrls.push(storageURL.data);
-                } catch (error) {
-                    console.error(
-                        `Error uploading to storage for item ${jj}:`,
-                        error
-                    );
-                    imgUrls.push(undefined); // Add undefined if upload fails
-                }
-            }
-        } else {
-            imgUrls = null;
-        }
-
-        // Update userMediaSubmission for the current item
-        userLocationSubmission[ii].userMediaSubmission = imgUrls;
-    }
-
     try {
-        const { data: historyData, error: historyError } =
+        const { data: existingData } =
             await await supabase
                 .from("challengeHistories")
                 .select()
@@ -172,7 +137,37 @@ export default async function handler(
                 .eq("userId", user!.id)
                 .single();
 
-        const oldSubmissions = historyData?.userChallengeSubmission || [];
+        const oldSubmissions = existingData?.userChallengeSubmission || [];
+
+        const newSubmission = {
+            userQuestionSubmission: userLocationSubmission?.userQuestionSubmission,
+            userMediaSubmission: []
+        };
+
+        const cleanMergeSubmission = [
+            newSubmission,
+            ...oldSubmissions.filter(
+                (oldItem) =>
+                    !userLocationSubmission.some(
+                        (newItem) => newItem.locationId === undefined
+                    )
+            ),
+        ];
+
+
+        const insertCleanData = {
+            challengeId: challengeId,
+            userId: user!.id,
+            userChallengeSubmission: cleanMergeSubmission,
+
+            ...(existingData ? { id: existingData.id } : {}),
+        };
+
+        const { data, error } = await supabase
+              .from("challengeHistories")
+              .upsert(insertCleanData)
+              .select()
+              .single();
 
         const mergedSubmissions = [
             ...userLocationSubmission,
@@ -185,11 +180,10 @@ export default async function handler(
         ];
 
         const insertData = {
+            id: data?.id,
             challengeId: challengeId,
             userId: user!.id,
             userChallengeSubmission: mergedSubmissions,
-
-            ...(historyData ? { id: historyData.id } : {}),
         };
 
         const { data: updateData, error: updateError } = await supabase

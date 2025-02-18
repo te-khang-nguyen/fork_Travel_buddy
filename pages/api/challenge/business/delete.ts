@@ -3,7 +3,7 @@ import { supabase } from "@/libs/supabase/supabase_client";
 
 /**
  * @swagger
- * /api/v1/challenge/business/:challenge_id:
+ * /api/v1/challenge/business:
  *   delete:
  *     tags:
  *       - challenge/business
@@ -74,3 +74,63 @@ export default async function handler(
         });
     }
 }
+
+
+export const swaggerBussDel = 
+    `"/api/v1/challenge/business ": {
+      "delete": {
+        "tags": ["challenge/business"],
+        "summary": "Delete a challenge",
+        "description": "Move a challenge into 'Archived' and will be deleted",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "challenge_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the challenge to update"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Challenge deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }`

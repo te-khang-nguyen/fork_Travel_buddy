@@ -34,7 +34,7 @@ const JoinChallengeApi = createApi({
     getChallenge: builder.query<ChallengeRes, ChallengeReq>({
       query: ({ challengeId }) => ({
         url: `/challenge/user`,
-        params: {challengeId}
+        params: {challenge_id: challengeId}
       })
     }),
 
@@ -49,7 +49,7 @@ const JoinChallengeApi = createApi({
     getLocations: builder.query<ChallengeRes, ChallengeReq>({
       query: ({ challengeId }) => ({
           url: `/location`,
-          params: {challengeId}
+          params: {challenge_id: challengeId}
         })
     }),
 
@@ -64,8 +64,9 @@ const JoinChallengeApi = createApi({
     uploadInputs: builder.mutation<ChallengeRes, ChallengeReq>({
       query: ({ challengeId, userLocationSubmission }) => ({
         url: `/submission`,
+        params: {challenge_id: challengeId},
         method: "POST",
-        body: JSON.stringify({challengeId: challengeId, userLocationSubmission: userLocationSubmission})
+        body: {userLocationSubmission}
       }),
     }),
 
@@ -73,7 +74,7 @@ const JoinChallengeApi = createApi({
     getProgress: builder.query<ChallengeRes, ChallengeReq>({
       query: ({ challengeId }) => ({
         url: `/submission`,
-        params: {challengeId}
+        params: {challenge_id: challengeId}
       })
     }),
   }),

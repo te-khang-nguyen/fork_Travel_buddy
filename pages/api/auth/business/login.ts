@@ -88,3 +88,62 @@ export default async function handler(
             .json({ error: "Login failed due to an unknown error." });
     }
 }
+
+
+export const swaggerBussLogin = 
+    `"/api/v1/auth/business/login": {
+      "post": {
+        "tags": ["auth/business"],
+        "summary": "Business login",
+        "description": "Authenticate a business user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "The email of the business user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The password for the business user account"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "userId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }`

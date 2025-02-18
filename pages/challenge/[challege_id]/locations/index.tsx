@@ -171,7 +171,7 @@ const MainUI = () => {
             Let's keep exploring while we craft your story!`,
           severity: "success",
         });
-      // router.push(`/challenge/${challenge_id}/story/`);
+      router.push(`/challenge/${challenge_id}/story/`);
     } else {
       setIsConfirmClicked(false);
       setSnackbar({
