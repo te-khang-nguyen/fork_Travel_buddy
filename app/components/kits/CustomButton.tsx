@@ -72,11 +72,12 @@ const ImageMarked = styled('span')(({ theme }) => ({
 }));
 
 interface CustomButtonProps {
-    content: any;
+    content?: any;
+    children?: React.ReactNode;
     onClick?: () => void;
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({ content, onClick }) => {
+const CustomButton: React.FC<CustomButtonProps> = ({ content, children, onClick }) => {
     const buttonWidth = 40;//Math.floor(Math.random() * (60 - 10) + 10);
     const buttonHeight = 100 - buttonWidth;
     return (
@@ -98,38 +99,17 @@ const CustomButton: React.FC<CustomButtonProps> = ({ content, onClick }) => {
         >
             <ImageButton
                 focusRipple
-                key={content.id}
+                key={content?.id}
                 sx={{
                     height: {xs:180, lg:200},
                     width: 300,
                 }}
                 onClick={onClick}
             >
-                <ImageSrc style={{ backgroundImage: `url(${content.userMediaSubmission?.[0]})` }} />
-                <ImageBackdrop className="MuiImageBackdrop-root" />
-                <Image>
-                    <Typography
-                        component="span"
-                        variant="h4"
-                        color="inherit"
-                        sx={(theme) => ({
-                            position: 'relative',
-                            p: 4,
-                            pt: 2,
-                            pb: `calc(${theme.spacing(1)} + 6px)`,
-                            fontFamily: montserrat.style.fontFamily,
-                            fontSize: {xs: "h5.fontSize", sm: "h5.fontSize", lg: "h4.fontSize"}
-                        })}
-                    >
-                        {content.title}
-                        <ImageMarked className="MuiImageMarked-root" />
-                    </Typography>
-                </Image>
+                {children || content}
             </ImageButton>
         </Box>
     );
 };
 
 export default CustomButton;
-
-

@@ -17,7 +17,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
 import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
-import { AccountCircle, Inventory, Logout } from "@mui/icons-material";
+import { AccountCircle, Inventory, Logout, MenuBook } from "@mui/icons-material";
 import { useLogOutMutation } from "@/libs/services/user/auth";
 
 const drawerWidth = 240;
@@ -82,6 +82,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
     role === "user"
       ? [
           { text: "Challenge", icon: <Inventory />, route: `/challenge` },
+          { text: "Story", icon: <MenuBook />, route: `/profile/user/story` },
           {
             text: "Logout",
             icon: <Logout />,

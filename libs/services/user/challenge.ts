@@ -97,6 +97,12 @@ const JoinChallengeApi = createApi({
         method: "GET",
         params: { story_id }
       })
+    }),
+
+    getAllStory: builder.query<any, any>({
+      query: ({}) => ({
+        url: `/story`,
+      })
     })
   }),
 });
@@ -110,5 +116,6 @@ export const {
   useGetProgressQuery,
   useGenerateStoryMutation,
   useGetStoryQuery,
+  useGetAllStoryQuery,
 } = JoinChallengeApi;
 export { JoinChallengeApi };
