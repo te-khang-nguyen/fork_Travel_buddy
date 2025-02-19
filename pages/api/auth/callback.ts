@@ -55,7 +55,8 @@ export default async function handler(req, res) {
   }
 
   // Extract tokens and error from the query parameters
-  const { access_token, refresh_token, error } = req.query;
+  const urlSegments = req.url.split("?")[1].split("&");
+  const [access_token, refresh_token, error] = urlSegments.map((segment)=>segment.split("=")[1]);
 
   if (error) {
     console.error("OAuth error:", error);
@@ -81,8 +82,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Failed to set session." });
     }
 
-    // Fetch user details
-    const { data: user, error: userError } = await supabase.auth.getUser();
+    // // Fetch user details
+    const { 
+      data: user, 
+      error: userError 
+    } = await supabase.auth.getUser(access_token);
 
     if (userError) {
       console.error("Error fetching user data:", userError.message);
@@ -91,7 +95,7 @@ export default async function handler(req, res) {
         .json({ error: "Failed to fetch user information." });
     }
 
-    // Extract user ID and additional info if needed
+    // // Extract user ID and additional info if needed
     const userId = user?.user?.id;
 
     if (!userId) {

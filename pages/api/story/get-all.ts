@@ -15,7 +15,7 @@ export default async function handler(
             error 
         } = await supabase
             .from("story")
-            .select("*");
+            .select(`*, challenges (title)`);
 
         if (error) {
             return res.status(400).json({ error: error.message });

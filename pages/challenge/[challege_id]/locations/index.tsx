@@ -23,6 +23,7 @@ import CustomInputsField from "@/app/components/challenge/UserInputsField";
 import { getPayLoadSize } from "@/libs/services/utils";
 
 const MainUI = () => {
+  const storedChallengeId = localStorage.getItem("challengeId");
   const router = useRouter();
   const challengeId = router.query.challege_id;
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -80,7 +81,6 @@ const MainUI = () => {
           })) || [],
       })
     } else if (userLastSubmission?.length > 1){
-      
       const concatenatedTexts = userLastSubmission?.map(
         (item) => item.userQuestionSubmission
       ).join("\n");

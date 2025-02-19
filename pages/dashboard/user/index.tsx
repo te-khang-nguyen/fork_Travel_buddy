@@ -5,7 +5,6 @@ import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
 import { useRouter } from "next/router";
 import { useGetAllChallengesQuery, useGetUserSubmissionsQuery } from "@/libs/services/user/challenge";
-import { send } from "process";
 
 interface UserDashboardProps {
   totalChallenges: number;
@@ -20,6 +19,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   activeChallenges,
 }) => {
   const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(true);
 
   const {

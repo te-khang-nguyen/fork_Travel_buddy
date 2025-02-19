@@ -127,7 +127,7 @@ const ChallengesTab: React.FC = () => {
       <QRModal
         open={modalOpen}
         onClose={handleCloseModal}
-        chanllengeId={challengeId}
+        challengeId={challengeId}
         displayText={challengeName}
       />
     </Box>

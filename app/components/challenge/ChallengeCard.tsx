@@ -45,7 +45,7 @@ const ChallengeCard = ({ challenge }) => {
       <QRModal
         open={modalOpen}
         onClose={handleCloseModal}
-        chanllengeId={challenge.id}
+        challengeId={challenge.id}
         backgroundImage={challenge.image}
         displayText={challengeName}
       />

@@ -4,7 +4,7 @@ import QRCode from "qrcode";
 import { baseUrl } from "@/app/constant";
 
 type QRModalComponentProps = {
-  chanllengeId: string;
+  challengeId: string;
   displayText: string;
   locationId?: string;
   backgroundImage?: string;
@@ -12,17 +12,19 @@ type QRModalComponentProps = {
   onClose: () => void;
 };
 
-const QRModal: React.FC<QRModalComponentProps> = ({displayText, locationId, chanllengeId, backgroundImage, open, onClose }) => {
+const QRModal: React.FC<QRModalComponentProps> = ({
+  displayText, 
+  locationId, 
+  challengeId, 
+  backgroundImage, 
+  open, 
+  onClose 
+}) => {
   const [qr, setQr] = useState<string | null>(null);
 
-
-  const url = locationId 
-    ? `${baseUrl}/challenge/${chanllengeId}/locations/${locationId}`
-    : `${baseUrl}/challenge/${chanllengeId}`;
+  const url = `${baseUrl}?challenge_id=${challengeId}`
   useEffect(() => {
     if (open) {
-     
-
       QRCode.toDataURL(
         url,
         {

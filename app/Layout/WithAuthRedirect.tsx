@@ -8,15 +8,36 @@ const PUBLIC_ROUTES = ["/", "/register", "/login/business", "/recovery", "/auth/
 const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
   const WithAuthRedirect = (props: P) => {
     const router = useRouter();
+    const challengeId = router.query?.challenge_id;
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+    if(challengeId){
+      localStorage.setItem("challengeId", challengeId as string);
+    }
 
     useEffect(() => {
       const checkUserAuth = async () => {
         try {
           const jwt = localStorage.getItem("jwt") || "";
           const role = localStorage.getItem("role") || "";
-          const isValidJwt = await isAuthenticated(jwt);
+          const isValidJwt = await isAuthenticated(jwt);  
+          const storedChallengeId = localStorage.getItem("challengeId");
 
+          // Redirect to login if no JWT OR if JWT is invalid
+          if (!isValidJwt) {
+            localStorage.removeItem("jwt");
+            localStorage.removeItem("role");
+            await router.replace("/");
+            return;
+          }
+
+          if(router.pathname.includes("/challenge") && storedChallengeId) {
+              localStorage.removeItem("challengeId");
+          }
+          
+          if (router.pathname !== "/" && storedChallengeId) {
+            router.push(`/challenge/${storedChallengeId}/locations`);
+          }
 
           // If the role is 'user' and the path contains 'business', deny access
           if (role && role === 'user' && router.pathname.includes('business')) {
@@ -34,14 +55,6 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           // Allow access to public routes 
           if (PUBLIC_ROUTES.includes(router.pathname)) {
             setIsCheckingAuth(false);
-            return;
-          }
-
-          // Redirect to login if no JWT OR if JWT is invalid
-          if (!isValidJwt) {
-            localStorage.setItem("jwt", "");
-            localStorage.setItem("role", "");
-            await router.replace("/");
             return;
           }
 

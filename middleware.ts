@@ -37,7 +37,6 @@ export function middleware(req: NextRequest) {
         }
 
         const newPath = apiRoutingCRUD(req);
-        console.log("New path:", newPath);
         if (!newPath){
           return Response.json(
             { success: false, message: "Method Undefined!" },

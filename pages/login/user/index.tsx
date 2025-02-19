@@ -22,6 +22,7 @@ import { useGlobalContext } from "@/app/GlobalContextProvider";
 function Login() {
   const { setRole, setUserId } = useGlobalContext();
   const router = useRouter();
+
   const [logIn] = useLogInMutation();
   const [logInWithGG] = useSignUpWithGoogleMutation();
 
@@ -36,6 +37,7 @@ function Login() {
 
   const handleLogin = async () => {
     const result = await logIn({ email, password });
+    
 
     if (result.error) {
       setSnackbarMessage("Login failed");
@@ -48,7 +50,7 @@ function Login() {
       localStorage.setItem("role", "user");
       localStorage.setItem("jwt", accessToken);
       setUserId(userId);
-      router.push("/dashboard/user");
+      router.push(`/dashboard/user`);
     }
   };
 
@@ -57,6 +59,7 @@ function Login() {
     const {
       data: { url },
     } = result;
+    console.log(url);
     router.push(url);
   };
 

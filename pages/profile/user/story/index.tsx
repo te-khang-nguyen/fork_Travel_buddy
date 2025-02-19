@@ -42,10 +42,22 @@ import { baseUrl } from "@/app/constant";
 import { Montserrat } from "next/font/google";
 import { generateLocationStories } from "@/libs/services/storyGen";
 import { StoryPage } from "@/app/components/challenge/StoryPage";
-
+import Image from 'next/image';
+import ImageCarousel from "@/app/components/challenge/ImageCarousel";
+import StatusChip from "@/app/components/challenge/StatusChip";
+import { formatDate } from "@/app/utils/date";
 
 const StoryTable = ({ stories }) => {
     const router = useRouter();
+
+    const tableHeaders = [
+        { key: 'date', label: 'Date' },
+        { key: 'challengeName', label: 'Challenge Name' },
+        { key: 'story', label: 'Story' },
+        { key: 'media', label: 'Media' },
+        { key: 'status', label: 'Status' }
+    ];
+        
 
     // If no stories, return a message
     if (!stories || stories.length === 0) {
@@ -56,38 +68,64 @@ const StoryTable = ({ stories }) => {
         );
     }
 
+    const sortedStories = [...stories].sort((a, b) => {
+        // First, sort by status (ASC)
+        const statusComparison = a.status.localeCompare(b.status);
+        if (statusComparison !== 0) return statusComparison;
+        
+        // If statuses are the same, sort by createdAt (DESC)
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
     return (
-        <TableContainer>
+        <TableContainer sx={{ 
+            maxHeight: 'calc(100vh - 100px)', 
+            overflowY: 'auto',
+        }}>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Challenge ID</TableCell>
-                        <TableCell>User Notes</TableCell>
-                        <TableCell>Media</TableCell>
+                        {tableHeaders.map((header) => (
+                            <TableCell key={header.key}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                    {header.label}
+                                </Typography>
+                            </TableCell>
+                        ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {stories.map((story) => (
+                    {sortedStories.map((story) => (
                         <TableRow 
                             key={story.id} 
                             hover 
-                            sx={{ cursor: 'pointer' }}
-                            onClick={() => router.push(`/profile/user/story/${story.id}`)}
                         >
-                            <TableCell>{story.challengeId}</TableCell>
                             <TableCell>
-                                <Typography variant="body2" noWrap sx={{ maxWidth: 200 }}>
-                                    {story.userNotes}
+                                <Typography variant="body2">
+                                    {formatDate(story.createdAt)}
                                 </Typography>
                             </TableCell>
+                            <TableCell
+                                sx={{ cursor: 'pointer' }}
+                                onClick={() => router.push(`/profile/user/story/${story.id}`)}
+                            >
+                                <Typography variant="body2">
+                                    {story.challenges.title}
+                                </Typography>
+                            </TableCell>
+                            <TableCell
+                                sx={{ cursor: 'pointer' }}
+                                onClick={() => router.push(`/profile/user/story/${story.id}`)}
+                            >
+                                <Typography variant="body2" sx={{ maxWidth: 400 }}>
+                                    {story.storyFull}
+                                </Typography>
+                            </TableCell>
+                            <TableCell sx={{ maxWidth: 500 }}>
+                                <ImageCarousel height={200} images={story.mediaSubmitted} />
+                            </TableCell>
                             <TableCell>
-                                {story.mediaSubmitted && story.mediaSubmitted.length > 0 ? (
-                                    <Typography variant="body2">
-                                        {story.mediaSubmitted.length} image(s)
-                                    </Typography>
-                                ) : (
-                                    'No media'
-                                )}
+                                <StatusChip status={story.status} />
                             </TableCell>
                         </TableRow>
                     ))}
@@ -98,7 +136,6 @@ const StoryTable = ({ stories }) => {
 };
 
 const StoryPageUI = () => {
-    const router = useRouter();
     const { data: story, error, isLoading } = useGetAllStoryQuery({});
     console.log("Story", story);
 

@@ -1,5 +1,4 @@
 // /* eslint-disable */
-import { sliderClasses } from "@mui/material";
 import { supabase } from "../supabase/supabase_client";
 const crypto = require("crypto");
 
