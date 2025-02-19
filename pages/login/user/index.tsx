@@ -59,7 +59,6 @@ function Login() {
     const {
       data: { url },
     } = result;
-    console.log(url);
     router.push(url);
   };
 
