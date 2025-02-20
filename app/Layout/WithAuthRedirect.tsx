@@ -40,8 +40,7 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           }
 
           // If the role is 'user' and the path contains 'business', deny access
-          if (role && role === 'user' && router.pathname.includes('business')) {
-            console.log('Current role:', role);
+          if (role === 'user' && router.pathname.includes('business')) {
             await router.replace('/'); // Redirect to a no-access page
             return;
           }
