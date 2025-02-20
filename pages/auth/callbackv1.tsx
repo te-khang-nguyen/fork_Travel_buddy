@@ -24,6 +24,8 @@ export default function OAuthCallback() {
       const token = queryParams.get("access_token");
       const refresh = queryParams.get("refresh_token");
 
+      console.log("Redirect URl embedded token:", token);
+
       if (token && token !== "") {
         localStorage.setItem("jwt", token); // Store access token
         localStorage.setItem("role", "user");
