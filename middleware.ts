@@ -11,9 +11,11 @@ export function middleware(req: NextRequest) {
   }
 
   if (url.pathname.includes('/api/v1/auth')) {
-    const pathSegments = url.pathname.split('/');
-    const target = pathSegments[pathSegments.length - 1];
-    return NextResponse.rewrite(new URL(`/api/auth/${target}`, req.url));
+    const newPath = url.pathname.replace('v1/', '');
+    const params = Array.from(url.searchParams.entries());
+    const paramsString = params.length > 0? 
+      '?' + params.map((item: any)=> `${item[0]}=${item[1]}`).join('&') : '';
+    return NextResponse.rewrite(new URL(newPath + paramsString, req.url));
   }
 
   // If path includes '/api' and not include '/auth, trigger API authorization logic

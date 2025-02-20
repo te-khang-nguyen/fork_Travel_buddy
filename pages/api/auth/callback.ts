@@ -56,7 +56,7 @@ export default async function handler(req, res) {
 
   const{ access_token, refresh_token, error } = req.query;
 
-  console.log("Request object:",req);
+  console.log("Token:", access_token);
 
   // Extract tokens and error from the query parameters
   // const urlSegments = req.url.split("?")[1].split("&");
