@@ -26,6 +26,14 @@ const UserAuthApi = createApi({
       }),
     }),
 
+    signUpWithX: builder.mutation<any, void>({
+      query: () => ({
+        url: "/auth/oauth",
+        method: "POST",
+        body: { provider: "twitter" },
+      }),
+    }),
+
     fetchUserAfterOAuth: builder.query({
       query: ({ accessToken, refreshToken }) => ({
         url: `/auth/callback`,
@@ -73,6 +81,7 @@ export const {
   useLogOutMutation,
   useSignUpWithFacebookMutation,
   useSignUpWithGoogleMutation,
+  useSignUpWithXMutation,
 } = UserAuthApi;
 
 export { UserAuthApi };

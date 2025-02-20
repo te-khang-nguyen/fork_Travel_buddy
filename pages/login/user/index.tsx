@@ -10,12 +10,14 @@ import {
   Alert,
 } from "@mui/material";
 import { Google, Facebook, Instagram } from "@mui/icons-material";
+import XIcon from '@mui/icons-material/X';
 import defaultBackground from "@/assets/background.jpg";
 import { useRouter } from "next/router";
 import {
   useLogInMutation,
   useSignUpWithFacebookMutation,
   useSignUpWithGoogleMutation,
+  useSignUpWithXMutation,
 } from "@/libs/services/user/auth";
 import { useGlobalContext } from "@/app/GlobalContextProvider";
 
@@ -25,7 +27,7 @@ function Login() {
 
   const [logIn] = useLogInMutation();
   const [logInWithGG] = useSignUpWithGoogleMutation();
-
+  const [logInWithX] = useSignUpWithXMutation();
   const [logInWithFB] = useSignUpWithFacebookMutation();
 
   const [email, setEmail] = React.useState("");
@@ -62,6 +64,14 @@ function Login() {
     router.push(url);
   };
 
+  const handleLoginWithX = async () => {
+    const result = await logInWithX().unwrap();
+    const {
+      data: { url },
+    } = result;
+    router.push(url);
+  };
+
   const handleLoginWithFacebook = async () => {
     const result = await logInWithFB().unwrap();
     const {
@@ -69,6 +79,7 @@ function Login() {
     } = result;
     router.push(url);
   };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -161,14 +172,24 @@ function Login() {
           >
             Google
           </Button>
+
           <Button
+            variant="outlined"
+            startIcon={<XIcon />}
+            onClick={handleLoginWithX}
+            fullWidth={true}
+          >
+            {""}
+          </Button>
+
+          {/* <Button
             variant="outlined"
             startIcon={<Facebook />}
             onClick={handleLoginWithFacebook}
             fullWidth={true}
           >
             Facebook
-          </Button>
+          </Button> */}
         </Box>
 
         <Box textAlign="center" mt={3}>
