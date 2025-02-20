@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { data: authData, error: authError } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${baseUrl}auth/callbackv1` },
+      options: { redirectTo: `${baseUrl}/auth/callbackv1` },
     });
 
     if (authError) {

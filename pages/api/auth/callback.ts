@@ -54,9 +54,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+
+  const{ access_token, refresh_token, error } = req.query;
+
+  console.log("Params retreived using Query",req.query);
+
+  console.log("Full request URL:",req.url)
+
   // Extract tokens and error from the query parameters
-  const urlSegments = req.url.split("?")[1].split("&");
-  const [access_token, refresh_token, error] = urlSegments.map((segment)=>segment.split("=")[1]);
+  // const urlSegments = req.url.split("?")[1].split("&");
+  // const [access_token, refresh_token, error] = urlSegments.map((segment)=>segment.split("=")[1]);
 
   if (error) {
     console.error("OAuth error:", error);
