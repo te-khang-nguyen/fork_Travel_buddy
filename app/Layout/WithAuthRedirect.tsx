@@ -27,8 +27,14 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           if (!isValidJwt) {
             localStorage.removeItem("jwt");
             localStorage.removeItem("role");
-            await router.replace("/");
-            return;
+            localStorage.removeItem("refresh_token");
+            if (router.pathname.includes("business")){
+              await router.replace("/login/business");
+              return;
+            } else {
+              await router.replace("/");
+              return;
+            }
           }
 
           if(router.pathname.includes("/challenge") && storedChallengeId) {
