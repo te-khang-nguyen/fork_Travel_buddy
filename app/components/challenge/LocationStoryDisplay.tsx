@@ -57,6 +57,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     },
 }));
 
+
 const WoodenCircle = styled(Box)(({ theme }) => ({
     borderRadius: '50%',
     background: `radial-gradient(circle, #b87333 0%, #8b5a2b 70%, #3e2723 100%)`,
@@ -69,36 +70,38 @@ const WoodenCircle = styled(Box)(({ theme }) => ({
 }));
 
 
-
 interface LocationStoryProps {
     content: any;
-    onSaveChanges: (storyUpdated: string) => void;
-    onArchive: () => void;
-    isArchived: boolean;
+    onSaveChanges?: (storyUpdated: string) => void;
+    onTrigger?: () => void;
+    isTriggered?: boolean;
+    isEditor?: boolean;
 }
 
 const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ 
     content,
     onSaveChanges,
-    onArchive,
-    isArchived 
+    onTrigger,
+    isTriggered, 
+    isEditor
 }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
 
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [imageError, setImageError] = useState(false);
-    const [imageIndex, setImageIndex] = useState(null);
+    const [imageIndex, setImageIndex] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [travelStory, setTravelStory] = useState<string>('');
-    
+    const [media, setMedia] = useState<string[]>([]);
+    const persitedTexts = sessionStorage.getItem("story");
 
     useEffect(() => {
         if (!content) {
             setImageIndex(null);
-        }
-        if(content?.story){
-            setTravelStory(content?.story);
+        } else {
+            setTravelStory(persitedTexts || content?.story);
+            setMedia(content?.userMediaSubmission ?? []);
         }
     }, [content]);
 
@@ -117,11 +120,11 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
     };
 
     const handleSaveChanges = () => {
-        onSaveChanges(travelStory);
+        onSaveChanges?.(travelStory);
     };
 
     const handleArchive = () => {
-        onArchive();
+        onTrigger?.();
     };
 
     return (
@@ -233,7 +236,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                             }}
                         >
                             {/*<Cable /> Add the cable */}
-                            {content?.userMediaSubmission.map((img, index) => (
+                            {media.map((img, index) => (
                                 <Box
                                     key={index}
                                     sx={{
@@ -295,7 +298,30 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                             p: { xs: 0, lg: 5 },
                         }}
                     >
-                        {!isEditing?
+                        {!isEditor?
+                            <Button
+                                sx={{
+                                    backgroundColor: "rgba(0, 0, 0, 0.85)",
+                                    color: "rgb(255, 255, 255)",
+                                    fontFamily: montserrat.style.fontFamily,
+                                    fontSize: {
+                                        xs:"body2.fontSize",
+                                        sm:"body1.fontSize",
+                                        md:"body1.fontSize",
+                                        lg:"body1.fontSize",
+                                    },
+                                    borderRadius: 3,
+                                    boxShadow: 3,
+                                    ml:{xs:5,sm:30,md:50,lg:50},
+                                    mb: 2
+                                }}
+                                onClick={onTrigger}
+                                disabled={isTriggered}
+                            >
+                                To Story Editor
+                            </Button>
+                        :
+                        !isEditing?
                         <Box
                             sx={{
                                 display: "flex",
@@ -308,7 +334,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                         >
                             <Button
                                 sx={{
-                                    backgroundColor: isArchived?"rgba(15, 148, 10, 0.84)"
+                                    backgroundColor: isTriggered?"rgba(15, 148, 10, 0.84)"
                                                                 :"rgba(228, 17, 17, 0.73)",
                                     color: "rgb(255, 255, 255)",
                                     fontFamily: montserrat.style.fontFamily,
@@ -324,9 +350,9 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                 }}
                                 onClick={handleArchive}
                             >
-                                {isArchived? "Reactivate" : "Archive"}
+                                {isTriggered? "Reactivate" : "Archive"}
                             </Button>
-                            {isArchived?<></>:<Button
+                            {isTriggered?<></>:<Button
                                 sx={{
                                     backgroundColor: "rgba(0, 0, 0, 0.85)",
                                     color: "rgb(255, 255, 255)",
@@ -343,11 +369,10 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                     mb: 2
                                 }}
                                 onClick={()=>setIsEditing(true)}
-                                disabled={isArchived}
+                                disabled={isTriggered}
                             >
                                 Edit
                             </Button>}
-                            
                         </Box>
                         :
                         <Box
@@ -449,11 +474,17 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                         width: {xs: 160, sm: 300, md: 600, lg:600},
                                         '.MuiInputBase-input': {
                                             fontFamily: montserrat.style.fontFamily, 
-                                            fontSize: {xs:'0.7rem',lg:'1.2rem'}
+                                            fontSize: {
+                                                xs:'0.7rem',
+                                                sm:'0.9rem',
+                                                md:'1rem',
+                                                lg:'1.2rem'
+                                            }
                                         },
                                     }}
 
                                     onChange={(e) => {
+                                        sessionStorage.setItem('story', e.target.value)
                                         setTravelStory(e.target.value);
                                     }}
                                 />}

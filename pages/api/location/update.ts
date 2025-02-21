@@ -126,7 +126,9 @@ export default async function handler(
 
 };
 
-export const swaggerLocUpdate = 
+export const swaggerLocUpdate = {
+  index:20, 
+  text:
 `"/api/v1/location   ": {
     "post": {
       "tags": ["location"],
@@ -236,3 +238,4 @@ export const swaggerLocUpdate =
       }
     }
   }`
+}

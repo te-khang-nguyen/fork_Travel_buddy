@@ -19,19 +19,14 @@ import {
     TwitterShareButton,
     TwitterIcon,
 } from 'next-share';
-import CustomButton from "@/app/components/kits/CustomButton";
 import { useRouter } from "next/router";
-import LocationStoryDisplay from "@/app/components/challenge/LocationStoryDisplay";
-import {    
-    useGetChallengeQuery,
-    useGetUserSubmissionsQuery,
-    useGetLocationsQuery,
-    useGetStoryQuery,
-    useGenerateStoryMutation
-} from "@/libs/services/user/challenge";
+
+import {
+    useGetStoryQuery
+} from "@/libs/services/user/story"
+
 import { baseUrl } from "@/app/constant";
 import { Montserrat } from "next/font/google";
-import { generateLocationStories } from "@/libs/services/storyGen";
 import { StoryPage } from "@/app/components/challenge/StoryPage";
 
 const historyDataFinal = {

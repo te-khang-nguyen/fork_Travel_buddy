@@ -19,6 +19,14 @@ import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout, MenuBook } from "@mui/icons-material";
 import { useLogOutMutation } from "@/libs/services/user/auth";
+import { store } from "@/libs/store";
+import { UserProfileApi } from '@/libs/services/user/profile';
+import { StoryApi } from '@/libs/services/user/story';
+import { BusinessProfileApi } from '@/libs/services/business/profile';
+import { JoinChallengeApi } from '@/libs/services/user/challenge';
+import { ChallengeApi } from '@/libs/services/business/challenge';
+import { LocationApi } from '@/libs/services/business/location';
+
 
 const drawerWidth = 240;
 const Search = styled("div")(({ theme }) => ({
@@ -73,6 +81,22 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
     setDrawerOpen(!drawerOpen);
   };
 
+  const handleLogOut = async (item: any) => {
+    if (item.text == "Logout") {
+      logout();
+      localStorage.clear();
+      sessionStorage.clear();
+      // store.dispatch(UserProfileApi.util.resetApiState());
+      // store.dispatch(StoryApi.util.resetApiState());
+      // store.dispatch(BusinessProfileApi.util.resetApiState());
+      // store.dispatch(JoinChallengeApi.util.resetApiState());
+      // store.dispatch(ChallengeApi.util.resetApiState());
+      // store.dispatch(LocationApi.util.resetApiState());
+    }
+    await router.replace(item.route);
+    setDrawerOpen(false);
+  };
+
   const defaultMenuItems = [
     { text: "Dashboard", icon: <HomeIcon />, route: `/dashboard/${role}` },
     { text: "Profile", icon: <AccountCircle />, route: `/profile/${role}` },
@@ -120,16 +144,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
         {[...defaultMenuItems, ...menuItems].map((item) => (
           <ListItem
             key={item.text}
-            onClick={async () => {
-              // this is so not recommened, enhance later
-              if (item.text == "Logout") {
-                logout();
-                localStorage.setItem("jwt", "");
-                localStorage.setItem("role", "");
-              }
-              router.push(item.route);
-              setDrawerOpen(false);
-            }}
+            onClick={async () => handleLogOut(item)}
             sx={{
               "&:hover": {
                 backgroundColor: "rgba(0, 0, 0, 0.08)", // Light gray background on hover

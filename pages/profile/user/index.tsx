@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 import {
   Box,
   TextField,
@@ -26,6 +27,7 @@ interface ProfileFormInputs {
 }
 
 const ProfileForm = () => {
+  const role = localStorage.getItem("role");
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -39,6 +41,7 @@ const ProfileForm = () => {
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+  
   const defaultValues = {
     username: "",
     email: "",
@@ -54,30 +57,52 @@ const ProfileForm = () => {
     handleSubmit,
     control,
     formState: { errors },
+    watch,
     setValue,
-  } = useForm<ProfileFormInputs>({ defaultValues });
+  } = useForm<ProfileFormInputs>();
 
-  const { data: profile, error: profileError } = useGetProfileQuery();
+  const { 
+    data: profile, 
+    error: profileError 
+  } = useGetProfileQuery();
+
+  const storedValues = JSON.parse(sessionStorage.getItem("profile") as string);
 
   useEffect(() => {
     if (profile) {
       for (const [key, value] of Object.entries(profile.data)) {
         if (key in defaultValues) {
-          setValue(key as any, value || "");
+          console.log(storedValues?.[key]);
+          setValue(key as any, (
+            storedValues && storedValues[key] !== ""
+            ? storedValues[key] : value
+          ) || "");
         }
       }
     }
   }, [profile, setValue]);
 
+  useEffect(()=>{
+    if(profile){
+      const subscription = watch((value)=>{
+        if(!Object.values(profile.data).includes(value)){
+          sessionStorage.setItem("profile", JSON.stringify(value));
+        }
+      });
+      return () => subscription.unsubscribe();
+    }
+  },[watch, profile]);
+
   const onSubmit = async (profileData: ProfileFormInputs) => {
-    try {
-      const result = await updateProfile(profileData).unwrap();
+    const result = await updateProfile(profileData).unwrap();
+    
+    if (result.data) {
       setSnackbar({
         open: true,
         message: "Profile updated successfully!",
         severity: "success",
       });
-    } catch (error) {
+    } else {
       setSnackbar({
         open: true,
         message: "Failed to update profile. Please try again.",

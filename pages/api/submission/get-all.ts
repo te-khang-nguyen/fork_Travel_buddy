@@ -89,7 +89,9 @@ export default async function handler(
 
 };
 
-export const swaggerSubmissionGetAll = 
+export const swaggerSubmissionGetAll = {
+  index:24, 
+  text:
 `"/api/v1/submission ": {
     "get": {
       "tags": ["submission"],
@@ -168,3 +170,4 @@ export const swaggerSubmissionGetAll =
       }
     }
   }`
+}

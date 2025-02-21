@@ -17,7 +17,7 @@ export default async function handler(
         return res.status(405).json({ error: "Method not allowed!" });
     }
 
-    const {story_id, challengeHistoryId} = req.query;
+    const { story_id } = req.query;
     const updatedData = req.body;
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token);
@@ -33,7 +33,7 @@ export default async function handler(
         } = await supabase
             .from('story')
             .update(updatedData)
-            .eq(story_id? "id": "challengeHistoryId", story_id ?? challengeHistoryId)
+            .eq("id", story_id)
             .select()
             .single();
 
@@ -50,85 +50,88 @@ export default async function handler(
 };
 
 
-export const swaggerStoryUpdate = 
-    `"/api/v1/story  ": {
-      "put": {
-        "tags": ["story"],
-        "summary": "Update a challenge",
-        "description": "Update the details of an existing challenge.",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "story_id",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The ID of the challenge to update"
-          }
-        ],
-        "requestBody": {
+export const swaggerStoryUpdate = {
+  index:29, 
+  text:
+`"/api/v1/story   ": {
+    "put": {
+      "tags": ["story"],
+      "summary": "Update a story",
+      "description": "Update the details of an existing story.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "in": "path",
+          "name": "story_id",
+          "schema": {
+            "type": "string"
+          },
           "required": true,
+          "description": "The ID of the story to update"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userNotes": {
+                  "type": "string",
+                  "description": "User travel notes"
+                },
+                "storyFull": {
+                  "type": "string",
+                  "description": "AI-generated travel story based on users notes"
+                },
+                "mediaSubmitted": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "URL of the user submitted media"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Story updated successfully",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "userNotes": {
-                    "type": "string",
-                    "description": "User travel notes"
-                  },
-                  "storyFull": {
-                    "type": "string",
-                    "description": "AI-generated travel story based on users notes"
-                  },
-                  "mediaSubmitted": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "description": "URL of the user submitted media"
-                    }
-                  },
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Story updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
                       }
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "405": {
-            "description": "Method not allowed"
-          },
-          "500": {
-            "description": "Internal server error"
           }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
         }
       }
-    }`
+    }
+  }`
+}

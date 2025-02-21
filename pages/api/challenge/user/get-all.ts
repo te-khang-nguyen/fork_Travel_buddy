@@ -70,7 +70,9 @@ export default async function handler(
     }
 }
 
-export const swaggerUserGetAll = 
+export const swaggerUserGetAll = {
+  index:11, 
+  text:
     `"/api/v1/challenge/user": {
       "get": {
         "tags": ["challenge/user"],
@@ -133,3 +135,4 @@ export const swaggerUserGetAll =
         }
       }
     }`
+}

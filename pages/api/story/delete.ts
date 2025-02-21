@@ -37,7 +37,9 @@ export default async function handler(
 }
 
 
-export const swaggerBussDel = 
+export const swaggerStoryDel = {
+  index:30, 
+  text:
   `"/api/v1/story    ": {
       "delete": {
         "tags": ["story"],
@@ -95,3 +97,4 @@ export const swaggerBussDel =
         }
       }
     }`
+}

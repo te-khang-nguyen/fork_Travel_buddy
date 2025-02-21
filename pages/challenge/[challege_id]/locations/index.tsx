@@ -13,6 +13,7 @@ import {
   useGetProgressQuery,
   useGetLocationsQuery,
   useUploadInputsMutation,
+  JoinChallengeApi
 } from "@/libs/services/user/challenge";
 import { useUploadImageMutation } from "@/libs/services/storage/upload";
 import { useRouter } from "next/router";
@@ -21,9 +22,9 @@ import LocationDetail from "@/app/components/challenge/LocationDetail";
 import GenericModal from "@/app/components/kits/Modal";
 import CustomInputsField from "@/app/components/challenge/UserInputsField";
 import { getPayLoadSize } from "@/libs/services/utils";
+import { store } from "@/libs/store";
 
 const MainUI = () => {
-  const storedChallengeId = localStorage.getItem("challengeId");
   const router = useRouter();
   const challengeId = router.query.challege_id;
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -132,7 +133,9 @@ const MainUI = () => {
     setIsConfirmClicked(true);
     // getPayLoadSize([userInputs]);
 
-    const results = Promise.all(userInputs.userMediaSubmission.map(async (img, index) => {
+    const results = Promise.all(userInputs
+      .userMediaSubmission
+      .map(async (img, index) => {
       // getPayLoadSize([img]);
       const result = await uploadImage({
         imageBase64: img,
@@ -161,20 +164,23 @@ const MainUI = () => {
       }],
     });
 
+    
     if (submissionResult.data) {
       setIsConfirmClicked(false);
         setSnackbar({
           open: true,
           message:
-            `Great sharings!${<br/>}
-            This chapter will be wonderful!${<br/>}
+            `Great sharings!\n
+            This chapter will be wonderful!\n
             Let's keep exploring while we craft your story!`,
           severity: "success",
         });
+
       router.push({
         pathname:`/challenge/${challenge_id}/story/`,
         query: {challengeHistoryId: submissionResult?.data?.data?.id}
       });
+
     } else {
       setIsConfirmClicked(false);
       setSnackbar({

@@ -1,61 +1,49 @@
+import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { createApiClient } from "@/libs/supabase/supabaseApi";
 
-
-export const config = {
-    api: {
-        bodyParser: {
-            sizeLimit: '4.5mb', // Increase the body size limit (e.g., 5MB)
-        },
-    },
-};
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== "PUT") {
+    if (req.method !== "GET") {
         return res.status(405).json({ error: "Method not allowed!" });
     }
 
-    const locationId = req.query?.location_id;
-    const token = req.headers.authorization?.split(' ')[1];
-    const supabase = createApiClient(token);
+    const { role } = req.query;
 
-    // const {
-    //     data: { user },
-    // } = await supabase.auth.getUser();
+    const token = req.headers.authorization?.split(' ')[1];
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser(token);
 
     try {
-        const {
-            data: locationData,
-            error: locationErr
-        } = await supabase
-            .from('locations')
-            .upsert({ id: locationId, status: "ARCHIVED" })
+        const { data: profileData, error } = await supabase
+            .from(`${role}profiles`)
             .select()
+            .eq(`${role}id`, user!.id)
             .single();
 
-        if (locationErr) {
-            return res.status(400).json({ error: locationErr.message });
+        if (error) {
+            return res.status(400).json({ error: error.message });
         }
 
-        return res.status(200).json({ data: locationData });
-
+        return res.status(200).json({ data: profileData });
     } catch (err: any) {
-        return res.status(500).json({ error: err.message || "An error has occurred while updating location." });
+        return res.status(500).json({ error: err.message || "An error has occurred while retrieving the user profile." });
     }
 
 };
 
-export const swaggerLocDel = {
-  index:21, 
+export const swaggerProfileGetAll = {
+  index:8, 
   text:
-`"/api/v1/location     ": {
-    "put": {
-      "tags": ["location"],
-      "summary": "Delete location",
-      "description": "Move a location into 'Archived' status.",
+`"/api/v1/profile": {
+    "get": {
+      "tags": ["profile"],
+      "summary": "Retrieve user profile",
+      "description": "Retrieve the profile of a user based on their role.",
       "security": [
         {
           "bearerAuth": []
@@ -64,17 +52,17 @@ export const swaggerLocDel = {
       "parameters": [
         {
           "in": "query",
-          "name": "location_id",
+          "name": "role",
           "schema": {
             "type": "string"
           },
           "required": true,
-          "description": "The ID of the location to update"
+          "description": "The role of the user (e.g., 'business', 'user')"
         }
       ],
       "responses": {
         "200": {
-          "description": "Location deleted successfully",
+          "description": "User profile retrieved successfully",
           "content": {
             "application/json": {
               "schema": {
@@ -86,7 +74,16 @@ export const swaggerLocDel = {
                       "id": {
                         "type": "string"
                       },
-                      "status": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "role": {
+                        "type": "string"
+                      },
+                      "created_at": {
                         "type": "string"
                       }
                     }

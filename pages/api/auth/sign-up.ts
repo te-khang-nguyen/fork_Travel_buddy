@@ -98,7 +98,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 
-export const swaggerUserSignUp = 
+export const swaggerUserSignUp = {
+  index:1, 
+  text:
   `"/api/v1/auth/sign-up": {
     "post": {
       "tags": ["auth"],
@@ -164,3 +166,4 @@ export const swaggerUserSignUp =
       }
     }
   }`
+}

@@ -34,10 +34,12 @@ import {
     useGetChallengeQuery,
     useGetUserSubmissionsQuery,
     useGetLocationsQuery,
-    useGetStoryQuery,
-    useGetAllStoryQuery,
-    useGenerateStoryMutation
 } from "@/libs/services/user/challenge";
+
+import {
+    useGetAllStoryQuery,
+} from "@/libs/services/user/story"
+
 import { baseUrl } from "@/app/constant";
 import { Montserrat } from "next/font/google";
 import { generateLocationStories } from "@/libs/services/storyGen";

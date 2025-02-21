@@ -1,5 +1,5 @@
-import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import { supabase } from "../../supabase/supabase_client";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQuery } from "@/libs/supabase/baseQuery";
 
 // Define TypeScript interfaces for the request and response data
 interface ProfileReq {
@@ -17,69 +17,34 @@ interface ProfileReq {
 }
 
 interface ProfileRes {
-    data: any;
+  data: any;
   error?: string;
 }
 
 const UserProfileApi = createApi({
   reducerPath: "userprofile",
-  baseQuery: fakeBaseQuery(),
+  baseQuery,
   endpoints: (builder) => ({
     getProfile: builder.query<ProfileRes, void>({
-      queryFn: async () => {
-        const {
-          data: { user },
-          error: getUerror,
-        } = await supabase.auth.getUser();
-
-        if (user) {
-          const { data, error } = await supabase
-            .from("userprofiles")
-            .select()
-            .eq("userid", user.id)
-            .single();
-
-          if (!error) {
-            return { data: { data } };
-          } else {
-            return { error: error.message };
-          }
-        } else {
-          return { error: getUerror?.message || "User not authenticated" };
-        }
-      },
+      query: () => ({
+        url: `/profile`,
+        params: { role: "user" }
+      }),
     }),
 
     updateProfile: builder.mutation<ProfileRes, ProfileReq>({
-      queryFn: async (input) => {
-        try {
-          const {
-            data: { user },
-            error: getUerror,
-          } = await supabase.auth.getUser();
-
-          if (!user) {
-            return { error: getUerror?.message || "Session expired!" };
-          }
-
-          const { error: updateError } = await supabase
-            .from("userprofiles")
-            .update(input)
-            .eq("userid", user.id);
-
-          if (updateError) {
-            return { error: updateError.message };
-          }
-
-          // Return updated data in a format matching ProfileRes
-          return { data: { data: input } };
-        } catch (err: any) {
-          return { error: err.message || "An unexpected error occurred" };
-        }
-      },
+      query: (payload) => ({
+        url: `/profile`,
+        params: { role: "user" },
+        method: "PUT",
+        body: payload
+      }),
     }),
   }),
 });
 
-export const { useGetProfileQuery, useUpdateProfileMutation } = UserProfileApi;
+export const {
+  useGetProfileQuery,
+  useUpdateProfileMutation
+} = UserProfileApi;
 export { UserProfileApi };

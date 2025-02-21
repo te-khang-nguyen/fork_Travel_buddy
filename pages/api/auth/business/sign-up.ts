@@ -87,7 +87,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-export const swaggerBussSignup = 
+export const swaggerBussSignup = {
+  index:6, 
+  text:
   `"/api/v1/auth/business/sign-up": {
     "post": {
       "tags": ["auth/business"],
@@ -149,3 +151,4 @@ export const swaggerBussSignup =
       }
     }
   }`
+}

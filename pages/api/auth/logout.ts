@@ -42,7 +42,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 
-export const swaggerUserLogout = 
+export const swaggerUserLogout = {
+  index:3, 
+  text:
   `"/api/v1/auth/logout": {
     "post": {
       "tags": ["auth"],
@@ -61,3 +63,4 @@ export const swaggerUserLogout =
       }
     }
   }`
+}

@@ -92,7 +92,9 @@ export default async function handler(
     }
 };
 
-export const swaggerLocGetAll = 
+export const swaggerLocGetAll = {
+  index:19, 
+  text:
 `"/api/v1/location  ": {
     "get": {
       "tags": ["location"],
@@ -174,3 +176,4 @@ export const swaggerLocGetAll =
       }
     }
   }`
+}

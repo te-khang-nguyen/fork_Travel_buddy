@@ -172,7 +172,9 @@ export default async function handler(
     }
 };
 
-export const swaggerLocCreate = 
+export const swaggerLocCreate = {
+  index:17, 
+  text:
 `"/api/v1/location": {
     "post": {
       "tags": ["location"],
@@ -308,3 +310,4 @@ export const swaggerLocCreate =
       }
     }
   }`
+}

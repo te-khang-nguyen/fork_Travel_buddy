@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { upsertNewRow } from "@/libs/services/utils";
 import { supabase } from "@/libs/supabase/supabase_client";
 
 /**
@@ -116,7 +115,9 @@ export default async function handler(
 }
 
 
-export const swaggerBussUpdate = 
+export const swaggerBussUpdate = {
+  index:14, 
+  text:
     `"/api/v1/challenge/business  ": {
       "put": {
         "tags": ["challenge/business"],
@@ -224,3 +225,4 @@ export const swaggerBussUpdate =
         }
       }
     }`
+}

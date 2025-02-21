@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 import { Box, TextField, Typography, Button, Paper } from "@mui/material";
 import { useSignUpMutation } from "@/libs/services/business/auth";
 
@@ -25,9 +26,15 @@ const SignUpForm = () => {
   const {
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
-  } = useForm<SignUpFormInputs>({
-    defaultValues,
+  } = useForm<SignUpFormInputs>();
+
+  useFormPersist("adminRegister", {
+    watch, 
+    setValue,
+    exclude: ['password']
   });
 
   const onSubmit = async (formData: SignUpFormInputs) => {

@@ -28,6 +28,7 @@ interface ProfileFormInputs {
 }
 
 const ProfileTab = () => {
+  const storedValues = JSON.parse(sessionStorage.getItem("adminProfile") as string);
   const [updateProfile] = useUpdateProfileMutation();
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -48,10 +49,9 @@ const ProfileTab = () => {
     handleSubmit,
     control,
     formState: { errors },
+    watch,
     setValue,
-  } = useForm<ProfileFormInputs>({
-    defaultValues,
-  });
+  } = useForm<ProfileFormInputs>();
 
   const {
     data: profile,
@@ -60,21 +60,39 @@ const ProfileTab = () => {
   } = useGetProfileQuery();
 
   if (profileError) {
-    console.log("Service error:", profileError);
+    setSnackbar({
+      open: true,
+      message: `Service error: ${profileError}`,
+      severity: "error",
+    });
   }
-
+  
   useEffect(() => {
     if (profile) {
-      for (const [key, value] of Object.entries(profile)) {
+      for (const [key, value] of Object.entries(profile.data)) {
         if (key in defaultValues) {
-          setValue(key as any, value ? value : "");
+          setValue(key as any, (
+            storedValues && storedValues[key] !== ""
+            ? storedValues[key] : value
+          ) || "");
         }
       }
     }
   }, [profile, setValue]);
+  
+  useEffect(()=>{
+    if(profile){
+      const subscription = watch((value)=>{
+        if(!Object.values(profile.data).includes(value)){
+          sessionStorage.setItem("adminProfile", JSON.stringify(value));
+        }
+      });
+      return () => subscription.unsubscribe();
+    }
+  },[watch, profile]);
 
   const onSubmit = async (profileData: ProfileFormInputs) => {
-    let result = await updateProfile(profileData);
+    const result = await updateProfile(profileData).unwrap();
 
     if (result.data) {
       setSnackbar({
@@ -128,7 +146,7 @@ const ProfileTab = () => {
             }}
           >
             {[
-              { name: "businessname", label: "Businessname", required: true },
+              { name: "businessname", label: "Business Name", required: true },
               { name: "email", label: "Email", required: true },
               { name: "facebook", label: "Facebook", required: false },
               { name: "instagram", label: "Instagram", required: false },
@@ -203,6 +221,7 @@ const ProfileTab = () => {
               variant="contained"
               color="primary"
               sx={{ textTransform: "none", width: "250px", padding: 1.5 }}
+              disabled={profileLoad}
             >
               Save Changes
             </Button>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 import { TextField, Button, Box, Typography, Snackbar, Alert } from "@mui/material";
 import defaultBackground from "@/assets/background.jpg";
 import { useSignUpMutation } from "@/libs/services/user/auth";
@@ -9,8 +10,16 @@ const RegistrationForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm();
+
+  useFormPersist("register", {
+    watch, 
+    setValue,
+    exclude: ['password']
+  });
 
   const [signUp] = useSignUpMutation();
   const router = useRouter();

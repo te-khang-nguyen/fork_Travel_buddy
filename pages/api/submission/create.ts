@@ -204,7 +204,9 @@ export default async function handler(
 
 };
 
-export const swaggerSubmissionCreate = 
+export const swaggerSubmissionCreate = {
+  index:22, 
+  text:
 `"/api/v1/submission": {
     "post": {
       "tags": ["submission"],
@@ -316,3 +318,4 @@ export const swaggerSubmissionCreate =
       }
     }
   }`
+}

@@ -29,6 +29,8 @@ interface ChallengeRes {
 const JoinChallengeApi = createApi({
   reducerPath: "joinchallenge",
   baseQuery,
+  tagTypes: ['Submission'],
+  keepUnusedDataFor: 1,
   endpoints: (builder) => ({
     // ------------------QUERY CHALLENGE BY ID--------------------------
     getChallenge: builder.query<ChallengeRes, ChallengeReq>({
@@ -50,14 +52,15 @@ const JoinChallengeApi = createApi({
       query: ({ challengeId }) => ({
           url: `/location`,
           params: {challenge_id: challengeId}
-        })
+      })
     }),
 
     // ------------------QUERY CHALLENGE HISTORY--------------------------
     getUserSubmissions: builder.query<ChallengeRes, void>({
       query: () => ({
         url: "/submission",
-      })
+      }),
+      providesTags: ['Submission']
     }),
 
     //  ----------------UPLOAD USER SUBMISSION DATA--------------------------------
@@ -75,35 +78,9 @@ const JoinChallengeApi = createApi({
       query: ({ challengeId }) => ({
         url: `/submission`,
         params: {challenge_id: challengeId}
-      })
+      }),
+      providesTags: ['Submission']
     }),
-
-    generateStory: builder.mutation<any, any>({
-      query: ({ challengeId, challengeHistoryId, user_notes, story, media_submitted }) => ({
-        url: `/story`,
-        method: "POST",
-        params: { challengeId, challengeHistoryId },
-        body: {
-          user_notes,
-          story,
-          media_submitted,
-        }
-      })
-    }),
-
-    getStory: builder.query<any, any>({
-      query: ({ story_id }) => ({
-        url: `/story`,
-        method: "GET",
-        params: { story_id }
-      })
-    }),
-
-    getAllStory: builder.query<any, any>({
-      query: ({}) => ({
-        url: `/story`,
-      })
-    })
   }),
 });
 
@@ -114,8 +91,5 @@ export const {
   useGetUserSubmissionsQuery,
   useUploadInputsMutation,
   useGetProgressQuery,
-  useGenerateStoryMutation,
-  useGetStoryQuery,
-  useGetAllStoryQuery,
 } = JoinChallengeApi;
 export { JoinChallengeApi };

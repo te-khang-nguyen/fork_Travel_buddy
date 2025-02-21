@@ -112,21 +112,27 @@ const ImageUploader: React.FC<ImageUploaderProps> =
     >([]);
 
     // Memoize fetchImages to prevent unnecessary re-renders
-    const memorizedFetchImages = useMemo(() => 
-      fetchImages.map(img => ({ 
-        image: img.image, 
-        name: img.name 
-      })), 
-      [JSON.stringify(fetchImages)]
-    );
+    // const memorizedFetchImages = useMemo(() => 
+    //   fetchImages.map(img => ({ 
+    //     image: img.image, 
+    //     name: img.name 
+    //   })), 
+    //   [JSON.stringify(fetchImages)]
+    // );
+
+    // useEffect(() => {
+    //   // Only update if the memoized images are different from current selected images
+    //   const areImagesEqual = JSON.stringify(memorizedFetchImages) !== JSON.stringify(selectedImages);
+    //   if (areImagesEqual) {
+    //     setSelectedImages(memorizedFetchImages);
+    //   }
+    // }, [memorizedFetchImages, selectedImages]);
 
     useEffect(() => {
-      // Only update if the memoized images are different from current selected images
-      const areImagesEqual = JSON.stringify(memorizedFetchImages) !== JSON.stringify(selectedImages);
-      if (areImagesEqual) {
-        setSelectedImages(memorizedFetchImages);
+      if (fetchImages.length > 0) {
+        setSelectedImages(fetchImages);
       }
-    }, [memorizedFetchImages, selectedImages]);
+    },[fetchImages])
 
     const [imageError, setImageError] = useState(false);
 

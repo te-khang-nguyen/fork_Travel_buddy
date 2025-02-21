@@ -110,7 +110,9 @@ export default async function handler(
 }
 
 
-export const swaggerBussGetAll = 
+export const swaggerBussGetAll = {
+  index:13, 
+  text:
     `"/api/v1/challenge/business  ": {
       "get": {
         "tags": ["challenge/business"],
@@ -219,3 +221,4 @@ export const swaggerBussGetAll =
         }
       }
     }`
+}

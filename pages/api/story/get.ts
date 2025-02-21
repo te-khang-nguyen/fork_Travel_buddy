@@ -31,3 +31,75 @@ export default async function handler(
     }
 
 };
+
+
+export const swaggerStoryGet = {
+    index:27, 
+    text:
+`"/api/v1/story  ": {
+    "get": {
+      "tags": ["story"],
+      "summary": "Retrieve a story by ID",
+      "description": "Retrieve a story by its ID.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "story_id",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "The ID of the story to retrieve"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Story retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "challengeId": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "story": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`
+}

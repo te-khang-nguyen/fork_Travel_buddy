@@ -23,11 +23,16 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           const isValidJwt = await isAuthenticated(jwt);  
           const storedChallengeId = localStorage.getItem("challengeId");
 
+          // Allow access to public routes 
+          if (PUBLIC_ROUTES.includes(router.pathname)) {
+            setIsCheckingAuth(false);
+            return;
+          }
+
           // Redirect to login if no JWT OR if JWT is invalid
           if (!isValidJwt) {
-            localStorage.removeItem("jwt");
-            localStorage.removeItem("role");
-            localStorage.removeItem("refresh_token");
+            localStorage.clear();
+            sessionStorage.clear();
             if (router.pathname.includes("business")){
               await router.replace("/login/business");
               return;
@@ -54,12 +59,6 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           // Redirect to role-based dashboard if on root path with valid JWT and role
           if (router.pathname === "/" && isValidJwt && role) {
             await router.replace(`/dashboard/${role}`);
-            return;
-          }
-
-          // Allow access to public routes 
-          if (PUBLIC_ROUTES.includes(router.pathname)) {
-            setIsCheckingAuth(false);
             return;
           }
 

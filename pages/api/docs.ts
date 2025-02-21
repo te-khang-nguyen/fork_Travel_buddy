@@ -35,18 +35,12 @@ const swaggerDefinition = {
   ]
 };
 
-const paths = `{${Object.values(swaggerObjs)
-                         .map((obj) => obj).join(',')}}`;
+const unSortedSwaggerObjs = Object.values(swaggerObjs).map((obj) => obj);
+const sortedSwaggerObjs = unSortedSwaggerObjs.sort((a,b) => a.index - b.index);
+
+const paths = `{${sortedSwaggerObjs.map((obj) => obj.text).join(',')}}`;
 
 console.log(paths);
-
-// export const swaggerOptions = {
-//   swaggerDefinition,
-//   apis: [
-//     'pages/api/**/*.js',
-//     'pages/api/**/*.ts',
-//   ],
-// };
 
 const swaggerSpec = {
   ...swaggerDefinition,

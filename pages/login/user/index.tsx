@@ -46,6 +46,7 @@ function Login() {
       setSnackbarOpen(true);
       return;
     } else {
+      router.prefetch(`/dashboard/user`);
       const accessToken = (result.data as any).access_token;
       const userId = (result.data as any).userId;
       setRole("user");

@@ -69,7 +69,6 @@ export const StoryPage = ({
     const handleSaveChanges = async (updatedStory: string) => {
         const result = await updateStory({
             storyId: story_id,
-            // challengeHistoryId: matchedSubmission?.id,
             payload: {
                 storyFull: updatedStory
             }
@@ -215,8 +214,9 @@ export const StoryPage = ({
                         userMediaSubmission,
                     }}
                     onSaveChanges={(e)=>handleSaveChanges(e)}
-                    onArchive={isArchived? handleReactivate : handleDeleteStory}
-                    isArchived={isArchived}
+                    onTrigger={isArchived? handleReactivate : handleDeleteStory}
+                    isTriggered={isArchived}
+                    isEditor
                 />
             )}
         </Box>

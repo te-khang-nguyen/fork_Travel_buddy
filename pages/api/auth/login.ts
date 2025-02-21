@@ -70,7 +70,9 @@ export default async function handler(
 }
 
 
-export const swaggerUserLogin =
+export const swaggerUserLogin ={
+  index:2, 
+  text:
   `"/api/v1/auth/login": {
     "post": {
       "tags": ["auth"],
@@ -107,4 +109,4 @@ export const swaggerUserLogin =
       }
     }
   }`
-
+}

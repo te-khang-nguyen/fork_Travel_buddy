@@ -114,7 +114,9 @@ export default async function handler(req, res) {
 }
 
 
-export const swaggerCallback = 
+export const swaggerCallback = {
+  index:5, 
+  text:
   `"/api/v1/auth/callback": {
     "get": {
       "tags": ["auth"],
@@ -183,3 +185,4 @@ export const swaggerCallback =
       }
     }
   }`
+}

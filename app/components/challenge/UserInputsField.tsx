@@ -53,21 +53,25 @@ const CustomInputsField = forwardRef<
     severity: "success",
   });
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
-
+  
   const [inputTexts, setInputTexts] = useState("");
   const [uploadedImg, setUploadedImg] = useState<
     Array<{ image: string | null; name: string | null }>
   >([]);
+  const persistedNotes = sessionStorage.getItem("notes");
 
   useEffect(() => {
     if (lastInputText !== "") {
-      setInputTexts(lastInputText as any);
+      setInputTexts(
+        (persistedNotes && persistedNotes !== ""? 
+        persistedNotes : (lastInputText || "")) || ""
+      );
     }
-  }, [lastInputText]);
+  }, [lastInputText, persistedNotes]);
 
   useEffect(() => {
-    if (lastUploadedImgs && (lastUploadedImgs as any).length > 0) {
-      const lastUploadsImgsLen = (lastUploadedImgs as any).length;
+    if (lastUploadedImgs && lastUploadedImgs?.length > 0) {
+      const lastUploadsImgsLen = lastUploadedImgs?.length;
       const processedPreviousUploads: any = lastUploadedImgs?.map(
         async (inputObj) => {
           try {
@@ -135,6 +139,7 @@ const CustomInputsField = forwardRef<
           return img.image;
         }) as any,
       });
+      sessionStorage.removeItem("notes");
     }
   };
 
@@ -172,6 +177,7 @@ const CustomInputsField = forwardRef<
           mb: 3,
         }}
         onChange={(e) => {
+          sessionStorage.setItem("notes", e.target.value);
           setInputTexts(e.target.value);
         }}
         slotProps={{

@@ -62,3 +62,100 @@ export default async function handler(
         return res.status(500).json({ error: "Internal server error" });
     }
 }
+
+export const swaggerStoryCreate = {
+    index:26, 
+    text:
+`"/api/v1/story": {
+    "post": {
+      "tags": ["story"],
+      "summary": "Create a new story",
+      "description": "Create a new story for a challenge.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "challengeId",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "The ID of the challenge"
+        },
+        {
+          "in": "query",
+          "name": "challengeHistoryId",
+          "schema": {
+            "type": "string"
+          },
+          "required": false,
+          "description": "The ID of the challenge history"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user_notes": {
+                  "type": "string",
+                  "description": "User notes for the story"
+                },
+                "story": {
+                  "type": "string",
+                  "description": "The full story"
+                },
+                "media_submitted": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Media submitted for the story"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Story created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Story created successfully"
+                  },
+                  "storyId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "401": {
+          "description": "Unauthorized - Authorization token is required"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`
+}

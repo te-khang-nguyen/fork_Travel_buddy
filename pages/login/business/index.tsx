@@ -96,7 +96,7 @@ function AdminLogin() {
           <Link href="/recovery">Forgot Password?</Link>
         </Box>
 
-        <Divider sx={{ my: 3 }} />
+        {/* <Divider sx={{ my: 3 }} />
 
         <Typography variant="body1" align="center" gutterBottom>
           Or sign in with:
@@ -116,7 +116,7 @@ function AdminLogin() {
           <Link href="/register" sx={{ textDecoration: "none" }}>
             Have not registered yet? Join us!
           </Link>
-        </Box>
+        </Box> */}
       </Box>
 
       {/* Snackbar for error messages */}

@@ -12,6 +12,9 @@ interface StoryReq {
         storyFull?: string;
         mediaSubmitted?: string;
         status?: string;
+        locations?: string;
+        tourSchedule?: string;
+        storyLength?: number;
     }
 }
 
@@ -34,6 +37,45 @@ const StoryApi = createApi({
     reducerPath: "story",
     baseQuery,
     endpoints: (builder) => ({
+        generateStory: builder.mutation<any, StoryReq>({
+            query: ({ payload }) => ({
+              url: `/story/generate`,
+              method: "POST",
+              body: {
+                schedule: payload?.tourSchedule,
+                locations: payload?.locations,
+                notes: payload?.userNotes,
+                story_length: payload?.storyLength
+              }
+            })
+          }),
+
+        uploadStory: builder.mutation<any, any>({
+            query: ({ challengeId, challengeHistoryId, user_notes, story, media_submitted }) => ({
+              url: `/story`,
+              method: "POST",
+              params: { challengeId, challengeHistoryId },
+              body: {
+                user_notes,
+                story,
+                media_submitted,
+              }
+            })
+          }),
+      
+        getStory: builder.query<any, any>({
+            query: ({ story_id }) => ({
+              url: `/story`,
+              method: "GET",
+              params: { story_id }
+            })
+        }),
+      
+        getAllStory: builder.query<any, any>({
+            query: ({}) => ({
+              url: `/story`,
+            })
+        }),
         //--------------------UPDATE A STORY-------------------
         updateStory: builder.mutation<StoryRes, StoryReq>({
             query: ({ storyId, challengeHistoryId, payload }) => ({
@@ -55,6 +97,10 @@ const StoryApi = createApi({
 });
 
 export const {
+    useGenerateStoryMutation,
+    useUploadStoryMutation,
+    useGetStoryQuery,
+    useGetAllStoryQuery,
     useUpdateStoryMutation,
     useDeleteStoryMutation
 } = StoryApi;

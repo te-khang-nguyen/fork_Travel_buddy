@@ -4,14 +4,16 @@ import FastForwardIcon from "@mui/icons-material/FastForward";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
 import { useRouter } from "next/router";
-import { useGetAllChallengesQuery, useGetUserSubmissionsQuery } from "@/libs/services/user/challenge";
+import { 
+  useGetAllChallengesQuery, 
+  useGetUserSubmissionsQuery 
+} from "@/libs/services/user/challenge";
 
 interface UserDashboardProps {
   totalChallenges: number;
   completedChallenges: number;
   activeChallenges: { id: string, name: string; status: string; link: string }[];
 }
-
 
 const UserDashboard: React.FC<UserDashboardProps> = ({
   totalChallenges,
@@ -21,12 +23,14 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [challenges, setChallenges] = useState();
 
   const {
     data: challengeRef,
     error: challengeError,
     isLoading: isChallengeLoading
   } = useGetAllChallengesQuery();
+
   const {
     data: historyRef,
     error: historyError,
@@ -34,27 +38,25 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   } = useGetUserSubmissionsQuery();
 
   useEffect(() => {
-      setIsLoading(isChallengeLoading || isHistoryLoading);
-    }, [isChallengeLoading, isHistoryLoading]);
-  
+      setIsLoading(isChallengeLoading && isHistoryLoading);
+  }, [isChallengeLoading, isHistoryLoading]);
+
+  useEffect(()=>{
+    if (challengeRef?.data) {
+      setChallenges(challengeRef?.data.map((item) =>({
+          id: item.id,
+          name: item.title,
+          image: item.thumbnailUrl
+        }))
+      )
+    }
+  },[challengeRef?.data]);
 
   // If still loading, show loading state
   if (isLoading) {
     return (
       <LoadingSkeleton isLoading={isLoading} />
     );
-  }
-
-  let challenges;
-
-  if (challengeRef?.data) {
-    challenges = challengeRef?.data.map((item) => {
-      return {
-        id: item.id,
-        name: item.title,
-        image: item.thumbnailUrl
-      };
-    })
   }
 
   if (historyRef?.data) {
@@ -66,9 +68,12 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
         status: !item.ended ? "In progress" : "Completed",
         link: !item?.reward ? "Your reward is being prepared" : item?.reward
       };
-    })
+    });
+
     totalChallenges = activeChallenges.length;
-    completedChallenges = activeChallenges.filter((item) => item.status == "Completed").length;
+    completedChallenges = activeChallenges.filter(
+      (item) => item.status === "Completed"
+    ).length;
   }
 
 

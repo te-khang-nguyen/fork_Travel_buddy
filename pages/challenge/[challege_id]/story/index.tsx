@@ -26,17 +26,17 @@ import { useRouter } from "next/router";
 import LocationStoryDisplay from "@/app/components/challenge/LocationStoryDisplay";
 import {
     useGetChallengeQuery,
-    useGetUserSubmissionsQuery,
+    useGetProgressQuery,
     useGetLocationsQuery,
-    useGenerateStoryMutation
 } from "@/libs/services/user/challenge";
+
 import {
-    useUpdateStoryMutation,
-    useDeleteStoryMutation
-} from "@/libs/services/user/story"
+    useGenerateStoryMutation,
+    useUploadStoryMutation,
+} from "@/libs/services/user/story";
+
 import { baseUrl } from "@/app/constant";
 import { Montserrat } from "next/font/google";
-import { generateLocationStories } from "@/libs/services/storyGen";
 
 const montserrat = Montserrat({
     weight: '400',
@@ -67,29 +67,24 @@ function GradientCircularProgress() {
   }
 
 const StoryPageUI = () => {
+    // store.dispatch(JoinChallengeApi.util.resetApiState());
     const router = useRouter();
+    const [generateStoryApi] = useGenerateStoryMutation();
+    const [createStory] = useUploadStoryMutation();
+
     const { challege_id, challengeHistoryId } = router.query;
+    const [isGenerating, setIsGenerating] = useState(true);
+    const hasGeneratedRef = useRef(false);
+    // const [locationIndex, setLocationIndex] = useState(null);
+    // const [isOpen, setIsOpen] = useState(false);
+    const [storyId,  setStoryId] = useState<string>('');
+    const [historyData, setHistoryData] = useState<any>();
+    const [challengeTitle, setChallengeTitle] = useState<string>('');
+    const [tourSchedule, setTourSchedule] = useState<string>('');
 
-    const [updateStory] = useUpdateStoryMutation();
-    const [deleteStory] = useDeleteStoryMutation();
-
-    const [locationIndex, setLocationIndex] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
-    const [isArchived, setIsArchived] = useState<boolean>(false);
-
-    const { data: challengeData } = useGetChallengeQuery({ challengeId: challege_id })
-    const challengeTitle = challengeData ? challengeData?.data?.[0].title : "";
-    const tourSchedule = challengeData ? challengeData?.data?.[0].tourSchedule : "";
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const handleShareClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
+    const [open, setOpen] = useState<boolean>(false);
     const [snackbar, setSnackbar] = useState<{
         open: boolean;
         message: string;
@@ -99,86 +94,90 @@ const StoryPageUI = () => {
         message: "",
         severity: "success",
     });
-    const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
-    const handleClick = (id) => {
-        setLocationIndex(id);
-        setIsOpen(true);
-    };
+
+    const { 
+        data: challengeData, 
+    } = useGetChallengeQuery({ 
+        challengeId: challege_id 
+    });
+
     const {
         data: locationData,
-        error: locationError,
-        isLoading: isLocationLoading
+        isLoading: isLocationLoading,
     } = useGetLocationsQuery({
         challengeId: challege_id
     });
+
     const { 
         data: userSubmissionData, 
-        isLoading: isUserSubmissionLoading 
-    } = useGetUserSubmissionsQuery();
-
-    const matchedSubmission = userSubmissionData?.data?.find(
-        submission => submission.challengeId === challege_id
-    );
-
-    const historyData1 = isUserSubmissionLoading ? [] : 
-                        matchedSubmission?.userChallengeSubmission
-
-    const historyData2 = historyData1 ? historyData1.map(({ index, ...rest }) => ({
-        id: index,
-        ...rest,
-    })) : [];
-
-    const locationDataUnsorted = isLocationLoading ? [] : locationData?.data;
-    const locationDataSorted = [...locationDataUnsorted].sort(
-        (a,b)=> (Date.parse(a?.created)) - (Date.parse(b?.created)));
+        isLoading: isUserSubmissionLoading,
+        refetch: submissionRefetch
+    } = useGetProgressQuery({
+        challengeId: challege_id
+    });
     
-    const locationTitles = locationDataSorted.map(item => item.title).join("\n");
-    
-    const matchItem = historyData2.find(itemA => itemA.locationId === undefined);
-    const historyData = {
-        
-        locations: locationTitles,
-        notes: matchItem?.userQuestionSubmission,
-        userMediaSubmission: matchItem?.userMediaSubmission
-    }
-
-    const [isGenerating, setIsGenerating] = useState(true);
-    const [story, setStory] = useState([{locationId: '', story: ''}]);
-    const [createStory] = useGenerateStoryMutation();
-    const hasGeneratedRef = useRef(false);
     useEffect(() => {
-        if (historyData2.length > 0 && locationIndex === null) {
-            setLocationIndex(historyData2[0].locationId);
+        if(challengeData && challengeData?.data){
+            setChallengeTitle(challengeData?.data?.[0]?.title);
+            setTourSchedule(challengeData?.data?.[0]?.tourSchedule);
         }
+    }, [challengeData, challengeData?.data]);
+    
+
+    useEffect(() => {
         // Only run if historyData is not null
-        if (historyData.locations 
-            && historyData.notes 
-            && historyData.userMediaSubmission 
+        submissionRefetch();
+        if (userSubmissionData?.data 
+            && locationData?.data
             && tourSchedule !== "") {
+
+            const locationDataUnsorted = locationData?.data;
+            const locationDataSorted = [...locationDataUnsorted].sort(
+                (a,b)=> (Date.parse(a?.created)) - (Date.parse(b?.created)));
+        
+            const locationTitles = locationDataSorted.map(item => item.title).join("\n");
+        
+            const submittedData = userSubmissionData?.data?.[0]?.userChallengeSubmission;
+    
+            const matchItem = submittedData?.find(itemA => 
+                itemA.locationId === undefined
+            );
+
             const generateStory = async () => {
                 if (hasGeneratedRef.current) return;
                 hasGeneratedRef.current = true;
-
                 try {
-                    const response = await generateLocationStories(
-                        tourSchedule, 
-                        historyData
-                    );
-                    const cleanedOutput = response
-                        .replace(/^```json\s*/, '')  // Remove leading ```json
-                        .replace(/```\s*$/, '')      // Remove trailing ```
-                        .trim();
-                    const finalStory = JSON.parse(cleanedOutput).map((item) => item.story).join('\n\n')
-                    await createStory({
-                        challengeId: challege_id,
-                        challengeHistoryId,
-                        user_notes: historyData.notes,
-                        story: finalStory,
-                        media_submitted: historyData.userMediaSubmission,
+                    const { data: generatedStory } = await generateStoryApi({
+                        payload: {
+                            tourSchedule: tourSchedule, 
+                            userNotes: matchItem?.userQuestionSubmission,
+                            locations: locationTitles,
+                        }
                     });
-                    setStory(JSON.parse(cleanedOutput));
-                    setIsGenerating(false);
+
+                    if(generatedStory){
+                        const finalStory = generatedStory?.data?.replace(/\*/g,'');
+                        const {
+                            data: newStoryData
+                        } = await createStory({
+                            challengeId: challege_id,
+                            challengeHistoryId,
+                            user_notes: matchItem?.userQuestionSubmission,
+                            story: finalStory,
+                            media_submitted: matchItem?.userMediaSubmission,
+                        });
+    
+                        setIsGenerating(false);
+                        setStoryId(newStoryData?.storyId);
+                        setHistoryData({
+                            locations: locationTitles,
+                            notes: matchItem?.userQuestionSubmission,
+                            userMediaSubmission: matchItem?.userMediaSubmission,
+                            story: finalStory
+                        });
+                    }
+                    
                 } catch (error) {
                     console.error('Error generating story:', error);
                     setIsGenerating(false);
@@ -187,93 +186,27 @@ const StoryPageUI = () => {
 
             generateStory();
         }
-    }, [historyData2, historyData, locationIndex, isGenerating, tourSchedule]);
+    }, [JSON.stringify(locationData?.data), JSON.stringify(userSubmissionData?.data)]);
 
-    const historyDataFinal = isGenerating ? {} : 
-        {
-            ...historyData,
-            story: story.map((item)=>item.story).join("\n\n") ?? null
-        };
 
-    const handleSaveChanges = async (updatedStory: string) => {
-        const result = await updateStory({
-            storyId: "76a83d09-b1c0-49bc-af09-0bd0f8a0ff3d",
-            // challengeHistoryId: matchedSubmission?.id,
-            payload: {
-                storyFull: updatedStory
-            }
-        })
-
-        if(result?.error){
-            setSnackbar({
-                open: true,
-                message:
-                  "Fail to save the latest changes!",
-                severity: "error",
-            });
-        } else {
-            setSnackbar({
-                open: true,
-                message:
-                  "Your story is updated!",
-                severity: "success",
-            });
-        }
-    }
-
-    const handleDeleteStory = async () => {
-        const result = await deleteStory({
-            storyId: "76a83d09-b1c0-49bc-af09-0bd0f8a0ff3d",
-            // challengeHistoryId: matchedSubmission?.id
-        });
-
-        setIsArchived(true);
-
-        if(result?.error){
-            setSnackbar({
-                open: true,
-                message:
-                  `Fail to archive story due to ${result?.error}`,
-                severity: "error",
-            });
-        } else {
-            setSnackbar({
-                open: true,
-                message:
-                  "Your story is put to Archive mode and will not be displayed publically!",
-                severity: "success",
-            });
-        }
+    const handleShareClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setOpen(true);
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+        setOpen(false);
     };
 
-    const handleReactivate = async () => {
-        const result = await updateStory({
-            storyId: "76a83d09-b1c0-49bc-af09-0bd0f8a0ff3d",
-            // challengeHistoryId: matchedSubmission?.id,
-            payload: {
-                status: "ACTIVE"
-            }
-        });
+    const handleCloseSnackbar = () => setSnackbar({ 
+        ...snackbar, 
+        open: false 
+    });
 
-        setIsArchived(false);
-
-        if(result?.error){
-            setSnackbar({
-                open: true,
-                message:
-                  "Fail to reactivate your story!",
-                severity: "error",
-            });
-        } else {
-            setSnackbar({
-                open: true,
-                message:
-                  `Your story is reactivated! 
-                  You can now edit the story and share it!`,
-                severity: "success",
-            });
-        }
-    }
+    // const handleClick = (id) => {
+    //     setLocationIndex(id);
+    //     setIsOpen(true);
+    // };
 
     return (
         <Box
@@ -338,14 +271,12 @@ const StoryPageUI = () => {
                     </Typography>
                 </Box>
                 
-            ) : !historyDataFinal? (
+            ) : !historyData? (
                 <Typography>No submissions found for this challenge.</Typography>
             ) : (
                 <LocationStoryDisplay
-                    content={historyDataFinal}
-                    onSaveChanges={(e)=>handleSaveChanges(e)}
-                    onArchive={isArchived? handleReactivate : handleDeleteStory}
-                    isArchived={isArchived}
+                    content={historyData}
+                    onTrigger={()=>{router.push(`/profile/user/story/${storyId}`)}}
                 />
             )}
 
@@ -363,7 +294,7 @@ const StoryPageUI = () => {
                     backgroundColor: "rgba(251, 146, 0, 0.2)"
                 }}
                 onClick={handleShareClick}
-                disabled={isArchived}
+                disabled={true}
             >
                 <Share
                     sx={{

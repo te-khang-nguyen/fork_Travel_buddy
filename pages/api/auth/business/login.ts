@@ -90,7 +90,9 @@ export default async function handler(
 }
 
 
-export const swaggerBussLogin = 
+export const swaggerBussLogin = {
+  index:7, 
+  text:
     `"/api/v1/auth/business/login": {
       "post": {
         "tags": ["auth/business"],
@@ -147,3 +149,4 @@ export const swaggerBussLogin =
         }
       }
     }`
+}

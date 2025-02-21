@@ -126,7 +126,9 @@ export default async function handler(
     }
 }
 
-export const swaggerBussCreate = 
+export const swaggerBussCreate = {
+  index:12, 
+  text:
     `"/api/v1/challenge/business": {
       "post": {
         "tags": ["challenge/business"],
@@ -213,3 +215,4 @@ export const swaggerBussCreate =
         }
       }
     }`
+}

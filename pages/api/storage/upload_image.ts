@@ -174,8 +174,10 @@ export default async function handler(
     }
 }
 
-export const swaggerStorageImgUpload = 
-`"/api/storage": {
+export const swaggerStorageImgUpload = {
+  index:31, 
+  text:
+`"/api/v1/storage": {
     "post": {
       "tags": ["storage"],
       "summary": "Upload an image to storage",
@@ -246,3 +248,4 @@ export const swaggerStorageImgUpload =
       }
     }
   }`
+}
