@@ -188,7 +188,7 @@ const NagoyaCastleHomePage: React.FC = () => {
           right: '50%',
           marginLeft: '-50vw',
           marginRight: '-50vw',
-          height: '800px',
+          height: '600px',
           overflow: 'hidden',
           mb: 4,
         }}
@@ -222,6 +222,7 @@ const NagoyaCastleHomePage: React.FC = () => {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             p: 3,
             borderRadius: 2,
+            width: '60%',
           }}
         >
           <Typography variant="h2" gutterBottom>
