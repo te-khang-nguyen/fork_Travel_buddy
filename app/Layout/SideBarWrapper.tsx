@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   AppBar,
   Box,
@@ -19,6 +19,7 @@ import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { AccountCircle, Inventory, Logout, MenuBook } from "@mui/icons-material";
 import { useLogOutMutation } from "@/libs/services/user/auth";
+import AccountSwitcher from "@app/components/profile/business/AccountSwitcher";
 import { store } from "@/libs/store";
 import { UserProfileApi } from '@/libs/services/user/profile';
 import { StoryApi } from '@/libs/services/user/story';
@@ -99,14 +100,14 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
 
   const defaultMenuItems = [
     { text: "Dashboard", icon: <HomeIcon />, route: `/dashboard/${role}` },
-    { text: "Profile", icon: <AccountCircle />, route: `/profile/${role}` },
+    { text: "Destination", icon: <AccountCircle />, route: `/destination` },
   ];
 
   const menuItems =
     role === "user"
       ? [
-          { text: "Challenge", icon: <Inventory />, route: `/challenge` },
-          { text: "Story", icon: <MenuBook />, route: `/profile/user/story` },
+          // { text: "Challenge", icon: <Inventory />, route: `/challenge` },
+          { text: "My stories", icon: <MenuBook />, route: `/profile/user/story` },
           {
             text: "Logout",
             icon: <Logout />,
@@ -192,6 +193,9 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
                 inputProps={{ "aria-label": "search" }}
               />
             </Search>
+            {role === "business" && (
+              <AccountSwitcher />
+            )}
           </Toolbar>
         </AppBar>
       )}
@@ -221,5 +225,7 @@ const DrawerLayout: React.FC<DrawerLayoutProps> = ({
     </Box>
   );
 };
+
+
 
 export default DrawerLayout;

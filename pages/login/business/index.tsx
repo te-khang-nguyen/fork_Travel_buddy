@@ -2,7 +2,7 @@ import React from "react";
 import { Box, TextField, Button, Typography, Alert, Snackbar, Link, Divider } from "@mui/material";
 import { useRouter } from "next/router";
 import { useLogInMutation } from "@/libs/services/business/auth";
-  import { useGlobalContext } from "@/app/GlobalContextProvider";
+import { useGlobalContext } from "@/app/GlobalContextProvider";
 
 function AdminLogin() {
   const router = useRouter();
@@ -32,6 +32,13 @@ function AdminLogin() {
       router.push("/dashboard/business");
     }
   };
+
+  React.useEffect(() => {
+    // Ensure this page is only accessible for business login
+    if (router.pathname !== '/login/business') {
+      router.push('/login/business');
+    }
+  }, [router]);
 
   return (
     <Box

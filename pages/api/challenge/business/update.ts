@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "@/libs/supabase/supabase_client";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 
 /**
  * @swagger
@@ -84,6 +84,9 @@ export default async function handler(
         return;
     }
 
+    const token = req.headers.authorization?.split(' ')[1];
+    const supabase = createApiClient(token);
+
     const { challenge_id } = req.query;
     const data = req.body;
 
@@ -100,13 +103,15 @@ export default async function handler(
                         ...data 
                     })
                     .eq('id', challenge_id)
-                    .select();
+                    .select("id");
 
         if (updateError) {
             return res.status(400).json({ error: updateError });
         }
-
-        return res.status(200).json({ data: updateData });
+        if (!updateData || updateData.length === 0) {
+          return res.status(403).json({ success: false, message: "Unauthorized or challenge not found" });
+        }
+        return res.status(200).json({ success: true, message: "Challenge updated successfully", data: updateData });
     } catch (err: any) {
         return res.status(500).json({ 
             error: err.message || "An error occurred while updating the challenge" 

@@ -56,6 +56,16 @@ const ChallengesTab: React.FC = () => {
   const handleOnClickEditChallenge = (challenge) => {
     router.push(`/challenge/create/${challenge.id}`);
   };
+  const selectedBusinessId = localStorage.getItem("account");
+
+  // Filter challenges based on selected business ID
+  const filteredChallenges = React.useMemo(() => {
+    if (!selectedBusinessId) return allChallenge?.data;
+    
+    return allChallenge?.data.filter(
+      challenge => challenge.businessid === selectedBusinessId
+    );
+  }, [allChallenge, selectedBusinessId]);
 
   return (
     <Box sx={{ p: 3 }}>
@@ -65,7 +75,7 @@ const ChallengesTab: React.FC = () => {
 
       {/* Challenges List */}
       <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-        {allChallenge?.data?.map((challenge) => (
+        {filteredChallenges?.map((challenge) => (
             <Card
               key={challenge.id}
               sx={{

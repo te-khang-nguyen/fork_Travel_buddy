@@ -1,5 +1,5 @@
-import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 
 /**
  * @swagger
@@ -76,6 +76,7 @@ export default async function handler(
 
     try {
         const token = req.headers.authorization?.split(' ')[1];
+        const supabase = createApiClient(token);
 
         const {
             data: { user },
