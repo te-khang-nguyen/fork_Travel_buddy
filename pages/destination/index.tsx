@@ -236,7 +236,7 @@ const NagoyaCastleHomePage: React.FC = () => {
       {/* Rest of the Content in a Container */}
       <Container maxWidth={false} sx={{ width: '90%' }}>
         {/* Overview Section */}
-        <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+        <Paper elevation={0} sx={{ p: 3, mb: 4 }}>
           <Typography variant="h5" gutterBottom>
             Overview
           </Typography>
@@ -317,7 +317,7 @@ const NagoyaCastleHomePage: React.FC = () => {
           color="secondary"
           size="large"
           href="#"
-          sx={{ display: 'block', mx: 'auto', mb: 6, maxWidth: 200, alignItems: 'center', display: 'flex' }}
+          sx={{ mx: 'auto', mb: 6, maxWidth: 200, alignItems: 'center', display: 'flex' }}
         >
           Explore
         </Button>
