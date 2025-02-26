@@ -127,7 +127,7 @@ const NagoyaCastleHomePage: React.FC = () => {
   const router = useRouter();
   const { destination_id } = router.query;
   const { data: destination, isLoading } = useGetDestinationQuery({ id: destination_id as string });
-  const { data: children, isLoading: childrenLoading } = useGetChildrenDestinationsQuery({ id: destination_id as string });
+  const { data: childrenDestinations, isLoading: childrenLoading } = useGetChildrenDestinationsQuery({ id: destination_id as string });
   const { data: attractions, isLoading: attractionsLoading } = useGetAttractionsQuery({ id: destination_id as string });
 
   if (isLoading) return <CircularProgress />;
@@ -334,14 +334,14 @@ const NagoyaCastleHomePage: React.FC = () => {
     )
   }
 
-  const MainSection: React.FC<{destination: Destination, children: Destination[]}> = ({destination, children}) => {
+  const MainSection: React.FC<{destination: Destination, childrenDestinations: Destination[]}> = ({destination, childrenDestinations}) => {
     return(
       <>
         <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
           Explore destinations within {destination.name}
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {children?.map((child, index) => (
+          {childrenDestinations?.map((child, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card>
                 <CardMedia
@@ -462,7 +462,7 @@ const NagoyaCastleHomePage: React.FC = () => {
 
       {/* Rest of the Content in a Container */}
       <Container maxWidth={false} sx={{ width: '90%' }}>
-        {destination && children && attractions ? (
+        {destination && childrenDestinations && attractions ? (
           <>
             {/* Overview Section */}
             <OverviewSection destination={destination} />
@@ -471,7 +471,7 @@ const NagoyaCastleHomePage: React.FC = () => {
             <FeaturesSection destination={destination} />
 
             {/* Main Section */}
-            <MainSection destination={destination} children={children} />
+            <MainSection destination={destination} childrenDestinations={childrenDestinations} />
 
             {/* Top attractions */}
             <TopAttractionsSection attractions={attractions} />
