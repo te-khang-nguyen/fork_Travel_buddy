@@ -24,48 +24,17 @@ import {
   useGetAttractionsQuery,
   Destination,
   Attraction,
+  useGetDestinationDetailsQuery,
+  convertDestinationDetailsToFeatures,
+  useGetIconicPhotosQuery,
 } from "@/libs/services/user/destination";
 
-interface Feature {
-    title: string;
-    description: string;
-    image: string;
-    link?: string;
-  }
-
-
-
+import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/features";
+import IconicPhotos from "@/app/components/destination/iconic_photos";
 
 const NagoyaCastleHomePage: React.FC = () => {
 
-    const mainVidThumbnail = "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/edited.mp4?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL2VkaXRlZC5tcDQiLCJpYXQiOjE3NDAzOTAzMTQsImV4cCI6MTc3MTkyNjMxNH0.GY7GzgQstiu_EADqGFWPdzHO92XuuutvBwcD1z8Vh08"
-  // Mock data for features
-  const features = [
-    {
-      title: "Famous Visitors",
-      description: "Who has been here? Let's find out.",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/fact_sheet_best_time_to_visit.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL2ZhY3Rfc2hlZXRfYmVzdF90aW1lX3RvX3Zpc2l0LnN2ZyIsImlhdCI6MTc0MDM5MjkwNywiZXhwIjoxNzcxOTI4OTA3fQ.8JoBfIICsf_GnfGYJlCiUpeQtVia7KO-ar5bXrcCP58",
-      link: "#"
-    },
-    {
-      title: "Events & Festivals",
-      description: "Discover the various events and festivals held at Ho Chi Minh City throughout the year.",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/fact_sheet_local_customs.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL2ZhY3Rfc2hlZXRfbG9jYWxfY3VzdG9tcy5zdmciLCJpYXQiOjE3NDAzOTI4OTYsImV4cCI6MTc3MTkyODg5Nn0.N9ylI3yge81vWeA00sRndamvK01R8YqTDZblM8sYCEA",
-      link: "#"
-    },
-    {
-      title: "Visitor Information",
-      description: "Find out about and how to get to Ho Chi Minh City.",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/fact_sheet_getting_around.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL2ZhY3Rfc2hlZXRfZ2V0dGluZ19hcm91bmQuc3ZnIiwiaWF0IjoxNzQwMzkyOTE5LCJleHAiOjE3NzE5Mjg5MTl9.MJ0B8H8uuovBbpk49goPsdx1WuR_TzbB7C3QSbR7UBw",
-      link: "#"
-    },
-    {
-      title: "Tips from the pros",
-      description: "Explore some of our curated tips, collected from travelers themselves.",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/fact_sheet_tips.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL2ZhY3Rfc2hlZXRfdGlwcy5zdmciLCJpYXQiOjE3NDAzOTI4ODIsImV4cCI6MTc3MTkyODg4Mn0.38xeEWL6McXXZ6xtZU_4KVGaJQrWGMfkrcU-QMZa6KY",
-      link: "#"
-    }
-  ];
+  const mainVidThumbnail = "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/edited.mp4?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL2VkaXRlZC5tcDQiLCJpYXQiOjE3NDAzOTAzMTQsImV4cCI6MTc3MTkyNjMxNH0.GY7GzgQstiu_EADqGFWPdzHO92XuuutvBwcD1z8Vh08"
 
   // Mock data for Destinations
   const destinations = [
@@ -127,10 +96,14 @@ const NagoyaCastleHomePage: React.FC = () => {
   const router = useRouter();
   const { destination_id } = router.query;
   const { data: destination, isLoading } = useGetDestinationQuery({ id: destination_id as string });
-  const { data: childrenDestinations, isLoading: childrenLoading } = useGetChildrenDestinationsQuery({ id: destination_id as string });
+  // const { data: childrenDestinations, isLoading: childrenLoading } = useGetChildrenDestinationsQuery({ id: destination_id as string });
   const { data: attractions, isLoading: attractionsLoading } = useGetAttractionsQuery({ id: destination_id as string });
+  const { data: destination_details } = useGetDestinationDetailsQuery({ id: destination_id as string })
 
+  const { data: iconic_photos } = useGetIconicPhotosQuery({ id: destination_id as string });
+  
   if (isLoading) return <CircularProgress />;
+  
   const VideoSection: React.FC<{destination: Destination}> = ({destination}) => {
     return(
     <Box
@@ -239,71 +212,6 @@ const NagoyaCastleHomePage: React.FC = () => {
     );
   }
 
-  const FeaturesSection: React.FC<{destination: Destination}> = ({destination}) => {
-    const [openFeature, setOpenFeature] = useState<Feature | null>(null);
-  
-    return (
-      <>
-        <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
-          Essential {destination?.name}
-        </Typography>
-        <Grid container spacing={4} sx={{ mt: 4, justifyContent: 'center' }}>
-          {features.map((feature, index) => (
-            <Grid item key={index}>
-              <Button
-                variant="outlined"
-                onClick={() => setOpenFeature(feature)}
-                sx={{
-                  borderColor: 'lightgray',
-                  backgroundColor: 'transparent',
-                  color: 'black',
-                  fontSize: '1.2rem', // bigger text
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  maxHeight: 100,
-                  minWidth: 250,
-                  padding: 2,
-                  '&:hover': {
-                    borderColor: 'lightgray',
-                    backgroundColor: 'rgba(0,0,0,0.03)',
-                  },
-                }}
-                startIcon={
-                  <Box
-                    component="img"
-                    src={feature.image}
-                    alt={feature.title}
-                    sx={{ width: 90, height: 90 }} // larger icon size
-                  />
-                }
-              >
-                {feature.title}
-              </Button>
-            </Grid>
-          ))}
-        </Grid>
-  
-        {/* Dialog for feature details */}
-        <Dialog
-          open={Boolean(openFeature)}
-          onClose={() => setOpenFeature(null)}
-          fullWidth
-          maxWidth="sm"
-        >
-          <DialogTitle>{openFeature?.title}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{openFeature?.description}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenFeature(null)} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </>
-    );
-  };
-
   const OverviewSection: React.FC<{destination: Destination}> = ({destination}) => {
     return(
       <Paper elevation={0} sx={{ p: 3, mb: 4 }}>
@@ -327,6 +235,7 @@ const NagoyaCastleHomePage: React.FC = () => {
         color="secondary"
         size="large"
         href="#"
+        onClick={() => router.push('select')}
         sx={{ mx: 'auto', mb: 6, maxWidth: 200, alignItems: 'center', display: 'flex' }}
       >
         Explore
@@ -376,7 +285,7 @@ const NagoyaCastleHomePage: React.FC = () => {
           Top attractions for you
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {attractions.map((feature, index) => (
+          {attractions?.map((feature, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card>
                 <CardMedia
@@ -390,8 +299,7 @@ const NagoyaCastleHomePage: React.FC = () => {
                     {feature.title}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {/* need to fix this later */}
-                    {feature.attraction_info[0].description_thumbnail}
+                    {feature.description_thumbnail}
                   </Typography>
                   <Button variant="contained" color="primary" onClick={() => router.push(`/attraction/${feature.id}`)} sx={{ mt: 2 }}>
                     Learn More
@@ -462,16 +370,19 @@ const NagoyaCastleHomePage: React.FC = () => {
 
       {/* Rest of the Content in a Container */}
       <Container maxWidth={false} sx={{ width: '90%' }}>
-        {destination && childrenDestinations && attractions ? (
+        {destination && attractions && destination_details && iconic_photos ? (
           <>
             {/* Overview Section */}
             <OverviewSection destination={destination} />
 
             {/* Features Section */}
-            <FeaturesSection destination={destination} />
+            <GroupedFeaturesPopup features={convertDestinationDetailsToFeatures(destination_details)} />
 
             {/* Main Section */}
-            <MainSection destination={destination} childrenDestinations={childrenDestinations} />
+            {/* <MainSection destination={destination} childrenDestinations={childrenDestinations} /> */}
+
+            {/* Iconic Photos */}
+            <IconicPhotos photos={iconic_photos}/>
 
             {/* Top attractions */}
             <TopAttractionsSection attractions={attractions} />

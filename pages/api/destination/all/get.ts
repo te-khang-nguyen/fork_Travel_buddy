@@ -1,7 +1,6 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-// NEED TO CALL THIS API, BUT DON'T KNOW HOW TO YET
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse

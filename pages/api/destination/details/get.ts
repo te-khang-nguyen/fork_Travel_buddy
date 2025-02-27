@@ -1,7 +1,8 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-// NEED TO CALL THIS API, BUT DON'T KNOW HOW TO YET
+
+// This function returns all destination_details except for iconic_photos (which requires further data transformation)
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -11,10 +12,12 @@ export default async function handler(
         return
     }
     try {
-        const { data, error } = await supabase
-            .from("destinations")
-            .select("*")
-            .eq("status", "active");
+        const { destination_id, type } = req.query;
+        const query = type 
+            ? supabase.from('destination_details').select('*').eq('destination_id', destination_id).eq('type', type)
+            : supabase.from('destination_details').select('*').eq('destination_id', destination_id).neq('type', 'iconic_photos');            
+        
+        const { data, error } = await query;
 
         if (error) {
             return res.status(400).json({ error: error.message });
