@@ -31,6 +31,7 @@ import {
 
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/features";
 import IconicPhotos from "@/app/components/destination/iconic_photos";
+import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 
 const NagoyaCastleHomePage: React.FC = () => {
 
@@ -102,7 +103,7 @@ const NagoyaCastleHomePage: React.FC = () => {
 
   const { data: iconic_photos } = useGetIconicPhotosQuery({ id: destination_id as string });
   
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return <LoadingSkeleton isLoading={true}/>;
   
   const VideoSection: React.FC<{destination: Destination}> = ({destination}) => {
     return(

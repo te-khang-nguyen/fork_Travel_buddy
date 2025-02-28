@@ -32,7 +32,7 @@ import {
 
 const SelectDestination = () => {
   const router = useRouter();
-  const { data: allDestinations, isLoading } = useGetAllDestinationsQuery({dummy: "d"});
+  const { data: allDestinations, isLoading } = useGetAllDestinationsQuery();
   if (isLoading) return <CircularProgress />;
   const MainSection: React.FC<{allDestinations: Destination[]}> = ({allDestinations}) => {
     return(

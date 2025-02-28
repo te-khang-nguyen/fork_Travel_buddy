@@ -105,10 +105,10 @@ const DestinationApi = createApi({
   baseQuery,
   endpoints: (builder) => ({
     // ------------------QUERY CHALLENGE BY ID--------------------------
-    getAllDestinations: builder.query<Destination[], any>({
-      query: ({dummy}) => ({
-        url: `/destination/all`,
-        params: {dummy},
+    getAllDestinations: builder.query<Destination[], void>({
+      query: () => ({
+        url: `/destination`,
+        params: {},
       }),
       transformResponse: ((res: DestinationResponseList) => res.data)
     }),
