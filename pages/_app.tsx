@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import "../app/globals.css";
 import { useRouter } from "next/router";
 import DrawerLayout from "@/app/Layout/SideBarWrapper";
+import MenuBarsLayout from "@/app/Layout/MenuBarsWrapper";
 import { ThemeProvider } from "@mui/material";
 import theme from "@/app/theme";
 import { GlobalContextProvider } from "@/app/GlobalContextProvider";
@@ -19,15 +20,16 @@ const NO_DRAWER_BUTTON_PAGES = [
 const MainContent = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  const showDrawerButton = !NO_DRAWER_BUTTON_PAGES.includes(router.pathname);
+  // const showDrawerButton = !NO_DRAWER_BUTTON_PAGES.includes(router.pathname);
+  const showMenuBars = !NO_DRAWER_BUTTON_PAGES.includes(router.pathname);
 
   return (
     <GlobalContextProvider>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
-          <DrawerLayout showDrawerButton={showDrawerButton}>
+          <MenuBarsLayout showMenuBars={showMenuBars}>
             <Component {...pageProps} />
-          </DrawerLayout>
+          </MenuBarsLayout>
         </ThemeProvider>
       </Provider>
     </GlobalContextProvider>

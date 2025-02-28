@@ -11,9 +11,9 @@ export default async function handler(
         return;
     }
 
-    const {story_id, challengeHistoryId} = req.query;
+    const story_id = req.query?.["story-id"];
 
-    if (!story_id && !challengeHistoryId ) {
+    if (!story_id) {
         return res.status(400).json({ error: "Story ID is required" });
     }
 
@@ -21,7 +21,7 @@ export default async function handler(
         const { data, error } = await supabase
             .from("story")
             .update({status : "ARCHIVED"})
-            .eq(story_id? "id": "challengeHistoryId", story_id ?? challengeHistoryId)
+            .eq(story_id? "id": "challengeHistoryId", story_id)
             .select("id, status");
 
         if (error) {

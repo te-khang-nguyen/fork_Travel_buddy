@@ -14,6 +14,7 @@ interface ProfileReq {
   phone?: string;
   references?: string;
   description?: string;
+  avatarUrl?: string
 }
 
 interface ProfileRes {

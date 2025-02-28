@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { PiNotePencilBold } from "react-icons/pi";
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
@@ -6,27 +7,38 @@ import {
   Typography,
   Button,
   Paper,
+  IconButton,
   Snackbar,
   Alert,
 } from "@mui/material";
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import AvatarEditor from "@/app/components/image_picker/AvatarPicker";
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
 } from "@/libs/services/user/profile";
 
 interface ProfileFormInputs {
-  username: string;
-  email: string;
-  firstname: string;
-  lastname: string;
-  facebook: string;
-  instagram: string;
-  x: string;
-  phone: string;
+  username?: string;
+  email?: string;
+  firstname?: string;
+  lastname?: string;
+  facebook?: string;
+  instagram?: string;
+  x?: string;
+  phone?: string;
 }
 
 const ProfileForm = () => {
+  const defaultValues = {
+    username: "",
+    avatarUrl: "",
+    brandVoice: "",
+  };
+
   const role = localStorage.getItem("role");
+  const [isEditingName, setIsEdtingName] = useState<boolean>(false); 
+  const [isEditingVoice, setIsEdtingVoice] = useState<boolean>(false); 
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -39,178 +51,246 @@ const ProfileForm = () => {
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
-  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
-  
-  const defaultValues = {
-    username: "",
-    email: "",
-    firstname: "",
-    lastname: "",
-    facebook: "",
-    instagram: "",
-    x: "",
-    phone: "",
-  };
+  const [profileValues, setProfileValues] = useState<{
+    username: string;
+    avatarUrl: string;
+    brandVoice: string;
+  }>(defaultValues);
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useForm<ProfileFormInputs>();
+  const profileValuesRef = useRef<{
+    username: string;
+    avatarUrl: string;
+    brandVoice: string;
+  }>(defaultValues);
+
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
   const { 
     data: profile, 
     error: profileError 
   } = useGetProfileQuery();
 
-  const storedValues = JSON.parse(sessionStorage.getItem("profile") as string);
+  // const storedValues = JSON.parse(sessionStorage.getItem("profile") as string);
 
   useEffect(() => {
     if (profile) {
       for (const [key, value] of Object.entries(profile.data)) {
         if (key in defaultValues) {
-          console.log(storedValues?.[key]);
-          setValue(key as any, (
-            storedValues && storedValues[key] !== ""
-            ? storedValues[key] : value
-          ) || "");
+          const storedValues = sessionStorage.getItem(key);
+          const valueToSet = storedValues 
+            && storedValues !== ""
+            ? storedValues : value;
+
+          const newObj = {
+              ...profileValuesRef.current,
+              [key]: valueToSet
+          };
+
+          profileValuesRef.current = newObj;
+
+          setProfileValues({
+            ...profileValuesRef.current,
+            [key]: valueToSet,
+          });
         }
       }
     }
-  }, [profile, setValue]);
+  }, [profile]);
 
-  useEffect(()=>{
-    if(profile){
-      const subscription = watch((value)=>{
-        if(!Object.values(profile.data).includes(value)){
-          sessionStorage.setItem("profile", JSON.stringify(value));
-        }
-      });
-      return () => subscription.unsubscribe();
+  const onUserNameEditClicked = async (
+    setIsEditing: (isEdditing: boolean) => void, 
+    isEditing: boolean, 
+    key: string, 
+    value: string
+  ) => {
+    setIsEditing(!isEditing);
+    if(isEditing) {
+      const result = await updateProfile({
+        [key]: value
+      }).unwrap();
+      
+      if (result.data) {
+        setSnackbar({
+          open: true,
+          message: "Profile updated successfully!",
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Failed to update profile. Please try again.",
+          severity: "error",
+        });
+      }
     }
-  },[watch, profile]);
+  };
 
-  const onSubmit = async (profileData: ProfileFormInputs) => {
-    const result = await updateProfile(profileData).unwrap();
-    
+  const handleAvatarUpload = async (uploadedAvatar: 
+    {image: string | null; name:string | null}[]
+  ) => {
+    const result = await updateProfile({
+      avatarUrl: uploadedAvatar?.[0]?.image || ""
+    }).unwrap();
+
     if (result.data) {
       setSnackbar({
         open: true,
-        message: "Profile updated successfully!",
+        message: "Avatar updated successfully!",
         severity: "success",
       });
     } else {
       setSnackbar({
         open: true,
-        message: "Failed to update profile. Please try again.",
+        message: "Failed to update avatar! Please try again!",
         severity: "error",
       });
     }
-  };
+  }
 
   return (
     <Box
       sx={{
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
+        justifyContent: "flex-start",
         alignItems: "center",
         minHeight: "100%",
         backgroundColor: "#f4f4f4",
         padding: 2,
+        
       }}
     >
-      <Paper
-        elevation={3}
-        sx={{
-          padding: 4,
-          borderRadius: 2,
-          width: "100%",
-          maxWidth: 800,
-        }}
+      <Box
+       display="flex"
+       flexDirection="row"
+       justifyContent="space-between"
+       alignItems="center"
+       width={"100%"}
+       // border={1}
       >
-        <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-          User Information
+        <Typography variant="h5" sx={{fontWeight: 'bold'}}>My Profile</Typography>
+        <IconButton sx={{right: 0}}>
+          <SettingsOutlinedIcon sx={{color: "rgb(16, 126, 243)"}}/>
+        </IconButton>
+      </Box>
+
+
+      <Box
+       display="flex"
+       flexDirection="row"
+       justifyContent="space-between"
+       alignItems="center"
+       width={"100%"}
+       // border={1}
+      >
+        <AvatarEditor
+          onImageUpload={(e) => handleAvatarUpload(e)}
+          fetchImages={[{
+              image: profileValues.avatarUrl,
+              name: "User's avatar"
+          }]}
+        />
+
+        {!isEditingName?
+        <Typography
+          variant="h6"
+          sx={{
+            color: "black",
+            fontWeight:"bold"
+          }}
+        >
+          {profileValues.username}
         </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              gap: 2,
-            }}
-          >
-            {[
-              { name: "username", label: "Username", required: true },
-              { name: "email", label: "Email", required: true },
-              { name: "firstname", label: "Firstname", required: true },
-              { name: "lastname", label: "Lastname", required: true },
-              { name: "facebook", label: "Facebook", required: false },
-              { name: "instagram", label: "Instagram", required: false },
-              { name: "x", label: "X", required: false },
-              { name: "phone", label: "Phone", required: true },
-            ].map((field) => (
-              <Box
-                key={field.name}
-                sx={{
-                  flex: "1 1 calc(50% - 16px)",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  sx={{ marginBottom: 0.5, fontWeight: 500 }}
-                >
-                  {field.label}
-                  {field.required && (
-                    <Typography
-                      component="span"
-                      color="error"
-                      sx={{ marginLeft: 0.5 }}
-                    >
-                      *
-                    </Typography>
-                  )}
-                </Typography>
-                <Controller
-                  name={field.name as keyof ProfileFormInputs}
-                  control={control}
-                  rules={
-                    field.required
-                      ? { required: `${field.label} is required` }
-                      : undefined
-                  }
-                  render={({ field: controllerField }) => (
-                    <TextField
-                      {...controllerField}
-                      fullWidth
-                      variant="outlined"
-                      error={!!errors[field.name as keyof ProfileFormInputs]}
-                      helperText={
-                        errors[field.name as keyof ProfileFormInputs]?.message
-                      }
-                    />
-                  )}
-                />
-              </Box>
-            ))}
-          </Box>
-          <Box sx={{ marginTop: 3 }}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ textTransform: "none", width: "250px", padding: 1.5 }}
-              disabled={isLoading}
-            >
-              Save Changes
-            </Button>
-          </Box>
-        </form>
-      </Paper>
+        :<TextField
+          fullWidth
+          variant="outlined"
+          sx={{
+            ml: 2
+          }}
+          value={profileValues.username}
+          onChange={(e) => {
+            sessionStorage.setItem("username", e.target.value);
+            setProfileValues({
+              ...profileValues,
+              username: e.target.value,
+            })
+          }}
+          />}
+        
+        <IconButton
+          onClick={() => onUserNameEditClicked(
+            setIsEdtingName,
+            isEditingName,
+            "username",
+            profileValues.username
+          )}
+        >
+          <PiNotePencilBold style={{fontSize: "20px"}}/>
+        </IconButton>
+
+      </Box>
+
+      <Box
+       display="flex"
+       flexDirection="column"
+       justifyContent="space-between"
+       alignItems="flex-start"
+       width={"100%"}
+       // border={1}
+      >
+
+        <Typography
+          variant="body1"
+          sx={{
+            fontWeight: "bold"
+          }}
+        >
+          Brand Voice
+        </Typography>
+        <Box
+       display="flex"
+       flexDirection="row"
+       justifyContent="space-between"
+       alignItems="center"
+       width={"100%"}
+       // border={1}
+      >
+        {!isEditingVoice?
+        <Typography
+          variant="body1"
+          sx={{
+            color: "black",
+          }}
+        >
+          {profileValues.brandVoice}
+        </Typography>
+        :<TextField
+          fullWidth
+          variant="outlined"
+          value={profileValues.brandVoice}
+          onChange={(e) => {
+            sessionStorage.setItem("brandVoice", e.target.value);
+            setProfileValues({
+              ...profileValues,
+              brandVoice: e.target.value,
+            })
+          }}
+          />}
+        
+        <IconButton
+          onClick={() => onUserNameEditClicked(
+            setIsEdtingVoice,
+            isEditingVoice,
+            "brandVoice",
+            profileValues.brandVoice
+          )}
+        >
+          <PiNotePencilBold style={{fontSize: "20px"}}/>
+        </IconButton>
+        </Box>
+
+      </Box>
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

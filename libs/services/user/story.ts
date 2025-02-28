@@ -3,16 +3,15 @@ import { baseQuery } from "@/libs/supabase/baseQuery";
 
 interface StoryReq {
     storyId?: string;
-    challengeId?: string;
-    challengeHistoryId?: string;
+    destinationId?: string;
     payload?: {
-        challengeId?: string;
-        challengeHistoryId?: string;
+        destinationId?: string;
+        title?: string;
         userNotes?: string;
         storyFull?: string;
-        mediaSubmitted?: string;
+        mediaSubmitted?: string[];
         status?: string;
-        locations?: string;
+        attractions?: string;
         tourSchedule?: string;
         storyLength?: number;
     }
@@ -22,15 +21,42 @@ interface StoryRes {
     data?: {
         id?: string;
         status?: string;
-        createAt?: string;
+        title?: string;
+        createdAt?: string;
         userId?: string;
-        challengeId?: string;
+        destinationId?: string;
         challengeHistoryId?: string;
         userNotes?: string;
         storyFull?: string;
-        mediaSubmitted?: string;
-    }
+        mediaSubmitted?: string[];
+        seoTitleTag?: string;
+        seoMetaDesc?: string;
+        seoSlug?: string;
+        longTailKeyWord?: string;
+        hashtag?: string;
+    }[];
     error?: any;
+}
+
+interface StorySingleRes {
+  data?: {
+      id?: string;
+      status?: string;
+      title?: string;
+      createdAt?: string;
+      userId?: string;
+      destinationId?: string;
+      challengeHistoryId?: string;
+      userNotes?: string;
+      storyFull?: string;
+      mediaSubmitted?: string[];
+      seoTitleTag?: string;
+      seoMetaDesc?: string;
+      seoSlug?: string;
+      longTailKeyWord?: string;
+      hashtag?: string;
+  };
+  error?: any;
 }
 
 const StoryApi = createApi({
@@ -43,53 +69,49 @@ const StoryApi = createApi({
               method: "POST",
               body: {
                 schedule: payload?.tourSchedule,
-                locations: payload?.locations,
+                attractions: payload?.attractions,
                 notes: payload?.userNotes,
                 story_length: payload?.storyLength
               }
             })
           }),
 
-        uploadStory: builder.mutation<any, any>({
-            query: ({ challengeId, challengeHistoryId, user_notes, story, media_submitted }) => ({
+        uploadStory: builder.mutation<StorySingleRes, StoryReq>({
+            query: ({ destinationId, payload }) => ({
               url: `/story`,
               method: "POST",
-              params: { challengeId, challengeHistoryId },
-              body: {
-                user_notes,
-                story,
-                media_submitted,
-              }
+              params: { destinationId },
+              body: payload
             })
           }),
       
-        getStory: builder.query<any, any>({
-            query: ({ story_id }) => ({
+        getStory: builder.query<StorySingleRes, StoryReq>({
+            query: ({ storyId }) => ({
               url: `/story`,
               method: "GET",
-              params: { story_id }
+              params: { "story-id": storyId }
             })
         }),
       
-        getAllStory: builder.query<any, any>({
-            query: ({}) => ({
+        getAllStory: builder.query<StoryRes, void>({
+            query: () => ({
               url: `/story`,
             })
         }),
         //--------------------UPDATE A STORY-------------------
-        updateStory: builder.mutation<StoryRes, StoryReq>({
-            query: ({ storyId, challengeHistoryId, payload }) => ({
+        updateStory: builder.mutation<StorySingleRes, StoryReq>({
+            query: ({ storyId, payload }) => ({
                 url: `story`,
-                params: {story_id: storyId, submission_id: challengeHistoryId},
+                params: {"story-id": storyId},
                 method: 'PUT',
                 body: payload
             })
         }),
         //--------------------DELETE A STORY-------------------
-        deleteStory: builder.mutation<StoryRes, StoryReq>({
-            query: ({ storyId, challengeHistoryId }) => ({
+        deleteStory: builder.mutation<StorySingleRes, StoryReq>({
+            query: ({ storyId }) => ({
                 url: `story`,
-                params: {story_id: storyId, submission_id: challengeHistoryId},
+                params: {"story-id": storyId},
                 method: 'DELETE',
             })
         })

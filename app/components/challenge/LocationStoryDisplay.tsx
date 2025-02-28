@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ImageCarousel from './ImageCarousel';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled, keyframes } from '@mui/system';
 import { Montserrat } from "next/font/google";
@@ -87,8 +88,8 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
 }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
-
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    
     const [imageError, setImageError] = useState(false);
     const [imageIndex, setImageIndex] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -129,6 +130,68 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
 
     return (
         <>
+        {!isEditor?
+                            <Button
+                                sx={{
+                                    backgroundColor: "rgba(0, 0, 0, 0.85)",
+                                    color: "rgb(255, 255, 255)",
+                                    fontFamily: montserrat.style.fontFamily,
+                                    fontSize: {
+                                        xs:"body2.fontSize",
+                                        sm:"body1.fontSize",
+                                        md:"body1.fontSize",
+                                        lg:"body1.fontSize",
+                                    },
+                                    borderRadius: 3,
+                                    boxShadow: 3,
+                                    ml:{xs:5,sm:30,md:50,lg:50},
+                                    mb: 2
+                                }}
+                                onClick={onTrigger}
+                                disabled={isTriggered}
+                            >
+                                To Story Editor
+                            </Button>
+                        :
+
+                        <Box
+                            position="absolute"
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems:"flex-start",
+                                justifyContent:"flex-start",
+                                gap: 1,
+                                mb: 2,
+                                top: 70,
+                                left: 10,
+                               
+                            }}
+                        >
+                            {isTriggered || isEditing? <></>:
+                            <Button
+                                size="small"
+                                sx={{
+                                    backgroundColor: "rgba(0, 0, 0, 0.85)",
+                                    color: "rgb(255, 255, 255)",
+                                    fontFamily: montserrat.style.fontFamily,
+                                    fontSize: {
+                                        xs:"body2.fontSize",
+                                        sm:"body1.fontSize",
+                                        md:"body1.fontSize",
+                                        lg:"body1.fontSize",
+                                    },
+                                    borderRadius: 3,
+                                    boxShadow: 3,
+                                    // ml:{xs:5,sm:30,md:50,lg:50},
+                                }}
+                                onClick={()=>setIsEditing(true)}
+                                disabled={isTriggered}
+                            >
+                                Edit
+                            </Button>}
+                          </Box>
+                        }
              {imageIndex ?
                 <Box
                     display="flex"
@@ -173,120 +236,48 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                 :
                 <Box
                     display="flex"
-                    alignItems="flex-start"
-                    position="absolute"
-                    overflow= "auto"
+                    flexDirection= "column"
+                    alignItems="center"
+                    position="relative"
                     sx={{
-                        // backgroundColor: "rgba(250, 221, 180, 0.97)",
-                        flexDirection: "row",
                         p: {xs: 0, sm: 0, md: 1, lg: 1},
-                        height: "70%",
-                        mt: 15,
-                        bottom: 5
-                        //boxShadow: 10
+                        maxWidth: {xs: "80%", sm: "80%", md: "80%", lg: "100%"},
+                        height: "100%",
+                        bottom: 5,
                     }}
                 >
-                    <Box
-                        display="flex"
-                        alignItems="center"
-                        position="relative"
+                    <ImageCarousel
+                        images={media}
                         sx={{
-                            flexDirection: "column",
+                            position: 'relative',
+                            width: '90%',
                             height: "100%",
-                            width: { xs: "35%", sm: "80%", lg: "100%" },
-                            boxShadow: 4,
-                            backgroundColor: "rgba(232, 182, 113, 0.86)",
-                            borderRadius: 5,
-                            p: { xs: 0, lg: 2 },
-                            mr: 2,
+                            mb: 4
+                        }}
+                        onCardClick={(idx) => setImageIndex(idx)}
+                    />
+                    
+                    <Box
+                        sx={{
+                            display:"flex",
+                            flexDirection:"row",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                            gap: 2,
+                            m: 2
                         }}
                     >
-                        {/* Upward Navigation Button */}
-                        {!isMobile && (
-                            <IconButton
-                                onClick={handlePrev}
-                                sx={{
-                                    position: "absolute",
-                                    top: 0,
-                                    justifyContent: "center",
-                                    zIndex: 2,
-                                    backgroundColor: "rgba(250, 221, 180, 0.49)",
-                                    boxShadow: 1,
-                                }}
-                            >
-                                <ArrowDropUpIcon />
-                            </IconButton>
-                        )}
-
-                        {/* Scrollable Cards */}
-                        <Box
-                            ref={carouselRef}
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "0.01rem",
-                                scrollBehavior: "smooth",
-                                height: "100%",
-                                width: { xs: "80%", sm: "80%", lg: "100%" },
-                                overflowY: "auto",
-                                "&::-webkit-scrollbar": { display: "none" }, // Optional: Hide scrollbar
-                                pb: "0.75rem",
-                                alignItems: "center",
-                                mb: 1
-                            }}
-                        >
-                            {/*<Cable /> Add the cable */}
-                            {media.map((img, index) => (
-                                <Box
-                                    key={index}
-                                    sx={{
-                                        minWidth: { 
-                                            xs: '45vw', 
-                                            sm: '300px', 
-                                            lg: '300px' 
-                                        }, // Adjust card width
-                                        maxWidth: '100%',
-                                        width:"100%",
-                                        position: 'relative',
-                                        p: 1,
-                                        zIndex: 1,
-                                    }}
-                                >
-                                    
-                                    <StyledCard>
-                                        <CardActionArea onClick={() => 
-                                            { setImageIndex(index + 1) }
-                                        }>
-                                            <CardMedia
-                                                component="img"
-                                                height="100%"
-                                                image={img}
-                                                alt="Location Image"
-                                            />
-                                        </CardActionArea>
-                                    </StyledCard>
-                                    
-                                </Box>
-                            ))}
-                        </Box>
-
-                        {/* Downward Navigation Button */}
-                        {!isMobile && (
-                            <IconButton
-                                onClick={handleNext}
-                                sx={{
-                                    position: "absolute",
-                                    justifyContent: "center",
-                                    bottom: 0,
-                                    zIndex: 1,
-                                    backgroundColor: "rgba(250, 221, 180, 0.69)",
-                                    boxShadow: 1,
-                                }}
-                            >
-                                <ArrowDropDownIcon />
-                            </IconButton>
-                        )}
+                    <Typography 
+                        variant="h6" 
+                        sx={{
+                            fontWeight : "bold"
+                        }}
+                    >
+                      Destination:  
+                    </Typography>
+                    <Typography variant="body1" sx={{mt: "0.3rem"}}>Ho Chi Minh City</Typography>
                     </Box>
+
                     <Box
                         display="flex"
                         alignItems="center"
@@ -298,31 +289,9 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                             p: { xs: 0, lg: 5 },
                         }}
                     >
-                        {!isEditor?
-                            <Button
-                                sx={{
-                                    backgroundColor: "rgba(0, 0, 0, 0.85)",
-                                    color: "rgb(255, 255, 255)",
-                                    fontFamily: montserrat.style.fontFamily,
-                                    fontSize: {
-                                        xs:"body2.fontSize",
-                                        sm:"body1.fontSize",
-                                        md:"body1.fontSize",
-                                        lg:"body1.fontSize",
-                                    },
-                                    borderRadius: 3,
-                                    boxShadow: 3,
-                                    ml:{xs:5,sm:30,md:50,lg:50},
-                                    mb: 2
-                                }}
-                                onClick={onTrigger}
-                                disabled={isTriggered}
-                            >
-                                To Story Editor
-                            </Button>
-                        :
-                        !isEditing?
-                        <Box
+
+                        {isEditing && (
+                            <Box
                             sx={{
                                 display: "flex",
                                 flexDirection: "row",
@@ -352,42 +321,9 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                             >
                                 {isTriggered? "Reactivate" : "Archive"}
                             </Button>
-                            {isTriggered?<></>:<Button
-                                sx={{
-                                    backgroundColor: "rgba(0, 0, 0, 0.85)",
-                                    color: "rgb(255, 255, 255)",
-                                    fontFamily: montserrat.style.fontFamily,
-                                    fontSize: {
-                                        xs:"body2.fontSize",
-                                        sm:"body1.fontSize",
-                                        md:"body1.fontSize",
-                                        lg:"body1.fontSize",
-                                    },
-                                    borderRadius: 3,
-                                    boxShadow: 3,
-                                    ml:{xs:5,sm:30,md:50,lg:50},
-                                    mb: 2
-                                }}
-                                onClick={()=>setIsEditing(true)}
-                                disabled={isTriggered}
-                            >
-                                Edit
-                            </Button>}
-                        </Box>
-                        :
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                alignItems:"center",
-                                justifyContent:"center",
-                                position:"relative",
-                                gap: 1,
-                            }}
-                        >
                             <Button
                                 sx={{
-                                    backgroundColor: "rgb(242, 183, 105)",
+                                    backgroundColor: "rgb(255, 255, 255)",
                                     color: "rgb(0, 0, 0)",
                                     fontFamily: montserrat.style.fontFamily,
                                     fontSize: {
@@ -425,20 +361,19 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                 Cancel
                             </Button>
 
-                        </Box>
-                        }
+                        </Box>)}
                         
-
                         <Box
                             sx={{
-                                overflow: "auto",
+                                display: "flex",
+                                // overflow: "auto",
                                 textOverflow: 'clip', // Cut off the text without showing ellipsis
                                 whiteSpace: 'normal', // Allow text to wrap to the next line
                                 wordBreak: 'break-word', // Ensure long words break to fit inside the box
-                                backgroundColor: "rgba(246, 224, 188, 0.43)",
+                                backgroundColor: "rgba(255, 255, 255, 0.33)",
                                 p: 2,
                                 borderRadius: 3,
-                                boxShadow: 2,
+                                // boxShadow: 2,
                                 width: {xs: "100%", lg: "100%"}
                             }}
                         >

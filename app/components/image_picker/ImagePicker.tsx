@@ -1,4 +1,8 @@
 import React, { useEffect, useState, useMemo, ChangeEvent } from "react";
+import { BsCamera2 } from "react-icons/bs";
+import { GiPhotoCamera } from "react-icons/gi";
+import { AiOutlineCamera } from "react-icons/ai";
+import Dropzone, { useDropzone } from "react-dropzone";
 import { Box, Button, Typography, CardMedia, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { File } from "openai/_shims/index.mjs";
@@ -89,8 +93,72 @@ export function handleResize(
   })
 }
 
+interface UploadHandlerProps {
+  acceptedFiles: File[] | FileList | null;
+  selectedImages: Array<{ image: string | null; name: string | null }>;
+  setImageError: (state: boolean) => void;
+  setSelectedImages: (images: Array<{ image: string | null; name: string | null }>) => void;
+  onImageUpload: (images: Array<{ image: string | null; name: string | null }>) => void;
+  withResize?: boolean;
+  allowMultiple?: boolean;
+}
+
+
+export const handleImageUpload = ({
+  acceptedFiles,
+  withResize,
+  allowMultiple,
+  selectedImages,
+  setImageError,
+  setSelectedImages,
+  onImageUpload,
+}: UploadHandlerProps) => {
+  if (acceptedFiles && acceptedFiles.length > 0) {
+    const files = typeof acceptedFiles ==='object'? 
+                          Array.from(acceptedFiles)
+                          : acceptedFiles;
+    const numberOfFiles = files.length;
+    const images = files.map((file) => {
+      const reader = new FileReader();
+      if(!withResize || (file.size / Math.pow(1024,2)) < 3.5){
+        return new Promise<{ 
+          image: string | null; 
+          name: string | null 
+        }>((resolve) => {
+          reader.onload = () => {
+            resolve({ image: reader.result as string, name: file.name });
+          };
+          reader.onerror = () => {
+            setImageError(true);
+            resolve({ image: null, name: file.name });
+          };
+          reader.readAsDataURL(file);
+        });
+      } else {
+        // Resize image
+        return new Promise<{ 
+          image: string | null; 
+          name: string | null;
+        }>(async (resolve) => {
+          const image = await handleResize(file, numberOfFiles);
+          resolve(image);
+        })
+      }
+    });
+
+    Promise.all(images).then((uploadedImages) => {
+      const updatedImages = allowMultiple ? [...selectedImages, ...uploadedImages] : uploadedImages;
+      setSelectedImages(updatedImages);
+      setImageError(false);
+      onImageUpload(updatedImages); // Notify parent component
+    });
+  }
+};
+
+
 interface ImageUploaderProps {
   onImageUpload: (images: Array<{ image: string | null; name: string | null }>) => void;
+  withDropzone?: boolean;
   variant?: "image" | "name"; // New prop for variants
   allowMultiple?: boolean; // New prop for choosing and displaying multiple images
   allowAddNew?: boolean;
@@ -102,10 +170,11 @@ const ImageUploader: React.FC<ImageUploaderProps> =
   ({
     onImageUpload,
     variant = "image",
+    withDropzone = false,
     allowMultiple = false,
     allowAddNew = true,
     fetchImages = [],
-    withResize = false
+    withResize = false,
   }) => {
     const [selectedImages, setSelectedImages] = useState<
       Array<{ image: string | null; name: string | null }>
@@ -136,100 +205,100 @@ const ImageUploader: React.FC<ImageUploaderProps> =
 
     const [imageError, setImageError] = useState(false);
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files && event.target.files.length > 0) {
-        const files = Array.from(event.target.files);
-        const numberOfFiles = files.length;
-        const images = files.map((file) => {
-          const reader = new FileReader();
-          if(!withResize || (file.size / Math.pow(1024,2)) < 3.5){
-            return new Promise<{ 
-              image: string | null; 
-              name: string | null 
-            }>((resolve) => {
-              reader.onload = () => {
-                resolve({ image: reader.result as string, name: file.name });
-              };
-              reader.onerror = () => {
-                setImageError(true);
-                resolve({ image: null, name: file.name });
-              };
-              reader.readAsDataURL(file);
-            });
-          } else {
-            // Resize image
-            return new Promise<{ 
-              image: string | null; 
-              name: string | null;
-            }>(async (resolve) => {
-              const image = await handleResize(file, numberOfFiles);
-              resolve(image);
-            })
-          }
-        });
-
-        Promise.all(images).then((uploadedImages) => {
-          const updatedImages = allowMultiple ? [...selectedImages, ...uploadedImages] : uploadedImages;
-          setSelectedImages(updatedImages);
-          setImageError(false);
-          onImageUpload(updatedImages); // Notify parent component
-        });
-      }
-    };
-
     const handleRemoveImage = (index: number) => {
       const updatedImages = selectedImages.filter((_, i) => i !== index);
       setSelectedImages(updatedImages);
       onImageUpload(updatedImages); // Notify parent component
     };
 
-    return (
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Box display="flex" alignItems="center" gap={2}>
-          {!allowAddNew ?
-            <Typography></Typography> :
+    const paramObj = {
+      withResize,
+      allowMultiple,
+      selectedImages,
+      setImageError,
+      setSelectedImages,
+      onImageUpload,
+    }
+
+    const MediaUploadButton = (
             <Button
-              variant="contained"
+              variant="outlined"
               component="label"
               sx={{
-                backgroundColor: "#4285F4",
-                color: "white",
+
+                color: "primary",
                 textTransform: "none",
                 padding: "8px 16px",
                 fontSize: { xs: "12px", sm: "14px" },
                 borderRadius: "4px",
-                "&:hover": {
-                  backgroundColor: "#357ae8",
-                },
+                // "&:hover": {
+                //   backgroundColor: "#357ae8",
+                // },
               }}
             >
-              {allowMultiple ? "Choose Files" : "Choose File"}
+              {allowMultiple ? "Browse Files" : "Browse File"}
               <input 
                 type="file" 
                 multiple={allowMultiple} 
                 hidden 
-                onChange={handleImageUpload} 
+                onChange={(e) => handleImageUpload({
+                  acceptedFiles: e.target.files,
+                  ...paramObj
+                })} 
               />
-            </Button>}
+            </Button>
+    );
 
-          <Typography
-            sx={{ maxWidth: "300px" }}
-            variant="body2"
-            color="textSecondary"
+
+    const DropzoneUI = (
+      <Dropzone onDrop={acceptedFiles => handleImageUpload({
+        acceptedFiles,
+        ...paramObj
+      })}>
+        {({getRootProps, getInputProps}) => (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              border: 1,
+              borderStyle: "dashed",
+              color: "grey",
+              width: "100%",
+              padding: 2,
+            }}
           >
-            {selectedImages.length > 0
-              ? <></>
-              // selectedImages.map((img) => img.name).join(", ")
-              : "No files chosen"}
-          </Typography>
-        </Box>
-        {variant === "image" && (
+            <BsCamera2
+              style={{
+                fontSize: "40px",
+                color: "grey"
+              }}
+            />
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+                <p>Drag and drop your photos here</p>
+            </div>
+
+            <Typography variant="body1"> OR </Typography>
+            {MediaUploadButton}
+
+          </Box>
+        )}
+      </Dropzone>
+    );
+    
+
+    return (
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
+         {variant === "image" && (
           <Box
             sx={{
               display: "flex",
               flexWrap: allowMultiple ? "wrap" : "nowrap",
               gap: 2,
-              marginTop: 2,
+              mt: 1,
+              mb: 1
             }}
           >
             {selectedImages.map((img, index) => (
@@ -282,6 +351,24 @@ const ImageUploader: React.FC<ImageUploaderProps> =
             ))}
           </Box>
         )}
+        <Box display="flex" alignItems="center" gap={2}>
+          {allowAddNew  &&
+            (<>
+            {!withDropzone?
+              MediaUploadButton:DropzoneUI}
+            </>)
+          }
+
+          <Typography
+            sx={{ maxWidth: "300px" }}
+            variant="body2"
+            color="textSecondary"
+          >
+            {selectedImages.length > 0 && !withDropzone
+              && "No files chosen"}
+          </Typography>
+        </Box>
+       
       </Box>
     );
   };

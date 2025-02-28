@@ -149,10 +149,9 @@ const StoryPageUI = () => {
                 hasGeneratedRef.current = true;
                 try {
                     const { data: generatedStory } = await generateStoryApi({
-                        payload: {
-                            tourSchedule: tourSchedule, 
+                        payload: { 
                             userNotes: matchItem?.userQuestionSubmission,
-                            locations: locationTitles,
+                            attractions: locationTitles,
                         }
                     });
 
@@ -161,15 +160,16 @@ const StoryPageUI = () => {
                         const {
                             data: newStoryData
                         } = await createStory({
-                            challengeId: challege_id,
-                            challengeHistoryId,
-                            user_notes: matchItem?.userQuestionSubmission,
-                            story: finalStory,
-                            media_submitted: matchItem?.userMediaSubmission,
+                            destinationId: challege_id as string,
+                            payload: {
+                                userNotes: matchItem?.userQuestionSubmission,
+                                storyFull: finalStory,
+                                mediaSubmitted: matchItem?.userMediaSubmission,
+                            }
                         });
     
                         setIsGenerating(false);
-                        setStoryId(newStoryData?.storyId);
+                        setStoryId(newStoryData?.data?.id as string);
                         setHistoryData({
                             locations: locationTitles,
                             notes: matchItem?.userQuestionSubmission,

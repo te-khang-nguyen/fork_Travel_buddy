@@ -15,12 +15,14 @@ import {
   useUploadInputsMutation,
   JoinChallengeApi
 } from "@/libs/services/user/challenge";
-import { useUploadImageMutation } from "@/libs/services/storage/upload";
+import { 
+  useUploadImageMutation 
+} from "@/libs/services/storage/upload";
 import { useRouter } from "next/router";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import LocationDetail from "@/app/components/challenge/LocationDetail";
 import GenericModal from "@/app/components/kits/Modal";
-import CustomInputsField from "@/app/components/challenge/UserInputsField";
+import CustomInputsField from "@/app/components/generic-component/UserInputsField";
 import { getPayLoadSize } from "@/libs/services/utils";
 import { store } from "@/libs/store";
 

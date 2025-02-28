@@ -10,6 +10,7 @@ import {
     useUpdateStoryMutation,
     useDeleteStoryMutation
 } from "@/libs/services/user/story"
+import ShareButton from "../generic-component/ShareButton";
 
 
 const montserrat = Montserrat({
@@ -41,13 +42,13 @@ function GradientCircularProgress() {
   }
 
 export const StoryPage = ({ 
-    challengeTitle, 
+    title, 
     story,
     story_id,
     userMediaSubmission,
     isGenerating = false 
 }: { 
-    challengeTitle: string, 
+    title: string, 
     story: string,
     story_id: string,
     userMediaSubmission: string[],
@@ -151,12 +152,14 @@ export const StoryPage = ({
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                backgroundColor: "rgb(252, 241, 216)",
+                backgroundColor: "rgb(255, 255, 255)",
                 backgroundRepeat: "repeat",
                 p: 2,
                 fontSize: '1.2rem',
+                justifyContent: "space-between",
                 alignItems: "center",
-                height: "100%",
+                // height: "90%",
+                maxHeight: "90%",
                 overflow:"auto",
             }}
         >
@@ -169,7 +172,6 @@ export const StoryPage = ({
                     borderRadius: 2,
                     backgroundColor: "rgba(255, 220, 171, 0)",
                     p: 4,
-                    mb: 3,
                 }}
             >
                 <Typography
@@ -185,10 +187,21 @@ export const StoryPage = ({
                         color: "black",
                         textAlign: "center",
                     }}>
-                    {`My ${challengeTitle || 'Travel'} Diaries`}
+                    {`My ${title || 'Travel'} Diaries`}
                 </Typography>
             </Box>
-            {isGenerating ? (
+            {!isGenerating ?(
+                <LocationStoryDisplay 
+                    content={{ 
+                        story,
+                        userMediaSubmission,
+                    }}
+                    onSaveChanges={(e)=>handleSaveChanges(e)}
+                    onTrigger={isArchived? handleReactivate : handleDeleteStory}
+                    isTriggered={isArchived}
+                    isEditor
+                />
+            ) : (
                 <Box
                     display='flex'
                     flexDirection='row'
@@ -207,18 +220,11 @@ export const StoryPage = ({
                         Loading submissions...
                     </Typography>
                 </Box>
-            ) : (
-                <LocationStoryDisplay 
-                    content={{ 
-                        story,
-                        userMediaSubmission,
-                    }}
-                    onSaveChanges={(e)=>handleSaveChanges(e)}
-                    onTrigger={isArchived? handleReactivate : handleDeleteStory}
-                    isTriggered={isArchived}
-                    isEditor
-                />
             )}
+
+            <ShareButton
+                texts={{title: `My ${title || 'Travel'} Diaries`}}
+            />
         </Box>
     );
 }

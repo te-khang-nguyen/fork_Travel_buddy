@@ -11,7 +11,7 @@ export default async function handler(
     }
 
     // Extract body
-    const { schedule, locations, notes, story_length } = req.body;
+    const { attractions, notes, story_length } = req.body;
 
     // Extract authorization token
     const token = req.headers.authorization?.split(' ')[1];
@@ -22,8 +22,8 @@ export default async function handler(
     try {
         // Insert story into database
         const { data: storyData, error } = await generateLocationStories(
-                schedule,
-                { locations, notes },
+                attractions, 
+                notes,
                 story_length
         );
 
@@ -50,7 +50,7 @@ export const swaggerStoryGenerate = {
     "post": {
       "tags": ["story"],
       "summary": "Generate a new story",
-      "description": "Generate a new story based on the provided schedule, locations, notes, and story length.",
+      "description": "Generate a new story based on the provided schedule, attractions, notes, and story length.",
       "security": [
         {
           "bearerAuth": []
@@ -67,12 +67,12 @@ export const swaggerStoryGenerate = {
                   "type": "string",
                   "description": "The schedule for the story"
                 },
-                "locations": {
+                "attractions": {
                   "type": "array",
                   "items": {
                     "type": "string"
                   },
-                  "description": "The locations for the story"
+                  "description": "The attractions for the story"
                 },
                 "notes": {
                   "type": "string",
@@ -104,7 +104,7 @@ export const swaggerStoryGenerate = {
                       "schedule": {
                         "type": "string"
                       },
-                      "locations": {
+                      "attractions": {
                         "type": "array",
                         "items": {
                           "type": "string"

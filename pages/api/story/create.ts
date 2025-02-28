@@ -11,8 +11,8 @@ export default async function handler(
     }
 
     // Extract parameters
-    const { challengeId, challengeHistoryId } = req.query;
-    const { user_notes, story, media_submitted } = req.body;
+    const { destinationId } = req.query;
+    const { userNotes, storyFull, mediaSubmitted } = req.body;
 
     // Extract authorization token
     const token = req.headers.authorization?.split(' ')[1];
@@ -28,8 +28,8 @@ export default async function handler(
     } = await supabase.auth.getUser();
 
     // Validate required parameters
-    if (!challengeId) {
-        return res.status(400).json({ error: "Challenge ID is required" });
+    if (!destinationId) {
+        return res.status(400).json({ error: "Desination ID is required" });
     }
 
     try {
@@ -38,24 +38,22 @@ export default async function handler(
             {
                 status: "ACTIVE",
                 userId: user?.id,
-                challengeHistoryId: challengeHistoryId,
-                challengeId: challengeId,
-                userNotes: user_notes,
-                storyFull: story,
-                mediaSubmitted: media_submitted,
+                destinationId: destinationId,
+                userNotes: userNotes,
+                storyFull: storyFull,
+                mediaSubmitted: mediaSubmitted,
             }
         ]).select('id').single();
 
         if (error) {
-            console.error("Story insertion error:", error);
             return res.status(400).json({ error: error.message });
         }
 
         // Successful response
-        return res.status(201).json({ 
+        return res.status(201).json({ data: {
             message: "Story created successfully", 
-            storyId: data?.id 
-        });
+            id: data?.id 
+          }});
 
     } catch (catchError) {
         console.error("Unexpected error:", catchError);
@@ -79,7 +77,7 @@ export const swaggerStoryCreate = {
       "parameters": [
         {
           "in": "query",
-          "name": "challengeId",
+          "name": "destinationId",
           "schema": {
             "type": "string"
           },

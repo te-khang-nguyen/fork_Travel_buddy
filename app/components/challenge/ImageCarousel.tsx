@@ -6,7 +6,10 @@ import {
   useTheme,
   useMediaQuery,
   Card,
-  CardMedia
+  CardMedia,
+  CardActionArea,
+  SxProps,
+  Theme
 } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -14,11 +17,15 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 interface ImageCarouselProps {
   images: string[];
   height?: number | string;
+  sx?: SxProps<Theme>;
+  onCardClick?: (index: number | null) => void;
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ 
   images, 
-  height = 250 
+  height = 250, 
+  sx,
+  onCardClick,
 }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -42,7 +49,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
 
   return (
     <Box
-      sx={{
+      sx={sx ?? {
         position: 'relative',
         width: '100%',
         height: height,
@@ -98,7 +105,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
           <Box
             key={index}
             sx={{
-              minWidth: { xs: "85vw", sm: "300px" },
+              minWidth: { xs: "65vw", sm: "300px" },
               maxWidth: "100%",
               height: "100%",
             }}
@@ -111,16 +118,26 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
                 overflow: 'hidden'
               }}
             >
-              <CardMedia
-                component="img"
-                image={imageUrl}
-                alt={`Submitted photo ${index + 1}`}
-                sx={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
+              <CardActionArea
+                sx={{ 
+                  height: "100%", 
+                  width: "100%",
+                  borderRadius: 2,
+                  overflow: 'hidden'
                 }}
-              />
+                onClick={() => onCardClick?.(index)}
+              >
+                <CardMedia
+                  component="img"
+                  image={imageUrl}
+                  alt={`Submitted photo ${index + 1}`}
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+              </CardActionArea>
             </Card>
           </Box>
         ))}

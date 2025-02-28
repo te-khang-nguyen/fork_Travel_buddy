@@ -42,7 +42,13 @@ const historyDataFinal = {
 const StoryPageUI = () => {
     const router = useRouter();
     const { story_id } = router.query;
-    const { data: story, error, isLoading } = useGetStoryQuery({story_id});
+    const { 
+        data: story, 
+        error, 
+        isLoading 
+    } = useGetStoryQuery({
+        storyId: story_id as string
+    });
 
     // Handle loading state
     if (isLoading) {
@@ -80,9 +86,9 @@ const StoryPageUI = () => {
     return (
         <StoryPage 
             story_id={Array.isArray(story_id) ? story_id[0] : story_id || ''}
-            challengeTitle={story.data.challengeTitle} 
+            title={story.data.title ?? ''} 
             story={story.data.storyFull}
-            userMediaSubmission={story.data.mediaSubmitted}
+            userMediaSubmission={story.data.mediaSubmitted ?? []}
         />
     );
 }

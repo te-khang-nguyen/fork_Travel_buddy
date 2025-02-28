@@ -20,37 +20,33 @@ import {
     Paper, 
     Chip
 } from "@mui/material";
-import { Share } from "@mui/icons-material";
-import {
-    FacebookShareButton,
-    FacebookIcon,
-    TwitterShareButton,
-    TwitterIcon,
-} from 'next-share';
-import CustomButton from "@/app/components/kits/CustomButton";
 import { useRouter } from "next/router";
-import LocationStoryDisplay from "@/app/components/challenge/LocationStoryDisplay";
-import {    
-    useGetChallengeQuery,
-    useGetUserSubmissionsQuery,
-    useGetLocationsQuery,
-} from "@/libs/services/user/challenge";
 
 import {
     useGetAllStoryQuery,
 } from "@/libs/services/user/story"
+import GenericTable from "@/app/components/generic-component/Table";
 
-import { baseUrl } from "@/app/constant";
-import { Montserrat } from "next/font/google";
-import { generateLocationStories } from "@/libs/services/storyGen";
-import { StoryPage } from "@/app/components/challenge/StoryPage";
-import Image from 'next/image';
-import ImageCarousel from "@/app/components/challenge/ImageCarousel";
-import StatusChip from "@/app/components/challenge/StatusChip";
-import { formatDate } from "@/app/utils/date";
 
-const StoryTable = ({ stories }) => {
+const StoryPageUI = () => {
     const router = useRouter();
+    const { data: story, error, isLoading } = useGetAllStoryQuery();
+    const [ storyData, setStoryData ] = useState<{
+        [x: string]: string | number | string[] | undefined
+    }[]>([]);
+
+    useEffect(()=>{
+        if(story?.data){
+            setStoryData(story?.data?.map((item) => ({
+                id: item.id,
+                createdAt: item.createdAt,
+                title: item.title,
+                text: item.storyFull,
+                media: item.mediaSubmitted,
+                status: item.status,
+            })));
+        }
+    },[story?.data]);
 
     const tableHeaders = [
         { key: 'date', label: 'Date' },
@@ -59,87 +55,10 @@ const StoryTable = ({ stories }) => {
         { key: 'media', label: 'Media' },
         { key: 'status', label: 'Status' }
     ];
-        
 
-    // If no stories, return a message
-    if (!stories || stories.length === 0) {
-        return (
-            <Typography variant="body1" sx={{ p: 2, textAlign: 'center' }}>
-                No stories found
-            </Typography>
-        );
+    const handleRowClicks = (storyId: string) => {
+        router.push(`/profile/user/story/${storyId}`);
     }
-
-    const sortedStories = [...stories].sort((a, b) => {
-        // First, sort by status (ASC)
-        const statusComparison = a.status.localeCompare(b.status);
-        if (statusComparison !== 0) return statusComparison;
-        
-        // If statuses are the same, sort by createdAt (DESC)
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-
-    return (
-        <TableContainer sx={{ 
-            maxHeight: 'calc(100vh - 100px)', 
-            overflowY: 'auto',
-        }}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        {tableHeaders.map((header) => (
-                            <TableCell key={header.key}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                    {header.label}
-                                </Typography>
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {sortedStories.map((story) => (
-                        <TableRow 
-                            key={story.id} 
-                            hover 
-                        >
-                            <TableCell>
-                                <Typography variant="body2">
-                                    {formatDate(story.createdAt)}
-                                </Typography>
-                            </TableCell>
-                            <TableCell
-                                sx={{ cursor: 'pointer' }}
-                                onClick={() => router.push(`/profile/user/story/${story.id}`)}
-                            >
-                                <Typography variant="body2">
-                                    {story.challenges.title}
-                                </Typography>
-                            </TableCell>
-                            <TableCell
-                                sx={{ cursor: 'pointer' }}
-                                onClick={() => router.push(`/profile/user/story/${story.id}`)}
-                            >
-                                <Typography variant="body2" sx={{ maxWidth: 400 }}>
-                                    {story.storyFull}
-                                </Typography>
-                            </TableCell>
-                            <TableCell sx={{ maxWidth: 500 }}>
-                                <ImageCarousel height={200} images={story.mediaSubmitted} />
-                            </TableCell>
-                            <TableCell>
-                                <StatusChip status={story.status} />
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
-};
-
-const StoryPageUI = () => {
-    const { data: story, error, isLoading } = useGetAllStoryQuery({});
-    console.log("Story", story);
 
     // Handle loading state
     if (isLoading) {
@@ -173,7 +92,6 @@ const StoryPageUI = () => {
         );
     }
 
-    // Render story page when data is available
     return (
         <Box
             sx={{
@@ -189,7 +107,12 @@ const StoryPageUI = () => {
             }}
         >
             <Card>
-                <StoryTable stories={story.data} />
+                <GenericTable 
+                    contents={storyData} 
+                    headers={tableHeaders}
+                    withMedia
+                    onRowClick={(e) => handleRowClicks(e ?? '1')}
+                />
             </Card>
         </Box>
     );
