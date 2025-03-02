@@ -2,83 +2,78 @@ import React, { useState, useEffect } from "react";
 import { Box, Link, Typography, Card, CardContent, Button } from "@mui/material";
 import FastForwardIcon from "@mui/icons-material/FastForward";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
-import ChallengeCarousel from "@/app/components/challenge/ChallengeCarousel";
+import CustomCarousel from "@/app/components/generic-component/CustomCarousel";
+import StyledContentCard from "@/app/components/generic-component/StyledContentCard";
 import { useRouter } from "next/router";
-import { 
-  useGetAllChallengesQuery, 
-  useGetUserSubmissionsQuery 
-} from "@/libs/services/user/challenge";
+import { useGetAllDestinationsQuery } from "@/libs/services/user/destination";
+import { useGetAllStoryQuery } from "@/libs/services/user/story";
 
-interface UserDashboardProps {
-  totalChallenges: number;
-  completedChallenges: number;
-  activeChallenges: { id: string, name: string; status: string; link: string }[];
-}
-
-const UserDashboard: React.FC<UserDashboardProps> = ({
-  totalChallenges,
-  completedChallenges,
-  activeChallenges,
-}) => {
+const UserDashboard = () => {
   const router = useRouter();
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [challenges, setChallenges] = useState();
+  const [isFetching, setIsFetching] = useState(true);
+  const [destinations, setDestinations] = useState<{
+    id: string;
+    name: string;
+    image: string;
+  }[]>([]);
+  const [storyData, setStoryData] = useState<{
+    id: string | undefined;
+    createdAt: string | undefined;
+    title: string | undefined;
+    text: string | undefined;
+    media: string[] | undefined;
+    status: string | undefined;
+  }[]>([]);
 
   const {
-    data: challengeRef,
-    error: challengeError,
-    isLoading: isChallengeLoading
-  } = useGetAllChallengesQuery();
+      data: destinationsData,
+      error: destinationsErr,
+      isFetching: destinationsFetching,
+  } = useGetAllDestinationsQuery();
 
   const {
-    data: historyRef,
-    error: historyError,
-    isLoading: isHistoryLoading
-  } = useGetUserSubmissionsQuery();
-
-  useEffect(() => {
-      setIsLoading(isChallengeLoading && isHistoryLoading);
-  }, [isChallengeLoading, isHistoryLoading]);
+      data: story, 
+      error: storyError,
+      isFetching: storyFetching
+  } = useGetAllStoryQuery();
 
   useEffect(()=>{
-    if (challengeRef?.data) {
-      setChallenges(challengeRef?.data.map((item) =>({
-          id: item.id,
-          name: item.title,
-          image: item.thumbnailUrl
-        }))
-      )
+    setIsFetching(destinationsFetching || storyFetching);
+  },[destinationsFetching, storyFetching]);
+
+  useEffect(()=>{
+    if(destinationsData){
+      setDestinations(destinationsData?.map((item)=>({
+        id: item.id,
+        name: item.name,
+        image: item.primary_photo
+      })))
     }
-  },[challengeRef?.data]);
+  },[destinationsData])
+
+  useEffect(()=>{
+    if(story?.data){
+      setStoryData(story?.data?.map((item) => ({
+        id: item.id,
+        createdAt: item.createdAt,
+        title: item.title,
+        text: item.storyFull,
+        media: item.mediaSubmitted,
+        status: item.status,
+      })));
+    }
+  },[story?.data]);
 
   // If still loading, show loading state
-  if (isLoading) {
+  if (isFetching) {
     return (
-      <LoadingSkeleton isLoading={isLoading} />
+      <LoadingSkeleton isLoading={isFetching} />
     );
   }
 
-  if (historyRef?.data) {
-    activeChallenges = historyRef?.data?.map((item) => {
-      const matchedChallenge = challengeRef?.data?.filter(e => e.id == item.challengeId)[0];
-      return {
-        id: item.challengeId,
-        name: matchedChallenge?.title,
-        status: !item.ended ? "In progress" : "Completed",
-        link: !item?.reward ? "Your reward is being prepared" : item?.reward
-      };
-    });
-
-    totalChallenges = activeChallenges.length;
-    completedChallenges = activeChallenges.filter(
-      (item) => item.status === "Completed"
-    ).length;
-  }
-
-
-  const handleContinue = (challengeId) => {
-    router.push(`/challenge/${challengeId}`);
+  const handleContinue = (destinationId: string) => {
+    router.push(`/destination/${destinationId}`);
   };
 
 
@@ -93,135 +88,53 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
       }}
     >
-      {/* Challenge Dashboard */}
-      {!challenges ?
-        <Typography></Typography> :
-        <ChallengeCarousel
-          challenges={challenges}
-          onViewAll={() => {
-            router.push("/challenge")
+
+        <CustomCarousel
+            contents={destinations}
+            header="Featured Destinations"
+            onCardSelect={(id)=> handleContinue(id)}
+            onViewAll={()=> router.push("/destination/select")}
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection:"column",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            alignSelf: "center",
+            overflowY: "auto",
+            mt: 3,
+            width: "100%",
+            maxHeight: 400
           }}
-        />}
-      <Box
-        sx={{
-          height: "100%",
-          flexDirection: "column",
-          gap: 3,
-          display: "flex",
-          backgroundColor: "#f9f9f9",
-          borderRadius: 2,
-          boxShadow: 1,
-          p: 3,
-        }}
-      >
-        <Box>
+        >
           <Typography
             variant="h4"
-            gutterBottom
-            sx={{ color: "#4a90e2", fontWeight: "bold" }}
+            sx={{ 
+              color: "#4a90e2", 
+              fontWeight: "bold",
+              fontSize: {
+                xs: "h5.fontSize", 
+                sm: "h5.fontSize", 
+                md: "h4.fontSize", 
+                lg: "h4.fontSize"
+              },
+              ml: 2,
+              mb: 2
+            }}
           >
-            Activities
+            Featured Stories
           </Typography>
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Challenge Dashboard
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-              <Card
-                sx={{
-                  width: "50%",
-                  backgroundColor: "#dff9e7",
-                  color: "green",
-                  p: 2,
-                  borderRadius: 2,
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Participated
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                    {totalChallenges || 0}
-                  </Typography>
-                </CardContent>
-              </Card>
-              <Card
-                sx={{
-                  width: "50%",
-                  backgroundColor: "#f3e7fc",
-                  color: "purple",
-                  p: 2,
-                  borderRadius: 2,
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Completed
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                    {completedChallenges || 0}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-            {/* Active Challenges */}
-            <Typography variant="h6" gutterBottom>
-              Active Challenges
-            </Typography>
-            {!activeChallenges ?
-              <Typography variant="h6">
-                {"Welcome traveler!\n Let's craft your first memory together!"}
-              </Typography> :
-              activeChallenges.length > 0 ? (
-                activeChallenges.map((challenge, index) => (
-                  <Card
-                    key={index}
-                    sx={{
-                      p: 2,
-                      mb: 2,
-                      backgroundColor: "#fff",
-                      boxShadow: 1,
-                      borderRadius: 2,
-                    }}
-                  >
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      {challenge.name}
-                    </Typography>
-                    <Typography>Status: {challenge.status}</Typography>
-                    <Typography>
-                      <Link 
-                        component="button" 
-                        underline="none"
-                        onClick={()=>{router.push(`/challenge/${challenge.id}/story`)}}>
-                        Visit your story
-                      </Link>
-                    </Typography>
-                    {challenge.status !== "Completed" ?
-                      <Typography align="center">
-                        <Button
-                          sx={{
-                            borderRadius: 14,
-                            width: "150px",
-                            fontSize: { xs: "0.5rem", md: "1rem" },
-                          }}
-                          variant="contained"
-                          startIcon={<FastForwardIcon />}
-                          onClick={() => { handleContinue(challenge.id) }}>
-
-                          Continue
-                        </Button>
-                      </Typography> : <Typography></Typography>
-                    }
-
-                  </Card>
-                ))
-              ) : (
-                <Typography>No Challenges Currently Available</Typography>
-              )
-            }
-          </Box>
+          {storyData.map((item, index)=>(
+            <StyledContentCard 
+              key={index}
+              content={item}
+              route={`/profile/user/${item.id}`}
+            />
+          ))}
         </Box>
-      </Box>
+      
     </Box>
   );
 };

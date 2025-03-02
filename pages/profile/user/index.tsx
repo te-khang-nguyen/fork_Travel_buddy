@@ -10,13 +10,21 @@ import {
   IconButton,
   Snackbar,
   Alert,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
+import StyledContentCard from "@/app/components/generic-component/StyledContentCard";
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import AvatarEditor from "@/app/components/image_picker/AvatarPicker";
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
 } from "@/libs/services/user/profile";
+import {
+  useGetAllStoryQuery
+} from "@/libs/services/user/story";
+
+import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 
 interface ProfileFormInputs {
   username?: string;
@@ -49,6 +57,9 @@ const ProfileForm = () => {
     severity: "success",
   });
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   const [profileValues, setProfileValues] = useState<{
@@ -56,6 +67,10 @@ const ProfileForm = () => {
     avatarUrl: string;
     brandVoice: string;
   }>(defaultValues);
+
+  const [ storyData, setStoryData ] = useState<{
+    [x: string]: string | number | string[] | undefined
+  }[]>([]);
 
   const profileValuesRef = useRef<{
     username: string;
@@ -67,10 +82,15 @@ const ProfileForm = () => {
 
   const { 
     data: profile, 
-    error: profileError 
+    error: profileError,
+    isLoading: isLoadingProfile,
+    isFetching
   } = useGetProfileQuery();
 
-  // const storedValues = JSON.parse(sessionStorage.getItem("profile") as string);
+  const {
+    data: story, 
+    error: storyError
+  } = useGetAllStoryQuery();
 
   useEffect(() => {
     if (profile) {
@@ -96,6 +116,19 @@ const ProfileForm = () => {
       }
     }
   }, [profile]);
+  
+  useEffect(()=>{
+          if(story?.data){
+              setStoryData(story?.data?.map((item) => ({
+                  id: item.id,
+                  createdAt: item.createdAt,
+                  title: item.title,
+                  text: item.storyFull,
+                  media: item.mediaSubmitted,
+                  status: item.status,
+              })));
+          }
+  },[story?.data]);
 
   const onUserNameEditClicked = async (
     setIsEditing: (isEdditing: boolean) => void, 
@@ -104,7 +137,7 @@ const ProfileForm = () => {
     value: string
   ) => {
     setIsEditing(!isEditing);
-    if(isEditing) {
+    if(isEditing && profile?.data[key] !== value) {
       const result = await updateProfile({
         [key]: value
       }).unwrap();
@@ -144,20 +177,40 @@ const ProfileForm = () => {
         message: "Failed to update avatar! Please try again!",
         severity: "error",
       });
+
     }
   }
+
+  if(isLoadingProfile) {
+    return (<LoadingSkeleton isLoading={isLoadingProfile}/>);
+  };
 
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-start",
+        justifyContent: "center",
         alignItems: "center",
+        alignSelf: "center",
         minHeight: "100%",
         backgroundColor: "#f4f4f4",
         padding: 2,
-        
+        gap: 5
+      }}
+    >
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
+        minHeight: "100%",
+        width: isMobile? "100%":"50%",
+        backgroundColor: "#f4f4f4",
+        padding: 2,
+        gap: 5
       }}
     >
       <Box
@@ -168,9 +221,16 @@ const ProfileForm = () => {
        width={"100%"}
        // border={1}
       >
-        <Typography variant="h5" sx={{fontWeight: 'bold'}}>My Profile</Typography>
+        <Typography variant="h3" sx={{
+          fontWeight: 'bold',
+          fontSize: isMobile ? "h5.fontSize": "h4.fontSize",
+          }}>My Profile</Typography>
         <IconButton sx={{right: 0}}>
-          <SettingsOutlinedIcon sx={{color: "rgb(16, 126, 243)"}}/>
+          <SettingsOutlinedIcon 
+            sx={{
+              color: "rgb(16, 126, 243)",
+              fontSize: {xs: "30px", sm: "30px", md: "40px", lg: "40px"}
+            }}/>
         </IconButton>
       </Box>
 
@@ -178,9 +238,13 @@ const ProfileForm = () => {
       <Box
        display="flex"
        flexDirection="row"
-       justifyContent="space-between"
+       justifyContent={isMobile?"space-between":"flex-start"}
        alignItems="center"
        width={"100%"}
+       gap={isMobile? 0 : 3}
+       sx={{
+        mt: 0,
+       }}
        // border={1}
       >
         <AvatarEditor
@@ -195,6 +259,12 @@ const ProfileForm = () => {
         <Typography
           variant="h6"
           sx={{
+            fontSize:  {
+              xs:'h6.fontSize',
+              sm:'h6.fontSize',
+              md:'h5.fontSize',
+              lg:'h5.fontSize'
+            },
             color: "black",
             fontWeight:"bold"
           }}
@@ -205,7 +275,19 @@ const ProfileForm = () => {
           fullWidth
           variant="outlined"
           sx={{
-            ml: 2
+            ml: 2,
+            '.MuiInputBase-input': {                           
+                fontSize: {
+                  xs:'h6.fontSize',
+                  sm:'h6.fontSize',
+                  md:'h5.fontSize',
+                  lg:'h5.fontSize'
+                }
+            },
+            '.MuiOutlinedInput-notchedOutline':{
+              borderColor:"black",
+              borderWidth: "2px"
+            }
           }}
           value={profileValues.username}
           onChange={(e) => {
@@ -236,13 +318,23 @@ const ProfileForm = () => {
        justifyContent="space-between"
        alignItems="flex-start"
        width={"100%"}
+       sx={{
+        mt: 0,
+        gap: 2
+       }}
        // border={1}
       >
 
         <Typography
-          variant="body1"
+          variant="h4"
           sx={{
-            fontWeight: "bold"
+            fontWeight: "bold",
+            fontSize: {
+              xs:'h6.fontSize',
+              sm:'h6.fontSize',
+              md:'h5.fontSize',
+              lg:'h5.fontSize'
+            },
           }}
         >
           Brand Voice
@@ -260,6 +352,12 @@ const ProfileForm = () => {
           variant="body1"
           sx={{
             color: "black",
+            fontSize:  {
+              xs:'h6.fontSize',
+              sm:'h6.fontSize',
+              md:'h5.fontSize',
+              lg:'h5.fontSize'
+            },
           }}
         >
           {profileValues.brandVoice}
@@ -267,6 +365,21 @@ const ProfileForm = () => {
         :<TextField
           fullWidth
           variant="outlined"
+          sx={{
+            '.MuiInputBase-input': {
+                                            
+              fontSize: {
+                xs:'h6.fontSize',
+                sm:'h6.fontSize',
+                md:'h5.fontSize',
+                lg:'h5.fontSize'
+              }
+            },
+            '.MuiOutlinedInput-notchedOutline':{
+              borderColor:"black",
+              borderWidth: "2px"
+            }
+          }}
           value={profileValues.brandVoice}
           onChange={(e) => {
             sessionStorage.setItem("brandVoice", e.target.value);
@@ -289,6 +402,44 @@ const ProfileForm = () => {
         </IconButton>
         </Box>
 
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection:"column",
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+            alignSelf: "center",
+            overflowY: "auto",
+            mt: 3,
+            width: "100%",
+            maxHeight: 400,
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: "bold",
+              fontSize: {
+                xs:'h6.fontSize',
+                sm:'h6.fontSize',
+                md:'h5.fontSize',
+                lg:'h5.fontSize'
+              },
+              mb: 2
+            }}
+          >
+            Your Stories
+          </Typography>
+          {storyData.map((item, index)=>(
+            <StyledContentCard 
+              key={index}
+              content={item}
+              route={`/profile/user/${item.id}`}
+            />
+          ))}
+        </Box>
+        
+
       </Box>
 
       <Snackbar
@@ -305,6 +456,7 @@ const ProfileForm = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+    </Box>
     </Box>
   );
 };

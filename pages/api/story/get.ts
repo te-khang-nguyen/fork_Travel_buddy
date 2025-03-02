@@ -17,7 +17,7 @@ export default async function handler(
             error 
         } = await supabase
             .from("story")
-            .select("*")
+            .select("*, destinations(name)")
             .eq("id", story_id)
             .single();
 

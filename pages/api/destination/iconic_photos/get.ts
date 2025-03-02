@@ -28,7 +28,7 @@ export default async function handler(
                 url: media_assets?.url || null, // Extract URL
             }));
         
-            console.log("Transformed Data:", transformedData);
+            // console.log("Transformed Data:", transformedData);
         }        
 
         if (error) {

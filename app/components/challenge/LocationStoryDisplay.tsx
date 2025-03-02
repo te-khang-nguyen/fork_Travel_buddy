@@ -106,20 +106,6 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
         }
     }, [content]);
 
-    // Scroll to the left
-    const handlePrev = () => {
-        if (carouselRef.current) {
-            carouselRef.current.scrollTop -= 300;
-        }
-    };
-
-    // Scroll to the right
-    const handleNext = () => {
-        if (carouselRef.current) {
-            carouselRef.current.scrollTop += 300;
-        }
-    };
-
     const handleSaveChanges = () => {
         onSaveChanges?.(travelStory);
     };
@@ -250,7 +236,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                         images={media}
                         sx={{
                             position: 'relative',
-                            width: '90%',
+                            width: {xs: "90%", sm: "90%", md: "45%", lg: "30%"},
                             height: "100%",
                             mb: 4
                         }}
@@ -275,7 +261,9 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                     >
                       Destination:  
                     </Typography>
-                    <Typography variant="body1" sx={{mt: "0.3rem"}}>Ho Chi Minh City</Typography>
+                    <Typography variant="body1" sx={{mt: "0.3rem"}}>
+                        Ho Chi Minh City
+                    </Typography>
                     </Box>
 
                     <Box
@@ -291,7 +279,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                     >
 
                         {isEditing && (
-                            <Box
+                        <Box
                             sx={{
                                 display: "flex",
                                 flexDirection: "row",
@@ -396,7 +384,6 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                 </Typography>:
                                 <TextField
                                     variant="outlined"
-                                    fullWidth
                                     multiline
                                     rows={12}
                                     value={travelStory}
@@ -406,7 +393,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                         borderRadius: 3,
                                         mt: 1,
                                         mb: 3,
-                                        width: {xs: 160, sm: 300, md: 600, lg:600},
+                                        width: {xs: 300, sm: 300, md: 600, lg:1000},
                                         '.MuiInputBase-input': {
                                             fontFamily: montserrat.style.fontFamily, 
                                             fontSize: {

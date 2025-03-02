@@ -49,6 +49,20 @@ export default async function handler(
             return res.status(400).json({ error: error.message });
         }
 
+        const toMediaAssets =  mediaSubmitted.map((mediaItem)=>({
+          uploader_id: user!.id,
+          url: mediaItem,
+          usage: "story",
+          mime_type: "image/jpeg"
+        }))
+
+        const {
+          data: mediaData, 
+          error: mediaErr
+        } = await supabase.from("media_assets")
+                          .insert(toMediaAssets)
+                          .select();
+
         // Successful response
         return res.status(201).json({ data: {
             message: "Story created successfully", 

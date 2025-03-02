@@ -3,12 +3,18 @@ import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import "../app/globals.css";
 import { useRouter } from "next/router";
-import DrawerLayout from "@/app/Layout/SideBarWrapper";
 import MenuBarsLayout from "@/app/Layout/MenuBarsWrapper";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material";
 import theme from "@/app/theme";
 import { GlobalContextProvider } from "@/app/GlobalContextProvider";
 import withAuthRedirect from "@/app/Layout/WithAuthRedirect";
+import { Roboto } from 'next/font/google';
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['300', '400', '500', '700']
+});
 
 const NO_DRAWER_BUTTON_PAGES = [
   "/recovery",
@@ -16,6 +22,13 @@ const NO_DRAWER_BUTTON_PAGES = [
   "/login/business",
   "/register",
 ];
+
+const THEME = createTheme({
+  ...theme,
+  typography: {
+    "fontFamily": roboto.style.fontFamily,
+  }
+})
 
 const MainContent = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();

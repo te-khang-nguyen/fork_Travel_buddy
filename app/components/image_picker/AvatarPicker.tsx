@@ -3,11 +3,11 @@ import { BsPersonBoundingBox } from "react-icons/bs";
 import { BsCamera2 } from "react-icons/bs";
 import { GiPhotoCamera } from "react-icons/gi";
 import { AiOutlineCamera } from "react-icons/ai";
-import Dropzone, { useDropzone } from "react-dropzone";
 import { 
   Box, 
   Button, 
   Typography, 
+  CardActionArea,
   CardMedia, 
   useTheme, 
   useMediaQuery,
@@ -53,37 +53,6 @@ const AvatarEditor: React.FC<AvatarEditorProps> =
       setSelectedImages,
       onImageUpload,
     }
-
-    const MediaUploadButton = (
-            <Button
-              variant="contained"
-              component="label"
-              size="small"
-              sx={{
-                // backgroundColor: "rgb(17, 104, 245)",
-                color: "rgb(17, 104, 245)",
-                fontSize: { xs: "12px", sm: "14px" },
-                borderRadius: "50%",
-                minWidth: 35,
-                minHeight: 35
-              }}
-            >
-              <BsPersonBoundingBox
-                style={{
-                  color: "white",
-                  fontSize: "13px"
-                }}
-              /> 
-              <input 
-                type="file" 
-                hidden 
-                onChange={(e) => handleImageUpload({
-                  acceptedFiles: e.target.files,
-                  ...paramObj
-                })} 
-              />
-            </Button>
-    );
     
     return (
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -107,6 +76,13 @@ const AvatarEditor: React.FC<AvatarEditorProps> =
                   position: "relative",
                 }}
               >
+                <CardActionArea
+                  component="label"
+                  // onClick={(e) => handleImageUpload({
+                  //   acceptedFiles: e.target.files,
+                  //   ...paramObj
+                  // })}
+                >
                 <CardMedia
                   component="img"
                   src={
@@ -124,25 +100,18 @@ const AvatarEditor: React.FC<AvatarEditorProps> =
                     objectFit: "cover",
                   }}
                 />
+                <input 
+                  type="file" 
+                  hidden 
+                  onChange={(e) => handleImageUpload({
+                    acceptedFiles: e.target.files,
+                    ...paramObj
+                  })} 
+                />
+                </CardActionArea>
               </Box>
           </Box>
           )}
-        <Box 
-          position="absolute"
-          display="flex" 
-          alignItems="center" 
-          gap={2}
-          sx={{
-            top: isMobile? 125:140,
-            left: isMobile? 70: 85,
-            zIndex: 2,  
-            width: "20%",
-            height: "20%"
-          }}
-        >
-          {MediaUploadButton}
-        </Box>
-       
       </Box>
     );
   };

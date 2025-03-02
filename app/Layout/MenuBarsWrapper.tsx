@@ -1,11 +1,14 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { FaPenNib } from "react-icons/fa6";
 import { LiaPenNibSolid } from "react-icons/lia";
+import { FiPenTool } from "react-icons/fi";
+import { RiQuillPenAiLine } from "react-icons/ri";
 import { ImCompass2 } from "react-icons/im";
 import { FiCompass } from "react-icons/fi";
 import { PiCompassFill } from "react-icons/pi";
 import { GoPerson } from "react-icons/go";
 import { GoPersonAdd } from "react-icons/go";
+import { GoGear } from "react-icons/go";
 import {
   AppBar,
   Box,
@@ -13,7 +16,6 @@ import {
   Menu,
   MenuItem,
   IconButton,
-  InputBase,
   Typography,
   List,
   ListItem,
@@ -24,6 +26,7 @@ import {
   useTheme, 
   useMediaQuery,
   Grid2,
+  Drawer
 } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
@@ -50,17 +53,18 @@ const StyledFab = styled(Fab)({
   margin: '0 auto',
 });
 
-
-
 interface DrawerLayoutProps {
   children: ReactNode;
   showMenuBars?: boolean;
 }
 
+const drawerWidth = 240;
+
 const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
   children,
   showMenuBars = false,
 }) => {
+  const router = useRouter();
   const [logout] = useLogOutMutation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -69,14 +73,19 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
     color:string
   }[]>([]);
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState<null | HTMLElement>(null);
+  const [buttonContext, setButtonContext] = useState(false);
+  
+  const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
   const role = typeof window !== 'undefined' ? localStorage.getItem('role') : null
 
-  const [menuOpen, setMenuOpen] = useState<null | HTMLElement>(null);
-  const router = useRouter();
-
   const IconStyle = {
-    transform: 'rotate(90deg)',
-    fontSize: isMobile? '30px' : '40px',
+    // transform: 'rotate(90deg)',
+    fontSize: '30px',
     color: "white"
   }
 
@@ -116,7 +125,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
     { 
       text: role==="user"?"Explore":"Dashboard", 
       icon: <ImCompass2 />, 
-      route: `/dashboard/${role}` 
+      route: `/destination/select` 
     },
     { 
       text: "Profile", 
@@ -125,7 +134,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
     { 
       text: "Add new", 
       icon: role === "user"? 
-        <LiaPenNibSolid style={IconStyle} /> : <AddIcon style={IconStyle} />, 
+        <RiQuillPenAiLine style={IconStyle} /> : <AddIcon style={IconStyle} />, 
       route: role === "user"? `/profile/${role}/story/create` : `/`
     },
   ];
@@ -134,7 +143,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
     role === "user"
       ? [
           // { text: "Challenge", icon: <Inventory />, route: `/challenge` },
-          { text: "Settings", icon: <SettingsOutlinedIcon />, route: `/profile/${role}` },
+          { text: "Settings", icon: <GoGear />, route: `/profile/${role}` },
       ]
       : [
           {
@@ -179,11 +188,19 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
               }}
              >
               <StyledFab
-                size={isMobile? "small": "large"}
+                size="small"
                 sx={{
-                  backgroundColor: colorOnClicked?.find(e => e.text === item.text)?.color,
-                  color: colorOnClicked?.find(e => e.text === item.text)?.color,
-                  left: isMobile? "27%":"45%",
+                  backgroundColor: "rgb(53, 126, 254)",
+                  color: "rgb(53, 126, 254)",
+                  left: "27%",
+                  "&:active": {
+                    backgroundColor: "rgb(53, 126, 254)",
+                    color: "rgb(53, 126, 254)",
+                  },
+                  "&:focus": {
+                    backgroundColor: "rgb(53, 126, 254)",
+                    color: "rgb(53, 126, 254)",
+                  }
                 }}
                 onClick={()=>{handleButtonClicked(item)}}
               >
@@ -215,6 +232,125 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
         ))}
     </Toolbar>
   );
+
+  const mobileBottomBar = (
+    <AppBar
+          position="fixed"
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            backgroundColor: "white",
+            color: "rgb(38, 107, 209)",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            top: "auto",
+            bottom: 0,
+          }}
+        >
+          {items}
+    </AppBar>
+  );
+
+  const drawer = (
+      <Box
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
+          
+        }}
+      >
+        <Toolbar />
+        <List
+          sx={{
+            display:"flex",
+            flexDirection: "column",
+            gap: 2
+          }}
+        >
+          <Box
+              sx={{
+                display: "flex", 
+                flexDirection: "row",
+                mt: -7, 
+                ml: 1
+              }}
+            >
+              <IconButton
+                onClick={()=>router.push(`/dashboard/${role}`)}
+              >
+              <PiCompassFill 
+                style={{
+                  color: "rgb(38, 107, 209)",
+                  transform: 'rotate(135deg)',
+                  fontSize: '36px'
+                }}
+              />
+              </IconButton>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: "bold",
+                color: "rgb(38, 107, 209)",
+                mt: 1,
+                ml: 1
+              }}
+            >
+              Travel Buddy
+            </Typography>
+            </Box>
+          {[...defaultMenuItems, ...menuItems].map((item) => (
+            item.text !== "Add new" &&
+            (<ListItem
+              key={item.text}
+              onClick={() => handleButtonClicked(item)}
+              sx={{
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.08)", // Light gray background on hover
+                  cursor: "pointer",
+                },
+                transition: "background-color 0.3s", // Smooth transition effect
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  fontSize: "30px"
+                }}
+              >{item.icon}</ListItemIcon>
+              <ListItemText 
+                primary={
+                  item.text==="Add new"? 
+                  role === "user"? 
+                    "Write your story" 
+                    : "Create new destination"
+                    : item.text
+                } 
+              />
+            </ListItem>)
+          ))}
+        </List>
+      </Box>
+  );
+
+  const drawerDisplay = (
+    <Drawer
+      variant="temporary"
+      open={drawerOpen}
+      onClose={handleDrawerToggle}
+      ModalProps={{
+        keepMounted: true,
+      }}
+      sx={{
+        "& .MuiDrawer-paper": { 
+          width: drawerWidth, 
+          boxSizing: "border-box" 
+        },
+      }}
+    >
+      {drawer}
+    </Drawer>
+  );
+
+
 
   const menuId = 'user-account-menu'
   const renderMenu = (
@@ -271,31 +407,90 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
                 inputProps={{ "aria-label": "search" }}
               />
             </Search> */}
+
+            {!isMobile && 
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{ 
+                  mr: 2,
+                }}
+              >
+                <MenuIcon /> 
+              </IconButton>}
+
+
             <Box
               sx={{
                 display: "flex", 
                 flexDirection: "row", 
               }}
             >
-            <PiCompassFill 
-              style={{
-                color: "rgb(38, 107, 209)",
-                transform: 'rotate(135deg)',
-                fontSize: '36px'
-              }}
-            />
+            <IconButton
+                onClick={()=>router.push(`/dashboard/${role}`)}
+              >
+              <PiCompassFill 
+                style={{
+                  color: "rgb(38, 107, 209)",
+                  transform: 'rotate(135deg)',
+                  fontSize: '36px'
+                }}
+              />
+            </IconButton>
             <Typography
               variant="h5"
               sx={{
                 fontWeight: "bold",
                 color: "rgb(38, 107, 209)",
-                top: 1,
+                mt: 1,
                 ml: 1
               }}
             >
               Travel Buddy
             </Typography>
             </Box>
+            
+            {!isMobile && 
+              <>
+              {defaultMenuItems.map((item, index) => (
+                item.text === "Add new" &&
+                <StyledFab
+                  key={index}
+                  size="small"
+                  sx={{
+                    display:"flex",
+                    flexDirection: "row",
+                    backgroundColor: "rgb(53, 126, 254)",
+                    color: "rgb(53, 126, 254)",
+                    top: 10,
+                    "&:hover": {
+                      backgroundColor: "rgb(53, 126, 254)",
+                    },
+                    gap: 1
+                  }}
+                  // onMouseOver={() => setButtonContext(true)}
+                  // onMouseOut={() => setButtonContext(false)}
+                  onClick={()=>{handleButtonClicked(item)}}
+                >
+                  {item.icon}
+                  
+                </StyledFab>
+                
+              ))}
+              {/* {buttonContext && 
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      backgroundColor: "rgb(139, 184, 247)",
+                      color: "white",
+                    }}
+                  >
+                    Write your story
+                </Typography>} */}
+              </>
+            }
             <IconButton
               size="large"
               color="inherit"
@@ -321,20 +516,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
             
           </Toolbar>
         </AppBar>
-        <AppBar
-          position="fixed"
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            backgroundColor: "white",
-            color: "rgb(38, 107, 209)",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-            top: "auto",
-            bottom: 0,
-          }}
-        >
-          {items}
-        </AppBar>
+        {isMobile? mobileBottomBar : drawerDisplay}
         {renderMenu}
       </>)
       }
