@@ -8,13 +8,17 @@ const client = new OpenAI({
 async function generateLocationStories(
     attractions: string,
     notes: string,
+    brand_voice: string,
     storyLength: number = 45
   ): Promise<any> {
 
     const prompt = `
-    Play the role of an imaginative travel writer.
     Create a cohesive creative story based on the following tour details:
-    
+
+    Writing Style: 
+    - Strict ly follow and write the story in the style specified in the [Brand Voice]
+    - [Brand Voice]: ${brand_voice}
+
     List of Tour information:
     - Tour Locations: ${attractions}
     - Tour Notes: ${notes}

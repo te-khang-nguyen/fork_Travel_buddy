@@ -27,10 +27,13 @@ import {
 import {
     useGetAllChannelsQuery
 } from "@/libs/services/user/channel";
+import {
+    useGetProfileQuery,
+} from "@/libs/services/user/profile";
 import MenuDropdown from "@/app/components/generic-component/MenuDropdown";
 import writeAnimation from "@/assets/feather-pen.gif";
 import Image from 'next/image';
-import { skip } from "node:test";
+
 
 const defaultOption = [
     {
@@ -45,6 +48,7 @@ const CreateStoryUI = () => {
     const [ generateStory ] = useGenerateStoryMutation();
     const [ uploadImage ] = useUploadImageMutation();
     const [ destinationId, setDestinationId ] = useState<string>("1");
+    const [ brandVoice, setBrandVoice] = useState<string>("");
     const [ channelId, setChannelId ] = useState<string>("1");
     const [ options, setOptions ] = useState<{
         id: string;
@@ -71,7 +75,7 @@ const CreateStoryUI = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const commonComponentWidth = isMobile? "100%": "60%";
-    const [attractionsTitles, setAttractionsTitles] = useState<string>("")
+    const [attractionsTitles, setAttractionsTitles] = useState<string>("");
 
     const persistedDesId = sessionStorage.getItem("destinationId");
     const persistedChannelId = sessionStorage.getItem("channelId");
@@ -96,6 +100,19 @@ const CreateStoryUI = () => {
     {
         skip: !destinationId || destinationId === "1"
     });
+
+    const { 
+        data: profile, 
+        error: profileError,
+        isLoading: isLoadingProfile,
+        isFetching
+    } = useGetProfileQuery();
+
+    useEffect(()=>{
+        if(profile?.data){
+            setBrandVoice(profile?.data?.brandVoice);
+        }
+    },[profile?.data]);
 
     useEffect(()=>{
         setDestinationId(persistedDesId ?? "1");
@@ -170,6 +187,7 @@ const CreateStoryUI = () => {
             payload: {
                 userNotes: userInputs.userQuestionSubmission,
                 attractions: attractionsTitles,
+                brandVoice: brandVoice
             }
         });
 

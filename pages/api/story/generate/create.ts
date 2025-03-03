@@ -11,7 +11,7 @@ export default async function handler(
     }
 
     // Extract body
-    const { attractions, notes, story_length } = req.body;
+    const { attractions, notes, brand_voice, story_length } = req.body;
 
     // Extract authorization token
     const token = req.headers.authorization?.split(' ')[1];
@@ -24,6 +24,7 @@ export default async function handler(
         const { data: storyData, error } = await generateLocationStories(
                 attractions, 
                 notes,
+                brand_voice,
                 story_length
         );
 

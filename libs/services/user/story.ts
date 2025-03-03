@@ -14,6 +14,7 @@ interface StoryReq {
         attractions?: string;
         tourSchedule?: string;
         storyLength?: number;
+        brandVoice?: string;
     }
 }
 
@@ -60,6 +61,7 @@ const StoryApi = createApi({
                 schedule: payload?.tourSchedule,
                 attractions: payload?.attractions,
                 notes: payload?.userNotes,
+                brand_voice: payload?.brandVoice,
                 story_length: payload?.storyLength
               }
             })
