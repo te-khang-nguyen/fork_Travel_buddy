@@ -45,13 +45,15 @@ export const StoryPage = ({
     title, 
     story,
     story_id,
-    userMediaSubmission,
+    destination,
+    media,
     isGenerating = false 
 }: { 
-    title: string, 
-    story: string,
-    story_id: string,
-    userMediaSubmission: string[],
+    title: string;
+    story: string;
+    story_id: string;
+    destination: string;
+    media: string[];
     isGenerating?: boolean 
 }) => {
     const [updateStory] = useUpdateStoryMutation();
@@ -194,7 +196,8 @@ export const StoryPage = ({
                 <LocationStoryDisplay 
                     content={{ 
                         story,
-                        userMediaSubmission,
+                        media,
+                        destination,
                     }}
                     onSaveChanges={(e)=>handleSaveChanges(e)}
                     onTrigger={isArchived? handleReactivate : handleDeleteStory}

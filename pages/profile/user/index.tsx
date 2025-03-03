@@ -434,7 +434,7 @@ const ProfileForm = () => {
             <StyledContentCard 
               key={index}
               content={item}
-              route={`/profile/user/${item.id}`}
+              route={`/profile/user/story/${item.id}`}
             />
           ))}
         </Box>

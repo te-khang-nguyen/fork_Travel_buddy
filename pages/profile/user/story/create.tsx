@@ -150,7 +150,7 @@ const CreateStoryUI = () => {
           const result = await uploadImage({
             imageBase64: img,
             title: `ind-${index}`,
-            bucket: 'story',
+            bucket: 'challenge',
           });
     
           if (result.error) {
@@ -187,15 +187,6 @@ const CreateStoryUI = () => {
             });
 
             if (submissionResult) {
-                  setSnackbar({
-                    open: true,
-                    message:
-                      `Great sharings!\n
-                      This chapter will be wonderful!\n
-                      Let's keep exploring while we craft your story!`,
-                    severity: "success",
-                  });
-          
                 router.push(`/profile/user/story/${submissionResult?.data?.id}`);
                 sessionStorage.removeItem("notes");
                 sessionStorage.removeItem("destinationId");
@@ -254,7 +245,7 @@ const CreateStoryUI = () => {
             flexDirection: "column",
             alignItems: "center",
             overflow: "auto",
-            maxHeight: "80vh"
+            maxHeight: isMobile? "80vh":"150vh"
         }}
     >
         {isConfirmClicked? 
@@ -309,6 +300,7 @@ const CreateStoryUI = () => {
                     onSort={(id) => {
                         setDestinationId(id);
                         sessionStorage.setItem("destinationId", id)
+                        console.log(id);
                     }}
                     options={options}
                     sx={{

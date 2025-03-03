@@ -62,7 +62,8 @@ const StoryPageUI = () => {
             story_id={Array.isArray(story_id) ? story_id[0] : story_id || ''}
             title={story.data.title ?? ''} 
             story={story.data.storyFull}
-            userMediaSubmission={story.data.mediaSubmitted ?? []}
+            media={story.data.mediaSubmitted ?? []}
+            destination={story.data.destinations?.name ?? ""}
         />
     );
 }

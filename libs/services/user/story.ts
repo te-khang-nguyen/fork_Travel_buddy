@@ -17,45 +17,34 @@ interface StoryReq {
     }
 }
 
+interface StoryProps {
+  id?: string;
+  status?: string;
+  title?: string;
+  createdAt?: string;
+  userId?: string;
+  destinationId?: string;
+  challengeHistoryId?: string;
+  userNotes?: string;
+  storyFull?: string;
+  mediaSubmitted?: string[];
+  seoTitleTag?: string;
+  seoMetaDesc?: string;
+  seoSlug?: string;
+  longTailKeyWord?: string;
+  hashtag?: string;
+  destinations?: {
+    name?: string;
+  };
+}
+
 interface StoryRes {
-    data?: {
-        id?: string;
-        status?: string;
-        title?: string;
-        createdAt?: string;
-        userId?: string;
-        destinationId?: string;
-        challengeHistoryId?: string;
-        userNotes?: string;
-        storyFull?: string;
-        mediaSubmitted?: string[];
-        seoTitleTag?: string;
-        seoMetaDesc?: string;
-        seoSlug?: string;
-        longTailKeyWord?: string;
-        hashtag?: string;
-    }[];
+    data?: StoryProps[];
     error?: any;
 }
 
 interface StorySingleRes {
-  data?: {
-      id?: string;
-      status?: string;
-      title?: string;
-      createdAt?: string;
-      userId?: string;
-      destinationId?: string;
-      challengeHistoryId?: string;
-      userNotes?: string;
-      storyFull?: string;
-      mediaSubmitted?: string[];
-      seoTitleTag?: string;
-      seoMetaDesc?: string;
-      seoSlug?: string;
-      longTailKeyWord?: string;
-      hashtag?: string;
-  };
+  data?: StoryProps;
   error?: any;
 }
 

@@ -1,6 +1,5 @@
  // Your API slices
 import { configureStore} from '@reduxjs/toolkit';
-import { UsersApi } from './services/user';
 import { UserAuthApi } from './services/user/auth';
 import { BusinessAuthApi } from './services/business/auth';
 import { UserProfileApi } from './services/user/profile';
@@ -18,7 +17,6 @@ import { ChannelApi } from './services/user/channel';
 
 export const store = configureStore({
   reducer: {
-    [UsersApi.reducerPath]: UsersApi.reducer, // Setting the reducer correctly
     [UserAuthApi.reducerPath]: UserAuthApi.reducer,
     [UserProfileApi.reducerPath]: UserProfileApi.reducer,
     [BusinessAuthApi.reducerPath]: BusinessAuthApi.reducer,
@@ -33,7 +31,6 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
-      .concat(UsersApi.middleware)
       .concat(UserAuthApi.middleware) 
       .concat(UserProfileApi.middleware)
       .concat(BusinessAuthApi.middleware)

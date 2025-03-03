@@ -73,18 +73,20 @@ const WoodenCircle = styled(Box)(({ theme }) => ({
 
 interface LocationStoryProps {
     content: any;
-    onSaveChanges?: (storyUpdated: string) => void;
-    onTrigger?: () => void;
     isTriggered?: boolean;
     isEditor?: boolean;
+    onSaveChanges?: (storyUpdated: string) => void;
+    onPublished?: () => void;
+    onTrigger?: () => void;
 }
 
 const LocationStoryDisplay: React.FC<LocationStoryProps> = ({ 
     content,
-    onSaveChanges,
-    onTrigger,
     isTriggered, 
-    isEditor
+    isEditor,
+    onSaveChanges,
+    onPublished,
+    onTrigger,
 }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
@@ -102,7 +104,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
             setImageIndex(null);
         } else {
             setTravelStory(persitedTexts || content?.story);
-            setMedia(content?.userMediaSubmission ?? []);
+            setMedia(content?.media ?? []);
         }
     }, [content]);
 
@@ -112,6 +114,10 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
 
     const handleArchive = () => {
         onTrigger?.();
+    };
+
+    const handlePusblishing = () => {
+        onPublished?.();
     };
 
     return (
@@ -176,7 +182,26 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                             >
                                 Edit
                             </Button>}
-                          </Box>
+                            <Button
+                                sx={{
+                                    backgroundColor: "rgba(21, 228, 17, 0.73)",
+                                    color: "rgb(255, 255, 255)",
+                                    fontFamily: montserrat.style.fontFamily,
+                                    fontSize: {
+                                        xs:"body2.fontSize",
+                                        sm:"body1.fontSize",
+                                        md:"body1.fontSize",
+                                        lg:"body1.fontSize",
+                                    },
+                                    borderRadius: 3,
+                                    boxShadow: 3,
+                                    mb: 2
+                                }}
+                                onClick={handlePusblishing}
+                            >
+                                Publish
+                            </Button>
+                        </Box>
                         }
              {imageIndex ?
                 <Box
@@ -196,7 +221,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                 >
                     <CardMedia
                         component="img"
-                        image={content?.userMediaSubmission?.[imageIndex - 1]}
+                        image={content?.media?.[imageIndex - 1]}
                         alt={`Image ${imageIndex}`}
                         sx={{
                             height:"100%",
@@ -218,7 +243,6 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                         <CloseIcon />
                     </Fab>
                 </Box>
-
                 :
                 <Box
                     display="flex"
@@ -240,7 +264,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                             height: "100%",
                             mb: 4
                         }}
-                        onCardClick={(idx) => setImageIndex(idx)}
+                        onCardClick={(idx) => setImageIndex(idx ?? 0 + 1)}
                     />
                     
                     <Box
@@ -254,15 +278,15 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                         }}
                     >
                     <Typography 
-                        variant="h6" 
+                        variant="h5" 
                         sx={{
                             fontWeight : "bold"
                         }}
                     >
                       Destination:  
                     </Typography>
-                    <Typography variant="body1" sx={{mt: "0.3rem"}}>
-                        Ho Chi Minh City
+                    <Typography variant="h6" sx={{mt: "0rem"}}>
+                        {content.destination}
                     </Typography>
                     </Box>
 
@@ -291,8 +315,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                         >
                             <Button
                                 sx={{
-                                    backgroundColor: isTriggered?"rgba(15, 148, 10, 0.84)"
-                                                                :"rgba(228, 17, 17, 0.73)",
+                                    backgroundColor: "rgba(228, 17, 17, 0.73)",
                                     color: "rgb(255, 255, 255)",
                                     fontFamily: montserrat.style.fontFamily,
                                     fontSize: {
@@ -307,7 +330,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                 }}
                                 onClick={handleArchive}
                             >
-                                {isTriggered? "Reactivate" : "Archive"}
+                                Archive
                             </Button>
                             <Button
                                 sx={{
@@ -362,7 +385,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                 p: 2,
                                 borderRadius: 3,
                                 // boxShadow: 2,
-                                width: {xs: "100%", lg: "100%"}
+                                width: {xs: "100%", sm: "100%", md:"80%", lg: "80%"}
                             }}
                         >
                                 {!isEditing?
@@ -393,14 +416,14 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                         borderRadius: 3,
                                         mt: 1,
                                         mb: 3,
-                                        width: {xs: 300, sm: 300, md: 600, lg:1000},
+                                        width: {xs: 300, sm: 300, md: 600, lg:1300},
                                         '.MuiInputBase-input': {
                                             fontFamily: montserrat.style.fontFamily, 
                                             fontSize: {
                                                 xs:'0.7rem',
                                                 sm:'0.9rem',
                                                 md:'1rem',
-                                                lg:'1.2rem'
+                                                lg:'1.3rem'
                                             }
                                         },
                                     }}
