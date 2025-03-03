@@ -351,7 +351,7 @@ const ProfileForm = () => {
         <Typography
           variant="body1"
           sx={{
-            color: "black",
+            color: profileValues.brandVoice? "black" : "grey",
             fontSize:  {
               xs:'h6.fontSize',
               sm:'h6.fontSize',
@@ -360,7 +360,7 @@ const ProfileForm = () => {
             },
           }}
         >
-          {profileValues.brandVoice}
+          {profileValues.brandVoice || 'Input your brand voice'}
         </Typography>
         :<TextField
           fullWidth

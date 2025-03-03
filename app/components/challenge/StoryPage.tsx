@@ -227,6 +227,7 @@ export const StoryPage = ({
 
             <ShareButton
                 texts={{title: `My ${title || 'Travel'} Diaries`}}
+                disabled
             />
         </Box>
     );

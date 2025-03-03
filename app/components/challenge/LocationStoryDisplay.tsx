@@ -122,7 +122,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
 
     return (
         <>
-        {!isEditor?
+        {/* {!isEditor?
                             <Button
                                 sx={{
                                     backgroundColor: "rgba(0, 0, 0, 0.85)",
@@ -202,7 +202,7 @@ const LocationStoryDisplay: React.FC<LocationStoryProps> = ({
                                 Publish
                             </Button>
                         </Box>
-                        }
+                        } */}
              {imageIndex ?
                 <Box
                     display="flex"

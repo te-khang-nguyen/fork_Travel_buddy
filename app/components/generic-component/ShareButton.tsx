@@ -20,12 +20,14 @@ import { useRouter } from "next/router";
 interface ShareButtonProps {
     texts: {
         [x: string] : string;
-    }
+    };
+    disabled?: boolean
 }
 
 
 const ShareButton: React.FC<ShareButtonProps> = ({
-    texts
+    texts,
+    disabled
 }) => {
     const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -57,7 +59,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
             boxShadow: 200,
         }}
         onClick={handleShareClick}
-        // disabled={true}
+        disabled={disabled}
     >
         <LuShare2
             style={{
