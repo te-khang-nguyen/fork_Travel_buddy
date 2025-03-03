@@ -267,7 +267,10 @@ const NagoyaCastleHomePage: React.FC = () => {
                   <Typography variant="body2" color="textSecondary">
                     {child.thumbnail_description}
                   </Typography>
-                  <Button variant="contained" color="primary" onClick={() => router.push(`/destination/${child.id}`)} sx={{ mt: 2 }}>
+                  <Button variant="contained" color="primary" 
+                    // onClick={() => router.push(`/destination/${child.id}`)} 
+                    sx={{ mt: 2 }}
+                  >
                     Learn More
                   </Button>
                 </CardContent>
