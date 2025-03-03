@@ -143,7 +143,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
     role === "user"
       ? [
           // { text: "Challenge", icon: <Inventory />, route: `/challenge` },
-          { text: "Settings", icon: <GoGear />, route: `/profile/${role}` },
+          { text: "Settings", icon: <GoGear />, route: `/settings/${role}` },
       ]
       : [
           {
@@ -179,8 +179,10 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
         gap: isMobile? 2 : 47
       }}
     > 
-        {[...defaultMenuItems, ...menuItems].map((item) => (
-          <>
+        {[...defaultMenuItems, ...menuItems].map((item, index) => (
+          <Box
+            key={index}
+          >
             {item.text == "Add new" ? 
              <Box
               sx={{
@@ -228,7 +230,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
                   </Typography>
                 </IconButton>
               </Box>}
-          </>
+          </Box>
         ))}
     </Toolbar>
   );

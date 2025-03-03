@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PiNotePencilBold } from "react-icons/pi";
 import { useForm, Controller } from "react-hook-form";
+import { useRouter } from "next/router";
 import {
   Box,
   TextField,
@@ -43,7 +44,7 @@ const ProfileForm = () => {
     avatarUrl: "",
     brandVoice: "",
   };
-
+  const router = useRouter()
   const role = localStorage.getItem("role");
   const [isEditingName, setIsEdtingName] = useState<boolean>(false); 
   const [isEditingVoice, setIsEdtingVoice] = useState<boolean>(false); 
@@ -225,7 +226,10 @@ const ProfileForm = () => {
           fontWeight: 'bold',
           fontSize: isMobile ? "h5.fontSize": "h4.fontSize",
           }}>My Profile</Typography>
-        <IconButton sx={{right: 0}}>
+        <IconButton 
+          sx={{right: 0}}
+          onClick={() => router.push(`/settings/${role}`)}
+        >
           <SettingsOutlinedIcon 
             sx={{
               color: "rgb(16, 126, 243)",
@@ -325,7 +329,7 @@ const ProfileForm = () => {
        // border={1}
       >
 
-        <Typography
+        {/* <Typography
           variant="h4"
           sx={{
             fontWeight: "bold",
@@ -340,13 +344,13 @@ const ProfileForm = () => {
           Brand Voice
         </Typography>
         <Box
-       display="flex"
-       flexDirection="row"
-       justifyContent="space-between"
-       alignItems="center"
-       width={"100%"}
-       // border={1}
-      >
+          display="flex"
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+          width={"100%"}
+          // border={1}
+        >
         {!isEditingVoice?
         <Typography
           variant="body1"
@@ -390,17 +394,17 @@ const ProfileForm = () => {
           }}
           />}
         
-        <IconButton
-          onClick={() => onUserNameEditClicked(
-            setIsEdtingVoice,
-            isEditingVoice,
-            "brandVoice",
-            profileValues.brandVoice
-          )}
-        >
-          <PiNotePencilBold style={{fontSize: "20px"}}/>
-        </IconButton>
-        </Box>
+          <IconButton
+            onClick={() => onUserNameEditClicked(
+              setIsEdtingVoice,
+              isEditingVoice,
+              "brandVoice",
+              profileValues.brandVoice
+            )}
+          >
+            <PiNotePencilBold style={{fontSize: "20px"}}/>
+          </IconButton>
+        </Box> */}
 
         <Box
           sx={{

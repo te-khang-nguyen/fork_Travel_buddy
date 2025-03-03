@@ -67,15 +67,19 @@ export default function MenuDropdown({
         open={!!openPopover}
         anchorEl={openPopover}
         onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          width:"100%"
+        }}
       >
         <MenuList
           disablePadding
           sx={{
             p: 0.5,
             gap: 0.5,
-            width: 'auto',
+            width: "100%",
+            minWidth: 900,
             display: 'flex',
             flexDirection: 'column',
             [`& .${menuItemClasses.root}`]: {

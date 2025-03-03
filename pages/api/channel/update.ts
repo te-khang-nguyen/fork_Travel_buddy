@@ -27,7 +27,7 @@ export default async function handler(
             data: storyData,
             error: storyErr
         } = await supabase
-            .from('story')
+            .from('channels')
             .update(updatedData)
             .eq("id", channel_id)
             .select()

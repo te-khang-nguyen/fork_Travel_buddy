@@ -14,7 +14,7 @@ export default async function handler(
             data: queryData, 
             error 
         } = await supabase
-            .from("channel")
+            .from("channels")
             .select(`*`);
 
         if (error) {

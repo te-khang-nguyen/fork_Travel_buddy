@@ -35,30 +35,32 @@ import writeAnimation from "@/assets/feather-pen.gif";
 import Image from 'next/image';
 
 
-const defaultOption = [
-    {
-        id: '1',
-        name: 'Select a destination'
-    },
-];
-
 const CreateStoryUI = () => {
     const router = useRouter();
     const [ uploadStory ] = useUploadStoryMutation();
     const [ generateStory ] = useGenerateStoryMutation();
     const [ uploadImage ] = useUploadImageMutation();
     const [ destinationId, setDestinationId ] = useState<string>("1");
-    const [ brandVoice, setBrandVoice] = useState<string>("");
     const [ channelId, setChannelId ] = useState<string>("1");
     const [ options, setOptions ] = useState<{
         id: string;
         name: string;
-    }[]>(defaultOption);
+    }[]>([
+        {
+            id: '1',
+            name: 'Select a destination'
+        },
+    ]);
 
     const [ channelOptions, setChannelOptions ] = useState<{
         id: string;
         name: string;
-    }[]>(defaultOption);
+    }[]>([
+        {
+            id: '1',
+            name: 'Select a channel'
+        },
+    ]);
 
     const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false);
 
@@ -101,31 +103,21 @@ const CreateStoryUI = () => {
         skip: !destinationId || destinationId === "1"
     });
 
-    const { 
-        data: profile, 
-        error: profileError,
-        isLoading: isLoadingProfile,
-        isFetching
-    } = useGetProfileQuery();
-
-    useEffect(()=>{
-        if(profile?.data){
-            setBrandVoice(profile?.data?.brandVoice);
-        }
-    },[profile?.data]);
-
     useEffect(()=>{
         setDestinationId(persistedDesId ?? "1");
     },[persistedDesId]);
 
     useEffect(()=>{
-        setDestinationId(persistedChannelId ?? "1");
+        setChannelId(persistedChannelId ?? "1");
     },[persistedChannelId]);
 
     useEffect(()=>{
         if(destinationsData){
             setOptions([
-                ...defaultOption,
+                {
+                    id: '1',
+                    name: 'Select a destination'
+                },
                 ...destinationsData?.map((item) =>({
                     id: item.id,
                     name: item.name
@@ -137,7 +129,10 @@ const CreateStoryUI = () => {
     useEffect(()=>{
         if(channelsData){
             setChannelOptions([
-                ...defaultOption,
+                {
+                    id: '1',
+                    name: 'Select a channel'
+                },
                 ...channelsData?.data?.map((item) =>({
                     id: item.id || '',
                     name: item.name || ''
@@ -157,6 +152,14 @@ const CreateStoryUI = () => {
     },[attractionsData]);
 
     const handleInputsUpload = async (userInputs) => {
+        if(destinationId === "1"){
+            setSnackbar({
+                open: true,
+                message: "Please choose a destination for your story!",
+                severity: "error",
+            });
+            return;
+        }
         setIsConfirmClicked(true);
         // getPayLoadSize([userInputs]);
     
@@ -187,7 +190,7 @@ const CreateStoryUI = () => {
             payload: {
                 userNotes: userInputs.userQuestionSubmission,
                 attractions: attractionsTitles,
-                brandVoice: brandVoice
+                brandVoice: channelsData?.data?.find(e => e.id === channelId)?.["brand_voice"]
             }
         });
 
@@ -208,6 +211,7 @@ const CreateStoryUI = () => {
                 router.push(`/profile/user/story/${submissionResult?.data?.id}`);
                 sessionStorage.removeItem("notes");
                 sessionStorage.removeItem("destinationId");
+                sessionStorage.removeItem("channelId");
               } else {
                 setIsConfirmClicked(false);
                 setSnackbar({
@@ -318,7 +322,6 @@ const CreateStoryUI = () => {
                     onSort={(id) => {
                         setDestinationId(id);
                         sessionStorage.setItem("destinationId", id)
-                        console.log(id);
                     }}
                     options={options}
                     sx={{
@@ -329,7 +332,7 @@ const CreateStoryUI = () => {
                 />  }
             </Box>
 
-            {/* <Box
+            <Box
                 sx={{
                     display:"flex",
                     flexDirection:"column",
@@ -360,7 +363,7 @@ const CreateStoryUI = () => {
                         left: 0,
                 }}
                 /> }
-            </Box> */}
+            </Box>
 
             <CustomInputsField
               withConfirmButton={true}
