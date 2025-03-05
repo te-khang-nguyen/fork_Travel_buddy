@@ -142,3 +142,106 @@ export default async function handler(
       });
     }
 }
+
+export const swaggerStorageVideoUpload = {
+    index:51, 
+    text:
+`"/api/storage/upload-video": {
+      "post": {
+        "tags": ["storage"],
+        "summary": "Upload a video",
+        "description": "Upload a video to the specified storage bucket.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "videoBase64": {
+                    "type": "string",
+                    "description": "Base64 encoded video data"
+                  },
+                  "bucket": {
+                    "type": "string",
+                    "description": "The storage bucket to upload the video to"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The title of the video"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "signedUrl": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "error": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "error": { "type": "string" },
+                    "message": { "type": "string" },
+                    "details": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`
+}

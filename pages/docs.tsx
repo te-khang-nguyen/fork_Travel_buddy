@@ -33,7 +33,7 @@ export default function SwaggerPage() {
   return (
     <div className="swagger-container">
       <Head>
-        <title>Travel Buddy API Documentation</title>
+        <title>API Documentation</title>
         <meta name="description" content="API Documentation for Travel Buddy" />
       </Head>
       

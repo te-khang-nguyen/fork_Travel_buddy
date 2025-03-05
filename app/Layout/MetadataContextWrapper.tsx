@@ -54,7 +54,7 @@ const metdataRouteMap = [
     },
     {
       title: 'API Documentation - Travel Buddy', 
-      description:'List of API for TRavel Buddy Application.',
+      description:'List of API for Travel Buddy Application.',
       slug: "/docs",
       seoSlug: "/api-documentation"
   },
@@ -121,6 +121,7 @@ export const MetadataProvider = ({ children }: { children: ReactNode }) => {
         <meta property="og:description" content={seoExcerpt} />
         <meta name="keywords" content={hashtags.join(", ")} />
         <meta name="long-tail-keywords" content={longTailKeyword} />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       {children}
     </MetadataContext.Provider>
