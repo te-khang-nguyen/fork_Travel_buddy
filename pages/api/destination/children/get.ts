@@ -36,7 +36,7 @@ export default async function handler(
 export const swaggerDesChildrenGet = {
     index:15, 
     text:
-`"/api/destination/children": {
+`"/api/v1/destination/children": {
       "get": {
         "tags": ["destination"],
         "summary": "Get child destinations",
