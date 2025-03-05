@@ -8,6 +8,7 @@ export { swaggerOAuth } from './auth/oauth';
 export { swaggerProfileGetAll } from './profile/get';
 export { swaggerProfileUpdate } from './profile/update';
 export { swaggerStorageImgUpload } from './storage/upload-image/create';
+export { swaggerStorageVideoUpload } from './storage/upload-video/create';
 export { swaggerDestCreate } from './destination/create';
 export { swaggerDestGet } from './destination/get';
 export { swaggerDestGetAll } from './destination/get-all';

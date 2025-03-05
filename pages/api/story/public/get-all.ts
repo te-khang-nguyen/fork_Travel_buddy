@@ -35,7 +35,7 @@ export default async function handler(
 export const swaggerPublicStoryGetAll = {
     index:24, 
     text:
-`"/api/v1/story/public": {
+`"/api/v1/story/public/": {
     "get": {
       "tags": ["story"],
       "summary": "Retrieve all published stories",

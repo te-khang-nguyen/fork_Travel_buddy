@@ -268,7 +268,7 @@ const NagoyaCastleHomePage: React.FC = () => {
                     {child.thumbnail_description}
                   </Typography>
                   <Button variant="contained" color="primary" 
-                    // onClick={() => router.push(`/destination/${child.id}`)} 
+                    onClick={() => router.push(`/destination/${child.id}`)} 
                     sx={{ mt: 2 }}
                   >
                     Learn More
@@ -305,7 +305,12 @@ const NagoyaCastleHomePage: React.FC = () => {
                   <Typography variant="body2" color="textSecondary">
                     {feature.description_thumbnail}
                   </Typography>
-                  <Button variant="contained" color="primary" onClick={() => router.push(`/attraction/${feature.id}`)} sx={{ mt: 2 }}>
+                  <Button 
+                    variant="contained" 
+                    color="primary" 
+                    // onClick={() => router.push(`/attraction/${feature.id}`)} 
+                    sx={{ mt: 2 }}
+                  >
                     Learn More
                   </Button>
                 </CardContent>

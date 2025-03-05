@@ -42,12 +42,12 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
             }
           }
 
-          if(router.pathname.includes("/challenge") && storedContentId) {
-              localStorage.removeItem("challengeId");
+          if(router.pathname.includes("/destination") && storedContentId) {
+              localStorage.removeItem("contentId");
           }
           
           if (router.pathname !== "/" && storedContentId) {
-            router.push(`/challenge/${storedContentId}/locations`);
+            router.push(`/destination/${storedContentId}`);
           }
 
           // If the role is 'user' and the path contains 'business', deny access
