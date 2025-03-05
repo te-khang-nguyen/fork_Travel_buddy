@@ -23,6 +23,13 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           const isValidJwt = await isAuthenticated(jwt);  
           const storedContentId = localStorage.getItem("contentId");
 
+          // Redirect to role-based dashboard if on root path with valid JWT and role
+          if (router.pathname === "/" && isValidJwt && role) {
+            console.log(router.pathname);
+            await router.replace(`/dashboard/${role}`);
+            return;
+          }
+
           // Allow access to public routes 
           if (PUBLIC_ROUTES.includes(router.pathname)) {
             setIsCheckingAuth(false);
@@ -41,6 +48,7 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
               return;
             }
           }
+          
 
           if(router.pathname.includes("/destination") && storedContentId) {
               localStorage.removeItem("contentId");
@@ -53,12 +61,6 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           // If the role is 'user' and the path contains 'business', deny access
           if (role === 'user' && router.pathname.includes('business')) {
             await router.replace('/'); // Redirect to a no-access page
-            return;
-          }
-
-          // Redirect to role-based dashboard if on root path with valid JWT and role
-          if (router.pathname === "/" && isValidJwt && role) {
-            await router.replace(`/dashboard/${role}`);
             return;
           }
 

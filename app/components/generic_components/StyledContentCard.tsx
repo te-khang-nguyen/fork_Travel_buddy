@@ -62,10 +62,11 @@ const StyledContentCard: React.FC<StyledContentCard> = ({
                 sx={{
                   display: 'flex',
                   mb: 4,
-                  boxShadow: 0,
+                  boxShadow: 1,
                   borderRadius: 2,
                   height: { xs: 200, sm: 300, md: 300 },
                   width: { xs: 400, sm: 600, md: 800 },
+                  border: 0,
                 }}
               >
                 <Grid container spacing={0}>

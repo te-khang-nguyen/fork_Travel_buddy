@@ -142,11 +142,22 @@ const VoiceToTextButton: React.FC<VoiceButtonForm> = ({
             <PulsingFab
                 variant="circular"
                 size="small"
-                color="primary"
                 onClick={listeningEventTrigger}
                 isPulsing={isListening} 
+                sx={{
+                    backgroundColor: "white",
+                    color: "rgb(41, 113, 246)",
+                    border: 2,
+                    boxShadow: 0
+                }}
             >
-                {isListening ? <StopIcon/> : <GraphicEqIcon />}
+                {isListening ? 
+                <StopIcon 
+                    sx={{color:"rgb(41, 113, 246)"}}
+                /> : 
+                <GraphicEqIcon 
+                    sx={{color:"rgb(41, 113, 246)"}}
+                />}
             </PulsingFab>
 
             <Snackbar

@@ -64,7 +64,7 @@ const UserDashboard = () => {
       setStoryData(story?.data?.map((item) => ({
         id: item.id,
         createdAt: item.created_at,
-        title: item.title,
+        title: item.seo_title_tag,
         text: item.story_content,
         media: item.media_assets?.map((item)=>item.url),
         status: item.status,
