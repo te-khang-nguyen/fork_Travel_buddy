@@ -14,7 +14,7 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import StyledContentCard from "@/app/components/generic-component/StyledContentCard";
+import StyledContentCard from "@/app/components/generic_components/StyledContentCard";
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import AvatarEditor from "@/app/components/image_picker/AvatarPicker";
 import {

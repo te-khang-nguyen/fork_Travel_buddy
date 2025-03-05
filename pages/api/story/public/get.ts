@@ -36,16 +36,11 @@ export default async function handler(
 export const swaggerStoryGet = {
     index:27, 
     text:
-`"/api/v1/story  ": {
+`"/api/story/public/get": {
     "get": {
       "tags": ["story"],
       "summary": "Retrieve a story by ID",
       "description": "Retrieve a story by its ID.",
-      "security": [
-        {
-          "bearerAuth": []
-        }
-      ],
       "parameters": [
         {
           "in": "query",
@@ -82,6 +77,39 @@ export const swaggerStoryGet = {
                       },
                       "created_at": {
                         "type": "string"
+                      },
+                      "destinations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "media_assets": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "url": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "channels": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "channel_type": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       }
                     }
                   }

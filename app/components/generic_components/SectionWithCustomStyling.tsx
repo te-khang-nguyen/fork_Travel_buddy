@@ -10,7 +10,7 @@ import {
   Theme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CustomInputsField from "../generic-component/UserInputsField";
+import CustomInputsField from "./UserInputsField";
 
 interface AccordionItem {
   header: string;

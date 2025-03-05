@@ -53,85 +53,160 @@ export default async function handler(
 export const swaggerStoryUpdate = {
   index:29, 
   text:
-`"/api/v1/story   ": {
-    "put": {
-      "tags": ["story"],
-      "summary": "Update a story",
-      "description": "Update the details of an existing story.",
-      "security": [
-        {
-          "bearerAuth": []
-        }
-      ],
-      "parameters": [
-        {
-          "in": "path",
-          "name": "story-id",
-          "schema": {
-            "type": "string"
-          },
-          "required": true,
-          "description": "The ID of the story to update"
-        }
-      ],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "notes": {
-                  "type": "string",
-                  "description": "User travel notes"
-                },
-                "story_content": {
-                  "type": "string",
-                  "description": "AI-generated travel story based on users notes"
-                },
-                "media": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "description": "URL of the user submitted media"
-                  }
-                }
-              }
-            }
+`"/api/v1/story": {
+      "put": {
+        "tags": ["story"],
+        "summary": "Update a story",
+        "description": "Update the details of an existing story.",
+        "security": [
+          {
+            "bearerAuth": []
           }
-        }
-      },
-      "responses": {
-        "200": {
-          "description": "Story updated successfully",
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "story-id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the story to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
+                  "seo_title_tag": { 
+                    "type": "string",
+                    "description": "SEO title of the story" 
+                  },
+                  "status": { 
+                    "type": "string",
+                    "description": "Publishing status: DRAFT/PUBLISHED/ARCHIVED"  
+                  },
+                  "notes": {
+                    "type": "string",
+                    "description": "User travel notes"
+                  },
+                  "story_content": {
+                    "type": "string",
+                    "description": "AI-generated travel story based on users notes"
+                  },
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Story updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": { "type": "string" },
+                        "created_at": { "type": "string" },
+                        "user_id": { "type": "string" },
+                        "destination_id": { "type": "string" },
+                        "channel_id": { "type": "string" },
+                        "notes": { "type": "string" },
+                        "story_content": { "type": "string" },
+                        "media_assets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": { "type": "string" }
+                            }
+                          }
+                        },
+                        "seo_title_tag": { "type": "string" },
+                        "seo_meta_desc": { "type": "string" },
+                        "seo_excerpt": { "type": "string" },
+                        "seo_slug": { "type": "string" },
+                        "long_tail_keyword": { "type": "string" },
+                        "hashtags": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "destinations": {
+                          "type": "object",
+                          "properties": {
+                            "name": { "type": "string" }
+                          }
+                        },
+                        "channels": {
+                          "type": "object",
+                          "properties": {
+                            "channel_type": { "type": "string" },
+                            "name": { "type": "string" }
+                          }
+                        }
                       }
                     }
                   }
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
-        },
-        "400": {
-          "description": "Bad request"
-        },
-        "405": {
-          "description": "Method not allowed"
-        },
-        "500": {
-          "description": "Internal server error"
         }
       }
-    }
-  }`
+    }`
 }

@@ -2,23 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
 import { 
-  useGetUserSubmissionsQuery
-} from "@/libs/services/user/challenge";
+  useGetStoryQuery
+} from "@/libs/services/user/story";
 
 
-const GeneratingReelPage: React.FC = () => {
+const GeneratingReelPage: React.FC<{id: string}> = ({id}) => {
   const [isGenerating, setIsGenerating] = useState(true);
   const [videoPath, setVideoPath] = useState('');
 
   const {
-    data: userSubmissionData, 
+    data: storyData, 
     error: userSubmissionError
-  } = useGetUserSubmissionsQuery();
+  } = useGetStoryQuery({storyId: id});
 
-  const userSubmittedMedias = userSubmissionData?.data.flatMap(
-    submission => submission.userChallengeSubmission?.flatMap(
-      challengeSubmission => challengeSubmission.userMediaSubmission || []
-    ) || []
+  const userSubmittedMedias = storyData?.data?.media_assets?.map(
+    item => item.url
   );
 
   useEffect(() => {

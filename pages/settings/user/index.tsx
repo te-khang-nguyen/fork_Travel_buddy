@@ -22,9 +22,9 @@ import {
 } from "@/libs/services/user/channel";
 import { ImInsertTemplate } from "react-icons/im";
 import { Channel } from "diagnostics_channel";
-import TableWithButton from "@/app/components/generic-component/TableWithButton";
-import { RowProps } from "@/app/components/generic-component/TableRow";
-import TextFormModal from "@/app/components/generic-component/TextFormModal";
+import TableWithButton from "@/app/components/generic_components/TableWithButton";
+import { RowProps } from "@/app/components/generic_components/TableRow";
+import TextFormModal from "@/app/components/generic_components/TextFormModal";
 
 
 const SettingsPageUI = () => {

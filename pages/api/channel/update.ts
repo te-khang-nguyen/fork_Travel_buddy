@@ -46,8 +46,124 @@ export default async function handler(
 };
 
 
-export const swaggerStoryUpdate = {
-  index:29, 
+export const swaggerChannelUpdate = {
+  index:10, 
   text:
-``
+`"/api/channel/  ": {
+      "put": {
+        "tags": ["channel"],
+        "summary": "Update a channel",
+        "description": "Update the details of an existing channel.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "channel-id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the channel to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the channel"
+                  },
+                  "channel_type": {
+                    "type": "string",
+                    "description": "Type of the channel"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "URL of the channel"
+                  },
+                  "brand_voice": {
+                    "type": "string",
+                    "description": "Brand voice of the channel"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Channel updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "user_id": { "type": "string" },
+                        "name": { "type": "string" },
+                        "channel_type": { "type": "string" },
+                        "url": { "type": "string" },
+                        "brand_voice": { "type": "string" },
+                        "created_at": { "type": "string" },
+                        "updated_at": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`
 }

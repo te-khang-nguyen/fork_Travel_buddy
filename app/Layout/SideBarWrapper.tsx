@@ -26,7 +26,6 @@ import { StoryApi } from '@/libs/services/user/story';
 import { BusinessProfileApi } from '@/libs/services/business/profile';
 import { JoinChallengeApi } from '@/libs/services/user/challenge';
 import { ChallengeApi } from '@/libs/services/business/challenge';
-import { LocationApi } from '@/libs/services/business/location';
 
 
 const drawerWidth = 240;

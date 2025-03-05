@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import {
     useGetAllStoryQuery,
 } from "@/libs/services/user/story"
-import GenericTable from "@/app/components/generic-component/Table";
+import GenericTable from "@/app/components/generic_components/Table";
 
 
 const StoryPageUI = () => {

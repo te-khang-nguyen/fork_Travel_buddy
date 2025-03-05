@@ -32,55 +32,67 @@ export default async function handler(
 };
 
 
-export const swaggerStoryGet = {
+export const swaggerPublicStoryGetAll = {
     index:27, 
     text:
-`"/api/v1/story  ": {
+`"/api/story/public/": {
     "get": {
       "tags": ["story"],
-      "summary": "Retrieve a story by ID",
-      "description": "Retrieve a story by its ID.",
-      "security": [
-        {
-          "bearerAuth": []
-        }
-      ],
-      "parameters": [
-        {
-          "in": "query",
-          "name": "story_id",
-          "schema": {
-            "type": "string"
-          },
-          "required": true,
-          "description": "The ID of the story to retrieve"
-        }
-      ],
+      "summary": "Retrieve all published stories",
+      "description": "Retrieve all stories that are published and belong to the 'Travel Buddy' channel.",
       "responses": {
         "200": {
-          "description": "Story retrieved successfully",
+          "description": "A list of published stories",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
                   "data": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "challengeId": {
-                        "type": "string"
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "story": {
-                        "type": "string"
-                      },
-                      "created_at": {
-                        "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "destination_id": {
+                          "type": "string"
+                        },
+                        "channel_id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "story": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "media_assets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "channels": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "channel_type": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }

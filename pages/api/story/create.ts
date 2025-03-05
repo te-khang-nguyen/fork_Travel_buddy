@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { StoryProps } from "@/libs/services/user/story";
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,9 +16,6 @@ export default async function handler(
 
   // Extract authorization token
   const token = req.headers.authorization?.split(' ')[1];
-  if (!token) {
-    return res.status(401).json({ error: "Authorization token is required" });
-  }
 
   // Create Supabase client
   const supabase = createApiClient(token);
@@ -91,7 +89,7 @@ export default async function handler(
 export const swaggerStoryCreate = {
   index: 26,
   text:
-    `"/api/v1/story": {
+    `"/api/story/": {
     "post": {
       "tags": ["story"],
       "summary": "Create a new story",
@@ -101,26 +99,6 @@ export const swaggerStoryCreate = {
           "bearerAuth": []
         }
       ],
-      "parameters": [
-        {
-          "in": "query",
-          "name": "destinationId",
-          "schema": {
-            "type": "string"
-          },
-          "required": true,
-          "description": "The ID of the challenge"
-        },
-        {
-          "in": "query",
-          "name": "challengeHistoryId",
-          "schema": {
-            "type": "string"
-          },
-          "required": false,
-          "description": "The ID of the challenge history"
-        }
-      ],
       "requestBody": {
         "required": true,
         "content": {
@@ -128,21 +106,30 @@ export const swaggerStoryCreate = {
             "schema": {
               "type": "object",
               "properties": {
-                "user_notes": {
-                  "type": "string",
-                  "description": "User notes for the story"
-                },
-                "story": {
-                  "type": "string",
-                  "description": "The full story"
-                },
-                "media_submitted": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Media submitted for the story"
-                }
+                "status": { "type": "string" },
+          "title": { "type": "string" },
+          "user_id": { "type": "string" },
+          "destination_id": { "type": "string" },
+          "notes": { "type": "string" },
+          "story_content": { "type": "string" },
+          "media_assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" }
+              }
+            }
+          },
+          "seo_title_tag": { "type": "string" },
+          "seo_meta_desc": { "type": "string" },
+          "seo_excerpt": { "type": "string" },
+          "seo_slug": { "type": "string" },
+          "long_tail_keyword": { "type": "string" },
+          "hashtags": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
               }
             }
           }
@@ -160,8 +147,15 @@ export const swaggerStoryCreate = {
                     "type": "string",
                     "example": "Story created successfully"
                   },
-                  "storyId": {
+                  "id": {
                     "type": "string"
+                  },
+                  "media": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "list of IDs for uploaded media in the media_assets entity"
                   }
                 }
               }

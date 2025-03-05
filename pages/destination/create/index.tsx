@@ -3,7 +3,7 @@ import { Box, Typography, TextField, Button, Paper } from "@mui/material";
 import { useCreateDestinationMutation, DestinationReq } from "@/libs/services/business/destination";
 import { useUploadImageMutation, useUploadVideoMutation } from "@/libs/services/storage/upload";
 import { useRouter } from "next/router";
-import TextInputForUser from "@/app/components/generic-component/TextInputForUser";
+import TextInputForUser from "@/app/components/generic_components/TextInputForUser";
 import CustomImageUpload from "@/app/components/destination/CustomImageUpload";
 import { useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -85,9 +85,9 @@ const CreateDestinationForm: React.FC = () => {
                 }
             }
             let videoUrl = "";
-            if (data.banner_video) {
+            if (data.video) {
                 const videoResponse = await uploadVideo({
-                    videoBase64: data.banner_video[0].image,
+                    videoBase64: data.video,
                     title: "DestinationVideo",
                     bucket: "destination",
                 }).unwrap();
@@ -154,31 +154,6 @@ const CreateDestinationForm: React.FC = () => {
                 optional={false} 
             />
 
-            {/* Description */}
-            <TextInputForUser 
-                control={control}
-                num_rows={4}
-                item_name="description"
-                optional={false} 
-            />
-
-            {/* Thumbnail Description */}
-            <TextInputForUser 
-                control={control}
-                num_rows={1}
-                item_name="thumbnail_description"
-                optional={false} 
-            />
-
-            {/* Primary Video */}
-            <VideoInput
-                name="banner_video"
-                optional={true}
-                control={control}
-                label="Upload your video"
-                rules={{ required: "Video is required" }}
-            />
-
             {/* Primary Photo */}
             <Controller
                 name="thumbnail_image"
@@ -186,8 +161,23 @@ const CreateDestinationForm: React.FC = () => {
                 render={({ field: { onChange, value } }) => (
                     <CustomImageUpload
                         text_display="Thumbnail Image"
-                        optional={false}
+                        optional={true}
                         allowMultiple={false}
+                        handleImageUpload={handlePrimaryPhotoUpload}
+                        onChange={onChange}
+                    />
+                )}
+            />
+
+            {/* Other Photos */}
+            <Controller
+                name="other_images"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                    <CustomImageUpload
+                        text_display="Other photos"
+                        optional={true}
+                        allowMultiple={true}
                         handleImageUpload={handlePrimaryPhotoUpload}
                         onChange={onChange}
                     />
@@ -216,19 +206,28 @@ const CreateDestinationForm: React.FC = () => {
                 optional={true} 
             />
 
-            {/* Other Photos */}
-            <Controller
-                name="other_images"
+            {/* Description */}
+            <TextInputForUser 
                 control={control}
-                render={({ field: { onChange, value } }) => (
-                    <CustomImageUpload
-                        text_display="Other Photos"
-                        optional={true}
-                        allowMultiple={true}
-                        handleImageUpload={handlePrimaryPhotoUpload}
-                        onChange={onChange}
-                    />
-                )}
+                num_rows={4}
+                item_name="description"
+                optional={false} 
+            />
+
+            {/* Thumbnail Description */}
+            <TextInputForUser 
+                control={control}
+                num_rows={1}
+                item_name="thumbnail_description"
+                optional={false} 
+            />
+
+            {/* Primary Video */}
+            <VideoInput
+                name="video"
+                control={control}
+                label="Upload your video"
+                rules={{ required: "Video is required" }}
             />
 
             <Box mt={2}>

@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "@/libs/supabase/supabase_client";
-
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 
 export default async function handler(
     req: NextApiRequest,
@@ -11,11 +10,17 @@ export default async function handler(
         return;
     }
 
+    // Extract authorization token
+    const token = req.headers.authorization?.split(" ")[1];
+    // Create Supabase client
+    const supabase = createApiClient(token);
+
     const storyId = req.query?.["story-id"];
 
     if (!storyId) {
         return res.status(400).json({ error: "Story ID is required" });
     }
+
 
     try {
         const { data, error } = await supabase
@@ -40,61 +45,61 @@ export default async function handler(
 export const swaggerStoryDel = {
   index:30, 
   text:
-  `"/api/v1/story    ": {
-      "delete": {
-        "tags": ["story"],
-        "summary": "Delete a story",
-        "description": "Move a story into ARCHIVED",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "challenge_id",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The ID of the challenge to update"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Challenge deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "status": {
-                          "type": "string"
-                        }
+  `"/api/story/    ": {
+    "delete": {
+      "tags": ["story"],
+      "summary": "Delete a story",
+      "description": "Move a story into ARCHIVED status.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "story-id",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "The ID of the story to delete"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Story deleted successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
                       }
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "405": {
-            "description": "Method not allowed"
-          },
-          "500": {
-            "description": "Internal server error"
           }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
         }
       }
-    }`
+    }
+  }`
 }

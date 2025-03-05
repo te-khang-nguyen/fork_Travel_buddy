@@ -8,7 +8,6 @@ import { BusinessProfileApi } from './services/business/profile';
 import { JoinChallengeApi } from './services/user/challenge';
 import { ChallengeApi } from './services/business/challenge';
 import { StorageApi } from './services/storage/upload';
-import { LocationApi } from './services/business/location';
 import { DestinationApi } from './services/user/destination';
 import { ChannelApi } from './services/user/channel';
 import { DestinationBusinessApi } from './services/business/destination';
@@ -25,7 +24,6 @@ export const store = configureStore({
     [JoinChallengeApi.reducerPath]: JoinChallengeApi.reducer,
     [ChallengeApi.reducerPath]: ChallengeApi.reducer,
     [StorageApi.reducerPath]: StorageApi.reducer,
-    [LocationApi.reducerPath]: LocationApi.reducer,
     [StoryApi.reducerPath]: StoryApi.reducer,
     [DestinationApi.reducerPath]: DestinationApi.reducer,
     [ChannelApi.reducerPath]: ChannelApi.reducer,
@@ -41,7 +39,6 @@ export const store = configureStore({
       .concat(JoinChallengeApi.middleware)
       .concat(ChallengeApi.middleware)
       .concat(StorageApi.middleware)
-      .concat(LocationApi.middleware)
       .concat(StoryApi.middleware)
       .concat(DestinationApi.middleware)
       .concat(ChannelApi.middleware)
