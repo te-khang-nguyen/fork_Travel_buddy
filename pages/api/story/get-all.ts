@@ -35,12 +35,18 @@ export default async function handler(
 };
 
 export const swaggerStoryGetAll = {
-    index:28, 
+    index:20, 
     text:
-`"/api/story/ ": {
+`"/api/v1/story/ ": {
       "get": {
+        "tags": ["story"],
         "summary": "Get all stories",
         "description": "Retrieve all stories with their media assets",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "A list of stories",

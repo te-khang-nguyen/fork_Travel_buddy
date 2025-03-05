@@ -49,7 +49,7 @@ export default async function handler(
 export const swaggerChannelUpdate = {
   index:10, 
   text:
-`"/api/channel/  ": {
+`"/api/v1/channel  ": {
       "put": {
         "tags": ["channel"],
         "summary": "Update a channel",

@@ -114,7 +114,7 @@ const DestinationApi = createApi({
     getDestination: builder.query<Destination, {id: string}>({
       query: ({id}) => ({
         url: `/destination`,
-        params: {destination_id : id},
+        params: {"destination-id" : id},
       }),
       transformResponse: ((res: DestinationResponse) => res.data)
     }),
@@ -142,7 +142,7 @@ const DestinationApi = createApi({
     }),
     getIconicPhotos: builder.query<IconicPhotos[], {id: string}>({
       query: ({id}) => ({
-        url: `/destination/iconic_photos`,
+        url: `/destination/iconic-photos`,
         params: {destination_id : id},
       }),
       transformResponse: ((res: IconicPhotosResponseList) => res.data)

@@ -40,7 +40,7 @@ export default async function handler(
 };
 
 export const swaggerStoryGenerate = {
-    index:25, 
+    index:18, 
     text:
 `"/api/v1/story/generate": {
     "post": {

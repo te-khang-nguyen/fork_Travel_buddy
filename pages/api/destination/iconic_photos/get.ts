@@ -46,3 +46,101 @@ export default async function handler(
         return res.status(500).json({ error: err.message || "An error has occurred while retrieving the challenge information."});
     }
 }
+
+export const swaggerDesIconicPhotosGet = {
+    index:17, 
+    text:
+`"/api/v1/destination/iconic-photos": {
+      "get": {
+        "tags": ["destination"],
+        "summary": "Get iconic photos by destination ID",
+        "description": "Retrieve iconic photos by destination ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "destination_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the destination to retrieve iconic photos for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Iconic photos retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "destination_id": { "type": "string" },
+                          "type": { "type": "string" },
+                          "name": { "type": "string" },
+                          "text": { "type": "string" },
+                          "created_at": { "type": "string" },
+                          "updated_at": { "type": "string" },
+                          "media_id": { "type": "string" },
+                          "url": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`
+}

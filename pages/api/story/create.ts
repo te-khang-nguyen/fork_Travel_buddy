@@ -87,9 +87,9 @@ export default async function handler(
 }
 
 export const swaggerStoryCreate = {
-  index: 26,
+  index: 19,
   text:
-    `"/api/story/": {
+    `"/api/v1/story": {
     "post": {
       "tags": ["story"],
       "summary": "Create a new story",

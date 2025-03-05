@@ -214,7 +214,7 @@ const apiRoutingCRUD = (req) => {
   const method = req.method;
   const url = req.nextUrl.clone();
   const pathSegments = url.pathname.split('/').filter(e => e !== 'v1' && e !== '');
-  const newPath = pathSegments.join('/');
+  const newPath = pathSegments.join('/').replace("iconic-photos", "iconic_photos");
   const params = Array.from(url.searchParams.entries());
   const paramsString = params.map((item: any)=> `${item[0]}=${item[1]}`).join('&');
 

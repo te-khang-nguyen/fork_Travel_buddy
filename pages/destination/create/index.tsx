@@ -85,9 +85,9 @@ const CreateDestinationForm: React.FC = () => {
                 }
             }
             let videoUrl = "";
-            if (data.video) {
+            if (data.banner_video) {
                 const videoResponse = await uploadVideo({
-                    videoBase64: data.video,
+                    videoBase64: data.banner_video[0].image,
                     title: "DestinationVideo",
                     bucket: "destination",
                 }).unwrap();
@@ -154,6 +154,31 @@ const CreateDestinationForm: React.FC = () => {
                 optional={false} 
             />
 
+            {/* Description */}
+            <TextInputForUser 
+                control={control}
+                num_rows={4}
+                item_name="description"
+                optional={false} 
+            />
+
+            {/* Thumbnail Description */}
+            <TextInputForUser 
+                control={control}
+                num_rows={1}
+                item_name="thumbnail_description"
+                optional={false} 
+            />
+
+            {/* Primary Video */}
+            <VideoInput
+                name="banner_video"
+                optional={true}
+                control={control}
+                label="Upload your video"
+                rules={{ required: "Video is required" }}
+            />
+
             {/* Primary Photo */}
             <Controller
                 name="thumbnail_image"
@@ -161,23 +186,8 @@ const CreateDestinationForm: React.FC = () => {
                 render={({ field: { onChange, value } }) => (
                     <CustomImageUpload
                         text_display="Thumbnail Image"
-                        optional={true}
+                        optional={false}
                         allowMultiple={false}
-                        handleImageUpload={handlePrimaryPhotoUpload}
-                        onChange={onChange}
-                    />
-                )}
-            />
-
-            {/* Other Photos */}
-            <Controller
-                name="other_images"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                    <CustomImageUpload
-                        text_display="Other photos"
-                        optional={true}
-                        allowMultiple={true}
                         handleImageUpload={handlePrimaryPhotoUpload}
                         onChange={onChange}
                     />
@@ -206,28 +216,19 @@ const CreateDestinationForm: React.FC = () => {
                 optional={true} 
             />
 
-            {/* Description */}
-            <TextInputForUser 
+            {/* Other Photos */}
+            <Controller
+                name="other_images"
                 control={control}
-                num_rows={4}
-                item_name="description"
-                optional={false} 
-            />
-
-            {/* Thumbnail Description */}
-            <TextInputForUser 
-                control={control}
-                num_rows={1}
-                item_name="thumbnail_description"
-                optional={false} 
-            />
-
-            {/* Primary Video */}
-            <VideoInput
-                name="video"
-                control={control}
-                label="Upload your video"
-                rules={{ required: "Video is required" }}
+                render={({ field: { onChange, value } }) => (
+                    <CustomImageUpload
+                        text_display="Other Photos"
+                        optional={true}
+                        allowMultiple={true}
+                        handleImageUpload={handlePrimaryPhotoUpload}
+                        onChange={onChange}
+                    />
+                )}
             />
 
             <Box mt={2}>

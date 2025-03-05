@@ -51,9 +51,9 @@ export default async function handler(
 
 
 export const swaggerStoryUpdate = {
-  index:29, 
+  index:22, 
   text:
-`"/api/v1/story": {
+`"/api/v1/story   ": {
       "put": {
         "tags": ["story"],
         "summary": "Update a story",
@@ -96,7 +96,7 @@ export const swaggerStoryUpdate = {
                   "story_content": {
                     "type": "string",
                     "description": "AI-generated travel story based on users notes"
-                  },
+                  }
                 }
               }
             }
@@ -113,9 +113,7 @@ export const swaggerStoryUpdate = {
                     "data": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "string"
-                        },
+                        "id": { "type": "string" },
                         "status": { "type": "string" },
                         "created_at": { "type": "string" },
                         "user_id": { "type": "string" },
@@ -168,9 +166,7 @@ export const swaggerStoryUpdate = {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": {
-                      "type": "string"
-                    }
+                    "error": { "type": "string" }
                   }
                 }
               }
@@ -183,9 +179,7 @@ export const swaggerStoryUpdate = {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": {
-                      "type": "string"
-                    }
+                    "error": { "type": "string" }
                   }
                 }
               }
@@ -198,9 +192,7 @@ export const swaggerStoryUpdate = {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": {
-                      "type": "string"
-                    }
+                    "error": { "type": "string" }
                   }
                 }
               }

@@ -28,19 +28,17 @@ const swaggerDefinition = {
       }
     }
   },
-  security: [
-    {
-      bearerAuth: []
-    }
-  ]
+  // security: [
+  //   {
+  //     bearerAuth: []
+  //   }
+  // ]
 };
 
 const unSortedSwaggerObjs = Object.values(swaggerObjs).map((obj) => obj);
 const sortedSwaggerObjs = unSortedSwaggerObjs.sort((a,b) => a.index - b.index);
 
 const paths = `{${sortedSwaggerObjs.map((obj) => obj.text).join(',')}}`;
-
-console.log(paths);
 
 const swaggerSpec = {
   ...swaggerDefinition,

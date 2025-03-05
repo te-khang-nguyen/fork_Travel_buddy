@@ -36,7 +36,7 @@ export default async function handler(
 export const swaggerChannelGetAll = {
     index:9, 
     text:
-`"/api/channel/ ": {
+`"/api/v1/channel ": {
       "get": {
         "tags": ["channel"],
         "summary": "Get all channels",

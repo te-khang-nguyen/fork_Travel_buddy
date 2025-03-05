@@ -33,10 +33,10 @@ export default async function handler(
 };
 
 
-export const swaggerStoryGet = {
-    index:27, 
+export const swaggerPublicStoryGet = {
+    index:25, 
     text:
-`"/api/story/public/get": {
+`"/api/v1/story/public ": {
     "get": {
       "tags": ["story"],
       "summary": "Retrieve a story by ID",

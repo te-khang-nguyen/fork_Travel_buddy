@@ -21,6 +21,7 @@ export interface Destination {
 
 interface DestinationResponse {
     data: Destination;
+    error?: string;
 }
 
 export type DestinationReq = Omit<Destination, 'id' | 'created_at' | 'updated_at' | 'created_by'>;

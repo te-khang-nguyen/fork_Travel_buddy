@@ -54,7 +54,7 @@ export default async function handler(
 export const swaggerChannelCreate = {
     index:8, 
     text:
-`"/api/channel/": {
+`"/api/v1/channel": {
       "post": {
         "tags": ["channel"],
         "summary": "Create a new channel",

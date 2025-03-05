@@ -31,7 +31,7 @@ const StorageApi = createApi({
     }),
     uploadVideo: builder.mutation<UploadRes, VideoReq>({
       query: (params) => ({
-        url: `/storage/upload_video`,
+        url: `/storage/upload-video`,
         method: "POST",
         body: params,
       }),

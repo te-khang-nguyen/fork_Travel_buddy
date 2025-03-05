@@ -52,6 +52,12 @@ const metdataRouteMap = [
         slug: "/profile/user/story/create",
         seoSlug: "/story-writing"
     },
+    {
+      title: 'API Documentation - Travel Buddy', 
+      description:'List of API for TRavel Buddy Application.',
+      slug: "/docs",
+      seoSlug: "/api-documentation"
+  },
 ]
 
 const MetadataContext = createContext<MetadataContextProps | undefined>(undefined);

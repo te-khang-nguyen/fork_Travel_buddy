@@ -37,3 +37,114 @@ export default async function handler(
     }
 
 };
+
+export const swaggerAttractionGet = {
+    index:16, 
+    text:
+`"/api/v1/destination/attractions": {
+      "get": {
+        "tags": ["destination"],
+        "summary": "Get attractions by destination ID",
+        "description": "Retrieve attractions by destination ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "destination_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the destination to retrieve attractions for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attractions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "destination_id": { "type": "string" },
+                          "title": { "type": "string" },
+                          "primary_photo": { "type": "string" },
+                          "photos": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          },
+                          "hours": { "type": "string" },
+                          "status": { "type": "string" },
+                          "attraction_info": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "description": { "type": "string" },
+                                "description_thumbnail": { "type": "string" }
+                              }
+                            }
+                          },
+                          "description": { "type": "string" },
+                          "description_thumbnail": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`
+}
