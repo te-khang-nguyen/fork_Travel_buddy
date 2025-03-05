@@ -147,14 +147,9 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
       ]
       : [
           {
-            text: "Challenge Management",
+            text: "Destination Management",
             icon: <Inventory />,
-            route: `/profile/business/#challenges`,
-          },
-          {
-            text: "Create Account",
-            icon: <GoPersonAdd />,
-            route: `/profile/business/createAccount`,
+            route: `/destination/business`,
           },
           { 
             text: "Settings", 

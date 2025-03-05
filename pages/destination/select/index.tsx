@@ -41,7 +41,9 @@ const SelectDestination = () => {
           Explore all destinations we have
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {allDestinations?.map((child, index) => (
+          {allDestinations
+          ?.filter(child => child.status === 'active')
+          .map((child, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card>
                 <CardMedia

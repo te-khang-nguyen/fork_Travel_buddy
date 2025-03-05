@@ -53,7 +53,7 @@ const AccountSwitcher = () => {
         minWidth: '100px',
         padding: 1,
         marginLeft: 'auto',
-        marginRight: 0,
+        marginRight: 5,
       }}>
       <Select
         fullWidth

@@ -59,10 +59,19 @@ const DestinationBusinessApi = createApi({
             },
       }),
     }),
+    updateDestination: builder.mutation<DestinationResponse, { id: string; data: any }>({
+      query: ({ id, data }) => ({
+        url: `/destination`,
+        params: {destination_id: id},
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
 export const { 
-  useCreateDestinationMutation
+  useCreateDestinationMutation,
+  useUpdateDestinationMutation,
 } = DestinationBusinessApi;
 export { DestinationBusinessApi };

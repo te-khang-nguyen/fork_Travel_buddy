@@ -19,8 +19,7 @@ export default async function handler(
     try {
         const { data, error } = await supabase
             .from("destinations")
-            .select("*")
-            .eq("status", "active");
+            .select("*");
 
         if (error) {
             return res.status(400).json({ error: error.message });

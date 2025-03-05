@@ -48,7 +48,7 @@ export default async function handler(
                 thumbnail_description,
                 primary_video,
                 parent_destination,
-                status: "passive",
+                status: "inactive",
             },
         ])
         .select("id")

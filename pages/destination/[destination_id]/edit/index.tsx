@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  TextField
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { 
@@ -32,6 +33,10 @@ import {
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
 import IconicPhotos from "@/app/components/destination/IconicPhotos";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
+import VideoSection from '@/app/components/destination/VideoSection';
+import OverviewSection from '@/app/components/destination/OverviewSection';
+import PublishButton from '@/app/components/destination/PublishDestinationButton';
+import ImageSection from '@/app/components/destination/ImageSection';
 
 const NagoyaCastleHomePage: React.FC = () => {
 
@@ -94,6 +99,7 @@ const NagoyaCastleHomePage: React.FC = () => {
   ];
 
   const [openChat, setOpenChat] = useState(false);
+  const [editMode, setEditMode] = useState(true);
   const router = useRouter();
   const { destination_id } = router.query;
   const { data: destination, isLoading } = useGetDestinationQuery({ id: destination_id as string });
@@ -104,183 +110,6 @@ const NagoyaCastleHomePage: React.FC = () => {
   const { data: iconic_photos } = useGetIconicPhotosQuery({ id: destination_id as string });
   
   if (isLoading) return <LoadingSkeleton isLoading={true}/>;
-  
-  const VideoSection: React.FC<{destination: Destination}> = ({destination}) => {
-    return(
-    <Box
-      sx={{
-        position: 'relative',
-        width: '100vw',
-        left: '50%',
-        right: '50%',
-        marginLeft: '-50vw',
-        marginRight: '-50vw',
-        height: '600px',
-        overflow: 'hidden',
-        mb: 4,
-      }}
-    >
-      <Box
-        component="video"
-        autoPlay
-        loop
-        muted
-        playsInline
-        sx={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-        }}
-      >
-        {/* <source src="/videos/edited.mp4" type="video/mp4" /> */}
-        <source src={destination.primary_video} type="video/mp4" />
-        
-        Your browser does not support the video tag.
-      </Box>
-      {/* Video Overlay */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          textAlign: 'center',
-          color: 'white',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          p: 3,
-          borderRadius: 2,
-          width: '60%',
-        }}
-      >
-        <Typography variant="h2" gutterBottom>
-          Welcome to {destination.name}
-        </Typography>
-        <Typography variant="subtitle1">
-          {destination.thumbnail_description}
-        </Typography>
-      </Box>
-    </Box>
-    )
-  }
-
-  const ImageSection: React.FC<{destination: Destination}> = ({destination}) => {
-    return (
-      <Box
-        sx={{
-          position: 'relative',
-          width: '100vw',
-          left: '50%',
-          right: '50%',
-          marginLeft: '-50vw',
-          marginRight: '-50vw',
-          height: '600px',
-          overflow: 'hidden',
-          mb: 4,
-        }}
-      >
-        <img
-          src={destination.primary_photo}
-          alt="Destination"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-        {/* Image Overlay */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            textAlign: 'center',
-            color: 'white',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            p: 3,
-            borderRadius: 2,
-            width: '60%',
-          }}
-        >
-          <Typography variant="h2" gutterBottom>
-            Welcome to {destination.name}
-          </Typography>
-          <Typography variant="subtitle1">
-            {destination.thumbnail_description}
-          </Typography>
-        </Box>
-      </Box>
-    );
-  }
-
-  const OverviewSection: React.FC<{destination: Destination}> = ({destination}) => {
-    return(
-      <Paper elevation={0} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Overview
-        </Typography>
-        <Typography variant="body1" paragraph>
-        {destination.description}
-        </Typography>
-      </Paper>
-    )
-  }
-
-  const CallToActionSection: React.FC<{destination: Destination}> = ({destination}) => {
-    return(
-      <><Typography variant="h5" align="center" sx={{ mt: 6, mb: 4 }}>
-        Not in {destination.name}? Maybe explore our other destinations. All over the world!
-      </Typography>
-      <Button
-        variant="contained"
-        color="secondary"
-        size="large"
-        href="#"
-        onClick={() => router.push('select')}
-        sx={{ mx: 'auto', mb: 6, maxWidth: 200, alignItems: 'center', display: 'flex' }}
-      >
-        Explore
-      </Button></>
-    )
-  }
-
-  const MainSection: React.FC<{destination: Destination, childrenDestinations: Destination[]}> = ({destination, childrenDestinations}) => {
-    return(
-      <>
-        <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
-          Explore destinations within {destination.name}
-        </Typography>
-        <Grid container spacing={4} sx={{ mt: 4 }}>
-          {childrenDestinations?.map((child, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={child.primary_photo}
-                  alt={child.name}
-                />
-                <CardContent>
-                  <Typography variant="h5" gutterBottom>
-                    {child.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {child.thumbnail_description}
-                  </Typography>
-                  <Button variant="contained" color="primary" 
-                    onClick={() => router.push(`/destination/${child.id}`)} 
-                    sx={{ mt: 2 }}
-                  >
-                    Learn More
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </>
-    )
-  }
 
   const TopAttractionsSection: React.FC<{attractions: Attraction[]}> = ({attractions}) => {
     return(
@@ -305,12 +134,7 @@ const NagoyaCastleHomePage: React.FC = () => {
                   <Typography variant="body2" color="textSecondary">
                     {feature.description_thumbnail}
                   </Typography>
-                  <Button 
-                    variant="contained" 
-                    color="primary" 
-                    // onClick={() => router.push(`/attraction/${feature.id}`)} 
-                    sx={{ mt: 2 }}
-                  >
+                  <Button variant="contained" color="primary" onClick={() => router.push(`/attraction/${feature.id}`)} sx={{ mt: 2 }}>
                     Learn More
                   </Button>
                 </CardContent>
@@ -364,6 +188,7 @@ const NagoyaCastleHomePage: React.FC = () => {
   
   return (
     <>
+      
       {/* Image section */}
       {/* {destination ? (<ImageSection destination={destination} />) : null} */}
 
@@ -373,31 +198,29 @@ const NagoyaCastleHomePage: React.FC = () => {
       {/* Video and Image section */}
       {destination ? (
         destination.primary_video ? 
-        (<VideoSection destination={destination} />) : 
-        (<ImageSection destination={destination} />)
+        (<VideoSection destination={destination} edit_mode={true} />) : 
+        (<ImageSection destination={destination} edit_mode={true} />)
       ) : null}
 
       {/* Rest of the Content in a Container */}
       <Container maxWidth={false} sx={{ width: '90%' }}>
+        
         {destination && attractions && destination_details && iconic_photos ? (
           <>
+            {/* Button to Publish */}
+            <PublishButton destination={destination} />
+
             {/* Overview Section */}
-            <OverviewSection destination={destination} />
+            <OverviewSection destination={destination} edit_mode={true}/>
 
             {/* Features Section */}
             <GroupedFeaturesPopup features={convertDestinationDetailsToFeatures(destination_details)} />
-
-            {/* Main Section */}
-            {/* <MainSection destination={destination} childrenDestinations={childrenDestinations} /> */}
 
             {/* Iconic Photos */}
             <IconicPhotos photos={iconic_photos}/>
 
             {/* Top attractions */}
             <TopAttractionsSection attractions={attractions} />
-
-            {/* Call to Action */}
-            <CallToActionSection destination={destination} />
 
             {/* Fixed Chat Button and Chatbox */}
             <ChatBoxSection destination={destination} />

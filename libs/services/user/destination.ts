@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "@/libs/supabase/baseQuery";
-import { Feature } from "@/app/components/destination/features";
+import { Feature } from "@/app/components/destination/DestinationDetails";
 
 export interface Destination {
     id: string;

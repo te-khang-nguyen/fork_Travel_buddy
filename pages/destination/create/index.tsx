@@ -108,7 +108,7 @@ const CreateDestinationForm: React.FC = () => {
                 primary_video: videoUrl,
             });
 
-            await router.replace(`/destination`);
+            await router.replace(`/destination/${newDestinationData?.data.id}/edit`);
             return;
         } catch (error) {
             console.error("Full Error in onSubmit:", error);
@@ -176,7 +176,6 @@ const CreateDestinationForm: React.FC = () => {
                 optional={true}
                 control={control}
                 label="Upload your video"
-                rules={{ required: "Video is required" }}
             />
 
             {/* Primary Photo */}
