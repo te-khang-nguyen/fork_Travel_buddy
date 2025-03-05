@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ImageCarousel from "@/app/components/generic-component/ImageCarousel";
+import ImageCarousel from "@/app/components/generic_components/ImageCarousel";
 
 // Define a type for the feature
 export type Feature = {

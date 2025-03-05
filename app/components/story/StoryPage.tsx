@@ -13,8 +13,8 @@ import {
     useUpdateStoryMutation,
     useDeleteStoryMutation
 } from "@/libs/services/user/story"
-import ShareButton from "../generic-component/ShareButton";
-import AlertDialog from "../generic-component/AlertDialogBox";
+import ShareButton from "../generic_components/ShareButton";
+import AlertDialog from "../generic_components/AlertDialogBox";
 
 
 const montserrat = Montserrat({

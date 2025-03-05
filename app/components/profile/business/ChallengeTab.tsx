@@ -8,7 +8,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import QRModal from "../../challenge/QRModal";
+import QRModal from "../../generic_components/QRModal";
 import { useRouter } from "next/router";
 import { useGetAllChallengesQuery } from "@/libs/services/business/challenge";
 
@@ -137,7 +137,7 @@ const ChallengesTab: React.FC = () => {
       <QRModal
         open={modalOpen}
         onClose={handleCloseModal}
-        challengeId={challengeId}
+        contentId={challengeId}
         displayText={challengeName}
       />
     </Box>

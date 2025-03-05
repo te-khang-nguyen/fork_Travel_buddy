@@ -34,7 +34,87 @@ export default async function handler(
 };
 
 export const swaggerChannelGetAll = {
-    index:28, 
+    index:9, 
     text:
-``
+`"/api/channel/ ": {
+      "get": {
+        "tags": ["channel"],
+        "summary": "Get all channels",
+        "description": "Retrieve all channels.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of channels",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "user_id": { "type": "string" },
+                          "name": { "type": "string" },
+                          "channel_type": { "type": "string" },
+                          "url": { "type": "string" },
+                          "brand_voice": { "type": "string" },
+                          "created_at": { "type": "string" },
+                          "updated_at": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`
 }

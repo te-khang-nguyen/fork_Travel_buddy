@@ -1,7 +1,7 @@
 // pages/api/docs.js
 import swaggerJsdoc from 'swagger-jsdoc';
 
-import * as swaggerObjs from './';
+import * as swaggerObjs from '.';
 
 // import * as path from 'path';
 

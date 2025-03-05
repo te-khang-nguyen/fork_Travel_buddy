@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ImageCarousel from '../generic-component/ImageCarousel';
+import ImageCarousel from '../generic_components/ImageCarousel';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled, keyframes } from '@mui/system';
 import { Montserrat } from "next/font/google";

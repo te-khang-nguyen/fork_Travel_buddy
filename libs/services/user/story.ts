@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "@/libs/supabase/baseQuery";
 
-interface StoryReq {
+export interface StoryReq {
     storyId?: string;
     destinationId?: string;
     payload?: {
@@ -26,13 +26,14 @@ interface StoryReq {
     }
 }
 
-interface StoryProps {
+export interface StoryProps {
   id?: string;
   status?: string;
   title?: string;
   created_at?: string;
   user_id?: string;
   destination_id?: string;
+  channel_id?: string;
   notes?: string;
   story_content?: string;
   media_assets?: {url:string}[];
@@ -51,12 +52,12 @@ interface StoryProps {
   }
 }
 
-interface StoryRes {
-    data?: StoryProps[];
-    error?: any;
+export interface StoryRes {
+  data?: StoryProps[];
+  error?: any;
 }
 
-interface StorySingleRes {
+export interface StorySingleRes {
   data?: StoryProps;
   error?: any;
 }

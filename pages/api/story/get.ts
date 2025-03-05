@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { StorySingleRes } from "@/libs/services/user/story";
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse
+    res: NextApiResponse<StorySingleRes>
 ) {
     if (req.method !== "GET") {
         return res.status(405).json({ error: "Method not allowed!" });
@@ -41,70 +42,134 @@ export default async function handler(
 export const swaggerStoryGet = {
     index:27, 
     text:
-`"/api/v1/story  ": {
-    "get": {
-      "tags": ["story"],
-      "summary": "Retrieve a story by ID",
-      "description": "Retrieve a story by its ID.",
-      "security": [
-        {
-          "bearerAuth": []
-        }
-      ],
-      "parameters": [
-        {
-          "in": "query",
-          "name": "story-id",
-          "schema": {
-            "type": "string"
-          },
-          "required": true,
-          "description": "The ID of the story to retrieve"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Story retrieved successfully",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "challengeId": {
-                        "type": "string"
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "story": {
-                        "type": "string"
-                      },
-                      "created_at": {
-                        "type": "string"
+`"/api/story/get": {
+      "get": {
+        "tags": ["story"],
+        "summary": "Retrieve a story by ID",
+        "description": "Retrieve a story by its ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "story-id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the story to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Story retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "status": { "type": "string" },
+                        "title": { "type": "string" },
+                        "created_at": { "type": "string" },
+                        "user_id": { "type": "string" },
+                        "destination_id": { "type": "string" },
+                        "channel_id": { "type": "string" },
+                        "notes": { "type": "string" },
+                        "story_content": { "type": "string" },
+                        "media_assets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": { "type": "string" }
+                            }
+                          }
+                        },
+                        "seo_title_tag": { "type": "string" },
+                        "seo_meta_desc": { "type": "string" },
+                        "seo_excerpt": { "type": "string" },
+                        "seo_slug": { "type": "string" },
+                        "long_tail_keyword": { "type": "string" },
+                        "hashtags": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "destinations": {
+                          "type": "object",
+                          "properties": {
+                            "name": { "type": "string" }
+                          }
+                        },
+                        "channels": {
+                          "type": "object",
+                          "properties": {
+                            "channel_type": { "type": "string" },
+                            "name": { "type": "string" }
+                          }
+                        }
                       }
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
                     }
                   }
                 }
               }
             }
           }
-        },
-        "400": {
-          "description": "Bad request"
-        },
-        "405": {
-          "description": "Method not allowed"
-        },
-        "500": {
-          "description": "Internal server error"
         }
       }
-    }
-  }`
+    }`
 }

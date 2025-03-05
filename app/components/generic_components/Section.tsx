@@ -8,7 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CunstomInputsField from "../generic-component/UserInputsField";
+import CunstomInputsField from "./UserInputsField";
 
 interface AccordionItem {
   header: string;

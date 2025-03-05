@@ -50,7 +50,7 @@ const TextInputForUser: React.FC<TextInputForUserProps> = ({
     <>
     <Typography
         variant="body2"
-        sx={{ marginTop: 2, marginBottom: 0, fontWeight: 500 }}
+        sx={{ marginTop: 0.5, marginBottom: 0.8, fontWeight: 500 }}
     >
         {convertUnderscoreToText(item_name, "title")}
         <Typography

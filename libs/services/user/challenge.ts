@@ -45,53 +45,12 @@ const JoinChallengeApi = createApi({
       query: () => ({
         url: `/challenge/user`
       })
-    }),
-
-    // ------------------QUERY LOCATIONS--------------------------
-    getLocations: builder.query<ChallengeRes, ChallengeReq>({
-      query: ({ challengeId }) => ({
-          url: `/location`,
-          params: {challenge_id: challengeId}
-      })
-    }),
-
-    // ------------------QUERY CHALLENGE HISTORY--------------------------
-    getUserSubmissions: builder.query<ChallengeRes, void>({
-      query: () => ({
-        url: "/submission",
-      }),
-      providesTags: ['Submission']
-    }),
-
-    //  ----------------UPLOAD USER SUBMISSION DATA--------------------------------
-    uploadInputs: builder.mutation<ChallengeRes, ChallengeReq>({
-      query: ({ challengeId, userLocationSubmission }) => ({
-        url: `/submission`,
-        params: {challenge_id: challengeId},
-        method: "POST",
-        body: {userLocationSubmission}
-      }),
-    }),
-
-    //  ----------------QUERY USERS' PROGRESS BY CHALLENGE ID--------------------------------
-    getProgress: builder.query<ChallengeRes, ChallengeReq>({
-      query: ({ challengeId }) => ({
-        url: `/submission`,
-        params: {challenge_id: challengeId}
-      }),
-      providesTags: ['Submission']
-    }),
-
-    
+    }),  
   }),
 });
 
 export const {
   useGetChallengeQuery,
   useGetAllChallengesQuery,
-  useGetLocationsQuery,
-  useGetUserSubmissionsQuery,
-  useUploadInputsMutation,
-  useGetProgressQuery,
 } = JoinChallengeApi;
 export { JoinChallengeApi };

@@ -12,7 +12,7 @@ import {
     LinearProgress,
     CircularProgress
 } from "@mui/material";
-import CustomInputsField from "@/app/components/generic-component/UserInputsField";
+import CustomInputsField from "@/app/components/generic_components/UserInputsField";
 import {
     useGenerateStoryMutation,
     useUploadStoryMutation,
@@ -30,7 +30,7 @@ import {
 import {
     useGetProfileQuery,
 } from "@/libs/services/user/profile";
-import MenuDropdown from "@/app/components/generic-component/MenuDropdown";
+import MenuDropdown from "@/app/components/generic_components/MenuDropdown";
 import writeAnimation from "@/assets/feather-pen.gif";
 import Image from 'next/image';
 

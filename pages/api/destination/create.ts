@@ -72,3 +72,9 @@ export default async function handler(
         });
     }
 }
+
+export const swaggerStoryUpdate = {
+    index:29, 
+    text:
+  ``
+}
