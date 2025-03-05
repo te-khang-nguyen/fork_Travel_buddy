@@ -25,10 +25,10 @@ const StoryPageUI = () => {
         if(story?.data){
             setStoryData(story?.data?.map((item) => ({
                 id: item.id,
-                createdAt: item.createdAt,
+                createdAt: item.created_at,
                 title: item.title,
-                text: item.storyFull,
-                media: item.mediaSubmitted,
+                text: item.story_content,
+                media: item.media_assets?.map((item)=>item.url),
                 status: item.status,
             })));
         }

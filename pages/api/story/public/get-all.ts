@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { supabase } from "@/libs/supabase/supabase_client";
 
 export default async function handler(
     req: NextApiRequest,
@@ -8,13 +8,6 @@ export default async function handler(
     if (req.method !== "GET") {
         return res.status(405).json({ error: "Method not allowed!" });
     }
-
-    const storyId = req.query?.["story-id"];
-
-    // Extract authorization token
-    const token = req.headers.authorization?.split(" ")[1];
-    // Create Supabase client
-    const supabase = createApiClient(token);
     
     try {
         const { 
@@ -22,9 +15,10 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select("*, destinations(name), media_assets(url), channels(channel_type)")
-            .eq("id", storyId)
-            .single();
+            .select("*, media_assets(url), channels(channel_type)")
+            .eq("status", "PUBLISHED")
+            .eq("channels.channel_type", "Travel Buddy")
+            // .single();
 
         if (error) {
             return res.status(400).json({ error: error.message });
@@ -54,7 +48,7 @@ export const swaggerStoryGet = {
       "parameters": [
         {
           "in": "query",
-          "name": "story-id",
+          "name": "story_id",
           "schema": {
             "type": "string"
           },

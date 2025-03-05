@@ -2,83 +2,96 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-    // Validate request method
-    if (req.method !== "POST") {
-        return res.status(405).json({ error: "Method not allowed!" });
+  // Validate request method
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed!" });
+  }
+
+  // Extract parameters
+  const { media, ...rest } = req.body;
+
+  // Extract authorization token
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: "Authorization token is required" });
+  }
+
+  // Create Supabase client
+  const supabase = createApiClient(token);
+  // Get authenticated user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  try {
+    // Insert story into database
+    const { data, error } = await supabase
+            .from("stories")
+            .insert([{
+                status: "DRAFT",
+                user_id: user?.id,
+                ...rest
+            }])
+            .select('id')
+            .single();
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
     }
 
-    // Extract parameters
-    const { destinationId } = req.query;
-    const { userNotes, storyFull, mediaSubmitted } = req.body;
+    const toMediaAssets = media.map((mediaItem) => ({
+      user_id: user!.id,
+      url: mediaItem,
+      usage: "story",
+      mime_type: "image/jpeg"
+    }))
 
-    // Extract authorization token
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ error: "Authorization token is required" });
+    const {
+      data: mediaData,
+      error: mediaErr
+    } = await supabase.from("media_assets")
+      .insert(toMediaAssets)
+      .select();
+
+    if (mediaErr) {
+      return res.status(400).json({ error: mediaErr.message });
     }
 
-    // Create Supabase client
-    const supabase = createApiClient(token);
-    // Get authenticated user
-    const { 
-        data: { user },
-    } = await supabase.auth.getUser();
+    const {
+      error: storyMediaErr
+    } = await supabase.from("story_media")
+      .insert(mediaData.map((item)=>({
+        story_id: data?.id,
+        media_id: item.id
+      })))
+      .select();
 
-    // Validate required parameters
-    if (!destinationId) {
-        return res.status(400).json({ error: "Desination ID is required" });
+    if (storyMediaErr) {
+      return res.status(400).json({ error: storyMediaErr.message });
     }
 
-    try {
-        // Insert story into database
-        const { data, error } = await supabase.from("story").insert([
-            {
-                status: "ACTIVE",
-                userId: user?.id,
-                destinationId: destinationId,
-                userNotes: userNotes,
-                storyFull: storyFull,
-                mediaSubmitted: mediaSubmitted,
-            }
-        ]).select('id').single();
+    // Successful response
+    return res.status(201).json({
+      data: {
+        message: "Story created successfully",
+        id: data?.id,
+        media: mediaData?.map((item) => item.id)
+      }
+    });
 
-        if (error) {
-            return res.status(400).json({ error: error.message });
-        }
-
-        const toMediaAssets =  mediaSubmitted.map((mediaItem)=>({
-          uploader_id: user!.id,
-          url: mediaItem,
-          usage: "story",
-          mime_type: "image/jpeg"
-        }))
-
-        const {
-          data: mediaData, 
-          error: mediaErr
-        } = await supabase.from("media_assets")
-                          .insert(toMediaAssets)
-                          .select();
-
-        // Successful response
-        return res.status(201).json({ data: {
-            message: "Story created successfully", 
-            id: data?.id 
-          }});
-
-    } catch (catchError) {
-        console.error("Unexpected error:", catchError);
-        return res.status(500).json({ error: "Internal server error" });
-    }
+  } catch (catchError) {
+    console.error("Unexpected error:", catchError);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
 
 export const swaggerStoryCreate = {
-    index:26, 
-    text:
-`"/api/v1/story": {
+  index: 26,
+  text:
+    `"/api/v1/story": {
     "post": {
       "tags": ["story"],
       "summary": "Create a new story",

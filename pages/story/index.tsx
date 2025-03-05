@@ -7,9 +7,22 @@ import StyledContentCard from "@/app/components/generic-component/StyledContentC
 import { useRouter } from "next/router";
 import { useGetAllDestinationsQuery } from "@/libs/services/user/destination";
 import { useGetAllPublishedStoryQuery } from "@/libs/services/user/story";
+import { baseUrl } from "@/app/constant";
+import { useMetadata } from "@/app/Layout/MetadataContextWrapper";
+import defaultBackground from "@/assets/background.jpg";
 
-const UserDashboard = () => {
+const PublicStories = () => {
   const router = useRouter();
+  const { setMetadata } = useMetadata();
+
+  useEffect(() => {
+    setMetadata({
+      title: 'Stories Gallery - Travel Buddy', 
+      description:'Welcome to My Travel Buddy.',
+      urlSlug: `${baseUrl}/stories-gallery`
+    });
+  }, []);
+
   const [isFetching, setIsFetching] = useState(true);
   const [destinations, setDestinations] = useState<{
     id: string;
@@ -25,20 +38,7 @@ const UserDashboard = () => {
     status: string | undefined;
   }[]>([]);
 
-  // useEffect(() => {
-  //   setMetadata({
-  //     title: 'Home - Travel Buddy', 
-  //     description:'Welcome to My Travel Buddy.',
-  //     urlSlug: baseUrl + router.asPath
-  //   });
-  // }, [setMetadata]);
-
-  const {
-      data: destinationsData,
-      error: destinationsErr,
-      isFetching: destinationsFetching,
-  } = useGetAllDestinationsQuery();
-
+  
   const {
       data: story, 
       error: storyError,
@@ -46,25 +46,15 @@ const UserDashboard = () => {
   } = useGetAllPublishedStoryQuery();
 
   useEffect(()=>{
-    setIsFetching(destinationsFetching || storyFetching);
-  },[destinationsFetching, storyFetching]);
-
-  useEffect(()=>{
-    if(destinationsData){
-      setDestinations(destinationsData?.map((item)=>({
-        id: item.id,
-        name: item.name,
-        image: item.primary_photo
-      })))
-    }
-  },[destinationsData])
+    setIsFetching(storyFetching);
+  },[storyFetching]);
 
   useEffect(()=>{
     if(story?.data){
       setStoryData(story?.data?.map((item) => ({
         id: item.id,
         createdAt: item.created_at,
-        title: item.title,
+        title: item.seo_title_tag,
         text: item.story_content,
         media: item.media_assets?.map((item)=>item.url),
         status: item.status,
@@ -80,30 +70,29 @@ const UserDashboard = () => {
     );
   }
 
-  const handleContinue = (destinationId: string) => {
-    router.push(`/destination/${destinationId}`);
-  };
-
-
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
         p: 3,
         gap: 2,
         mb: 2,
-
+        backgroundImage: `url("${defaultBackground.src}")`,
+        height: "100%",
+        overflowY: "auto"
       }}
     >
-
-        <CustomCarousel
-            contents={destinations}
-            header="Featured Destinations"
-            onCardSelect={(id)=> handleContinue(id)}
-            onViewAll={()=> router.push("/destination/select")}
-        />
-
+        <Typography 
+            variant="h3"
+            sx={{
+                fontWeight: "bold",
+                color: "white"
+            }}
+        >
+            Welcome to the Travel Buddy Stories Gallery
+        </Typography>
         <Box
           sx={{
             display: "flex",
@@ -111,10 +100,13 @@ const UserDashboard = () => {
             alignItems: "center",
             justifyContent: "flex-start",
             alignSelf: "center",
-            overflowY: "auto",
             mt: 3,
-            width: "100%",
-            maxHeight: 400
+            p:2,
+            width: "60%",
+            maxHeight: 400,
+            backgroundColor: "white",
+            borderRadius: 2,
+            boxShadow: 5
           }}
         >
           <Typography
@@ -147,4 +139,4 @@ const UserDashboard = () => {
   );
 };
 
-export default UserDashboard;
+export default PublicStories;

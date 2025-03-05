@@ -17,7 +17,7 @@ export default async function handler(
         return res.status(405).json({ error: "Method not allowed!" });
     }
 
-    const story_id = req.query?.["story-id"];
+    const storyId = req.query?.["story-id"];
     const updatedData = req.body;
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token);
@@ -31,11 +31,11 @@ export default async function handler(
             data: storyData,
             error: storyErr
         } = await supabase
-            .from('story')
+            .from('stories')
             .update(updatedData)
-            .eq("id", story_id)
-            .select()
-            .single();
+            .eq("id", storyId)
+            .select();
+            // .single();
 
         if (storyErr) {
             return res.status(400).json({ error: storyErr.message });
@@ -66,7 +66,7 @@ export const swaggerStoryUpdate = {
       "parameters": [
         {
           "in": "path",
-          "name": "story_id",
+          "name": "story-id",
           "schema": {
             "type": "string"
           },
@@ -81,15 +81,15 @@ export const swaggerStoryUpdate = {
             "schema": {
               "type": "object",
               "properties": {
-                "userNotes": {
+                "notes": {
                   "type": "string",
                   "description": "User travel notes"
                 },
-                "storyFull": {
+                "story_content": {
                   "type": "string",
                   "description": "AI-generated travel story based on users notes"
                 },
-                "mediaSubmitted": {
+                "media": {
                   "type": "array",
                   "items": {
                     "type": "string",

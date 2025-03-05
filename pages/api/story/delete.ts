@@ -11,17 +11,17 @@ export default async function handler(
         return;
     }
 
-    const story_id = req.query?.["story-id"];
+    const storyId = req.query?.["story-id"];
 
-    if (!story_id) {
+    if (!storyId) {
         return res.status(400).json({ error: "Story ID is required" });
     }
 
     try {
         const { data, error } = await supabase
-            .from("story")
+            .from("stories")
             .update({status : "ARCHIVED"})
-            .eq(story_id? "id": "challengeHistoryId", story_id)
+            .eq("id", storyId)
             .select("id, status");
 
         if (error) {

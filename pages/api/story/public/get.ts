@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { supabase } from "@/libs/supabase/supabase_client";
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,11 +10,6 @@ export default async function handler(
     }
 
     const storyId = req.query?.["story-id"];
-
-    // Extract authorization token
-    const token = req.headers.authorization?.split(" ")[1];
-    // Create Supabase client
-    const supabase = createApiClient(token);
     
     try {
         const { 

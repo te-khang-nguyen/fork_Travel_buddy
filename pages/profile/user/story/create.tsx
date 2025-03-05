@@ -186,24 +186,31 @@ const CreateStoryUI = () => {
     
         // getPayLoadSize(storageUrls);
 
+        const matchedChannel = channelsData?.data?.find(e => e.id === channelId);
+
         const { data: generatedStory } = await generateStory({
             payload: {
-                userNotes: userInputs.userQuestionSubmission,
+                notes: userInputs.userQuestionSubmission,
                 attractions: attractionsTitles,
-                brandVoice: channelsData?.data?.find(e => e.id === channelId)?.["brand_voice"]
+                brandVoice: matchedChannel?.["brand_voice"],
+                channelType: matchedChannel?.["channel_type"],
             }
         });
 
+    
         if(generatedStory?.data) {
-            const finalStory = generatedStory?.data?.replace(/\*/g,'');
+            const { story_content, ...rest } = generatedStory?.data
+            const finalStory = story_content.replace(/\*/g,'');
             const { 
                 data: submissionResult
             } = await uploadStory({
-                destinationId: destinationId,
                 payload: {
-                    userNotes: userInputs.userQuestionSubmission,
-                    storyFull: finalStory,
-                    mediaSubmitted: storageUrls,
+                    destination_id: destinationId,
+                    channel_id: channelId,
+                    notes: userInputs.userQuestionSubmission,
+                    story_content: finalStory,
+                    media: storageUrls,
+                    ...rest
                 }
             });
 

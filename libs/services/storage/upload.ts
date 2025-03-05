@@ -7,7 +7,13 @@ interface ImageReq {
     bucket: string;
 }
 
-interface ImageRes {
+interface VideoReq {
+  videoBase64: string | null;
+  title: string;
+  bucket: string;
+}
+
+interface UploadRes {
     signedUrl?: string;
     error?: any;
 }  
@@ -16,17 +22,25 @@ const StorageApi = createApi({
   reducerPath: "storage",
   baseQuery,
   endpoints: (builder) => ({
-    uploadImage: builder.mutation<ImageRes, ImageReq>({
+    uploadImage: builder.mutation<UploadRes, ImageReq>({
         query: (params) => ({
-          url: `/storage/upload_image`,
+          url: `/storage/upload-image`,
           method: "POST",
           body: params,
         }),
+    }),
+    uploadVideo: builder.mutation<UploadRes, VideoReq>({
+      query: (params) => ({
+        url: `/storage/upload_video`,
+        method: "POST",
+        body: params,
+      }),
     }),
   }),
 });
 
 export const { 
-  useUploadImageMutation
+  useUploadImageMutation,
+  useUploadVideoMutation,
 } = StorageApi;
 export { StorageApi };

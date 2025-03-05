@@ -1,4 +1,4 @@
-import { supabase } from "@/libs/supabase/supabase_client";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 import { NextApiRequest, NextApiResponse } from "next";
 
 /**
@@ -62,6 +62,11 @@ export default async function handler(
     }
 
     const { challenge_id } = req.query;
+
+    // Extract authorization token
+    const token = req.headers.authorization?.split(" ")[1];
+    // Create Supabase client
+    const supabase = createApiClient(token);
     
     try {
         const { 

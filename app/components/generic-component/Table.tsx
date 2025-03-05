@@ -8,7 +8,7 @@ import {
     TableHead, 
     TableRow, 
 } from "@mui/material";
-import ImageCarousel from "@/app/components/challenge/ImageCarousel";
+import ImageCarousel from "@/app/components/generic-component/ImageCarousel";
 import StatusChip from "@/app/components/challenge/StatusChip";
 import { formatDate } from "@/app/utils/date";
 

@@ -1,5 +1,5 @@
-import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,6 +10,10 @@ export default async function handler(
     }
 
     const { attraction_id } = req.query;
+    // Extract authorization token
+    const token = req.headers.authorization?.split(" ")[1];
+    // Create Supabase client
+    const supabase = createApiClient(token);
     
     try {
         const { 

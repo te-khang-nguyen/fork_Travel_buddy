@@ -1,4 +1,4 @@
-import { supabase } from "@/libs/supabase/supabase_client";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 import { NextApiRequest, NextApiResponse } from "next";
 
 /**
@@ -63,6 +63,7 @@ export default async function handler(
         return res.status(405).json({ error: "Method not allowed!" });
     }
     const token = req.headers.authorization?.split(' ')[1];
+    const supabase = createApiClient(token);
 
     const {
         data: { user },

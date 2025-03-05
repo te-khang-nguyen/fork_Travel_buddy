@@ -8,11 +8,11 @@ const PUBLIC_ROUTES = ["/", "/register", "/login/business", "/recovery", "/auth/
 const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
   const WithAuthRedirect = (props: P) => {
     const router = useRouter();
-    const challengeId = router.query?.challenge_id;
+    const contentId = router.query?.["content-id"];
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-    if(challengeId){
-      localStorage.setItem("challengeId", challengeId as string);
+    if(contentId){
+      localStorage.setItem("contentId", contentId as string);
     }
 
     useEffect(() => {
@@ -21,7 +21,7 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           const jwt = localStorage.getItem("jwt") || "";
           const role = localStorage.getItem("role") || "";
           const isValidJwt = await isAuthenticated(jwt);  
-          const storedChallengeId = localStorage.getItem("challengeId");
+          const storedContentId = localStorage.getItem("contentId");
 
           // Allow access to public routes 
           if (PUBLIC_ROUTES.includes(router.pathname)) {
@@ -42,12 +42,12 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
             }
           }
 
-          if(router.pathname.includes("/challenge") && storedChallengeId) {
+          if(router.pathname.includes("/challenge") && storedContentId) {
               localStorage.removeItem("challengeId");
           }
           
-          if (router.pathname !== "/" && storedChallengeId) {
-            router.push(`/challenge/${storedChallengeId}/locations`);
+          if (router.pathname !== "/" && storedContentId) {
+            router.push(`/challenge/${storedContentId}/locations`);
           }
 
           // If the role is 'user' and the path contains 'business', deny access

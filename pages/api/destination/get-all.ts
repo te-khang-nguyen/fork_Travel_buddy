@@ -1,4 +1,4 @@
-import { supabase } from "@/libs/supabase/supabase_client";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 import { NextApiRequest, NextApiResponse } from "next";
 
 // NEED TO CALL THIS API, BUT DON'T KNOW HOW TO YET
@@ -10,6 +10,12 @@ export default async function handler(
         res.status(405).send({ message: 'Only GET requests allowed' })
         return
     }
+
+    // Extract authorization token
+    const token = req.headers.authorization?.split(" ")[1];
+    // Create Supabase client
+    const supabase = createApiClient(token);
+
     try {
         const { data, error } = await supabase
             .from("destinations")

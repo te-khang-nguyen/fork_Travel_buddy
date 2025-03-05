@@ -28,15 +28,19 @@ export function middleware(req: NextRequest) {
     return isAuthenticated(jwt).then((result) => {
       // Check the validity of the JWT, if invalid, deny access to API
       if (!result) {
+        if(url.pathname.includes('/public')) {
+          const pathSegments = url.pathname.split('/').filter(e => e !== 'v1' && e !== '');
+          return NextResponse.rewrite(new URL(`/${pathSegments.join('/')}`, req.url));
+        }
         return Response.json(
           { success: false, message: "Unauthorized" },
           { status: 401 }
         )
       } else {
-        if(url.pathname.includes('/storage')) {
-          const pathSegments = url.pathname.split('/').filter(e => e !== 'v1' && e !== '');
-          return NextResponse.rewrite(new URL(`/${pathSegments.join('/')}`, req.url));
-        }
+        // if(url.pathname.includes('/storage')) {
+        //   const pathSegments = url.pathname.split('/').filter(e => e !== 'v1' && e !== '');
+        //   return NextResponse.rewrite(new URL(`/${pathSegments.join('/')}`, req.url));
+        // }
 
         const newPath = apiRoutingCRUD(req);
         if (!newPath){

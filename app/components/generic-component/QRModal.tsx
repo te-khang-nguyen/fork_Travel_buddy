@@ -14,7 +14,6 @@ type QRModalComponentProps = {
 
 const QRModal: React.FC<QRModalComponentProps> = ({
   displayText, 
-  locationId, 
   contentId, 
   backgroundImage, 
   open, 
@@ -22,7 +21,7 @@ const QRModal: React.FC<QRModalComponentProps> = ({
 }) => {
   const [qr, setQr] = useState<string | null>(null);
 
-  const url = `${baseUrl}?content_id=${contentId}`
+  const url = `${baseUrl}?content-id=${contentId}`
   useEffect(() => {
     if (open) {
       QRCode.toDataURL(

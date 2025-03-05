@@ -8,21 +8,37 @@ import {
 import { useRouter } from "next/router";
 
 import {
-    useGetStoryQuery
+    useGetSinglePublishedStoryQuery
 } from "@/libs/services/user/story";
 
 import { StoryPage } from "@/app/components/story/StoryPage";
+import { baseUrl } from "@/app/constant";
+import { useMetadata } from "@/app/Layout/MetadataContextWrapper";
 
-const StoryPageUI = () => {
+const PublicStoryPageUI = () => {
     const router = useRouter();
+    const { setMetadata } = useMetadata();
     const { story_id } = router.query;
     const { 
         data: story, 
         error, 
         isLoading 
-    } = useGetStoryQuery({
+    } = useGetSinglePublishedStoryQuery({
         storyId: story_id as string
     });
+
+    useEffect(() => {
+        if(story?.data){
+            setMetadata({
+                title: story.data?.seo_title_tag || "", 
+                description: story.data?.seo_meta_desc || "",
+                urlSlug: `${baseUrl}/${story.data?.seo_slug}`,
+                seoExcerpt: story.data?.seo_excerpt || "",
+                hashtags: story.data?.hashtags || ["#"],
+                longTailKeyword: story.data?.long_tail_keyword || "",
+            });
+        }
+    }, [setMetadata]);
 
     // Handle loading state
     if (isLoading) {
@@ -65,8 +81,9 @@ const StoryPageUI = () => {
             media={story.data.media_assets?.map((item)=>item.url) ?? []}
             destination={story.data.destinations?.name ?? ""}
             channelType={story.data.channels?.channel_type ?? ""}
+            isPublic
         />
     );
 }
 
-export default StoryPageUI;
+export default PublicStoryPageUI;

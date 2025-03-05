@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "@/libs/supabase/supabase_client";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 
 export default async function handler(
     req: NextApiRequest,
@@ -9,13 +9,18 @@ export default async function handler(
         return res.status(405).json({ error: "Method not allowed!" });
     }
 
+    // Extract authorization token
+    const token = req.headers.authorization?.split(" ")[1];
+    // Create Supabase client
+    const supabase = createApiClient(token);
+
     try {
         const { 
             data: queryData, 
             error 
         } = await supabase
-            .from("story")
-            .select(`*`);
+            .from("stories")
+            .select(`*, media_assets(url)`);
 
         if (error) {
             return res.status(400).json({ error: error.message });

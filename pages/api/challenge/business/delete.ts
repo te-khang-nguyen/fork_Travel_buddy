@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "@/libs/supabase/supabase_client";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 
 /**
  * @swagger
@@ -51,6 +51,10 @@ export default async function handler(
     }
 
     const { challenge_id } = req.query;
+    // Extract authorization token
+    const token = req.headers.authorization?.split(" ")[1];
+    // Create Supabase client
+    const supabase = createApiClient(token);
 
     if (!challenge_id) {
         return res.status(400).json({ error: "Challenge ID is required" });

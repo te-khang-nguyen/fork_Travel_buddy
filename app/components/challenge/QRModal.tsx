@@ -22,7 +22,7 @@ const QRModal: React.FC<QRModalComponentProps> = ({
 }) => {
   const [qr, setQr] = useState<string | null>(null);
 
-  const url = `${baseUrl}?challenge_id=${challengeId}`
+  const url = `${baseUrl}?destination-id=${challengeId}`
   useEffect(() => {
     if (open) {
       QRCode.toDataURL(

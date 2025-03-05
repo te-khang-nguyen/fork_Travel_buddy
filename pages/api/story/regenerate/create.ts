@@ -13,6 +13,12 @@ export default async function handler(
     // Extract body
     const { attractions, notes, brand_voice, story_length, channel_type } = req.body;
 
+    // Extract authorization token
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ error: "Authorization token is required" });
+    }
+
     try {
         // Insert story into database
         const { data: storyData, error } = await generateLocationStories(
@@ -20,7 +26,7 @@ export default async function handler(
                 notes,
                 brand_voice,
                 story_length,
-                channel_type
+                channel_type 
         );
 
         if (error) {

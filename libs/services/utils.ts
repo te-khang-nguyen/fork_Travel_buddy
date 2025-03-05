@@ -2,9 +2,19 @@
 import { supabase } from "../supabase/supabase_client";
 const crypto = require("crypto");
 
-const base64toBinary = (input) => {
-  return Uint8Array.from(Buffer.from(input.split(",")[1], "base64"));
+const base64toBinary = (input: string): Uint8Array => {
+  if (!input || typeof input !== "string") {
+      throw new Error("Invalid base64 input");
+  }
+
+  const base64Data = input.includes(",") ? input.split(",")[1] : input; // Handle missing prefix
+  if (!base64Data) {
+      throw new Error("Base64 data is empty or incorrectly formatted");
+  }
+
+  return Uint8Array.from(Buffer.from(base64Data, "base64"));
 };
+
 
 const checkAndInsertUserProfile = async () => {
   const {

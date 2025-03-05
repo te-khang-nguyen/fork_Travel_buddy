@@ -5,16 +5,24 @@ interface StoryReq {
     storyId?: string;
     destinationId?: string;
     payload?: {
-        destinationId?: string;
+        destination_id?: string;
+        channel_id?: string;
         title?: string;
-        userNotes?: string;
-        storyFull?: string;
-        mediaSubmitted?: string[];
+        notes?: string;
+        story_content?: string;
+        media?: string[];
         status?: string;
         attractions?: string;
         tourSchedule?: string;
         storyLength?: number;
         brandVoice?: string;
+        channelType?: string;
+        seo_title_tag?: string;
+        seo_meta_desc?: string;
+        seo_excerpt?: string;
+        seo_slug?: string;
+        long_tail_keyword?: string;
+        hashtags?: string[];
     }
 }
 
@@ -22,21 +30,25 @@ interface StoryProps {
   id?: string;
   status?: string;
   title?: string;
-  createdAt?: string;
-  userId?: string;
-  destinationId?: string;
-  challengeHistoryId?: string;
-  userNotes?: string;
-  storyFull?: string;
-  mediaSubmitted?: string[];
-  seoTitleTag?: string;
-  seoMetaDesc?: string;
-  seoSlug?: string;
-  longTailKeyWord?: string;
-  hashtag?: string;
+  created_at?: string;
+  user_id?: string;
+  destination_id?: string;
+  notes?: string;
+  story_content?: string;
+  media_assets?: {url:string}[];
+  seo_title_tag?: string;
+  seo_meta_desc?: string;
+  seo_excerpt?: string;
+  seo_slug?: string;
+  long_tail_keyword?: string;
+  hashtags?: string[];
   destinations?: {
     name?: string;
   };
+  channels?: {
+    channel_type: string;
+    name?: string;
+  }
 }
 
 interface StoryRes {
@@ -60,18 +72,18 @@ const StoryApi = createApi({
               body: {
                 schedule: payload?.tourSchedule,
                 attractions: payload?.attractions,
-                notes: payload?.userNotes,
+                notes: payload?.notes,
                 brand_voice: payload?.brandVoice,
-                story_length: payload?.storyLength
+                story_length: payload?.storyLength,
+                channel_type: payload?.channelType,
               }
             })
           }),
 
         uploadStory: builder.mutation<StorySingleRes, StoryReq>({
-            query: ({ destinationId, payload }) => ({
+            query: ({ payload }) => ({
               url: `/story`,
               method: "POST",
-              params: { destinationId },
               body: payload
             })
           }),
@@ -88,6 +100,20 @@ const StoryApi = createApi({
             query: () => ({
               url: `/story`,
             })
+        }),
+
+        getAllPublishedStory: builder.query<StoryRes, void>({
+          query: () => ({
+            url: `/story/public/`,
+          })
+        }),
+
+        getSinglePublishedStory: builder.query<StorySingleRes, StoryReq>({
+          query: ({ storyId }) => ({
+            url: `/story/public`,
+            method: "GET",
+            params: { "story-id": storyId }
+          })
         }),
         //--------------------UPDATE A STORY-------------------
         updateStory: builder.mutation<StorySingleRes, StoryReq>({
@@ -115,7 +141,9 @@ export const {
     useGetStoryQuery,
     useGetAllStoryQuery,
     useUpdateStoryMutation,
-    useDeleteStoryMutation
+    useDeleteStoryMutation,
+    useGetAllPublishedStoryQuery,
+    useGetSinglePublishedStoryQuery,
 } = StoryApi;
 
 export { StoryApi };

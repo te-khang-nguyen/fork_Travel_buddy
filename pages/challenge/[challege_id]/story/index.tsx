@@ -23,7 +23,7 @@ import {
 } from 'next-share';
 import CustomButton from "@/app/components/kits/CustomButton";
 import { useRouter } from "next/router";
-import LocationStoryDisplay from "@/app/components/challenge/LocationStoryDisplay";
+import LocationStoryDisplay from "@/app/components/story/LocationStoryDisplay";
 import {
     useGetChallengeQuery,
     useGetProgressQuery,
@@ -150,7 +150,7 @@ const StoryPageUI = () => {
                 try {
                     const { data: generatedStory } = await generateStoryApi({
                         payload: { 
-                            userNotes: matchItem?.userQuestionSubmission,
+                            notes: matchItem?.userQuestionSubmission,
                             attractions: locationTitles,
                         }
                     });
@@ -162,9 +162,9 @@ const StoryPageUI = () => {
                         } = await createStory({
                             destinationId: challege_id as string,
                             payload: {
-                                userNotes: matchItem?.userQuestionSubmission,
-                                storyFull: finalStory,
-                                mediaSubmitted: matchItem?.userMediaSubmission,
+                                notes: matchItem?.userQuestionSubmission,
+                                story_content: finalStory,
+                                media: matchItem?.userMediaSubmission,
                             }
                         });
     
