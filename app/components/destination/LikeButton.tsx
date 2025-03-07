@@ -5,7 +5,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
 const LikeButton = () => {
   // true indicates the "Like" state, false indicates "not like"
-  const [liked, setLiked] = useState(true);
+  const [liked, setLiked] = useState(false);
 
   const handleClick = () => {
     setLiked(prev => !prev);

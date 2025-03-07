@@ -6,15 +6,17 @@ import { Destination } from "@/libs/services/user/destination";
 
 const IDidItSection = ({id}: {id: string}) => {
     const [liked, setLiked] = useState(false);
-    const chosenId = localStorage.getItem("chosenId");
+    const chosenIds = JSON.parse(localStorage.getItem("chosenIds") || "[]");
+
+    console.log(chosenIds?.includes(id));
 
     useEffect(()=>{
-      setLiked(id === chosenId);
-    },[chosenId]);
+      setLiked(chosenIds?.includes(id));
+    },[chosenIds]);
     
     const handleClick = () => {
         setLiked(prev => !prev);
-        localStorage.setItem("chosenId", id);
+        localStorage.setItem("chosenIds", JSON.stringify([...chosenIds, id]));
 
     // TODO: Add your API call here to update the status in the database.
     // e.g., updateLikeStatus(!liked);
@@ -27,7 +29,7 @@ const IDidItSection = ({id}: {id: string}) => {
             // color="white"
             variant={liked ? "contained" : "contained"}
             // Conditionally show the icon only when not in the "Like" state.
-            startIcon={id !== chosenId? !liked
+            startIcon={!chosenIds?.includes(id)? !liked
                 ? <CheckBoxOutlineBlankIcon /> 
                 : <CheckBoxIcon />
                 : <CheckBoxIcon />
