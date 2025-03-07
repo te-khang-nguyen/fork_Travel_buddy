@@ -123,7 +123,10 @@ const CreateStoryUI = () => {
                     id: '1',
                     name: 'Select a destination'
                 },
-                ...destinationsData?.map((item) =>({
+                ...destinationsData
+                ?.filter(
+                    destination => destination.status === "active" 
+                )?.map((item) =>({
                     id: item.id,
                     name: item.name
                 }))
