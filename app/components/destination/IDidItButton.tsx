@@ -20,16 +20,17 @@ const IDidItSection = ({id}: {id: string}) => {
     // e.g., updateLikeStatus(!liked);
     };
     return(
-      <Box sx={{ position: 'fixed', top: 13, left: 330, zIndex: 10000 }}>
+      <Box sx={{ 
+        position: 'fixed', top: {xs: 8, sm: 13 , lg: 13}, left: {xs: 200, sm: 330 ,lg: 400}, zIndex: 10000 }}>
         <Button
             onClick={handleClick}
             // color="white"
             variant={liked ? "contained" : "contained"}
             // Conditionally show the icon only when not in the "Like" state.
-            startIcon={id === chosenId? !liked
+            startIcon={id !== chosenId? !liked
                 ? <CheckBoxOutlineBlankIcon /> 
                 : <CheckBoxIcon />
-                : null
+                : <CheckBoxIcon />
             }
             sx={{
                 textTransform: 'none',
@@ -40,12 +41,12 @@ const IDidItSection = ({id}: {id: string}) => {
                 opacity: liked ? 1.0 : 1.0,
                 borderRadius: 2,
                 boxShadow: "none",
-                backgroundColor: "white",
+                backgroundColor: "rgba(252, 252, 252, 0)",
                 color: "green",
                 "&:hover": {
                   boxShadow: 0,
                 },
-                fontSize: "20px"
+                fontSize: {xs: "15px", sm: "20px" , lg: "20px"}
             }}
             disableRipple
         >

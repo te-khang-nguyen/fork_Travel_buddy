@@ -252,7 +252,7 @@ const CreateStoryUI = () => {
         if(result?.data){
             setSnackbar({
                 open: true,
-                message: result?.data["message"],
+                message: "A new channel is created!",
                 severity: "success"
             });
             setIsClicked(false);

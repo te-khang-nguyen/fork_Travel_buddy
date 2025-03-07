@@ -44,6 +44,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
 import { useLogOutMutation } from "@/libs/services/user/auth";
 import AccountSwitcher from "@app/components/profile/business/AccountSwitcher";
+import { store } from "@/libs/store";
+import { UserProfileApi } from '@/libs/services/user/profile';
+import { StoryApi } from '@/libs/services/user/story';
+import { ChannelApi } from "@/libs/services/user/channel";
 
 const StyledFab = styled(Fab)({
   position: 'absolute',
@@ -118,6 +122,9 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
     setColorOnClicked([]);
     localStorage.clear();
     sessionStorage.clear();
+    // store.dispatch(UserProfileApi.util.resetApiState());
+    // store.dispatch(StoryApi.util.resetApiState());
+    // store.dispatch(ChannelApi.util.resetApiState());
     await router.replace(role==="user"? '/' : '/login/business');
     setMenuOpen(null);
   };

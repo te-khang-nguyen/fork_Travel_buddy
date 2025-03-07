@@ -28,7 +28,7 @@ async function generateLocationStories(
     Writing Style: 
     - Strictly follow and write the story in the style specified in the [Brand Voice]
     
-    Tour Notes Format:
+    Input Format:
     [Destination] is the name of the destination for which the story is written.
     [Attractions] is provided as a list of attraction titles associated with [Destination], each title separated by newline character.
     [Tour Notes] is provided as a long body of texts that can be formatted in one of the following ways:
@@ -49,6 +49,7 @@ async function generateLocationStories(
     THINGS MUST NOT BE VIOLATED:
     1. DO NOT WRITE THE STORY IRRELEVANT OF THE [Tour Notes].
     2. DO NOT USE MARKDOWN FORMAT ANYWHERE IN THE RESPONSE. ALWAYS GENERATE AS PLAINTEXT.
+    3. ALWAYS WRITE A GOOD STORY BASED ON [Destination] EVEN IF THERE ARE INSUFFICIENT INFORMATION IN THE INPUT FORMAT.
     
     Output Format:
     The output must be a paragraph with the following format:
@@ -149,6 +150,7 @@ async function generateLocationStories(
     and 2 more times in the remaining body, 
     keep the overall context and structure the same as in [Story],
     write in plaintext with no Markdown elements.
+    IF [Keyword] is not provided, just output [Story] without any modification.
     `.trim();
 
     const finalMessages = [

@@ -33,10 +33,6 @@ export const channelFieldsHeaderMap = [
         header: "Channel Title"
     },
     {
-        fieldName: "url",
-        header: "Channel URL"
-    },
-    {
         fieldName: "brand_voice",
         header: "Your Channel Prompt",
         rows: 7
@@ -116,7 +112,7 @@ const SettingsPageUI = () => {
         if(result?.data){
             setSnackbar({
                 open: true,
-                message: result?.data["message"],
+                message: "A new channel is created!",
                 severity: "success"
             });
             setIsClicked(false);
