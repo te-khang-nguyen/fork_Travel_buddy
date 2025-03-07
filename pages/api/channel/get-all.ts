@@ -14,17 +14,24 @@ export default async function handler(
     // Create Supabase client
     const supabase = createApiClient(token);
 
+    const { 
+      data: { user },
+    } = await supabase.auth.getUser();
+
     try {
         const { 
             data: queryData, 
             error 
         } = await supabase
             .from("channels")
-            .select(`*`);
+            .select()
+            .eq("user_id", user?.id);
 
         if (error) {
             return res.status(400).json({ error: error.message });
         }
+
+        console.log(queryData);
 
         return res.status(200).json({ data: queryData });
     } catch (err: any) {

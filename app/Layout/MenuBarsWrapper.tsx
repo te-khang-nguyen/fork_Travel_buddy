@@ -450,7 +450,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
               Travel Buddy
             </Typography>
 
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox />}
               label="I did it"
               sx={{
@@ -460,7 +460,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
                 ml: 1,
                 mr: 5,
               }}
-            />
+            /> */}
             </Box>
             
             {!isMobile && 

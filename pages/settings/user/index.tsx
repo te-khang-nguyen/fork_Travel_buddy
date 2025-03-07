@@ -27,6 +27,44 @@ import { RowProps } from "@/app/components/generic_components/TableRow";
 import TextFormModal from "@/app/components/generic_components/TextFormModal";
 
 
+export const channelFieldsHeaderMap = [
+    {
+        fieldName: "name",
+        header: "Channel Title"
+    },
+    {
+        fieldName: "url",
+        header: "Channel URL"
+    },
+    {
+        fieldName: "brand_voice",
+        header: "Your Channel Prompt",
+        rows: 7
+    }
+];
+
+export const channelTypes = [
+    {
+        name: "Travel Buddy",
+        icon: <PiCompassFill 
+                        style={{
+                          color: "rgb(46, 121, 226)",
+                          transform: 'rotate(135deg)',
+                          fontSize: '36px'
+                        }}
+                      />
+    },
+    {
+        name: "Instagram",
+        icon: <SlSocialInstagram
+                style={{ 
+                    color: "rgb(46, 121, 226)",
+                    fontSize: '36px' 
+                }}/>
+    }
+]
+
+
 const SettingsPageUI = () => {
     const [createChannel] = useCreateChannelMutation();
     const [updateChannel] = useUpdateChannelMutation();
@@ -47,47 +85,10 @@ const SettingsPageUI = () => {
             });
     
     const handleCloseSnackbar = () => setSnackbar({ 
-            ...snackbar, 
-            open: false 
+        ...snackbar, 
+        open: false 
     });
     
-
-    const channelFieldsHeaderMap = [
-        {
-            fieldName: "name",
-            header: "Channel Title"
-        },
-        {
-            fieldName: "url",
-            header: "Channel URL"
-        },
-        {
-            fieldName: "brand_voice",
-            header: "Your Channel Prompt",
-            rows: 7
-        }
-    ];
-
-    const channelTypes = [
-        {
-            name: "Travel Buddy",
-            icon: <PiCompassFill 
-                            style={{
-                              color: "rgb(46, 121, 226)",
-                              transform: 'rotate(135deg)',
-                              fontSize: '36px'
-                            }}
-                          />
-        },
-        {
-            name: "Instagram",
-            icon: <SlSocialInstagram
-                    style={{ 
-                        color: "rgb(46, 121, 226)",
-                        fontSize: '36px' 
-                    }}/>
-        }
-    ]
 
     const [channels, setChannels] = useState<RowProps[]>([]);
 

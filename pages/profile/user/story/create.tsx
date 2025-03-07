@@ -4,6 +4,7 @@ import { RiQuillPenAiFill } from "react-icons/ri";
 import { useRouter } from "next/router";
 import {
     Box,
+    Button,
     Snackbar,
     Alert,
     Typography,
@@ -12,7 +13,9 @@ import {
     LinearProgress,
     CircularProgress
 } from "@mui/material";
+import TextFormModal from "@/app/components/generic_components/TextFormModal";
 import CustomInputsField from "@/app/components/generic_components/UserInputsField";
+import { channelFieldsHeaderMap, channelTypes } from "@/pages/settings/user";
 import {
     useGenerateStoryMutation,
     useUploadStoryMutation,
@@ -25,11 +28,10 @@ import {
     useGetAttractionsQuery,
 } from "@/libs/services/user/destination";
 import {
+    useCreateChannelMutation,
     useGetAllChannelsQuery
 } from "@/libs/services/user/channel";
-import {
-    useGetProfileQuery,
-} from "@/libs/services/user/profile";
+
 import MenuDropdown from "@/app/components/generic_components/MenuDropdown";
 import writeAnimation from "@/assets/feather-pen.gif";
 import Image from 'next/image';
@@ -40,6 +42,9 @@ const CreateStoryUI = () => {
     const [ uploadStory ] = useUploadStoryMutation();
     const [ generateStory ] = useGenerateStoryMutation();
     const [ uploadImage ] = useUploadImageMutation();
+    const [ createChannel ] = useCreateChannelMutation();
+    const [ modalOpen, setModalOpen ] = useState<boolean>(false);
+    const [ isClicked, setIsClicked ] = useState<boolean>(false);
     const [ destinationId, setDestinationId ] = useState<string>("1");
     const [ channelId, setChannelId ] = useState<string>("1");
     const [ options, setOptions ] = useState<{
@@ -235,6 +240,33 @@ const CreateStoryUI = () => {
         open: false 
     });
 
+    const handleAddChannel = async (channelInfo: {
+        name?: string;
+        channel_type?: string;
+        url?: string;
+        brand_voice?: string;
+    }) => {
+        setIsClicked(true);
+        const result = await createChannel({payload: channelInfo});
+
+        if(result?.data){
+            setSnackbar({
+                open: true,
+                message: result?.data["message"],
+                severity: "success"
+            });
+            setIsClicked(false);
+        } else {
+            
+            setSnackbar({
+                open: true,
+                message: result?.error as string,
+                severity: "error"
+            });
+            setIsClicked(false);
+        }
+    }
+
     const generationScreen = (
         <Box
             sx={{
@@ -319,7 +351,7 @@ const CreateStoryUI = () => {
                     variant="h6"
                 
                 >
-                Destination
+                    Destination
                 </Typography>
                 {destinationsFetching? 
                 <CircularProgress/>:
@@ -351,25 +383,51 @@ const CreateStoryUI = () => {
                     variant="h6"
                 
                 >
-                Channel
+                    Channel
                 </Typography>
         
                 {channelsFetching? 
                 <CircularProgress/>:
-                <MenuDropdown
-                    selectedId={channelId}
-                    label=''
-                    onSort={(id) => {
-                        setChannelId(id);
-                        sessionStorage.setItem("channelId", id)
-                    }}
-                    options={channelOptions}
-                    sx={{
-                        border:1,
-                        width: "100%",
-                        left: 0,
-                }}
-                /> }
+                <>
+                    <MenuDropdown
+                        selectedId={channelId}
+                        label=''
+                        onSort={(id) => {
+                            setChannelId(id);
+                            sessionStorage.setItem("channelId", id)
+                        }}
+                        options={channelOptions}
+                        sx={{
+                            border:1,
+                            width: "100%",
+                            left: 0,
+                        }}
+                    /> 
+                    {(channelOptions.length === 1) && 
+                    (<><Button
+                        variant="outlined"
+                        sx={{
+                            borderColor: "white",
+                            color: "green",
+                            left: 0,
+                            boder: 0
+                        }}
+                        onClick={() => setModalOpen(true)}
+                    >
+                        No channel yet? Let's add one
+                    </Button>
+
+                    <TextFormModal
+                        open={modalOpen}
+                        onClose={() => setModalOpen(false)}
+                        mainTitle="Add New Channel"
+                        collection={channelFieldsHeaderMap}
+                        onSubmit={handleAddChannel}
+                        selections={channelTypes}
+                        isLoading={isClicked}
+                    /></>)}
+                </>
+                }
             </Box>
 
             <CustomInputsField

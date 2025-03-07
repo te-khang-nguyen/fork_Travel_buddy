@@ -14,6 +14,10 @@ export default async function handler(
     const token = req.headers.authorization?.split(" ")[1];
     // Create Supabase client
     const supabase = createApiClient(token);
+    // Get authenticated user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     try {
         const { 
@@ -21,7 +25,8 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select(`*, media_assets(url)`);
+            .select(`*, media_assets(url)`)
+            .eq("user_id", user!.id);
 
         if (error) {
             return res.status(400).json({ error: error.message });

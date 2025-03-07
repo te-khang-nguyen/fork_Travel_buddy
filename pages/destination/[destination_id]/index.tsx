@@ -407,6 +407,9 @@ const NagoyaCastleHomePage: React.FC = () => {
 
             {/* Fixed Chat Button and Chatbox */}
             <ChatBoxSection destination={destination} />
+
+            {/* Fixed Destinatio visit button */}
+            <IDidItSection id={destination_id as string}/>
           </>
         ) : (
           <Typography variant="h6">Destination not found</Typography> // Fallback UI
