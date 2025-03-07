@@ -28,12 +28,14 @@ import {
   convertDestinationDetailsToFeatures,
   useGetIconicPhotosQuery,
 } from "@/libs/services/user/destination";
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
 import IconicPhotos from "@/app/components/destination/IconicPhotos";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import LikeButton from '@/app/components/destination/LikeButton';
 import IDidItSection from '@/app/components/destination/IDidItButton';
+import QRModal from '@/app/components/generic_components/QRModal';
 
 const NagoyaCastleHomePage: React.FC = () => {
 
@@ -102,8 +104,10 @@ const NagoyaCastleHomePage: React.FC = () => {
   // const { data: childrenDestinations, isLoading: childrenLoading } = useGetChildrenDestinationsQuery({ id: destination_id as string });
   const { data: attractions, isLoading: attractionsLoading } = useGetAttractionsQuery({ id: destination_id as string });
   const { data: destination_details } = useGetDestinationDetailsQuery({ id: destination_id as string })
-
+  
   const { data: iconic_photos } = useGetIconicPhotosQuery({ id: destination_id as string });
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   
   if (isLoading) return <LoadingSkeleton isLoading={true}/>;
   
@@ -365,6 +369,39 @@ const NagoyaCastleHomePage: React.FC = () => {
       </Box>
     )
   }
+
+  const QRSection: React.FC = () => (<>
+      <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-end",
+                        justifyContent: "flex-start",
+                        m: 2,
+                        right: 2,
+                        left: 2
+                      }}
+                      onClick={() => setModalOpen(true)}
+                    >
+                      <QrCode2Icon
+                        sx={{
+                          color: "rgb(0, 182, 249)",
+                          fontSize: "45px",
+                          borderRadius: 2,
+                          border: 1,
+                          "&:hover": {
+                            color: "rgb(246, 101, 101)",
+                          },
+                        }}
+                      />
+                    </Box>
+            <QRModal
+                    open={modalOpen}
+                    onClose={()=>setModalOpen(false)}
+                    contentId={destination_id as string}
+                    backgroundImage={destination?.primary_photo}
+                    displayText={destination?.name || ""}
+            />
+  </>)
   
   return (
     <>
@@ -385,7 +422,8 @@ const NagoyaCastleHomePage: React.FC = () => {
       <Container maxWidth={false} sx={{ width: '90%' }}>
         {destination && attractions && destination_details && iconic_photos ? (
           <>
-            {/* <IDidItSection destination={destination}/> */}
+            <QRSection/>
+            {/* <IDidItSe tion destination={destination}/> */}
             <LikeButton />
             {/* Overview Section */}
             <OverviewSection destination={destination} />
