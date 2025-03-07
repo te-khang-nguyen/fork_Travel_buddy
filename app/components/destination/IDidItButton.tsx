@@ -50,7 +50,7 @@ const IDidItSection = ({id}: {id: string}) => {
             disableRipple
         >
             {/* {liked ? "I did it" : "Let's do it"} */}
-            I Did It!
+            {"I Did It!"}
         </Button>
       </Box>
     )

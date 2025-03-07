@@ -414,7 +414,7 @@ const CreateStoryUI = () => {
                         }}
                         onClick={() => setModalOpen(true)}
                     >
-                        No channel yet? Let's add one
+                        {"No channel yet? Let's add one"}
                     </Button>
 
                     <TextFormModal
