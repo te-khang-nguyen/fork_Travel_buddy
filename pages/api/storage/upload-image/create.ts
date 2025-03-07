@@ -155,7 +155,7 @@ export default async function handler(
         bucket: bucket,
         title: title,
         data: bytesArray,
-    };
+      };
 
       const {data : signedUrl} = await imageToStorage(toStorageUpload, supabase);
 

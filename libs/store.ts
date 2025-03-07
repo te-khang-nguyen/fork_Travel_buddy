@@ -11,6 +11,7 @@ import { StorageApi } from './services/storage/upload';
 import { DestinationApi } from './services/user/destination';
 import { ChannelApi } from './services/user/channel';
 import { DestinationBusinessApi } from './services/business/destination';
+import { SearchAgentApi } from './services/agents/search';
 
 
 
@@ -28,6 +29,7 @@ export const store = configureStore({
     [DestinationApi.reducerPath]: DestinationApi.reducer,
     [ChannelApi.reducerPath]: ChannelApi.reducer,
     [DestinationBusinessApi.reducerPath]: DestinationBusinessApi.reducer,
+    [SearchAgentApi.reducerPath]: SearchAgentApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -43,5 +45,6 @@ export const store = configureStore({
       .concat(DestinationApi.middleware)
       .concat(ChannelApi.middleware)
       .concat(DestinationBusinessApi.middleware)
+      .concat(SearchAgentApi.middleware)
 });
 

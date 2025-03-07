@@ -96,8 +96,7 @@ export const swaggerAttractionGet = {
                             }
                           },
                           "description": { "type": "string" },
-                          "description_thumbnail": { "type": "string" },
-                          "order_of_appearance": {"type": "number" },
+                          "description_thumbnail": { "type": "string" }
                         }
                       }
                     }

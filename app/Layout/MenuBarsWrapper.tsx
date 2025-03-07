@@ -49,6 +49,10 @@ import { UserProfileApi } from '@/libs/services/user/profile';
 import { StoryApi } from '@/libs/services/user/story';
 import { ChannelApi } from "@/libs/services/user/channel";
 
+import { PUBLIC_ROUTES } from "./WithAuthRedirect";
+
+
+
 const StyledFab = styled(Fab)({
   position: 'absolute',
   zIndex: 1,

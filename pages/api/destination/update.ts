@@ -44,3 +44,148 @@ export default async function handler(
         });
     }
 }
+
+export const swaggerDestUpdate = {
+    index:11, 
+    text:
+`"/api/v1/destination   ": {
+      "put": {
+        "tags": ["destination"],
+        "summary": "Update a destination",
+        "description": "Update the details of an existing destination.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "destination_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the destination to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "primary_photo": { "type": "string" },
+                  "photos": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "address": { "type": "string" },
+                  "primary_keyword": { "type": "string" },
+                  "url_slug": { "type": "string" },
+                  "description": { "type": "string" },
+                  "thumbnail_description": { "type": "string" },
+                  "primary_video": { "type": "string" },
+                  "parent_destination": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Destination updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "created_by": { "type": "string" },
+                        "name": { "type": "string" },
+                        "primary_photo": { "type": "string" },
+                        "photos": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "address": { "type": "string" },
+                        "status": { "type": "string" },
+                        "created_at": { "type": "string" },
+                        "updated_at": { "type": "string" },
+                        "primary_keyword": { "type": "string" },
+                        "url_slug": { "type": "string" },
+                        "description": { "type": "string" },
+                        "thumbnail_description": { "type": "string" },
+                        "primary_video": { "type": "string" },
+                        "parent_destination": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized or destination not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`
+}

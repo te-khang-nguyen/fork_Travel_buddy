@@ -10,6 +10,7 @@ import { GlobalContextProvider } from "@/app/GlobalContextProvider";
 import withAuthRedirect from "@/app/Layout/WithAuthRedirect";
 import { Roboto } from 'next/font/google';
 import { MetadataProvider } from "@/app/Layout/MetadataContextWrapper";
+// import { PageProvider } from "@/app/Layout/DynamicUiTracker";
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -20,6 +21,7 @@ const roboto = Roboto({
 const NO_DRAWER_BUTTON_PAGES = [
   "/recovery",
   "/",
+  "/docs",
   "/login/business",
   "/register",
   "/story/[story_id]",
@@ -43,11 +45,13 @@ const MainContent = ({ Component, pageProps }: AppProps) => {
     <GlobalContextProvider>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
+          {/* <PageProvider> */}
           <MetadataProvider>
             <MenuBarsLayout showMenuBars={showMenuBars}>
               <Component {...pageProps} />
             </MenuBarsLayout>
           </MetadataProvider>
+          {/* </PageProvider> */}
         </ThemeProvider>
       </Provider>
     </GlobalContextProvider>

@@ -23,7 +23,7 @@ const IDidItSection = ({id}: {id: string}) => {
     };
     return(
       <Box sx={{ 
-        position: 'fixed', top: {xs: 8, sm: 13 , lg: 13}, left: {xs: 200, sm: 330 ,lg: 400}, zIndex: 10000 }}>
+        position: 'fixed', top: {xs: 8, sm: 13 , lg: 13}, left: {xs: 200, sm: 330 ,lg: 400}, zIndex: 1200 }}>
         <Button
             onClick={handleClick}
             // color="white"

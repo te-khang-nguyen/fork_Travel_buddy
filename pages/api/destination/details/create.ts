@@ -64,3 +64,105 @@ export default async function handler(
         });
     }
 }
+
+export const swaggerDestDetailsCreate = {
+    index: 14,
+    text:
+` "/api/v1/destination/details/": {
+      "post": {
+        "tags": ["destination"],
+        "summary": "Create destination details",
+        "description": "Create new details for a destination.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "destination_id": { "type": "string" },
+                  "type": { "type": "string" },
+                  "name": { "type": "string" },
+                  "text": { "type": "string" },
+                  "media": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "created_at": { "type": "string" },
+                  "updated_at": { "type": "string" },
+                  "media_id": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Destination details created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" }
+                      }
+                    },
+                    "success": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`
+}
