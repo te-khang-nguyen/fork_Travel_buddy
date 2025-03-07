@@ -26,7 +26,8 @@ import {
   useTheme, 
   useMediaQuery,
   Grid2,
-  Drawer
+  Drawer,
+  Checkbox, FormControlLabel
 } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import { useRouter } from "next/router";
@@ -442,11 +443,24 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
                 fontWeight: "bold",
                 color: "rgb(38, 107, 209)",
                 mt: 1,
-                ml: 1
+                ml: 1,
+                mr: 5,
               }}
             >
               Travel Buddy
             </Typography>
+
+            <FormControlLabel
+              control={<Checkbox />}
+              label="I did it"
+              sx={{
+                fontWeight: "bold",
+                color: "rgb(38, 107, 209)",
+                mt: 1,
+                ml: 1,
+                mr: 5,
+              }}
+            />
             </Box>
             
             {!isMobile && 

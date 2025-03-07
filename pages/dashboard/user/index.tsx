@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Box, Link, Typography, Card, CardContent, Button } from "@mui/material";
-import FastForwardIcon from "@mui/icons-material/FastForward";
+import { Box, Typography } from "@mui/material";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
-import CustomCarousel from "@/app/components/generic_components/CustomCarousel";
+import DestinationCarousel from "@/app/components/destination/DestinationCarousel";
 import StyledContentCard from "@/app/components/generic_components/StyledContentCard";
 import { useRouter } from "next/router";
 import { useGetAllDestinationsQuery } from "@/libs/services/user/destination";
@@ -15,6 +14,7 @@ const UserDashboard = () => {
     id: string;
     name: string;
     image: string;
+    status: string;
   }[]>([]);
   const [storyData, setStoryData] = useState<{
     id: string | undefined;
@@ -54,7 +54,8 @@ const UserDashboard = () => {
       setDestinations(destinationsData?.map((item)=>({
         id: item.id,
         name: item.name,
-        image: item.primary_photo
+        image: item.primary_photo,
+        status: item.status,
       })))
     }
   },[destinationsData])
@@ -84,7 +85,8 @@ const UserDashboard = () => {
     router.push(`/destination/${destinationId}`);
   };
 
-
+  if (destinationsFetching) {return LoadingSkeleton}
+  
   return (
     <Box
       sx={{
@@ -97,12 +99,7 @@ const UserDashboard = () => {
       }}
     >
 
-        <CustomCarousel
-            contents={destinations}
-            header="Featured Destinations"
-            onCardSelect={(id)=> handleContinue(id)}
-            onViewAll={()=> router.push("/destination/select")}
-        />
+        <DestinationCarousel destinations={destinationsData} filter_mode="active" />
 
         <Box
           sx={{

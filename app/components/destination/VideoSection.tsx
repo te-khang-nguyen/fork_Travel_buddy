@@ -181,7 +181,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ destination, edit_mode = fa
             onClick={() => edit_mode && setEditingName(true)}
             sx={{ cursor: edit_mode ? 'pointer' : 'default' }}
           >
-            Welcome to {editedName}
+            {editedName}
           </Typography>
         )}
         {edit_mode && editingDescription ? (

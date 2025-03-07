@@ -156,7 +156,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({destination, edit_mode}) => 
                 onClick={() => edit_mode && setEditingName(true)}
                 sx={{ cursor: edit_mode ? 'pointer' : 'default' }}
             >
-                Welcome to {editedName}
+                {editedName}
             </Typography>
             )}
             {edit_mode && editingDescription ? (

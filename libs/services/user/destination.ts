@@ -44,6 +44,7 @@ export interface Attraction {
     attraction_info: AttractionInfo[];
     description: string;
     description_thumbnail: string;
+    order_of_appearance: number;
 }
 
 interface AttractionResponseList {
@@ -133,7 +134,7 @@ const DestinationApi = createApi({
       }),
       transformResponse: ((res: DestinationResponseList) => res.data)
     }),
-    getAttractions: builder.query<any, {id: string}>({
+    getAttractions: builder.query<Attraction[], {id: string}>({
       query: ({id}) => ({
         url: `/destination/attractions`,
         params: {destination_id : id},

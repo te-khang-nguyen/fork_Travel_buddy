@@ -11,7 +11,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CustomCard from "./MediaCardWithText"; // Adjust the path as needed
 
-interface Content {
+export interface Content {
   id: string;
   name: string;
   image: string;

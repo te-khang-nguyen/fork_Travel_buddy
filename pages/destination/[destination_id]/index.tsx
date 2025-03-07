@@ -32,6 +32,8 @@ import {
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
 import IconicPhotos from "@/app/components/destination/IconicPhotos";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
+import LikeButton from '@/app/components/destination/LikeButton';
+import IDidItSection from '@/app/components/destination/IDidItButton';
 
 const NagoyaCastleHomePage: React.FC = () => {
 
@@ -153,7 +155,7 @@ const NagoyaCastleHomePage: React.FC = () => {
         }}
       >
         <Typography variant="h2" gutterBottom>
-          Welcome to {destination.name}
+          {destination.name}
         </Typography>
         <Typography variant="subtitle1">
           {destination.thumbnail_description}
@@ -203,7 +205,7 @@ const NagoyaCastleHomePage: React.FC = () => {
           }}
         >
           <Typography variant="h2" gutterBottom>
-            Welcome to {destination.name}
+            {destination.name}
           </Typography>
           <Typography variant="subtitle1">
             {destination.thumbnail_description}
@@ -283,15 +285,17 @@ const NagoyaCastleHomePage: React.FC = () => {
   }
 
   const TopAttractionsSection: React.FC<{attractions: Attraction[]}> = ({attractions}) => {
+    const sortedAttractions = attractions.slice().sort((a, b) => a.order_of_appearance - b.order_of_appearance);
+
     return(
       <>
       <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
           Top attractions for you
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {attractions?.map((feature, index) => (
+          {sortedAttractions?.map((feature, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card>
+              <Card key={feature.id} feature={feature}>
                 <CardMedia
                   component="img"
                   height="200"
@@ -381,6 +385,8 @@ const NagoyaCastleHomePage: React.FC = () => {
       <Container maxWidth={false} sx={{ width: '90%' }}>
         {destination && attractions && destination_details && iconic_photos ? (
           <>
+            {/* <IDidItSection destination={destination}/> */}
+            <LikeButton />
             {/* Overview Section */}
             <OverviewSection destination={destination} />
 

@@ -2,10 +2,10 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "@/libs/supabase/baseQuery";
 
 export interface Destination {
-    id?: string;
+    id: string;
     created_by?: string;
-    name?: string;
-    primary_photo?: string;
+    name: string;
+    primary_photo: string;
     photos?: string[];
     address?: string;
     status?: string;
