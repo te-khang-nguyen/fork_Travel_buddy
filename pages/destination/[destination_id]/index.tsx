@@ -295,7 +295,7 @@ const NagoyaCastleHomePage: React.FC = () => {
         <Grid container spacing={4} sx={{ mt: 4 }}>
           {sortedAttractions?.map((feature, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card key={feature.id} feature={feature}>
+              <Card>
                 <CardMedia
                   component="img"
                   height="200"
