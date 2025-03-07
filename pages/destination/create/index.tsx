@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button, Paper } from "@mui/material";
-import { useCreateDestinationMutation, DestinationReq } from "@/libs/services/business/destination";
-import { useUploadImageMutation, useUploadVideoMutation } from "@/libs/services/storage/upload";
+import { Box, Typography, TextField, Button, Paper, CircularProgress } from "@mui/material";
+import { useCreateDestinationMutation, DestinationReq, useCreateDestinationDetailsMutation } from "@/libs/services/business/destination";
+import { useUploadImageMutation, useUploadImagesMutation, useUploadVideoMutation } from "@/libs/services/storage/upload";
 import { useRouter } from "next/router";
 import TextInputForUser from "@/app/components/generic_components/TextInputForUser";
-import CustomImageUpload from "@/app/components/destination/CustomImageUpload";
+import ImageInput from "@/app/components/destination/CustomImageUpload";
 import { useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import VideoInput from "@/app/components/destination/VideoInput";
+import CustomAccordionList from "@/app/components/generic_components/SectionWithCustomStyling"; 
+import AdminDetails from "@/app/components/destination/AdminDetails";
 
 interface FormData {
     email: string;
@@ -19,10 +21,68 @@ interface FormData {
     primary_video?: string | File;
   }
 
+interface ExtendedImageData extends ImageData {
+    image: string;
+}
+
+
+const mockItems = [
+{
+    header: "Item 1",
+    content: "This is the content for item 1",
+    lastUploads: {
+    lastUploadedTexts: ["Last text 1"],
+    lastUploadedImgs: ["image1.png"],
+    },
+},
+{
+    header: "Item 2",
+    content: <div>Content for item 2</div>,
+    lastUploads: {
+    lastUploadedTexts: ["Last text 2"],
+    lastUploadedImgs: ["image2.png"],
+    },
+},
+];
+
+function getDesDetailsInput(input: any): any[] {
+    const mappedArray: any[] = [];
+    const ALLOWED_TYPES = ["historical_context", "famous_visitors", "photography_tips"];
+
+    for (const key in input) {
+        const match = key.match(/(\w+)_\d+-?(text|image)?/);
+        if (!match) continue;
+    
+        const [, type, dataType] = match;
+        if (!ALLOWED_TYPES.includes(type)) continue;
+    
+        const existingEntry = mappedArray.find((entry) => entry.type === type && entry.text);
+        
+        if (dataType === "text" && typeof input[key] === "string") {
+            mappedArray.push({ type, text: input[key] as string, image: null });
+        }
+    
+        if (dataType === "image" && Array.isArray(input[key])) {
+            const images = input[key] as ExtendedImageData[];
+            const imageUrls = images.map((img) => img.image);
+    
+            if (existingEntry) {
+            existingEntry.image = imageUrls.length > 1 ? imageUrls : imageUrls[0];
+            } else {
+            mappedArray.push({ type, text: "", image: imageUrls.length > 1 ? imageUrls : imageUrls[0] });
+            }
+        }
+    }
+    return mappedArray;
+}
+
 const CreateDestinationForm: React.FC = () => {
     const router = useRouter();
+    const {destination_id} = router.query;
     const [uploadImage] = useUploadImageMutation();
     const [uploadVideo] = useUploadVideoMutation();
+
+    const [uploadImages] = useUploadImagesMutation();
     const [createDestination] = useCreateDestinationMutation();
     const [formData, setFormData] = useState({
         destination_title: "",
@@ -47,22 +107,15 @@ const CreateDestinationForm: React.FC = () => {
     // const [thumbnail, setThumbnail] = useState<string | null>(null);
     // const [background, setBackground] = useState<string | null>(null);
 
-    const [thumbnail, setThumbnail] = useState<
-        Array<{ image: string | null; name: string | null }>
-    >([]);
-  
-    const handlePrimaryPhotoUpload = (uploadedImages) => {
-        setThumbnail(uploadedImages);
-    };
-    const handleOtherPhotosUpload = (uploadedImages) => {
-        setThumbnail(uploadedImages);
-    };
-
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
+    const [createDestinationDetails] = useCreateDestinationDetailsMutation();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const onSubmit = async (data: any) => {
         try {
+            setIsSubmitting(true);
             let thumbnailUrl = "";
             if (data.thumbnail_image) {
                 const thumbnailResponse = await uploadImage({
@@ -108,12 +161,47 @@ const CreateDestinationForm: React.FC = () => {
                 primary_video: videoUrl,
             });
 
+            const des_details_input = getDesDetailsInput(data);
+            for (const element of des_details_input) {
+                const uploadImgResponse = await uploadImages({
+                    imagesBase64: Array.isArray(element.image) ? element.image : [element.image], // convert single image to array
+                    title: 'test',
+                    bucket: 'destination',
+                }).unwrap();
+                element["imageSupabaseUrl"] = uploadImgResponse.signedUrls;
+                await createDestinationDetails({
+                    destination_id : `${newDestinationData?.data.id}`,
+                    type : element.type,
+                    name : "test",
+                    text : element.text,
+                    media : element.imageSupabaseUrl,
+                })
+            };
             await router.replace(`/destination/${newDestinationData?.data.id}/edit`);
+            setIsSubmitting(false);
             return;
         } catch (error) {
             console.error("Full Error in onSubmit:", error);
         }
     };
+    // const onSubmit = async (data: any) => {
+    //     const des_details_input = getDesDetailsInput(data);
+    //     for (const element of des_details_input) {
+    //         const uploadImgResponse = await uploadImages({
+    //             imagesBase64: Array.isArray(element.image) ? element.image : [element.image], // convert single image to array
+    //             title: 'test',
+    //             bucket: 'destination',
+    //         }).unwrap();
+    //         element["imageSupabaseUrl"] = uploadImgResponse.signedUrls;
+    //         await createDestinationDetails({
+    //             destination_id : "testcode",
+    //             type : element.type,
+    //             name : "test",
+    //             text : element.text,
+    //             media : element.imageSupabaseUrl,
+    //         })
+    //     };
+    // }
 
   return (
     <Box
@@ -179,19 +267,8 @@ const CreateDestinationForm: React.FC = () => {
             />
 
             {/* Primary Photo */}
-            <Controller
-                name="thumbnail_image"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                    <CustomImageUpload
-                        text_display="Thumbnail Image"
-                        optional={false}
-                        allowMultiple={false}
-                        handleImageUpload={handlePrimaryPhotoUpload}
-                        onChange={onChange}
-                    />
-                )}
-            />
+            <ImageInput name="thumbnail_image" text_display="Thumbnail Image" control={control}
+                optional={false} allowMultiple={false} />
 
             <TextInputForUser 
                 num_rows={1}
@@ -216,19 +293,9 @@ const CreateDestinationForm: React.FC = () => {
             />
 
             {/* Other Photos */}
-            <Controller
-                name="other_images"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                    <CustomImageUpload
-                        text_display="Other Photos"
-                        optional={true}
-                        allowMultiple={true}
-                        handleImageUpload={handlePrimaryPhotoUpload}
-                        onChange={onChange}
-                    />
-                )}
-            />
+            <ImageInput name="other_images" text_display="Other Photos" control={control} />
+
+            <AdminDetails initialDetails={[]} control={control}/>
 
             <Box mt={2}>
             <Button type="submit" variant="contained" color="primary"
@@ -240,7 +307,14 @@ const CreateDestinationForm: React.FC = () => {
                   padding: 1.5,
                 }}
             >
-                Submit
+                {isSubmitting ? (
+                    <Box display="flex" alignItems="center">
+                        <CircularProgress size={24} color="inherit" />
+                        <span style={{ marginLeft: 8 }}>Submitting...</span>
+                    </Box>
+                ) : (
+                    "Submit"
+                )}
             </Button>
             </Box>
       </form>

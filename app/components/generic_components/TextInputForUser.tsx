@@ -7,7 +7,7 @@ import { Controller, Control } from "react-hook-form";
 interface TextInputForUserProps {
     item_name: string;
     value?: string;
-    onChange?: (value: string) => void;
+    onChange?: (value: string) => any;
     label?: string;
     optional?: boolean;
     control: Control<any>;
@@ -44,7 +44,7 @@ const email_rules={
   }
 
 const TextInputForUser: React.FC<TextInputForUserProps> = ({
-    item_name, control, defaultValue= "", optional=true, num_rows = 1,
+    item_name, control, defaultValue= "", optional=true, num_rows = 1
 }) => {
   return (
     <>
@@ -74,6 +74,9 @@ const TextInputForUser: React.FC<TextInputForUserProps> = ({
         render={({ field, fieldState: { error } }) => (
             <TextField
             {...field}
+            onChange={(e) => {
+                field.onChange(e); // Pass the event to the form handler
+              }}
             label={convertUnderscoreToText(item_name, "title")}
             multiline={num_rows > 1}
             rows={num_rows}

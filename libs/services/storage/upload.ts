@@ -13,9 +13,20 @@ interface VideoReq {
   bucket: string;
 }
 
+interface ImagesReq {
+  imagesBase64: string[] | null;
+  title: string;
+  bucket: string;
+}
+
 interface UploadRes {
     signedUrl?: string;
     error?: any;
+}  
+
+interface UploadResMultiple {
+  signedUrls?: string[];
+  error?: any;
 }  
 
 const StorageApi = createApi({
@@ -36,11 +47,19 @@ const StorageApi = createApi({
         body: params,
       }),
     }),
+    uploadImages: builder.mutation<UploadResMultiple, ImagesReq>({
+      query: (params) => ({
+        url: `/storage/upload-images`,
+        method: "POST",
+        body: params,
+      }),
+    }),
   }),
 });
 
 export const { 
   useUploadImageMutation,
   useUploadVideoMutation,
+  useUploadImagesMutation,
 } = StorageApi;
 export { StorageApi };
