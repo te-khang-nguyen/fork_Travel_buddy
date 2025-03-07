@@ -103,11 +103,13 @@ const NagoyaCastleHomePage: React.FC = () => {
       setIntitialResponse({
         title: destination.name ?? "",
         description: destination.description ?? "",
-        tags: destinationTags(destination.name, attractions?.map((item)=>item.title).join("\n")),
+        tags: destinationTags(destination.name, attractions?.map(
+          (item)=>item.title
+        ).join("\n")),
         promptQuestion: "",
       });
     }
-  }, [destination]);
+  }, [destination, attractions]);
 
   useEffect(()=>{
     setChecked((prev)=>!prev);
