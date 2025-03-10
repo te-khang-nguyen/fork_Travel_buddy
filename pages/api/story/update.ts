@@ -89,10 +89,6 @@ export const swaggerStoryUpdate = {
                     "type": "string",
                     "description": "Publishing status: DRAFT/PUBLISHED/ARCHIVED"  
                   },
-                  "notes": {
-                    "type": "string",
-                    "description": "User travel notes"
-                  },
                   "story_content": {
                     "type": "string",
                     "description": "AI-generated travel story based on users notes"

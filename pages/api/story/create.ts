@@ -106,8 +106,6 @@ export const swaggerStoryCreate = {
             "schema": {
               "type": "object",
               "properties": {
-                "title": { "type": "string" },
-                "user_id": { "type": "string" },
                 "destination_id": { "type": "string" },
                 "notes": { "type": "string" },
                 "story_content": { "type": "string" },
