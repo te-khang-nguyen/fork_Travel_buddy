@@ -107,6 +107,7 @@ export const swaggerStoryCreate = {
               "type": "object",
               "properties": {
                 "destination_id": { "type": "string" },
+                "channel_id": { "type": "string" },
                 "notes": { "type": "string" },
                 "story_content": { "type": "string" },
                 "media": {
