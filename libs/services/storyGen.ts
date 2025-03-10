@@ -9,6 +9,7 @@ async function generateLocationStories(
     destination: string,
     attractions: string,
     notes: string,
+    media: string[],
     brandVoice: string,
     channelType: string,
     storyLength: number = 45

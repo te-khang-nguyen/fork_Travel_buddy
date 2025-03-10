@@ -76,7 +76,7 @@ export default async function handler(
 export const swaggerDestCreate = {
     index:11, 
     text:
-  `"/api/v1/destination": {
+  `"/api/v1/destination/ ": {
       "post": {
         "tags": ["destination"],
         "summary": "Create a new destination",

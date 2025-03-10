@@ -89,7 +89,7 @@ export default async function handler(
 export const swaggerStoryCreate = {
   index: 19,
   text:
-    `"/api/v1/story": {
+`"/api/v1/story/ ": {
     "post": {
       "tags": ["story"],
       "summary": "Create a new story",
@@ -106,30 +106,26 @@ export const swaggerStoryCreate = {
             "schema": {
               "type": "object",
               "properties": {
-                "status": { "type": "string" },
-          "title": { "type": "string" },
-          "user_id": { "type": "string" },
-          "destination_id": { "type": "string" },
-          "notes": { "type": "string" },
-          "story_content": { "type": "string" },
-          "media_assets": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "url": { "type": "string" }
-              }
-            }
-          },
-          "seo_title_tag": { "type": "string" },
-          "seo_meta_desc": { "type": "string" },
-          "seo_excerpt": { "type": "string" },
-          "seo_slug": { "type": "string" },
-          "long_tail_keyword": { "type": "string" },
-          "hashtags": {
-            "type": "array",
-            "items": { "type": "string" }
-          }
+                "title": { "type": "string" },
+                "user_id": { "type": "string" },
+                "destination_id": { "type": "string" },
+                "notes": { "type": "string" },
+                "story_content": { "type": "string" },
+                "media": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "seo_title_tag": { "type": "string" },
+                "seo_meta_desc": { "type": "string" },
+                "seo_excerpt": { "type": "string" },
+                "seo_slug": { "type": "string" },
+                "long_tail_keyword": { "type": "string" },
+                "hashtags": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
               }
             }
           }
@@ -163,16 +159,56 @@ export const swaggerStoryCreate = {
           }
         },
         "400": {
-          "description": "Bad request"
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
+                }
+              }
+            }
+          }
         },
         "401": {
-          "description": "Unauthorized - Authorization token is required"
+          "description": "Unauthorized - Authorization token is required",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string" }
+                }
+              }
+            }
+          }
         },
         "405": {
-          "description": "Method not allowed"
+          "description": "Method not allowed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string" }
+                }
+              }
+            }
+          }
         },
         "500": {
-          "description": "Internal server error"
+          "description": "Internal server error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
+                }
+              }
+            }
+          }
         }
       }
     }

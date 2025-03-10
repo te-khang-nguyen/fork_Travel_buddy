@@ -13,7 +13,7 @@ export interface StoryReq {
         media?: string[];
         status?: string;
         attractions?: string;
-        tourSchedule?: string;
+        destinationName?: string;
         storyLength?: number;
         brandVoice?: string;
         channelType?: string;
@@ -71,12 +71,13 @@ const StoryApi = createApi({
               url: `/story/generate`,
               method: "POST",
               body: {
-                schedule: payload?.tourSchedule,
+                destination: payload?.destinationName,
                 attractions: payload?.attractions,
                 notes: payload?.notes,
+                media_urls: payload?.media,
                 brand_voice: payload?.brandVoice,
-                story_length: payload?.storyLength,
                 channel_type: payload?.channelType,
+                story_length: payload?.storyLength,
               }
             })
           }),

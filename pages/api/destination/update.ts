@@ -48,7 +48,7 @@ export default async function handler(
 export const swaggerDestUpdate = {
     index:11, 
     text:
-`"/api/v1/destination   ": {
+`"/api/v1/destination/": {
       "put": {
         "tags": ["destination"],
         "summary": "Update a destination",

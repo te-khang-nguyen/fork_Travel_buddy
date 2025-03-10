@@ -42,7 +42,7 @@ export default async function handler(
 export const swaggerStoryGetAll = {
     index:20, 
     text:
-`"/api/v1/story/ ": {
+`"/api/v1/story/  ": {
       "get": {
         "tags": ["story"],
         "summary": "Get all stories",

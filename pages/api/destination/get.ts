@@ -36,7 +36,7 @@ export default async function handler(
 export const swaggerDestGet = {
     index:13, 
     text:
-  `"/api/v1/destination  ": {
+  `"/api/v1/destination": {
       "get": {
         "tags": ["destination"],
         "summary": "Get a destination by ID",

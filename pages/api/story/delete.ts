@@ -45,7 +45,7 @@ export default async function handler(
 export const swaggerStoryDel = {
   index:23, 
   text:
-  `"/api/v1/story    ": {
+  `"/api/v1/story ": {
     "delete": {
       "tags": ["story"],
       "summary": "Delete a story",
@@ -57,7 +57,7 @@ export const swaggerStoryDel = {
       ],
       "parameters": [
         {
-          "in": "query",
+          "in": "path",
           "name": "story-id",
           "schema": {
             "type": "string"

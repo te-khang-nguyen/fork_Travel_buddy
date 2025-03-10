@@ -11,8 +11,6 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableConfig } from "@langchain/core/runnables";
 import { AIMessage } from "@langchain/core/messages";
 
-const GGL_KEY = "AIzaSyCMApTmGGuytaMU__x1g4gP4gFvJYzBSp8";
-
 export const systemPromptTemplate = ({ 
     numerOfWords,
     customPrompt,
@@ -75,14 +73,14 @@ interface searchAgentProps {
 
 const searchAgent = ({
     llmModel = "gemini-2.0-flash-exp", 
-    retrieverApiKey = process.env.EXASEARCH_API_KEY || "447fd489-0e14-4ad1-aaa5-90224799b134",
+    retrieverApiKey = process.env.EXASEARCH_API_KEY,
     numberOfSearchResults = 10
 }: searchAgentProps) => {
     const llm = new ChatGoogleGenerativeAI({
         model: llmModel,
         temperature: 0,
         maxOutputTokens: 4096,
-        apiKey: GGL_KEY,
+        apiKey: process.env.GOOGLE_API_KEY,
     });
 
     // const llm = new ChatAnthropic({

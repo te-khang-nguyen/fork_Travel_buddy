@@ -11,16 +11,26 @@ export default async function handler(
     }
 
     // Extract body
-    const { attractions, notes, brand_voice, story_length, channel_type } = req.body;
+    const { 
+      destination, 
+      attractions, 
+      notes, 
+      media_urls, 
+      brand_voice, 
+      story_length, 
+      channel_type 
+    } = req.body;
 
     try {
         // Insert story into database
         const { data: storyData, error } = await generateLocationStories(
+                destination,
                 attractions, 
                 notes,
+                media_urls,
                 brand_voice,
+                channel_type,
                 story_length,
-                channel_type
         );
 
         if (error) {
@@ -38,6 +48,13 @@ export default async function handler(
         return res.status(500).json({ error: "Internal server error" });
     }
 };
+
+// // long_tail_keyword: [Long tail keyword],
+// seo_title_tag: [Title],
+//   seo_excerpt: [Excerpt],
+//     seo_meta_desc: [Meta description],
+//       seo_slug: [URL slug],
+//         hashtags: [Hashtags]
 
 export const swaggerStoryGenerate = {
     index:18, 
@@ -59,24 +76,36 @@ export const swaggerStoryGenerate = {
             "schema": {
               "type": "object",
               "properties": {
-                "schedule": {
+                "destination": {
                   "type": "string",
-                  "description": "The schedule for the story"
+                  "description": "The name of the selected destination."
                 },
                 "attractions": {
+                  "type": "string",
+                  "description": "A list of attraction titles belongs to the selected destination."
+                },
+                "notes": {
+                  "type": "string",
+                  "description": "User's prompt to generate the story."
+                },
+                "media_urls": {
                   "type": "array",
                   "items": {
                     "type": "string"
                   },
-                  "description": "The attractions for the story"
+                  "description": "An array of URLs for user submitted media."
                 },
-                "notes": {
+                "brand_voice": {
                   "type": "string",
-                  "description": "Additional notes for the story"
+                  "description": "User's writing style belongs to the selected channel."
+                },
+                "channel_type": {
+                  "type": "string",
+                  "description": "The type of the selected channel."
                 },
                 "story_length": {
                   "type": "number",
-                  "description": "The length of the story"
+                  "description": "The length of each paragraph specific to each attraction."
                 }
               }
             }
@@ -94,26 +123,33 @@ export const swaggerStoryGenerate = {
                   "data": {
                     "type": "object",
                     "properties": {
-                      "id": {
-                        "type": "string"
+                      "long_tail_keyword": {
+                        "type": "string",
+                        "description": "The SEO long-tail keyword relevant to the requested story post."
                       },
-                      "schedule": {
-                        "type": "string"
+                      "seo_title_tag": {
+                        "type": "string",
+                        "description": "A SEO title containing the long-tail keyword."
                       },
-                      "attractions": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
+                      "seo_excerpt": {
+                        "type": "string",
+                        "description": "A short summary of the story content (less than 140 characters)."
                       },
-                      "notes": {
-                        "type": "string"
+                      "seo_meta_desc": {
+                        "type": "string",
+                        "description": "SEO meta description for the story post."
                       },
-                      "story_length": {
-                        "type": "number"
+                      "seo_slug": {
+                        "type": "string",
+                        "description": "SEO slug for story post URL in the Travel Buddy website."
                       },
-                      "created_at": {
-                        "type": "string"
+                      "hashtags": {
+                        "type": "string",
+                        "description": "SEO-focused hashtags for the SEO title tag."
+                      },
+                      "story_content": {
+                        "type": "string",
+                        "description": "The main content of the story post."
                       }
                     }
                   }
@@ -123,16 +159,56 @@ export const swaggerStoryGenerate = {
           }
         },
         "400": {
-          "description": "Bad request"
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
+                }
+              }
+            }
+          }
         },
         "401": {
-          "description": "Unauthorized - Authorization token is required"
+          "description": "Unauthorized - Authorization token is required",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string" }
+                }
+              }
+            }
+          }
         },
         "405": {
-          "description": "Method not allowed"
+          "description": "Method not allowed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string" }
+                }
+              }
+            }
+          }
         },
         "500": {
-          "description": "Internal server error"
+          "description": "Internal server error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
+                }
+              }
+            }
+          }
         }
       }
     }

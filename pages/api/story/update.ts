@@ -53,7 +53,7 @@ export default async function handler(
 export const swaggerStoryUpdate = {
   index:22, 
   text:
-`"/api/v1/story   ": {
+`"/api/v1/story/": {
       "put": {
         "tags": ["story"],
         "summary": "Update a story",
@@ -65,7 +65,7 @@ export const swaggerStoryUpdate = {
         ],
         "parameters": [
           {
-            "in": "path",
+            "in": "query",
             "name": "story-id",
             "schema": {
               "type": "string"
