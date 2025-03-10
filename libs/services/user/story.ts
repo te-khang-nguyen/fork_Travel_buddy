@@ -12,7 +12,7 @@ export interface StoryReq {
         story_content?: string;
         media?: string[];
         status?: string;
-        attractions?: string;
+        attractions?: string[];
         destinationName?: string;
         storyLength?: number;
         brandVoice?: string;

@@ -25,7 +25,7 @@ export default async function handler(
         // Insert story into database
         const { data: storyData, error } = await generateLocationStories(
                 destination,
-                attractions, 
+                attractions.join("\n"), 
                 notes,
                 media_urls,
                 brand_voice,
@@ -81,7 +81,10 @@ export const swaggerStoryGenerate = {
                   "description": "The name of the selected destination."
                 },
                 "attractions": {
-                  "type": "string",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
                   "description": "A list of attraction titles belongs to the selected destination."
                 },
                 "notes": {

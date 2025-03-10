@@ -82,7 +82,7 @@ const CreateStoryUI = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const commonComponentWidth = isMobile? "100%": "60%";
-    const [attractionsTitles, setAttractionsTitles] = useState<string>("");
+    const [attractionsTitles, setAttractionsTitles] = useState<string[]>([""]);
 
     const persistedDesId = sessionStorage.getItem("destinationId");
     const persistedChannelId = sessionStorage.getItem("channelId");
@@ -154,7 +154,7 @@ const CreateStoryUI = () => {
             setAttractionsTitles(
                 attractionsData?.map(
                     (item)=>item.title
-                ).join('\n')
+                )
             );
         }   
     },[attractionsData]);
