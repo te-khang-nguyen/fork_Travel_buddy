@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
     Typography,
     Box,
@@ -14,7 +14,7 @@ interface ImageInputProps {
     allowMultiple?: boolean;
 }
 
-const CustomImageUpload = ({
+export const CustomImageUpload = ({
     text_display,
     optional,
     allowMultiple,

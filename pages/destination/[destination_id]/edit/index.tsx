@@ -2,33 +2,19 @@ import React, { useState } from 'react';
 import {
   Container,
   Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CircularProgress,
   Button,
   Box,
   Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  TextField
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { 
-  useGetAllDestinationsQuery,
   useGetDestinationQuery,
-  useGetChildrenDestinationsQuery,
   useGetAttractionsQuery,
-  Destination,
-  Attraction,
   useGetDestinationDetailsQuery,
   convertDestinationDetailsToFeatures,
   useGetIconicPhotosQuery,
 } from "@/libs/services/user/destination";
+import { Destination } from '@/libs/services/business/destination';
 
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
 import IconicPhotos from "@/app/components/destination/IconicPhotos";
@@ -37,69 +23,11 @@ import VideoSection from '@/app/components/destination/VideoSection';
 import OverviewSection from '@/app/components/destination/OverviewSection';
 import PublishButton from '@/app/components/destination/PublishDestinationButton';
 import ImageSection from '@/app/components/destination/ImageSection';
+import TopAttractionsSection from '@/app/components/destination/TopAttractionsSection';
 
-const NagoyaCastleHomePage: React.FC = () => {
-
-  const mainVidThumbnail = "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/edited.mp4?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL2VkaXRlZC5tcDQiLCJpYXQiOjE3NDAzOTAzMTQsImV4cCI6MTc3MTkyNjMxNH0.GY7GzgQstiu_EADqGFWPdzHO92XuuutvBwcD1z8Vh08"
-
-  // Mock data for Destinations
-  const destinations = [
-    {
-      title: "Cho Ben Thanh",
-      description: "Learn about the rich history and cultural significance of Cho Ben Thanh.",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/Ben%20Thanh%20thumbnail.jpeg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL0JlbiBUaGFuaCB0aHVtYm5haWwuanBlZyIsImlhdCI6MTc0MDM5MTM2MiwiZXhwIjoxNzcxOTI3MzYyfQ.pNxQ_ljjvaAsTig9H7iQyC9is26mc2jymA_yOFoieak",
-      link: "#"
-    },
-    {
-      title: "Central Post Office",
-      description: "Historical place with French architecture, functional post office where you can send postcards",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/challenge/e42f2b79-82fe-4133-aab7-9860a3356307/District%201:%20City%20Center/District1:CityCenter_3264916df2042f37570fc46f3f00239b.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJjaGFsbGVuZ2UvZTQyZjJiNzktODJmZS00MTMzLWFhYjctOTg2MGEzMzU2MzA3L0Rpc3RyaWN0IDE6IENpdHkgQ2VudGVyL0Rpc3RyaWN0MTpDaXR5Q2VudGVyXzMyNjQ5MTZkZjIwNDJmMzc1NzBmYzQ2ZjNmMDAyMzliLmpwZyIsImlhdCI6MTc0MDM5MTE5OCwiZXhwIjoxNzcxOTI3MTk4fQ.W-4HoRwjAQf7oVlozQoXEK0qbx9toYiDG6KaVrWJO3c",
-      link: "#"
-    },
-    {
-      title: "Ba Son Bridge",
-      description: "Modern bridge crossing to Thu Thiem new area",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/challenge/e42f2b79-82fe-4133-aab7-9860a3356307/District%202/District2_ff529548b6a08b782eb941ab1b7c2f01.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJjaGFsbGVuZ2UvZTQyZjJiNzktODJmZS00MTMzLWFhYjctOTg2MGEzMzU2MzA3L0Rpc3RyaWN0IDIvRGlzdHJpY3QyX2ZmNTI5NTQ4YjZhMDhiNzgyZWI5NDFhYjFiN2MyZjAxLmpwZyIsImlhdCI6MTc0MDM5MTE0MSwiZXhwIjoxNzcxOTI3MTQxfQ.HOdJ-exsXl9PpTI4nH-0mwYo-mIrsuU2HpFvrhoTvkI",
-      link: "#"
-    },
-    {
-      title: "Tan Dinh Church",
-      description: "Stunning pink church in the city center.",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/nha-tho-tan-dinh-24.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL25oYS10aG8tdGFuLWRpbmgtMjQuanBnIiwiaWF0IjoxNzQwMzkxMzg3LCJleHAiOjE3NzE5MjczODd9.w_VFnHmqcQaunKiiVHhB_PkOMgBzM1vtHZtqY9UH9H4",
-      link: "#"
-    },
-    {
-        title: "Cu Chi Tunnel",
-        description: "Go back in history to discover how Vietnamese soldiers fight and win the war against all odds",
-        image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/Cu%20Chi%20tunnel.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL0N1IENoaSB0dW5uZWwuanBnIiwiaWF0IjoxNzQwMzkxMzc1LCJleHAiOjE3NzE5MjczNzV9.nVqUsLRfurgYmENP0oFLmoFeLrgcX1n_ciYAA7NmFgo",
-        link: "#"
-    }
-  ];
-
-  // Mock data for Attractions
-  const mock_attractions = [
-    {
-      title: "Com Tam Ba Ghien",
-      description: "Try out the dish that represents the city the most, filled with aroma from the grilled meat",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/BaGhien.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL0JhR2hpZW4uanBnIiwiaWF0IjoxNzQwMzkxNTIzLCJleHAiOjE3NzE5Mjc1MjN9.GEDRYdqPwUIMcHn8qeY3bPew8GiCsNp35axQ3cOLsmM",
-      link: "#"
-    },
-    {
-      title: "Banh mi Huynh Hoa",
-      description: "Queue up for the quinessential experience of eating Saigon's most popular street food",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/HuynhHoa2.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL0h1eW5oSG9hMi5qcGciLCJpYXQiOjE3NDAzOTE1NDMsImV4cCI6MTc3MTkyNzU0M30.QINiD2VkYc8cRXadEXUvhN9vkjO_pczWbGh76bK8BYE",
-      link: "#"
-    },
-    {
-      title: "Vincom Dong Khoi",
-      description: "Enjoy local shopping",
-      image: "https://kkhkvzjpcnivhhutxled.supabase.co/storage/v1/object/sign/destination/thumbnails/Vincom%20DK.webp?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJkZXN0aW5hdGlvbi90aHVtYm5haWxzL1ZpbmNvbSBESy53ZWJwIiwiaWF0IjoxNzQwMzkxNTM1LCJleHAiOjE3NzE5Mjc1MzV9.8G3KXVA-yVnHztdVAMeQjqa0PUTqzcFjMOHCT7t2T-8",
-      link: "#"
-    }
-  ];
+const EditDestinationPage: React.FC = () => {
 
   const [openChat, setOpenChat] = useState(false);
-  const [editMode, setEditMode] = useState(true);
   const router = useRouter();
   const { destination_id } = router.query;
   const { data: destination, isLoading } = useGetDestinationQuery({ id: destination_id as string });
@@ -111,40 +39,6 @@ const NagoyaCastleHomePage: React.FC = () => {
   
   if (isLoading) return <LoadingSkeleton isLoading={true}/>;
 
-  const TopAttractionsSection: React.FC<{attractions: Attraction[]}> = ({attractions}) => {
-    return(
-      <>
-      <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
-          Top attractions for you
-        </Typography>
-        <Grid container spacing={4} sx={{ mt: 4 }}>
-          {attractions?.map((feature, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={feature.primary_photo}
-                  alt={feature.title}
-                />
-                <CardContent>
-                  <Typography variant="h5" gutterBottom>
-                    {feature.title}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {feature.description_thumbnail}
-                  </Typography>
-                  <Button variant="contained" color="primary" onClick={() => router.push(`/attraction/${feature.id}`)} sx={{ mt: 2 }}>
-                    Learn More
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </>
-    )
-  }
 
   const ChatBoxSection: React.FC<{destination: Destination}> = ({destination}) => {
     return(
@@ -185,6 +79,10 @@ const NagoyaCastleHomePage: React.FC = () => {
       </Box>
     )
   }
+
+  const handleClickToDD = () => {
+    router.push(`/destination/${destination_id}/edit/details`);
+  }
   
   return (
     <>
@@ -205,7 +103,7 @@ const NagoyaCastleHomePage: React.FC = () => {
       {/* Rest of the Content in a Container */}
       <Container maxWidth={false} sx={{ width: '90%' }}>
         
-        {destination && attractions && destination_details && iconic_photos ? (
+        {destination && attractions && destination_details ? (
           <>
             {/* Button to Publish */}
             <PublishButton destination={destination} />
@@ -215,12 +113,16 @@ const NagoyaCastleHomePage: React.FC = () => {
 
             {/* Features Section */}
             <GroupedFeaturesPopup features={convertDestinationDetailsToFeatures(destination_details)} />
+            <Button
+              onClick={handleClickToDD}
+              variant="contained"
+            > Manage Destination Details </Button>
 
             {/* Iconic Photos */}
-            <IconicPhotos photos={iconic_photos}/>
+            <IconicPhotos photos={iconic_photos || []} edit_mode={true}/>
 
             {/* Top attractions */}
-            <TopAttractionsSection attractions={attractions} />
+            <TopAttractionsSection attractions={attractions} edit_mode={true}/>
 
             {/* Fixed Chat Button and Chatbox */}
             <ChatBoxSection destination={destination} />
@@ -233,4 +135,4 @@ const NagoyaCastleHomePage: React.FC = () => {
   );
 };
 
-export default NagoyaCastleHomePage;
+export default EditDestinationPage;

@@ -12,8 +12,8 @@ import {
   } from '@mui/material';  
 import { 
     useGetAllDestinationsQuery,
-    Destination,
   } from "@/libs/services/user/destination";
+import { Destination } from '@/libs/services/business/destination';
   
 
 const SelectDestination = () => {

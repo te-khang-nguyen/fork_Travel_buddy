@@ -1,24 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "@/libs/supabase/baseQuery";
 import { Feature } from "@/app/components/destination/DestinationDetails";
+import { Destination } from "../business/destination";
 
-export interface Destination {
-    id: string;
-    created_by: string;
-    name: string;
-    primary_photo: string;
-    photos: string[];
-    address: string;
-    status: string;
-    created_at: string; // Consider using Date type if you want to handle dates
-    updated_at: string; // Consider using Date type if you want to handle dates
-    primary_keyword: string;
-    url_slug: string;
-    description: string;
-    thumbnail_description: string;
-    primary_video: string;
-    parent_destination: string | null; // Use null for optional fields
-}
 
 interface DestinationResponse {
     data: Destination;
@@ -54,15 +38,15 @@ interface AttractionResponseList {
 export interface DestinationDetails {
     id: string;
     destination_id: string;
-    type: string;
-    name: string;
-    text: string;
-    media: string[];
-    created_at: string;
-    updated_at: string;
+    type?: string;
+    name?: string;
+    text?: string;
+    media?: string[];
+    created_at?: string;
+    updated_at?: string;
 }
 
-interface DestinationDetailsRes {
+export interface DestinationDetailsRes {
     data: DestinationDetails[];
 }
 
@@ -83,7 +67,11 @@ interface IconicPhotosResponseList {
 }
 
 export function convertDestinationDetailsToFeature(details: DestinationDetails): Feature {
-    return {
+  if (!details || !details.id || !details.type || !details.name || !details.text || !details.media) {
+    throw new Error("Missing required properties in details object");
+}
+  return {
+        id: details.id,
         type: details.type,
         name: details.name,
         text: details.text,
@@ -143,7 +131,7 @@ const DestinationApi = createApi({
     }),
     getIconicPhotos: builder.query<IconicPhotos[], {id: string}>({
       query: ({id}) => ({
-        url: `/destination/iconic-photos`,
+        url: `/destination/iconicPhotos`,
         params: {destination_id : id},
       }),
       transformResponse: ((res: IconicPhotosResponseList) => res.data)

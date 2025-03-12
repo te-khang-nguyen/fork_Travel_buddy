@@ -12,7 +12,7 @@ import { DestinationApi } from './services/user/destination';
 import { ChannelApi } from './services/user/channel';
 import { DestinationBusinessApi } from './services/business/destination';
 import { SearchAgentApi } from './services/agents/search';
-
+import { AttractionBusinessApi } from './services/business/attraction';
 
 
 
@@ -30,6 +30,7 @@ export const store = configureStore({
     [ChannelApi.reducerPath]: ChannelApi.reducer,
     [DestinationBusinessApi.reducerPath]: DestinationBusinessApi.reducer,
     [SearchAgentApi.reducerPath]: SearchAgentApi.reducer,
+    [AttractionBusinessApi.reducerPath]: AttractionBusinessApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -46,5 +47,6 @@ export const store = configureStore({
       .concat(ChannelApi.middleware)
       .concat(DestinationBusinessApi.middleware)
       .concat(SearchAgentApi.middleware)
+      .concat(AttractionBusinessApi.middleware)
 });
 

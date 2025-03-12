@@ -21,13 +21,16 @@ export default async function handler(
         const { 
             name,
             primary_photo,
+            primary_photo_id,
             photos,
+            photos_id,
             address,
             primary_keyword,
             url_slug,
             description,
             thumbnail_description,
             primary_video,
+            primary_video_id,
             parent_destination,
         } = req.body;
 
@@ -40,18 +43,21 @@ export default async function handler(
                 created_by: userId,
                 name,
                 primary_photo,
+                primary_photo_id,
                 photos,
+                photos_id,
                 address,
                 primary_keyword,
                 url_slug,
                 description,
                 thumbnail_description,
                 primary_video,
+                primary_video_id,
                 parent_destination,
                 status: "inactive",
             },
         ])
-        .select("id")
+        .select('id, photos_id')
         .single();
 
         if (error) {

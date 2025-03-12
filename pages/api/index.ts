@@ -14,7 +14,7 @@ export { swaggerDestGet } from './destination/get';
 export { swaggerDestGetAll } from './destination/get-all';
 export { swaggerDesChildrenGet } from './destination/children/get';
 export { swaggerDesDetailsGet } from './destination/details/get';
-export { swaggerDesIconicPhotosGet } from './destination/iconic_photos/get';
+export { swaggerDesIconicPhotosGet } from './destination/iconicPhotos/get';
 export { swaggerAttractionGet } from './destination/attractions/get';
 export { swaggerChannelCreate } from './channel/create';
 export { swaggerChannelGetAll } from './channel/get-all';

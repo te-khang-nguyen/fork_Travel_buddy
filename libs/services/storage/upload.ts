@@ -54,6 +54,13 @@ const StorageApi = createApi({
         body: params,
       }),
     }),
+    createMediaAsset: builder.mutation< any, any >({
+      query: (params) => ({
+        url: `/media-assets`,
+        method: "POST",
+        body: params,
+      }),
+    })
   }),
 });
 
@@ -61,5 +68,6 @@ export const {
   useUploadImageMutation,
   useUploadVideoMutation,
   useUploadImagesMutation,
+  useCreateMediaAssetMutation,
 } = StorageApi;
 export { StorageApi };

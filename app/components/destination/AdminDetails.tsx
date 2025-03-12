@@ -1,10 +1,8 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
 import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  TextField,
   Button,
   Typography,
   Box,
@@ -111,7 +109,7 @@ const AdminDetails: React.FC<AdminDetailsProps> = ({ control, initialDetails = [
 
   return (
     <Box>
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, mt: 2 }}>
         <Button variant="contained" onClick={() => addDetail('Historical Context')} sx={{ mr: 1 }}>
           Add Historical Context
         </Button>

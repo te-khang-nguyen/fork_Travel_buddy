@@ -22,12 +22,13 @@ import {
     useGetDestinationQuery,
     useGetChildrenDestinationsQuery,
     useGetAttractionsQuery,
-    Destination,
     Attraction,
     useGetDestinationDetailsQuery,
     convertDestinationDetailsToFeatures,
     useGetIconicPhotosQuery,
   } from "@/libs/services/user/destination";
+
+import { Destination } from '@/libs/services/business/destination';
   
 
 const SelectDestination = () => {

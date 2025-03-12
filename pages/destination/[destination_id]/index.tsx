@@ -6,39 +6,22 @@ import {
   Card,
   CardMedia,
   CardContent,
-  CircularProgress,
-  IconButton,
   Button,
   Box,
   Paper,
-  Grow,
-  TextField,
-  InputAdornment,
-  Popover,
-  Modal,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { 
-  useGetAllDestinationsQuery,
   useGetDestinationQuery,
-  useGetChildrenDestinationsQuery,
   useGetAttractionsQuery,
-  Destination,
   Attraction,
   useGetDestinationDetailsQuery,
   convertDestinationDetailsToFeatures,
   useGetIconicPhotosQuery,
 } from "@/libs/services/user/destination";
-
+import { Destination } from '@/libs/services/business/destination';
 import { useCallSearchAgentMutation } from '@/libs/services/agents/search';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
-import SendIcon from '@mui/icons-material/Send';
-
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
 import IconicPhotos from "@/app/components/destination/IconicPhotos";
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
@@ -64,7 +47,7 @@ const attractionTags = (attractionName) => [
       ]
 
 
-const NagoyaCastleHomePage: React.FC = () => {
+const DestinationHomePage: React.FC = () => {
   const router = useRouter();
   const { destination_id } = router.query;
   const { data: destination, isLoading } = useGetDestinationQuery({ id: destination_id as string });
@@ -474,4 +457,4 @@ const NagoyaCastleHomePage: React.FC = () => {
   );
 };
 
-export default NagoyaCastleHomePage;
+export default DestinationHomePage;

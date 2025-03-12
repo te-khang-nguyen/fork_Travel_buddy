@@ -2,7 +2,6 @@ import { Box, Button } from "@mui/material"
 import { useEffect, useState } from "react";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import { Destination } from "@/libs/services/user/destination";
 
 const IDidItSection = ({id}: {id: string}) => {
     const [liked, setLiked] = useState(false);

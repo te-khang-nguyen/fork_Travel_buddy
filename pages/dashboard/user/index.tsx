@@ -52,11 +52,11 @@ const UserDashboard = () => {
   useEffect(()=>{
     if(destinationsData){
       setDestinations(destinationsData?.map((item)=>({
-        id: item.id,
-        name: item.name,
-        image: item.primary_photo,
-        status: item.status,
-      })))
+        id: item?.id,
+        name: item?.name,
+        image: item?.primary_photo,
+        status: item?.status,
+      })) as { id: string; name: string; image: string; status: string }[])
     }
   },[destinationsData])
 

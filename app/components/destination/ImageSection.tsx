@@ -1,7 +1,7 @@
 import { Box, Button, Typography, TextField } from "@mui/material";
 import { Destination } from "@/libs/services/business/destination";
 import { useRouter } from 'next/router';
-import { useUploadImageMutation } from '@/libs/services/storage/upload';
+import { useCreateMediaAssetMutation, useUploadImageMutation } from '@/libs/services/storage/upload';
 import { useUpdateDestinationMutation } from '@/libs/services/business/destination';
 import { useState } from 'react';
 
@@ -14,6 +14,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({destination, edit_mode}) => 
     const router = useRouter();
     const { destination_id } = router.query;
     const [uploadImage] = useUploadImageMutation();
+    const [createMediaAsset] = useCreateMediaAssetMutation();
     const [editingName, setEditingName] = useState(false);
     const [editingDescription, setEditingDescription] = useState(false);
     const [editedName, setEditedName] = useState(destination.name);
@@ -48,9 +49,15 @@ const ImageSection: React.FC<ImageSectionProps> = ({destination, edit_mode}) => 
                 bucket: "destination",
             }).unwrap();
             const imageUrl = imageResponse?.signedUrl || "";
+            const mediaAssetResponse = await createMediaAsset({
+                signedUrl: imageUrl,
+                mimeType: 'image',
+                usage: 'thumbnail',
+            }).unwrap();
+            const image_id = mediaAssetResponse.data.id || "";
             updateDestination({
                 id : String(destination_id),
-                data : {primary_photo : imageUrl}
+                data : {primary_photo : image_id}
             });
         } catch (error) {
             console.error('Error uploading image:', error);

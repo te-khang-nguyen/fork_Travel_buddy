@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Paper, CircularProgress } from "@mui/material";
 import { useCreateDestinationMutation, DestinationReq, useCreateDestinationDetailsMutation } from "@/libs/services/business/destination";
-import { useUploadImageMutation, useUploadImagesMutation, useUploadVideoMutation } from "@/libs/services/storage/upload";
+import { useUploadImageMutation,
+    useUploadImagesMutation,
+    useUploadVideoMutation,
+    useCreateMediaAssetMutation } from "@/libs/services/storage/upload";
 import { useRouter } from "next/router";
 import TextInputForUser from "@/app/components/generic_components/TextInputForUser";
 import ImageInput from "@/app/components/destination/CustomImageUpload";
@@ -45,7 +48,7 @@ const mockItems = [
 },
 ];
 
-function getDesDetailsInput(input: any): any[] {
+export function getDesDetailsInput(input: any): any[] {
     const mappedArray: any[] = [];
     const ALLOWED_TYPES = ["historical_context", "famous_visitors", "photography_tips"];
 
@@ -83,6 +86,7 @@ const CreateDestinationForm: React.FC = () => {
     const [uploadVideo] = useUploadVideoMutation();
 
     const [uploadImages] = useUploadImagesMutation();
+    const [createMediaAsset] = useCreateMediaAssetMutation();
     const [createDestination] = useCreateDestinationMutation();
     const [formData, setFormData] = useState({
         destination_title: "",
@@ -116,7 +120,9 @@ const CreateDestinationForm: React.FC = () => {
     const onSubmit = async (data: any) => {
         try {
             setIsSubmitting(true);
+
             let thumbnailUrl = "";
+            let image_id = "";
             if (data.thumbnail_image) {
                 const thumbnailResponse = await uploadImage({
                     imageBase64: data.thumbnail_image[0].image,
@@ -124,9 +130,16 @@ const CreateDestinationForm: React.FC = () => {
                     bucket: "destination",
                 }).unwrap();
                 thumbnailUrl = thumbnailResponse.signedUrl || "";
+                const mediaAssetResponse = await createMediaAsset({
+                    signedUrl: thumbnailUrl,
+                    mimeType: 'image',
+                    usage: 'thumbnail',
+                }).unwrap();
+                image_id = mediaAssetResponse.data.id || "";
             }
 
             const otherImagesUrl: string[] = [];
+            const otherMediaAssetsUrl: string[] = [];
             if (data.other_images) {
                 for (const other_image of data.other_images) {
                     const otherImagesResponse = await uploadImage({
@@ -135,16 +148,30 @@ const CreateDestinationForm: React.FC = () => {
                         bucket: "destination",
                     }).unwrap();
                     otherImagesUrl.push(otherImagesResponse?.signedUrl || "");
+                    const otherMediaAssetResponse = await createMediaAsset({
+                        signedUrl: otherImagesResponse?.signedUrl || "",
+                        mimeType: 'image',
+                        usage: 'iconic_photo',
+                    }).unwrap();
+                    otherMediaAssetsUrl.push(otherMediaAssetResponse.data.id || "");
                 }
             }
+
             let videoUrl = "";
+            let video_id = "";
             if (data.banner_video) {
                 const videoResponse = await uploadVideo({
-                    videoBase64: data.banner_video[0].image,
+                    videoBase64: data.banner_video,
                     title: "DestinationVideo",
                     bucket: "destination",
                 }).unwrap();
                 videoUrl = videoResponse.signedUrl || "";
+                const videoAssetResponse = await createMediaAsset({
+                    signedUrl: videoUrl,
+                    mimeType: 'video',
+                    usage: 'primary_video',
+                }).unwrap();
+                video_id = videoAssetResponse.data.id || "";
             }
 
             const { 
@@ -159,13 +186,26 @@ const CreateDestinationForm: React.FC = () => {
                 primary_photo: thumbnailUrl,
                 photos: otherImagesUrl,
                 primary_video: videoUrl,
+                primary_photo_id: image_id,
+                photos_id: otherMediaAssetsUrl,
+                primary_video_id: video_id,
             });
+
+            for ( const img_id of otherMediaAssetsUrl ) {
+                await createDestinationDetails({
+                    destination_id : `${newDestinationData?.data.id}`,
+                    type : "iconic_photos",
+                    name : `Iconic Photo ${newDestinationData?.data.id}`,
+                    text : "Click here to change text",
+                    media_id : img_id,
+                })
+            }
 
             const des_details_input = getDesDetailsInput(data);
             for (const element of des_details_input) {
                 const uploadImgResponse = await uploadImages({
                     imagesBase64: Array.isArray(element.image) ? element.image : [element.image], // convert single image to array
-                    title: 'test',
+                    title: 'DestinationDetails',
                     bucket: 'destination',
                 }).unwrap();
                 element["imageSupabaseUrl"] = uploadImgResponse.signedUrls;
@@ -184,38 +224,24 @@ const CreateDestinationForm: React.FC = () => {
             console.error("Full Error in onSubmit:", error);
         }
     };
-    // const onSubmit = async (data: any) => {
-    //     const des_details_input = getDesDetailsInput(data);
-    //     for (const element of des_details_input) {
-    //         const uploadImgResponse = await uploadImages({
-    //             imagesBase64: Array.isArray(element.image) ? element.image : [element.image], // convert single image to array
-    //             title: 'test',
-    //             bucket: 'destination',
-    //         }).unwrap();
-    //         element["imageSupabaseUrl"] = uploadImgResponse.signedUrls;
-    //         await createDestinationDetails({
-    //             destination_id : "testcode",
-    //             type : element.type,
-    //             name : "test",
-    //             text : element.text,
-    //             media : element.imageSupabaseUrl,
-    //         })
-    //     };
-    // }
 
   return (
     <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#f4f4f4",
-        padding: 2,
-        overflowY: "auto",
-        scrollBehavior: "smooth"
-      }}
+        sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            backgroundColor: "#f4f4f4",
+            padding: 2,
+            overflowY: "auto",
+            scrollBehavior: "smooth"
+        }}
     >
       <Paper
         elevation={3}
@@ -224,9 +250,10 @@ const CreateDestinationForm: React.FC = () => {
           maxWidth: 800,
           padding: 4,
           borderRadius: 2,
-          mt: 4,
+          mt: 10,
           mb: 4,
-          overflowY: "visible"
+          overflowY: "visible",
+          boxShadow: "0px 2px 10px rgba(0,0,0,0.2)"
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 2 }}>
@@ -295,7 +322,7 @@ const CreateDestinationForm: React.FC = () => {
             {/* Other Photos */}
             <ImageInput name="other_images" text_display="Other Photos" control={control} />
 
-            <AdminDetails initialDetails={[]} control={control}/>
+            <AdminDetails initialDetails={[]} control={control} />
 
             <Box mt={2}>
             <Button type="submit" variant="contained" color="primary"
