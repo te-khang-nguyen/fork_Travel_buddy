@@ -174,6 +174,7 @@ export default async function handler(
     }
 }
 
+// Workaround to enable Swagger on production 
 export const swaggerStorageImgUpload = {
   index:31, 
   text:

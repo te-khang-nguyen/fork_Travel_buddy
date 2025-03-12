@@ -30,6 +30,7 @@ const swaggerDefinition = {
   ]
 };
 
+// Workaround to enable Swagger on production 
 export const swaggerOptions = {
   swaggerDefinition,
   apis: [

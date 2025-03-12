@@ -157,7 +157,18 @@ export default async function handler(
         data: bytesArray,
       };
 
-      const {data : signedUrl} = await imageToStorage(toStorageUpload, supabase);
+      const {
+        data : signedUrl,
+        error: uploadError
+      } = await imageToStorage(toStorageUpload, supabase);
+
+      if (uploadError){
+        return res.status(400).json({
+          success: false,
+          signedUrl: null,
+          message: uploadError
+        });
+      }
 
       return res.status(200).json({
           success: true,
@@ -174,8 +185,9 @@ export default async function handler(
     }
 }
 
+// Workaround to enable Swagger on production 
 export const swaggerStorageImgUpload = {
-  index:50, 
+  index:40, 
   text:
 `"/api/v1/storage/upload-image": {
     "post": {

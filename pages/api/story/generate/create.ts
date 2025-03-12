@@ -56,6 +56,7 @@ export default async function handler(
 //       seo_slug: [URL slug],
 //         hashtags: [Hashtags]
 
+// Workaround to enable Swagger on production 
 export const swaggerStoryGenerate = {
     index:18, 
     text:

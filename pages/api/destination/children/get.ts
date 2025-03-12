@@ -33,6 +33,7 @@ export default async function handler(
 
 };
 
+// Workaround to enable Swagger on production 
 export const swaggerDesChildrenGet = {
     index:15, 
     text:

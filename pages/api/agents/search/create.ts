@@ -40,6 +40,7 @@ export default async function handler(
   }
 };
 
+// Workaround to enable Swagger on production 
 export const swaggerSearchAgent = {
   index:18, 
   text:

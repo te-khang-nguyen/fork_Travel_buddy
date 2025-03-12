@@ -65,6 +65,7 @@ export default async function handler(
     }
 }
 
+// Workaround to enable Swagger on production 
 export const swaggerDestDetailsCreate = {
     index: 14,
     text:
@@ -92,10 +93,7 @@ export const swaggerDestDetailsCreate = {
                   "media": {
                     "type": "array",
                     "items": { "type": "string" }
-                  },
-                  "created_at": { "type": "string" },
-                  "updated_at": { "type": "string" },
-                  "media_id": { "type": "string" }
+                  }
                 }
               }
             }

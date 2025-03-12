@@ -42,6 +42,7 @@ export default async function handler(
 }
 
 
+// Workaround to enable Swagger on production 
 export const swaggerStoryDel = {
   index:23, 
   text:
@@ -57,7 +58,7 @@ export const swaggerStoryDel = {
       ],
       "parameters": [
         {
-          "in": "path",
+          "in": "query",
           "name": "story-id",
           "schema": {
             "type": "string"

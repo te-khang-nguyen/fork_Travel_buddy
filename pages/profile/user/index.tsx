@@ -20,7 +20,11 @@ import AvatarEditor from "@/app/components/image_picker/AvatarPicker";
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
+  useUpdateAvatarMutation,
 } from "@/libs/services/user/profile";
+import { 
+  useUploadImageMutation 
+} from "@/libs/services/storage/upload";
 import {
   useGetAllStoryQuery
 } from "@/libs/services/user/story";
@@ -42,9 +46,10 @@ const ProfileForm = () => {
   const defaultValues = {
     username: "",
     avatarUrl: "",
-    brandVoice: "",
   };
-  const router = useRouter()
+  const router = useRouter();
+  const [ uploadImage ] = useUploadImageMutation();
+  const [ uploadAvatar ] = useUpdateAvatarMutation();
   const role = localStorage.getItem("role");
   const [isEditingName, setIsEdtingName] = useState<boolean>(false); 
   const [isEditingVoice, setIsEdtingVoice] = useState<boolean>(false); 
@@ -66,7 +71,6 @@ const ProfileForm = () => {
   const [profileValues, setProfileValues] = useState<{
     username: string;
     avatarUrl: string;
-    brandVoice: string;
   }>(defaultValues);
 
   const [ storyData, setStoryData ] = useState<{
@@ -76,7 +80,6 @@ const ProfileForm = () => {
   const profileValuesRef = useRef<{
     username: string;
     avatarUrl: string;
-    brandVoice: string;
   }>(defaultValues);
 
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
@@ -95,7 +98,11 @@ const ProfileForm = () => {
 
   useEffect(() => {
     if (profile) {
-      for (const [key, value] of Object.entries(profile.data)) {
+      const mapped = {
+        username: profile.data.username,
+        avatarUrl: profile.data.media_assets?.url,
+      }
+      Object.entries(mapped).map(([key, value]) => {
         if (key in defaultValues) {
           const storedValues = sessionStorage.getItem(key);
           const valueToSet = storedValues 
@@ -114,7 +121,7 @@ const ProfileForm = () => {
             [key]: valueToSet,
           });
         }
-      }
+      })
     }
   }, [profile]);
   
@@ -162,8 +169,22 @@ const ProfileForm = () => {
   const handleAvatarUpload = async (uploadedAvatar: 
     {image: string | null; name:string | null}[]
   ) => {
-    const result = await updateProfile({
+
+    setProfileValues({
+      ...profileValues,
       avatarUrl: uploadedAvatar?.[0]?.image || ""
+    });
+
+    sessionStorage.setItem("avatarUrl", uploadedAvatar?.[0]?.image || "");
+
+    const imageResult = await uploadImage({
+            imageBase64: uploadedAvatar?.[0]?.image || "",
+            title: `avatar`,
+            bucket: 'profile',
+    });
+
+    const result = await uploadAvatar({
+      avatarUrl: imageResult?.data?.signedUrl
     }).unwrap();
 
     if (result.data) {

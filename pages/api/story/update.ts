@@ -50,6 +50,7 @@ export default async function handler(
 };
 
 
+// Workaround to enable Swagger on production 
 export const swaggerStoryUpdate = {
   index:22, 
   text:

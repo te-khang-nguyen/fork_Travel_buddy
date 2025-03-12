@@ -143,8 +143,9 @@ export default async function handler(
     }
 }
 
+// Workaround to enable Swagger on production 
 export const swaggerStorageVideoUpload = {
-    index:51, 
+    index:41, 
     text:
 `"/api/storage/upload-video": {
       "post": {

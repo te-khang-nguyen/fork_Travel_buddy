@@ -134,13 +134,13 @@ const InitialResponseLayout: React.FC<{
 
 const ChatBoxSection: React.FC<{
     content: ChatInitialContent,
-    response: string;
-    message: string;
+    response: string[];
+    message: string[];
     open: boolean;
     inputs: string;
     setOpen: () => void;
     setInputs: (text: string) => void;
-    displayMess: string;
+    displayMess: string[];
     isLoading: boolean;
     handleChat: () => void;
     clearChat: () => void;
@@ -157,6 +157,19 @@ const ChatBoxSection: React.FC<{
   handleChat,
   clearChat,
 }) => {
+    const [queryResponsePair, setQueryResponsePair] = useState<{
+      query: string;
+      response: string
+    }[]>([]);
+
+    useEffect(()=>{
+      setQueryResponsePair(message.map((item, index)=>({
+        query: item,
+        response: response?.[index] || ""
+      })));
+
+    },[response, message, displayMess]);
+
     return(
       <Box sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000,  }}>
         <Modal
@@ -218,41 +231,48 @@ const ChatBoxSection: React.FC<{
             />
 
             {/* <Grow in={checked}> */}
-            {displayMess !== "" ?<Box sx={{
-              display: "flex", 
-              flexDirection: "row", 
-              justifyContent:"flex-end",
-              alignItems:"flex-start",
-              alignSelf: "flex-end",
-              mr: 2,
+            {queryResponsePair.map((item)=>(
+              <>
+              {item.query !== "" && 
+              <Box sx={{
+                display: "flex", 
+                flexDirection: "row", 
+                justifyContent:"flex-end",
+                alignItems:"flex-start",
+                alignSelf: "flex-end",
+                mr: 2,
               }}>
-            <UserMessageLayout message={message} /> 
-            <RxAvatar style={{fontSize: "20px"}}/>
-            </Box> : <></>}
-            {/* </Grow> */}
+                <UserMessageLayout message={item.query} /> 
+                <RxAvatar style={{fontSize: "20px"}}/>
+              </Box>}
 
-            {isLoading && 
-            <CircularProgress sx={{
-              display: "flex", 
-              flexDirection: "column", 
-              justifyContent:"flex-start",
-              alignItems:"flex-start",
-              alignSelf: "flex-start",
-              m: 2,
+              {isLoading && !item.response && 
+              <CircularProgress sx={{
+                display: "flex", 
+                flexDirection: "column", 
+                justifyContent:"flex-start",
+                alignItems:"flex-start",
+                alignSelf: "flex-start",
+                m: 2,
               }}/>}
-            {/* <Grow in={checked}> */}
-            {response !== "" ?<Box
-            sx={{
-              display: "flex", 
-              flexDirection: "row", 
-              justifyContent:"flex-start",
-              alignItems:"flex-start",
-              alignSelf: "flex-start",
-              ml: 2,
-              mt: 2,
-            }}><VscHubot style={{fontSize: "30px"}}/>
-             <ResponseLayout response={response}/> 
-            </Box>: <></>}
+
+              {item.response !== "" &&
+              <Box
+                sx={{
+                  display: "flex", 
+                  flexDirection: "row", 
+                  justifyContent:"flex-start",
+                  alignItems:"flex-start",
+                  alignSelf: "flex-start",
+                  ml: 2,
+                  mt: 2,
+                }}>
+                  <VscHubot style={{fontSize: "30px"}}/>
+                  <ResponseLayout response={item.response}/> 
+              </Box>}
+              </>
+            ))}
+            
             {/* </Grow> */}
 
             </Box>

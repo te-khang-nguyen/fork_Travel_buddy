@@ -98,6 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 
+// Workaround to enable Swagger on production 
 export const swaggerUserSignUp = {
   index:1, 
   text:

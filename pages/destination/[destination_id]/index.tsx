@@ -61,7 +61,7 @@ const DestinationHomePage: React.FC = () => {
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [openChat, setOpenChat] = useState(false);
-  const [chatResponse, setChatResponse] = useState<string>("");
+  const [chatResponse, setChatResponse] = useState<string[]>([]);
   const [intitialResponse, setIntitialResponse] = useState<ChatInitialContent>({
       title: "",
       description: "",
@@ -69,16 +69,8 @@ const DestinationHomePage: React.FC = () => {
       promptQuestion: "",
   });
   const [userInputs, setUserInputs] = useState<string>("");
-  const [displayMess, setDisplayMess] = useState<string>("");
+  const [displayMess, setDisplayMess] = useState<string[]>([]);
   const [checked, setChecked] = React.useState(false);
-  // const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
-
-  // const openChat = Boolean(anchorEl);
-  const id = openChat ? 'simple-popover' : undefined;
 
 
   useEffect(()=>{
@@ -117,24 +109,27 @@ const DestinationHomePage: React.FC = () => {
     
   }
 
-  const handleChat = async (topic: string) => {
-    setDisplayMess(userInputs);
+  const handleChat = async () => {
+    setDisplayMess([...displayMess, userInputs]);
     setUserInputs("");
     const response = await callSearchAgent({
       query: userInputs,
-      topic: topic
+      topic: destination?.name || ""
     });
 
     if(response?.error) {
       console.log(response?.error);
     } else {
-      setChatResponse(response?.data?.answer ?? "");
+      setChatResponse([
+        ...chatResponse,
+        response?.data?.answer ?? ""
+      ]);
     }
   };
 
   const handleClearChat = () => {
-    setChatResponse("");
-    setDisplayMess("");
+    setChatResponse([]);
+    setDisplayMess([]);
   }
 
   
@@ -440,7 +435,7 @@ const DestinationHomePage: React.FC = () => {
               setOpen={() => setOpenChat((prev) => !prev)}
               inputs={userInputs}
               setInputs={setUserInputs}
-              handleChat={() => handleChat("")}
+              handleChat={handleChat}
               displayMess={displayMess}
               isLoading={searchAgentLoading}
               clearChat={handleClearChat}

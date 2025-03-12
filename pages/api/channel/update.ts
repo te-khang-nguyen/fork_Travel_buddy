@@ -46,6 +46,7 @@ export default async function handler(
 };
 
 
+// Workaround to enable Swagger on production 
 export const swaggerChannelUpdate = {
   index:10, 
   text:

@@ -12,7 +12,7 @@ export default async function handler(
     }
 
     const { role } = req.query;
-    const payload = req.body;
+    const avatar = req.body?.["avatar-url"];
 
     const token = req.headers.authorization?.split(' ')[1];
 
@@ -21,21 +21,41 @@ export default async function handler(
     } = await supabase.auth.getUser(token);
 
     try {
-        const {
-            data: updateData, 
-            error: updateError
-        } = await supabase.from(`${role}profiles`)
+      const toMediaAssets = {
+        user_id: user!.id,
+        url: avatar,
+        usage: "avatar",
+        mime_type: "image/jpeg"
+      }
+
+      const {
+        data: mediaData,
+        error: mediaErr
+      } = await supabase.from("media_assets")
+        .insert(toMediaAssets)
+        .select()
+        .single();
+      
+      if (mediaErr) {
+        return res.status(400).json({ error: mediaErr.message });
+      }
+
+      const {
+          data: updateData, 
+          error: updateError
+      } = await supabase.from(`${role}profiles`)
                     .update({
-                        ...payload
+                      avatar_id: mediaData?.id
                     })
                     .eq(`${role}id`, user!.id)
-                    .select();
+                    .select()
+                    .single();
 
         if (updateError) {
             return res.status(400).json({ error: updateError });
         }
 
-        return res.status(200).json({ data: updateData });
+        return res.status(200).json({ data: updateData.avatar_id });
     } catch (err: any) {
         return res.status(500).json({ 
             error: err.message || "An error occurred while updating user profile"
@@ -44,10 +64,10 @@ export default async function handler(
 }
 
 // Workaround to enable Swagger on production 
-export const swaggerProfileUpdate = {
+export const swaggerProfileAvatarUpdate = {
     index:9, 
     text:
-`"/api/v1/profile/": {
+`"/api/v1/profile/avatar": {
     "put": {
       "tags": ["profile"],
       "summary": "Update user profile",
@@ -75,17 +95,9 @@ export const swaggerProfileUpdate = {
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
+                "avatar-url": {
                   "type": "string",
-                  "description": "The name of the user"
-                },
-                "email": {
-                  "type": "string",
-                  "description": "The email of the user"
-                },
-                "phone": {
-                  "type": "string",
-                  "description": "The phone number of the user"
+                  "description": "The URL of the new avatar image"
                 }
               }
             }
@@ -101,27 +113,8 @@ export const swaggerProfileUpdate = {
                 "type": "object",
                 "properties": {
                   "data": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "role": {
-                        "type": "string"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      }
-                    }
+                    "type": "string",
+                    "description": "The ID of the updated avatar"
                   }
                 }
               }
@@ -129,13 +122,43 @@ export const swaggerProfileUpdate = {
           }
         },
         "400": {
-          "description": "Bad request"
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
+                }
+              }
+            }
+          }
         },
         "405": {
-          "description": "Method not allowed"
+          "description": "Method not allowed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string" }
+                }
+              }
+            }
+          }
         },
         "500": {
-          "description": "Internal server error"
+          "description": "Internal server error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
+                }
+              }
+            }
+          }
         }
       }
     }

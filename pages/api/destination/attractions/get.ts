@@ -38,6 +38,7 @@ export default async function handler(
 
 };
 
+// Workaround to enable Swagger on production 
 export const swaggerAttractionGet = {
     index:16, 
     text:
@@ -96,7 +97,12 @@ export const swaggerAttractionGet = {
                             }
                           },
                           "description": { "type": "string" },
-                          "description_thumbnail": { "type": "string" }
+                          "description_thumbnail": { "type": "string" },
+                          "url_slug": { "type": "string" },
+                          "primary_keyword": { "type": "string" },
+                          "address": { "type": "string" },
+                          "order_of_appearance": { "type": "number" },
+                          "primary_photo_id": { "type": "string" }
                         }
                       }
                     }

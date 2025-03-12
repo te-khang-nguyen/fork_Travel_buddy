@@ -41,11 +41,21 @@ const UserProfileApi = createApi({
         body: payload
       }),
     }),
+
+    updateAvatar: builder.mutation<ProfileRes, ProfileReq>({
+      query: ({avatarUrl}) => ({
+        url: `/profile/avatar`,
+        params: { role: "user" },
+        method: "PUT",
+        body: { "avatar-url": avatarUrl }
+      }),
+    }),
   }),
 });
 
 export const {
   useGetProfileQuery,
-  useUpdateProfileMutation
+  useUpdateProfileMutation,
+  useUpdateAvatarMutation
 } = UserProfileApi;
 export { UserProfileApi };

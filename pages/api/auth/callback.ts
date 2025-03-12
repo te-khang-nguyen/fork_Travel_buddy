@@ -114,6 +114,7 @@ export default async function handler(req, res) {
 }
 
 
+// Workaround to enable Swagger on production 
 export const swaggerCallback = {
   index:5, 
   text:

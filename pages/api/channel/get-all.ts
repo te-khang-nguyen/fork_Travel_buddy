@@ -16,7 +16,7 @@ export default async function handler(
 
     const { 
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser(token);
 
     try {
         const { 
@@ -40,6 +40,7 @@ export default async function handler(
 
 };
 
+// Workaround to enable Swagger on production 
 export const swaggerChannelGetAll = {
     index:9, 
     text:

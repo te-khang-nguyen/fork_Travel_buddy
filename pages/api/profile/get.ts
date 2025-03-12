@@ -21,7 +21,7 @@ export default async function handler(
     try {
         const { data: profileData, error } = await supabase
             .from(`${role}profiles`)
-            .select()
+            .select('*, media_assets(url)')
             .eq(`${role}id`, user!.id)
             .single();
 
@@ -36,6 +36,7 @@ export default async function handler(
 
 };
 
+// Workaround to enable Swagger on production 
 export const swaggerProfileGetAll = {
   index:8, 
   text:
