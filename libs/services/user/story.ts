@@ -113,7 +113,6 @@ const StoryApi = createApi({
         getSinglePublishedStory: builder.query<StorySingleRes, StoryReq>({
           query: ({ storyId }) => ({
             url: `/story/public`,
-            method: "GET",
             params: { "story-id": storyId }
           })
         }),

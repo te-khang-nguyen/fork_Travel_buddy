@@ -17,8 +17,7 @@ export default async function handler(
             .from("stories")
             .select("*, media_assets(url), channels(channel_type)")
             .eq("status", "PUBLISHED")
-            .eq("channels.channel_type", "Travel Buddy")
-            // .single();
+            .eq("channels.channel_type", "Travel Buddy");
 
         if (error) {
             return res.status(400).json({ error: error.message });
