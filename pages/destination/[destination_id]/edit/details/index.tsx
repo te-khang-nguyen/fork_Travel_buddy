@@ -8,32 +8,32 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { 
-  useGetDestinationQuery,
-  useGetDestinationDetailsQuery,
-  convertDestinationDetailsToFeatures,
-} from "@/libs/services/user/destination";
+  useGetExperienceQuery,
+  useGetExperienceDetailsQuery,
+  convertExperienceDetailsToFeatures,
+} from "@/libs/services/user/experience";
 import { useForm } from "react-hook-form";
 
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import AdminDetails from '@/app/components/destination/AdminDetails';
-import { useCreateDestinationDetailsMutation } from '@/libs/services/business/destination';
+import { useCreateExperienceDetailsMutation } from '@/libs/services/business/experience';
 import { getDesDetailsInput } from '@/pages/destination/create';
 import { useUploadImagesMutation } from '@/libs/services/storage/upload';
 import GroupedFeaturesEditPage from '@/app/components/destination/DestinationDetailsEdit';
 
-const EditDestinationDetails: React.FC = () => {
+const EditExperienceDetails: React.FC = () => {
 
   const router = useRouter();
   const { destination_id } = router.query;
-  const { data: destination, isLoading } = useGetDestinationQuery({ id: destination_id as string });
-  const { data: destination_details } = useGetDestinationDetailsQuery({ id: destination_id as string })  
+  const { data: destination, isLoading } = useGetExperienceQuery({ id: destination_id as string });
+  const { data: destination_details } = useGetExperienceDetailsQuery({ id: destination_id as string })  
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { handleSubmit, control } = useForm<FormData>({
         defaultValues: {},
       });
 
-  const [createDestinationDetails] = useCreateDestinationDetailsMutation();
+  const [createExperienceDetails] = useCreateExperienceDetailsMutation();
   const [uploadImages] = useUploadImagesMutation();
 
   const onSubmit = async (data: any) => {
@@ -44,13 +44,13 @@ const EditDestinationDetails: React.FC = () => {
             for (const detail of des_details_input) {
               const uploadImgResponse = await uploadImages({
                   imagesBase64: Array.isArray(detail.image) ? detail.image : [detail.image],
-                  title: 'DestinationDetails',
+                  title: 'ExperienceDetails',
                   bucket: 'destination',
               }).unwrap();
               detail["imageSupabaseUrl"] = uploadImgResponse.signedUrls;
               if (destination_id && !Array.isArray(destination_id)) {
-                await createDestinationDetails({
-                    destination_id,
+                await createExperienceDetails({
+                    experience_id: destination_id,
                     type : detail.type,
                     name : "test",
                     text : detail.text,
@@ -78,7 +78,7 @@ const EditDestinationDetails: React.FC = () => {
         {destination && destination_details ? (
           <>
             {/* Features Section */}
-            <GroupedFeaturesEditPage features={convertDestinationDetailsToFeatures(destination_details)} />
+            <GroupedFeaturesEditPage features={convertExperienceDetailsToFeatures(destination_details)} />
             <form onSubmit={handleSubmit(onSubmit)}>
               <AdminDetails initialDetails={[]} control={control} />
               <Box mt={2}>
@@ -104,11 +104,11 @@ const EditDestinationDetails: React.FC = () => {
             </form>
           </>
         ) : (
-          <Typography variant="h6">Destination not found</Typography> // Fallback UI
+          <Typography variant="h6">Experience not found</Typography> // Fallback UI
         )}
       </Container>
     </>
   );
 };
 
-export default EditDestinationDetails;
+export default EditExperienceDetails;

@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, Button, TextField } from '@mui/material';
-import { useUpdateDestinationMutation } from '@/libs/services/business/destination';
+import { useUpdateExperienceMutation } from '@/libs/services/business/experience';
 import { useRouter } from 'next/router';
-import { Destination } from '@/libs/services/business/destination';
+import { Experience } from '@/libs/services/business/experience';
 import { useUploadVideoMutation } from '@/libs/services/storage/upload';
 
 interface VideoSectionProps {
-  destination: Destination;
+  destination: Experience;
   edit_mode?: boolean;
 }
 
@@ -19,7 +19,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ destination, edit_mode = fa
   const [editingDescription, setEditingDescription] = useState(false);
   const [editedName, setEditedName] = useState(destination.name);
   const [editedDescription, setEditedDescription] = useState(destination.thumbnail_description);
-  const [updateDestination] = useUpdateDestinationMutation();
+  const [updateExperience] = useUpdateExperienceMutation();
 
   // Pause video and optionally disable autoplay when in edit mode
   useEffect(() => {
@@ -55,12 +55,12 @@ const VideoSection: React.FC<VideoSectionProps> = ({ destination, edit_mode = fa
 
         const videoResponse = await uploadVideo({
             videoBase64: base64String,
-            title: "DestinationVideo",
-            bucket: "destination",
+            title: "ExperienceVideo",
+            bucket: "experience",
         }).unwrap();
 
         const videoUrl = videoResponse?.signedUrl || "";
-        updateDestination({
+        updateExperience({
             id : String(destination_id),
             data : {primary_video : videoUrl}
         });
@@ -76,7 +76,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ destination, edit_mode = fa
 
   // Placeholder for handling name change
   const handleChangeName = () => {
-    updateDestination({
+    updateExperience({
         id : String(destination_id),
         data : {name: editedName}
     })
@@ -86,7 +86,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ destination, edit_mode = fa
   // Placeholder for handling description change
   const handleChangeDescription = () => {
     // TODO: Add your custom description change logic here
-    updateDestination({
+    updateExperience({
         id : String(destination_id),
         data : {thumbnail_description: editedDescription}
     })

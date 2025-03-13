@@ -17,8 +17,26 @@ interface ProfileReq {
   avatarUrl?: string
 }
 
+export interface Profile {
+  "userid": string;
+  "username": string;
+  "email": string;
+  "firstname": string;
+  "lastname": string;
+  "preferences": string;
+  "facebook": string;
+  "instagram": string;
+  "x": string;
+  "phone": string;
+  "createdAt": string;
+  "avatar_id": string;
+  "media_assets": {
+    "url": string;
+  }
+}
+
 interface ProfileRes {
-  data: any;
+  data: Profile;
   error?: string;
 }
 

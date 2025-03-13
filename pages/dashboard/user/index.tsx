@@ -4,13 +4,13 @@ import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import DestinationCarousel from "@/app/components/destination/DestinationCarousel";
 import StyledContentCard from "@/app/components/generic_components/StyledContentCard";
 import { useRouter } from "next/router";
-import { useGetAllDestinationsQuery } from "@/libs/services/user/destination";
+import { useGetAllExperiencesQuery } from "@/libs/services/user/experience";
 import { useGetAllPublishedStoryQuery } from "@/libs/services/user/story";
 
 const UserDashboard = () => {
   const router = useRouter();
   const [isFetching, setIsFetching] = useState(true);
-  const [destinations, setDestinations] = useState<{
+  const [destinations, setExperiences] = useState<{
     id: string;
     name: string;
     image: string;
@@ -37,7 +37,7 @@ const UserDashboard = () => {
       data: destinationsData,
       error: destinationsErr,
       isFetching: destinationsFetching,
-  } = useGetAllDestinationsQuery();
+  } = useGetAllExperiencesQuery();
 
   const {
       data: story, 
@@ -51,7 +51,7 @@ const UserDashboard = () => {
 
   useEffect(()=>{
     if(destinationsData){
-      setDestinations(destinationsData?.map((item)=>({
+      setExperiences(destinationsData?.map((item)=>({
         id: item?.id,
         name: item?.name,
         image: item?.primary_photo,

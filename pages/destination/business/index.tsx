@@ -11,16 +11,16 @@ import {
     Box,
   } from '@mui/material';  
 import { 
-    useGetAllDestinationsQuery,
-  } from "@/libs/services/user/destination";
-import { Destination } from '@/libs/services/business/destination';
+    useGetAllExperiencesQuery,
+  } from "@/libs/services/user/experience";
+import { Experience } from '@/libs/services/business/experience';
   
 
-const SelectDestination = () => {
+const SelectExperience = () => {
   const router = useRouter();
-  const { data: allDestinations, isLoading } = useGetAllDestinationsQuery();
+  const { data: allExperiences, isLoading } = useGetAllExperiencesQuery();
   if (isLoading) return <CircularProgress />;
-  const MainSection: React.FC<{allDestinations: Destination[]}> = ({allDestinations}) => {
+  const MainSection: React.FC<{allExperiences: Experience[]}> = ({allExperiences}) => {
     return(
       <>
         <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
@@ -28,7 +28,7 @@ const SelectDestination = () => {
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
             <Button
-                onClick={() => router.push('/destination/create')}
+                onClick={() => router.push('/experience/create')}
                 color="primary"
                 variant="outlined"
                 sx={{ mt: 1, mr: 3, width: '50%' }}
@@ -37,7 +37,7 @@ const SelectDestination = () => {
             </Button>
         </Box>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {allDestinations?.map((child, index) => (
+          {allExperiences?.map((child, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
                 <Card 
                     sx={{ 
@@ -79,8 +79,8 @@ const SelectDestination = () => {
   return (
     
     <Container maxWidth={false} sx={{ width: '90%' }}>
-        {allDestinations 
-            ? <MainSection allDestinations={allDestinations}/>
+        {allExperiences 
+            ? <MainSection allExperiences={allExperiences}/>
             : "No destinations found"
         }
     </Container>
@@ -88,4 +88,4 @@ const SelectDestination = () => {
   ); // You can return a loading spinner or message if desired
 };
 
-export default SelectDestination;
+export default SelectExperience;

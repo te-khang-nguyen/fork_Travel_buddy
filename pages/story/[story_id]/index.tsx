@@ -79,7 +79,7 @@ const PublicStoryPageUI = () => {
             title={story.data.seo_title_tag ?? ''} 
             story={story.data.story_content}
             media={story.data.media_assets?.map((item)=>item.url) ?? []}
-            destination={story.data.destinations?.name ?? ""}
+            destination={story.data.experiences?.name ?? ""}
             channelType={story.data.channels?.channel_type ?? ""}
             isPublic
         />

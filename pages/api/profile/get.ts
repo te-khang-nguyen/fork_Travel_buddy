@@ -1,5 +1,6 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { Profile } from "@/libs/services/user/profile";
 
 
 export default async function handler(
@@ -37,7 +38,7 @@ export default async function handler(
 };
 
 // Workaround to enable Swagger on production 
-export const swaggerProfileGetAll = {
+export const swaggerProfileGet = {
   index:8, 
   text:
 `"/api/v1/profile": {
@@ -72,20 +73,25 @@ export const swaggerProfileGetAll = {
                   "data": {
                     "type": "object",
                     "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "role": {
-                        "type": "string"
-                      },
-                      "created_at": {
-                        "type": "string"
+                      "userid": { "type": "string" },
+                      "username": { "type": "string" },
+                      "email": { "type": "string" },
+                      "firstname": { "type": "string" },
+                      "lastname": { "type": "string" },
+                      "preferences": { "type": "string" },
+                      "facebook": { "type": "string" },
+                      "instagram": { "type": "string" },
+                      "x": { "type": "string" },
+                      "phone": { "type": "string" },
+                      "createdAt": { "type": "string" },
+                      "avatar_id": { "type": "string" },
+                      "media_assets": {
+                        "type": "object",
+                        "properties": {
+                          "url" : {
+                            "type": "string"
+                          }
+                        }
                       }
                     }
                   }

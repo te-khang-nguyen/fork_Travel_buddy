@@ -8,13 +8,13 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { 
-  useGetDestinationQuery,
-  useGetAttractionsQuery,
-  useGetDestinationDetailsQuery,
-  convertDestinationDetailsToFeatures,
+  useGetExperienceQuery,
+  useGetLocationsQuery,
+  useGetExperienceDetailsQuery,
+  convertExperienceDetailsToFeatures,
   useGetIconicPhotosQuery,
-} from "@/libs/services/user/destination";
-import { Destination } from '@/libs/services/business/destination';
+} from "@/libs/services/user/experience";
+import { Experience } from '@/libs/services/business/experience';
 
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
 import IconicPhotos from "@/app/components/destination/IconicPhotos";
@@ -25,22 +25,22 @@ import PublishButton from '@/app/components/destination/PublishDestinationButton
 import ImageSection from '@/app/components/destination/ImageSection';
 import TopAttractionsSection from '@/app/components/destination/TopAttractionsSection';
 
-const EditDestinationPage: React.FC = () => {
+const EditExperiencePage: React.FC = () => {
 
   const [openChat, setOpenChat] = useState(false);
   const router = useRouter();
   const { destination_id } = router.query;
-  const { data: destination, isLoading } = useGetDestinationQuery({ id: destination_id as string });
-  // const { data: childrenDestinations, isLoading: childrenLoading } = useGetChildrenDestinationsQuery({ id: destination_id as string });
-  const { data: attractions, isLoading: attractionsLoading } = useGetAttractionsQuery({ id: destination_id as string });
-  const { data: destination_details } = useGetDestinationDetailsQuery({ id: destination_id as string })
+  const { data: destination, isLoading } = useGetExperienceQuery({ id: destination_id as string });
+  // const { data: childrenExperiences, isLoading: childrenLoading } = useGetChildrenExperiencesQuery({ id: destination_id as string });
+  const { data: attractions, isLoading: attractionsLoading } = useGetLocationsQuery({ id: destination_id as string });
+  const { data: destination_details } = useGetExperienceDetailsQuery({ id: destination_id as string })
 
   const { data: iconic_photos } = useGetIconicPhotosQuery({ id: destination_id as string });
   
   if (isLoading) return <LoadingSkeleton isLoading={true}/>;
 
 
-  const ChatBoxSection: React.FC<{destination: Destination}> = ({destination}) => {
+  const ChatBoxSection: React.FC<{destination: Experience}> = ({destination}) => {
     return(
       <Box sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000 }}>
         {openChat && (
@@ -112,7 +112,7 @@ const EditDestinationPage: React.FC = () => {
             <OverviewSection destination={destination} edit_mode={true}/>
 
             {/* Features Section */}
-            <GroupedFeaturesPopup features={convertDestinationDetailsToFeatures(destination_details)} />
+            <GroupedFeaturesPopup features={convertExperienceDetailsToFeatures(destination_details)} />
             <Button
               onClick={handleClickToDD}
               variant="contained"
@@ -122,17 +122,17 @@ const EditDestinationPage: React.FC = () => {
             <IconicPhotos photos={iconic_photos || []} edit_mode={true}/>
 
             {/* Top attractions */}
-            <TopAttractionsSection attractions={attractions} edit_mode={true}/>
+            <TopAttractionsSection attractions={attractions as any} edit_mode={true}/>
 
             {/* Fixed Chat Button and Chatbox */}
             <ChatBoxSection destination={destination} />
           </>
         ) : (
-          <Typography variant="h6">Destination not found</Typography> // Fallback UI
+          <Typography variant="h6">Experience not found</Typography> // Fallback UI
         )}
       </Container>
     </>
   );
 };
 
-export default EditDestinationPage;
+export default EditExperiencePage;

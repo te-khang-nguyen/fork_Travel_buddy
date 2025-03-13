@@ -71,13 +71,6 @@ export default async function handler(
     try {
       const { videoBase64, bucket, title } = req.body;
       
-      // Detailed logging for debugging
-      console.log('Received video upload request:');
-      console.log('videoBase64 type:', typeof videoBase64);
-      console.log('videoBase64 value:', videoBase64);
-      console.log('bucket:', bucket);
-      console.log('title:', title);
-      
       if (!videoBase64) {
         return res.status(400).json({
           success: false,

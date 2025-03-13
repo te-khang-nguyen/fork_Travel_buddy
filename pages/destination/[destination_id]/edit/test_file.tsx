@@ -58,7 +58,7 @@ const TravelPage = () => {
             borderBottom: editMode ? "1px dashed gray" : "none",
           }}
         >
-          Travel Destination
+          Travel Experience
           {editMode && (
             <IconButton size="small" sx={{ ml: 1 }}>
               <EditIcon fontSize="small" />

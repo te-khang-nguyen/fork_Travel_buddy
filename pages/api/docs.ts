@@ -14,7 +14,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'https://fork-travel-buddy.vercel.app/', // Add your production URL
+      url: 'http://localhost:3000/',// 'https://fork-travel-buddy.vercel.app/', // Add your production URL
       description: 'Production server'
     }
   ],

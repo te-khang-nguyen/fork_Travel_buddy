@@ -12,8 +12,8 @@ export default async function handler(
 
     // Extract body
     const { 
-      destination, 
-      attractions, 
+      experience, 
+      locations, 
       notes, 
       media_urls, 
       brand_voice, 
@@ -24,8 +24,8 @@ export default async function handler(
     try {
         // Insert story into database
         const { data: storyData, error } = await generateLocationStories(
-                destination,
-                attractions.join("\n"), 
+                experience,
+                locations.join("\n"), 
                 notes,
                 media_urls,
                 brand_voice,

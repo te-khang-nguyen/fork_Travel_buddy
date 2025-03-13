@@ -20,7 +20,19 @@ export default async function handler(
         data: { user },
     } = await supabase.auth.getUser(token);
 
+    
+
     try {
+        if ("email" in Object.keys(payload)) {
+          const { data, error: authUpdateError } = await supabase.auth.updateUser({
+            email: payload?.email
+          })
+
+          if (authUpdateError){
+            return res.status(400).json({ error: authUpdateError });
+          }
+        }
+
         const {
             data: updateData, 
             error: updateError
@@ -45,7 +57,7 @@ export default async function handler(
 
 // Workaround to enable Swagger on production 
 export const swaggerProfileUpdate = {
-    index:9, 
+    index:8, 
     text:
 `"/api/v1/profile/": {
     "put": {
@@ -75,18 +87,16 @@ export const swaggerProfileUpdate = {
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "The name of the user"
-                },
-                "email": {
-                  "type": "string",
-                  "description": "The email of the user"
-                },
-                "phone": {
-                  "type": "string",
-                  "description": "The phone number of the user"
-                }
+                "username": { "type": "string" },
+                      "email": { "type": "string" },
+                      "firstname": { "type": "string" },
+                      "lastname": { "type": "string" },
+                      "preferences": { "type": "string" },
+                      "facebook": { "type": "string" },
+                      "instagram": { "type": "string" },
+                      "x": { "type": "string" },
+                      "phone": { "type": "string" },
+                      "createdAt": { "type": "string" }
               }
             }
           }

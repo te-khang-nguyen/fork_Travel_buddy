@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { BusinessProfile } from "@/libs/services/business/profile";
 
 export default async function handler(
     req: NextApiRequest,
@@ -16,10 +17,9 @@ export default async function handler(
         data: { user },
     } = await supabase.auth.getUser(token);
 
-    const userId = user?.id;
     const data = req.body;
 
-    if (!userId) {
+    if (!user?.id) {
         return res.status(400).json({ error: "User ID is required" });
     }
 
@@ -31,7 +31,7 @@ export default async function handler(
                     .update({
                         ...data 
                     })
-                    .eq('businessid', userId)
+                .eq('businessid', user?.id)
                     .select("id");
 
         if (updateError) {
@@ -46,4 +46,96 @@ export default async function handler(
             error: err.message || "An error occurred while updating the challenge" 
         });
     }
+}
+
+
+// Workaround to enable Swagger on production 
+export const swaggerBusinessProfileUpdate = {
+    index:9, 
+    text:
+`"/api/v1/business/profile/": {
+    "put": {
+      "tags": ["profile"],
+      "summary": "Update a B2B profile",
+      "description": "Update the profile of a B2B user.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                        "businessid": { "type": "string" },
+                        "businessname": { "type": "string" },
+                        "email": { "type": "string" },
+                        "phone": { "type": "string" },
+                        "address": { "type": "string" },
+                        "website": { "type": "string" },
+                        "type": { "type": "string" },
+                        "created_at": { "type": "string" },
+                        "updated_at": { "type": "string" },
+                        "status": { "type": "string" },
+                        "logo_id": { "type": "string" },
+                        "editors": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "B2B profile updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "role": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "405": {
+          "description": "Method not allowed"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }`
 }

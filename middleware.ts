@@ -27,20 +27,12 @@ export function middleware(req: NextRequest) {
 
     return isAuthenticated(jwt).then((result) => {
       // Check the validity of the JWT, if invalid, deny access to API
-      if (!result) {
-        if(url.pathname.includes('/public')) {
-          const pathSegments = url.pathname.split('/').filter(e => e !== 'v1' && e !== '');
-          return NextResponse.rewrite(new URL(`/${pathSegments.join('/')}`, req.url));
-        }
+      if (!result && !url.pathname.includes('/public')) {
         return Response.json(
           { success: false, message: "Unauthorized" },
           { status: 401 }
         )
-      } else {
-        // if(url.pathname.includes('/storage')) {
-        //   const pathSegments = url.pathname.split('/').filter(e => e !== 'v1' && e !== '');
-        //   return NextResponse.rewrite(new URL(`/${pathSegments.join('/')}`, req.url));
-        // }
+      } else if (result || (!result && url.pathname.includes('/public'))) {
 
         const newPath = apiRoutingCRUD(req);
         if (!newPath){
@@ -51,6 +43,7 @@ export function middleware(req: NextRequest) {
         } else {
           return NextResponse.rewrite(new URL(newPath, req.url));
         }
+        
       }
     })
   }

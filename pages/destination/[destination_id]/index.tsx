@@ -12,14 +12,14 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { 
-  useGetDestinationQuery,
-  useGetAttractionsQuery,
-  Attraction,
-  useGetDestinationDetailsQuery,
-  convertDestinationDetailsToFeatures,
+  useGetExperienceQuery,
+  useGetLocationsQuery,
+  Location,
+  useGetExperienceDetailsQuery,
+  convertExperienceDetailsToFeatures,
   useGetIconicPhotosQuery,
-} from "@/libs/services/user/destination";
-import { Destination } from '@/libs/services/business/destination';
+} from "@/libs/services/user/experience";
+import { Experience } from '@/libs/services/business/experience';
 import { useCallSearchAgentMutation } from '@/libs/services/agents/search';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
@@ -47,13 +47,13 @@ const attractionTags = (attractionName) => [
       ]
 
 
-const DestinationHomePage: React.FC = () => {
+const ExperienceHomePage: React.FC = () => {
   const router = useRouter();
   const { destination_id } = router.query;
-  const { data: destination, isLoading } = useGetDestinationQuery({ id: destination_id as string });
-  // const { data: childrenDestinations, isLoading: childrenLoading } = useGetChildrenDestinationsQuery({ id: destination_id as string });
-  const { data: attractions, isLoading: attractionsLoading } = useGetAttractionsQuery({ id: destination_id as string });
-  const { data: destination_details } = useGetDestinationDetailsQuery({ id: destination_id as string })
+  const { data: destination, isLoading } = useGetExperienceQuery({ id: destination_id as string });
+  // const { data: childrenExperiences, isLoading: childrenLoading } = useGetChildrenExperiencesQuery({ id: destination_id as string });
+  const { data: attractions, isLoading: attractionsLoading } = useGetLocationsQuery({ id: destination_id as string });
+  const { data: destination_details } = useGetExperienceDetailsQuery({ id: destination_id as string })
   
   const { data: iconic_photos } = useGetIconicPhotosQuery({ id: destination_id as string });
 
@@ -95,7 +95,7 @@ const DestinationHomePage: React.FC = () => {
     // setAnchorEl(event.currentTarget);
   }
 
-  const handleAttractionChatInit = (attraction: Attraction) => {
+  const handleAttractionChatInit = (attraction: Location) => {
     // setAnchorEl(event.currentTarget);
     setOpenChat((prev) => {
       setIntitialResponse({
@@ -135,7 +135,7 @@ const DestinationHomePage: React.FC = () => {
   
   if (isLoading) return <LoadingSkeleton isLoading={true}/>;
   
-  const VideoSection: React.FC<{destination: Destination}> = ({destination}) => {
+  const VideoSection: React.FC<{destination: Experience}> = ({destination}) => {
     return(
     <Box
       sx={{
@@ -193,7 +193,7 @@ const DestinationHomePage: React.FC = () => {
     )
   }
 
-  const ImageSection: React.FC<{destination: Destination}> = ({destination}) => {
+  const ImageSection: React.FC<{destination: Experience}> = ({destination}) => {
     return (
       <Box
         sx={{
@@ -210,7 +210,7 @@ const DestinationHomePage: React.FC = () => {
       >
         <img
           src={destination.primary_photo}
-          alt="Destination"
+          alt="Experience"
           style={{
             width: '100%',
             height: '100%',
@@ -243,7 +243,7 @@ const DestinationHomePage: React.FC = () => {
     );
   }
 
-  const OverviewSection: React.FC<{destination: Destination}> = ({destination}) => {
+  const OverviewSection: React.FC<{destination: Experience}> = ({destination}) => {
     return(
       <Paper elevation={0} sx={{ p: 3, mb: 4 }}>
         <Typography variant="h5" gutterBottom>
@@ -256,7 +256,7 @@ const DestinationHomePage: React.FC = () => {
     )
   }
 
-  const CallToActionSection: React.FC<{destination: Destination}> = ({destination}) => {
+  const CallToActionSection: React.FC<{destination: Experience}> = ({destination}) => {
     return(
       <><Typography variant="h5" align="center" sx={{ mt: 6, mb: 4 }}>
         {`Not in ${destination.name}? Maybe explore our other destinations?`}
@@ -274,14 +274,14 @@ const DestinationHomePage: React.FC = () => {
     )
   }
 
-  const MainSection: React.FC<{destination: Destination, childrenDestinations: Destination[]}> = ({destination, childrenDestinations}) => {
+  const MainSection: React.FC<{destination: Experience, childrenExperiences: Experience[]}> = ({destination, childrenExperiences}) => {
     return(
       <>
         <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
           Explore destinations within {destination.name}
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {childrenDestinations?.map((child, index) => (
+          {childrenExperiences?.map((child, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card>
                 <CardMedia
@@ -312,7 +312,7 @@ const DestinationHomePage: React.FC = () => {
     )
   }
 
-  const TopAttractionsSection: React.FC<{attractions: Attraction[]}> = ({attractions}) => {
+  const TopAttractionsSection: React.FC<{attractions: Location[]}> = ({attractions}) => {
     const sortedAttractions = attractions.slice().sort((a, b) => a.order_of_appearance - b.order_of_appearance);
 
     return(
@@ -412,10 +412,10 @@ const DestinationHomePage: React.FC = () => {
             <OverviewSection destination={destination} />
 
             {/* Features Section */}
-            <GroupedFeaturesPopup features={convertDestinationDetailsToFeatures(destination_details)} />
+            <GroupedFeaturesPopup features={convertExperienceDetailsToFeatures(destination_details)} />
 
             {/* Main Section */}
-            {/* <MainSection destination={destination} childrenDestinations={childrenDestinations} /> */}
+            {/* <MainSection destination={destination} childrenExperiences={childrenExperiences} /> */}
 
             {/* Iconic Photos */}
             <IconicPhotos photos={iconic_photos}/>
@@ -445,11 +445,11 @@ const DestinationHomePage: React.FC = () => {
             <IDidItSection id={destination_id as string}/>
           </>
         ) : (
-          <Typography variant="h6">Destination not found</Typography> // Fallback UI
+          <Typography variant="h6">Experience not found</Typography> // Fallback UI
         )}
       </Container>
     </>
   );
 };
 
-export default DestinationHomePage;
+export default ExperienceHomePage;

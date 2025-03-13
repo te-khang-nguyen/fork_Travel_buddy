@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Paper, CircularProgress } from "@mui/material";
-import { useCreateDestinationMutation, DestinationReq, useCreateDestinationDetailsMutation } from "@/libs/services/business/destination";
+import { useCreateExperienceMutation, ExperienceReq, useCreateExperienceDetailsMutation } from "@/libs/services/business/experience";
 import { useUploadImageMutation,
     useUploadImagesMutation,
     useUploadVideoMutation,
@@ -79,7 +79,7 @@ export function getDesDetailsInput(input: any): any[] {
     return mappedArray;
 }
 
-const CreateDestinationForm: React.FC = () => {
+const CreateExperienceForm: React.FC = () => {
     const router = useRouter();
     const {destination_id} = router.query;
     const [uploadImage] = useUploadImageMutation();
@@ -87,7 +87,7 @@ const CreateDestinationForm: React.FC = () => {
 
     const [uploadImages] = useUploadImagesMutation();
     const [createMediaAsset] = useCreateMediaAssetMutation();
-    const [createDestination] = useCreateDestinationMutation();
+    const [createExperience] = useCreateExperienceMutation();
     const [formData, setFormData] = useState({
         destination_title: "",
         description: "",
@@ -114,7 +114,7 @@ const CreateDestinationForm: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const [createDestinationDetails] = useCreateDestinationDetailsMutation();
+    const [createExperienceDetails] = useCreateExperienceDetailsMutation();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const onSubmit = async (data: any) => {
@@ -126,7 +126,7 @@ const CreateDestinationForm: React.FC = () => {
             if (data.thumbnail_image) {
                 const thumbnailResponse = await uploadImage({
                     imageBase64: data.thumbnail_image[0].image,
-                    title: "DestinationThumbnail",
+                    title: "ExperienceThumbnail",
                     bucket: "destination",
                 }).unwrap();
                 thumbnailUrl = thumbnailResponse.signedUrl || "";
@@ -144,7 +144,7 @@ const CreateDestinationForm: React.FC = () => {
                 for (const other_image of data.other_images) {
                     const otherImagesResponse = await uploadImage({
                         imageBase64: other_image.image,
-                        title: "DestinationOtherImage",
+                        title: "ExperienceOtherImage",
                         bucket: "destination",
                     }).unwrap();
                     otherImagesUrl.push(otherImagesResponse?.signedUrl || "");
@@ -162,7 +162,7 @@ const CreateDestinationForm: React.FC = () => {
             if (data.banner_video) {
                 const videoResponse = await uploadVideo({
                     videoBase64: data.banner_video,
-                    title: "DestinationVideo",
+                    title: "ExperienceVideo",
                     bucket: "destination",
                 }).unwrap();
                 videoUrl = videoResponse.signedUrl || "";
@@ -175,8 +175,8 @@ const CreateDestinationForm: React.FC = () => {
             }
 
             const { 
-                data: newDestinationData 
-            } = await createDestination({
+                data: newExperienceData 
+            } = await createExperience({
                 name: data.destination_title,
                 description: data.description,
                 address: data.address || '',
@@ -192,10 +192,10 @@ const CreateDestinationForm: React.FC = () => {
             });
 
             for ( const img_id of otherMediaAssetsUrl ) {
-                await createDestinationDetails({
-                    destination_id : `${newDestinationData?.data.id}`,
+                await createExperienceDetails({
+                    experience_id: `${newExperienceData?.data.id}`,
                     type : "iconic_photos",
-                    name : `Iconic Photo ${newDestinationData?.data.id}`,
+                    name : `Iconic Photo ${newExperienceData?.data.id}`,
                     text : "Click here to change text",
                     media_id : img_id,
                 })
@@ -205,19 +205,19 @@ const CreateDestinationForm: React.FC = () => {
             for (const element of des_details_input) {
                 const uploadImgResponse = await uploadImages({
                     imagesBase64: Array.isArray(element.image) ? element.image : [element.image], // convert single image to array
-                    title: 'DestinationDetails',
+                    title: 'ExperienceDetails',
                     bucket: 'destination',
                 }).unwrap();
                 element["imageSupabaseUrl"] = uploadImgResponse.signedUrls;
-                await createDestinationDetails({
-                    destination_id : `${newDestinationData?.data.id}`,
+                await createExperienceDetails({
+                    experience_id: `${newExperienceData?.data.id}`,
                     type : element.type,
                     name : "test",
                     text : element.text,
                     media : element.imageSupabaseUrl,
                 })
             };
-            await router.replace(`/destination/${newDestinationData?.data.id}/edit`);
+            await router.replace(`/destination/${newExperienceData?.data.id}/edit`);
             setIsSubmitting(false);
             return;
         } catch (error) {
@@ -257,7 +257,7 @@ const CreateDestinationForm: React.FC = () => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-          Create a New Destination
+          Create a New Experience
         </Typography>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -350,4 +350,4 @@ const CreateDestinationForm: React.FC = () => {
   );
 };
 
-export default CreateDestinationForm;
+export default CreateExperienceForm;

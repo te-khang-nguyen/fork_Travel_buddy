@@ -196,10 +196,10 @@ const CreateStoryUI = () => {
 
         const matchedChannel = channelsData?.data?.find(e => e.id === channelId);
 
-        const { data: generatedStory } = await generateStory({
+        const { data: generatedStory, error: generateError } = await generateStory({
             payload: {
-                destinationName: options?.find((item) => item.id === destinationId)?.name,
-                attractions: attractionsTitles,
+                experienceName: options?.find((item) => item.id === destinationId)?.name,
+                locations: attractionsTitles,
                 notes: userInputs.userQuestionSubmission,
                 media: storageUrls,
                 brandVoice: matchedChannel?.["brand_voice"],
@@ -207,15 +207,26 @@ const CreateStoryUI = () => {
             }
         });
 
+        if(generateError){
+            setIsConfirmClicked(false);
+            setSnackbar({
+                open: true,
+                message: "Fail to generate new story!",
+                severity: "error",
+            });
+            return;
+        };
+
     
         if(generatedStory?.data) {
             const { story_content, ...rest } = generatedStory?.data
             const finalStory = story_content.replace(/\*/g,'');
             const { 
-                data: submissionResult
+                data: submissionResult,
+                error: submissionError
             } = await uploadStory({
                 payload: {
-                    destination_id: destinationId,
+                    experience_id: destinationId,
                     channel_id: channelId,
                     notes: userInputs.userQuestionSubmission,
                     story_content: finalStory,
@@ -233,7 +244,7 @@ const CreateStoryUI = () => {
                 setIsConfirmClicked(false);
                 setSnackbar({
                   open: true,
-                  message: "Fail to generate new story!",
+                  message: submissionError as string ?? "Fail to upload story!",
                   severity: "error",
                 });
               }

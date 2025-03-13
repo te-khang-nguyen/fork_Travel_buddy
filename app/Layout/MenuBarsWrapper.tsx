@@ -147,7 +147,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
       text: "Add new", 
       icon: role === "user"? 
         <RiQuillPenAiLine style={IconStyle} /> : <AddIcon style={IconStyle} />, 
-      route: role === "user"? `/profile/${role}/story/create` : `/`
+      route: role === "user"? `/profile/${role}/story/create` : `/destination/create`
     },
   ];
 

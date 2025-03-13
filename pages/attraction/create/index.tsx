@@ -6,7 +6,7 @@ import TextInputForUser from "@/app/components/generic_components/TextInputForUs
 import ImageInput from "@/app/components/destination/CustomImageUpload";
 import { useForm } from "react-hook-form";
 import DestinationDropbox from "@/app/components/destination/DestinationDropbox";
-import { useCreateAttractionMutation } from "@/libs/services/business/attraction";
+import { useCreateLocationMutation } from "@/libs/services/business/location";
 import { useCreateMediaAssetMutation } from "@/libs/services/storage/upload";
 
 interface FormData {
@@ -24,7 +24,7 @@ const CreateAttractionForm: React.FC = () => {
     const { destination_id } = router.query;
     const [uploadImage] = useUploadImageMutation();
     const [createMediaAsset] = useCreateMediaAssetMutation();
-    const [createAttraction] = useCreateAttractionMutation();
+    const [createLocation] = useCreateLocationMutation();
 
     const { handleSubmit, control } = useForm<FormData>({
         defaultValues: {
@@ -43,7 +43,7 @@ const CreateAttractionForm: React.FC = () => {
             if (data.thumbnail_image) {
                 const thumbnailResponse = await uploadImage({
                     imageBase64: data.thumbnail_image[0].image,
-                    title: "AttractionThumbnail",
+                    title: "LocationThumbnail",
                     bucket: "attraction",
                 }).unwrap();
                 thumbnailUrl = thumbnailResponse.signedUrl || "";
@@ -56,9 +56,9 @@ const CreateAttractionForm: React.FC = () => {
             }
             
             const { 
-                data: newAttractionData 
-            } = await createAttraction({
-                destination_id: data.destination_id,
+                data: newLocationData 
+            } = await createLocation({
+                experience_id: data.destination_id,
                 title: data.attraction_title,
                 description: data.description,
                 description_thumbnail: data.thumbnail_description || '',
@@ -66,7 +66,8 @@ const CreateAttractionForm: React.FC = () => {
                 primary_photo_id: image_id,
                 // order_of_appearance: -1,
             });
-            await router.replace(`/attraction/${newAttractionData?.data.id}/edit`);
+            // await router.replace(`/attraction/${newLocationData?.data.id}/edit`);
+            await router.replace(`/destination/${destination_id}/edit`);
             setIsSubmitting(false);
             return;
         } catch (error) {
@@ -114,7 +115,7 @@ const CreateAttractionForm: React.FC = () => {
             {/* Choosing destination */}
             <DestinationDropbox 
                 control={control}
-                title="Destinations"
+                title="Experiences"
                 optional={false} 
                 default_value={String(destination_id)}
             />

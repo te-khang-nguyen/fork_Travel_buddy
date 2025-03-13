@@ -18,31 +18,24 @@ import {
     DialogActions,
   } from '@mui/material';  
 import { 
-    useGetAllDestinationsQuery,
-    useGetDestinationQuery,
-    useGetChildrenDestinationsQuery,
-    useGetAttractionsQuery,
-    Attraction,
-    useGetDestinationDetailsQuery,
-    convertDestinationDetailsToFeatures,
-    useGetIconicPhotosQuery,
-  } from "@/libs/services/user/destination";
+  useGetAllExperiencesQuery,
+} from "@/libs/services/user/experience";
 
-import { Destination } from '@/libs/services/business/destination';
+import { Experience } from '@/libs/services/business/experience';
   
 
-const SelectDestination = () => {
+const SelectExperience = () => {
   const router = useRouter();
-  const { data: allDestinations, isLoading } = useGetAllDestinationsQuery();
+  const { data: allExperiences, isLoading } = useGetAllExperiencesQuery();
   if (isLoading) return <CircularProgress />;
-  const MainSection: React.FC<{allDestinations: Destination[]}> = ({allDestinations}) => {
+  const MainSection: React.FC<{allExperiences: Experience[]}> = ({allExperiences}) => {
     return(
       <>
         <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
           Explore all destinations we have
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {allDestinations
+          {allExperiences
           ?.filter(child => child.status === 'active')
           .map((child, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
@@ -75,8 +68,8 @@ const SelectDestination = () => {
   return (
     
     <Container maxWidth={false} sx={{ width: '90%' }}>
-        {allDestinations 
-            ? <MainSection allDestinations={allDestinations}/>
+        {allExperiences 
+            ? <MainSection allExperiences={allExperiences}/>
             : "No destinations found"
         }
     </Container>
@@ -84,4 +77,4 @@ const SelectDestination = () => {
   ); // You can return a loading spinner or message if desired
 };
 
-export default SelectDestination;
+export default SelectExperience;

@@ -3,17 +3,17 @@ import { baseQuery } from "@/libs/supabase/baseQuery";
 
 export interface StoryReq {
     storyId?: string;
-    destinationId?: string;
+    experienceId?: string;
     payload?: {
-        destination_id?: string;
+        experience_id?: string;
         channel_id?: string;
         title?: string;
         notes?: string;
         story_content?: string;
         media?: string[];
         status?: string;
-        attractions?: string[];
-        destinationName?: string;
+        locations?: string[];
+        experienceName?: string;
         storyLength?: number;
         brandVoice?: string;
         channelType?: string;
@@ -32,7 +32,7 @@ export interface StoryProps {
   title?: string;
   created_at?: string;
   user_id?: string;
-  destination_id?: string;
+  experience_id?: string;
   channel_id?: string;
   notes?: string;
   story_content?: string;
@@ -43,7 +43,7 @@ export interface StoryProps {
   seo_slug?: string;
   long_tail_keyword?: string;
   hashtags?: string[];
-  destinations?: {
+  experiences?: {
     name?: string;
   };
   channels?: {
@@ -71,8 +71,8 @@ const StoryApi = createApi({
               url: `/story/generate`,
               method: "POST",
               body: {
-                destination: payload?.destinationName,
-                attractions: payload?.attractions,
+                experience: payload?.experienceName,
+                locations: payload?.locations,
                 notes: payload?.notes,
                 media_urls: payload?.media,
                 brand_voice: payload?.brandVoice,
