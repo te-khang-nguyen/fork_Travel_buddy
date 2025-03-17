@@ -24,9 +24,15 @@ import {
     useUploadImageMutation 
 } from "@/libs/services/storage/upload";
 import {
+    useGetAllExperiencesPublicQuery,
+    useGetLocationsPublicQuery,
+} from "@/libs/services/user/experience";
+
+import {
     useGetAllDestinationsQuery,
     useGetAttractionsQuery,
 } from "@/libs/services/user/destination";
+
 import {
     useCreateChannelMutation,
     useGetAllChannelsQuery
@@ -38,6 +44,11 @@ import Image from 'next/image';
 
 
 const CreateStoryUI = () => {
+    const {
+        data: destinationsData,
+        error: destinationsErr,
+        isFetching: destinationsFetching,
+    } = useGetAllExperiencesPublicQuery();
     const router = useRouter();
     const [ uploadStory ] = useUploadStoryMutation();
     const [ generateStory ] = useGenerateStoryMutation();
@@ -87,11 +98,13 @@ const CreateStoryUI = () => {
     const persistedDesId = sessionStorage.getItem("destinationId");
     const persistedChannelId = sessionStorage.getItem("channelId");
     
-    const {
-        data: destinationsData,
-        error: destinationsErr,
-        isFetching: destinationsFetching,
-    } = useGetAllDestinationsQuery();
+
+    // const {
+    //       data: destinationsData,
+    //       error: destinationsErr,
+    //       isFetching: destinationsFetching,
+    // } = useGetAllExperiencesPublicQuery();
+
 
     const {
         data: channelsData,
@@ -101,7 +114,7 @@ const CreateStoryUI = () => {
 
     const { 
         data: attractionsData
-    } = useGetAttractionsQuery({
+    } = useGetLocationsPublicQuery({
         id: destinationId
     }, 
     {

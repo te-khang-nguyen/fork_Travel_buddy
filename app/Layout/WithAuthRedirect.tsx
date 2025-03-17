@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import isAuthenticated from "@/libs/services/authorization";
-import { JoinInnerTwoTone } from "@mui/icons-material";
 
 export const PUBLIC_ROUTES = [
   "/", "/register", 
@@ -27,10 +26,9 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
           const role = localStorage.getItem("role") || "";
           const isValidJwt = await isAuthenticated(jwt);  
           const storedContentId = localStorage.getItem("contentId");
-
           // Redirect to role-based dashboard if on root path with valid JWT and role
           if (router.pathname === "/" && isValidJwt && role) {
-            console.log(router.pathname);
+            // console.log(router.pathname);
             await router.replace(`/dashboard/${role}`);
             return;
           }
@@ -63,12 +61,14 @@ const withAuthRedirect = <P extends object>(WrappedComponent: React.ComponentTyp
             router.push(`/destination/${storedContentId}`);
           }
 
-          // If the role is 'user' and the path contains 'business', deny access
+          // If the role is 'user' 
           if (role === 'user' 
             && (router.pathname.includes('business') 
-            || router.pathname.includes('edit')
-            || router.pathname.includes('create'))) {
-            await router.replace('/'); // Redirect to a no-access page
+            || (router.pathname.includes('destination') && router.pathname.includes('edit'))
+            || (router.pathname.includes('destination') && router.pathname.includes('create'))
+            || (router.pathname.includes('attraction') && router.pathname.includes('create')))
+          ) {
+            await router.replace('/'); // Redirect to a login
             return;
           }
 

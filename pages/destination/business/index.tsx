@@ -28,7 +28,7 @@ const SelectExperience = () => {
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
             <Button
-                onClick={() => router.push('/experience/create')}
+                onClick={() => router.push('/destination/create')}
                 color="primary"
                 variant="outlined"
                 sx={{ mt: 1, mr: 3, width: '50%' }}

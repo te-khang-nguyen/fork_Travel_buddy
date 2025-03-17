@@ -31,8 +31,6 @@ export default async function handler(
             return res.status(400).json({ error: error.message });
         }
 
-        console.log(queryData);
-
         return res.status(200).json({ data: queryData });
     } catch (err: any) {
         return res.status(500).json({ error: err.message || "An error has occurred while retrieving the challenge information."});

@@ -21,11 +21,11 @@ export default async function handler(
     data: { user },
   } = await supabase.auth.getUser(token);
 
-  const { data: userData, error: userError } = await supabase
-    .from("businessprofiles")
-    .select("type")
-    .eq("businessid", user!.id)
-    .single();
+  // const { data: userData, error: userError } = await supabase
+  //   .from("businessprofiles")
+  //   .select("type")
+  //   .eq("businessid", user!.id)
+  //   .single();
 
   try {
     const { data, error } = await supabase

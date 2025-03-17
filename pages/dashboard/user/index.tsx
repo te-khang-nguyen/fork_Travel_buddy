@@ -4,7 +4,7 @@ import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import DestinationCarousel from "@/app/components/destination/DestinationCarousel";
 import StyledContentCard from "@/app/components/generic_components/StyledContentCard";
 import { useRouter } from "next/router";
-import { useGetAllExperiencesQuery } from "@/libs/services/user/experience";
+import { useGetAllExperiencesPublicQuery } from "@/libs/services/user/experience";
 import { useGetAllPublishedStoryQuery } from "@/libs/services/user/story";
 
 const UserDashboard = () => {
@@ -25,19 +25,11 @@ const UserDashboard = () => {
     status: string | undefined;
   }[]>([]);
 
-  // useEffect(() => {
-  //   setMetadata({
-  //     title: 'Home - Travel Buddy', 
-  //     description:'Welcome to My Travel Buddy.',
-  //     urlSlug: baseUrl + router.asPath
-  //   });
-  // }, [setMetadata]);
-
   const {
       data: destinationsData,
       error: destinationsErr,
       isFetching: destinationsFetching,
-  } = useGetAllExperiencesQuery();
+  } = useGetAllExperiencesPublicQuery();
 
   const {
       data: story, 

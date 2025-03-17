@@ -6,7 +6,7 @@ const DefaultExperience = () => {
 
   useEffect(() => {
     // Redirect to the default destination_id
-    router.push('/experience/e8e16f6e-bc5a-4135-a9e8-405ea282806d');
+    router.push('/destination/select');
   }, [router]);
 
   return null; // You can return a loading spinner or message if desired

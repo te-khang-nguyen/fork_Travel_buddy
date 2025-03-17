@@ -106,9 +106,9 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
     setMenuOpen(null);
   };
 
-  const handleButtonClicked = (item: any) => {
+  const handleButtonClicked = async (item: any) => {
     router.push(item.route);
-      setColorOnClicked([{
+    setColorOnClicked([{
         text: item.text,
         color: "rgb(53, 126, 254)",
       },
@@ -119,6 +119,8 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
           color: e.text !== "Add new"? "primary" : "rgb(53, 126, 254)",
         }))
     ]);
+    // await router.replace(item.route);
+    // return
   }
 
   const handleLogOut = async () => {

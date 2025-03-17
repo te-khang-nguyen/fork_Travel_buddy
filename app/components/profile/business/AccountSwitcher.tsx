@@ -79,7 +79,10 @@ const AccountSwitcher = () => {
             key={account.businessid} 
             value={account.businessname}
             onClick={() => {
-              handleLocalStorageChangeAccount(account.businessid, account.businessname);
+              handleLocalStorageChangeAccount(
+                account.businessid, 
+                account.businessname
+              );
             }}
             sx={{
               '&.Mui-selected': {

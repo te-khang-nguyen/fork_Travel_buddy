@@ -17,7 +17,7 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select("*, destinations(name), media_assets(url), channels(channel_type)")
+            .select("*, experiences(name), media_assets(url), channels(channel_type)")
             .eq("id", storyId)
             .single();
 

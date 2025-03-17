@@ -144,6 +144,50 @@ const ExperienceApi = createApi({
       }),
       transformResponse: ((res: IconicPhotosResponseList) => res.data)
     }),
+
+    // ------------------QUERY CHALLENGE BY ID--------------------------
+    getAllExperiencesPublic: builder.query<Experience[], void>({
+      query: () => ({
+        url: `/experiences/public`
+      }),
+      transformResponse: ((res: ExperienceResponseList) => res.data)
+    }),
+    getExperiencePublic: builder.query<Experience, { id: string }>({
+      query: ({ id }) => ({
+        url: `/experiences/public`,
+        params: { "experience-id": id },
+      }),
+      transformResponse: ((res: ExperienceResponse) => res.data)
+    }),
+    getExperienceDetailsPublic: builder.query<ExperienceDetails[], { id: string, type?: string }>({
+      // This function returns all experience_details except for iconic_photos (which requires further data transformation)
+      query: ({ id, type }) => ({
+        url: `/experiences/public/details`,
+        params: { "experience-id": id, type },
+      }),
+      transformResponse: ((res: ExperienceDetailsRes) => res.data)
+    }),
+    getChildrenExperiencesPublic: builder.query<Experience[], { id: string }>({
+      query: ({ id }) => ({
+        url: `/experiences/public/children`,
+        params: { parent_experience_id: id },
+      }),
+      transformResponse: ((res: ExperienceResponseList) => res.data)
+    }),
+    getLocationsPublic: builder.query<Location[], { id: string }>({
+      query: ({ id }) => ({
+        url: `/experiences/public/locations`,
+        params: { "experience-id": id },
+      }),
+      transformResponse: ((res: LocationResponseList) => res.data)
+    }),
+    getIconicPhotosPublic: builder.query<IconicPhotos[], { id: string }>({
+      query: ({ id }) => ({
+        url: `/experiences/public/iconicPhotos`,
+        params: { "experience-id": id },
+      }),
+      transformResponse: ((res: IconicPhotosResponseList) => res.data)
+    }),
   }),
 });
 
@@ -154,5 +198,11 @@ export const {
   useGetChildrenExperiencesQuery,
   useGetLocationsQuery,
   useGetIconicPhotosQuery,
+  useGetAllExperiencesPublicQuery,
+  useGetExperiencePublicQuery,
+  useGetExperienceDetailsPublicQuery,
+  useGetChildrenExperiencesPublicQuery,
+  useGetLocationsPublicQuery,
+  useGetIconicPhotosPublicQuery,
 } = ExperienceApi;
 export { ExperienceApi };
