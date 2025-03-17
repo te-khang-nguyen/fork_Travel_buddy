@@ -12,6 +12,8 @@ export default async function handler(
 
     // Extract body
     const { 
+      destination,
+      attractions,
       experience, 
       locations, 
       notes, 
@@ -24,8 +26,8 @@ export default async function handler(
     try {
         // Insert story into database
         const { data: storyData, error } = await generateLocationStories(
-                experience,
-                locations.join("\n"), 
+                experience ?? destination,
+                locations? locations?.join("\n") : attractions?.join("\n"), 
                 notes,
                 media_urls,
                 brand_voice,
@@ -49,12 +51,6 @@ export default async function handler(
     }
 };
 
-// // long_tail_keyword: [Long tail keyword],
-// seo_title_tag: [Title],
-//   seo_excerpt: [Excerpt],
-//     seo_meta_desc: [Meta description],
-//       seo_slug: [URL slug],
-//         hashtags: [Hashtags]
 
 // Workaround to enable Swagger on production 
 export const swaggerStoryGenerate = {
@@ -77,11 +73,11 @@ export const swaggerStoryGenerate = {
             "schema": {
               "type": "object",
               "properties": {
-                "destination": {
+                "experience": {
                   "type": "string",
                   "description": "The name of the selected destination."
                 },
-                "attractions": {
+                "locations": {
                   "type": "array",
                   "items": {
                     "type": "string"

@@ -56,7 +56,7 @@ export const swaggerPublicStoryGetAll = {
                         "id": {
                           "type": "string"
                         },
-                        "destination_id": {
+                        "experience_id": {
                           "type": "string"
                         },
                         "channel_id": {

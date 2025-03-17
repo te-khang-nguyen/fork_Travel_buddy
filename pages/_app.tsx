@@ -24,8 +24,6 @@ const NO_DRAWER_BUTTON_PAGES = [
   "/docs",
   "/login/business",
   "/register",
-  "/story/[story_id]",
-  "/story"
 ];
 
 const THEME = createTheme({

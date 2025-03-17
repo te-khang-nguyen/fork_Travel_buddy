@@ -17,7 +17,7 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select("*, experiences(name), media_assets(url), channels(channel_type)")
+            .select("*, experiences(name), destinations(name), media_assets(url), channels(channel_type)")
             .eq("id", storyId)
             .single();
 
@@ -79,7 +79,7 @@ export const swaggerPublicStoryGet = {
                       "created_at": {
                         "type": "string"
                       },
-                      "destinations": {
+                      "experiences": {
                         "type": "array",
                         "items": {
                           "type": "object",

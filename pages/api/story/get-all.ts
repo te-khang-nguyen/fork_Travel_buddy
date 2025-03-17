@@ -71,7 +71,7 @@ export const swaggerStoryGetAll = {
                           "title": { "type": "string" },
                           "created_at": { "type": "string" },
                           "user_id": { "type": "string" },
-                          "destination_id": { "type": "string" },
+                          "experience_id": { "type": "string" },
                           "notes": { "type": "string" },
                           "story_content": { "type": "string" },
                           "media_assets": {
@@ -92,7 +92,7 @@ export const swaggerStoryGetAll = {
                             "type": "array",
                             "items": { "type": "string" }
                           },
-                          "destinations": {
+                          "experiences": {
                             "type": "object",
                             "properties": {
                               "name": { "type": "string" }

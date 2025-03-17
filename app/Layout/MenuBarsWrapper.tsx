@@ -9,6 +9,8 @@ import { PiCompassFill } from "react-icons/pi";
 import { GoPerson } from "react-icons/go";
 import { GoPersonAdd } from "react-icons/go";
 import { GoGear } from "react-icons/go";
+import { RiLogoutBoxRLine } from "react-icons/ri";
+import { RiLoginBoxLine } from "react-icons/ri";
 import {
   AppBar,
   Box,
@@ -380,7 +382,10 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
       open={!!menuOpen}
       onClose={handleClose}
     >
-      <MenuItem onClick={handleLogOut}>Logout</MenuItem>
+      <MenuItem onClick={() => role? handleLogOut() : router.push('/')}>
+        {role? <><RiLogoutBoxRLine style={{color: "red", fontSize: "20px", marginRight: 3}}/> <p>Logout</p></> 
+        : <><RiLoginBoxLine style={{color: "green", fontSize: "20px", marginRight: 3}}/> <p>Login</p></>}
+      </MenuItem>
     </Menu>
   )
 
@@ -419,7 +424,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
               />
             </Search> */}
 
-            {!isMobile && 
+            {!isMobile && role && 
               <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -440,7 +445,8 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
               }}
             >
             <IconButton
-                onClick={()=>router.push(`/dashboard/${role}`)}
+                onClick={()=>role? router.push(`/dashboard/${role}`) 
+                : router.push(`/story`) }
               >
               <PiCompassFill 
                 style={{
@@ -476,7 +482,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
             /> */}
             </Box>
             
-            {!isMobile && 
+            {!isMobile && role && 
               <>
               {defaultMenuItems.map((item, index) => (
                 item.text === "Add new" &&
@@ -515,7 +521,7 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
                 </Typography>} */}
               </>
             }
-            <IconButton
+            {<IconButton
               size="large"
               color="inherit"
               aria-label="account popover"
@@ -533,14 +539,14 @@ const MenuBarsLayout: React.FC<DrawerLayoutProps> = ({
                   color: "rgb(112, 112, 112)"
                 }}
               />
-            </IconButton>
+            </IconButton>}
             {role === "business" && (
               <AccountSwitcher />
             )}
             
           </Toolbar>
         </AppBar>
-        {isMobile? mobileBottomBar : drawerDisplay}
+        {role? isMobile? mobileBottomBar : drawerDisplay : <></>}
         {renderMenu}
       </>)
       }

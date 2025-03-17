@@ -123,13 +123,30 @@ const UserDashboard = () => {
           >
             Featured Stories
           </Typography>
-          {storyData.map((item, index)=>(
+          {storyData.length > 0? 
+          storyData.map((item, index)=>(
             <StyledContentCard 
               key={index}
               content={item}
               route={`/story/${item.id}`}
             />
-          ))}
+          )): 
+          <Typography
+            variant="h6"
+            sx={{ 
+              fontSize: {
+                xs: "h6.fontSize", 
+                sm: "h6.fontSize", 
+                md: "h5.fontSize", 
+                lg: "h5.fontSize"
+              },
+              ml: 2,
+              mb: 2
+            }}
+          >
+            No stories available
+          </Typography>
+          }
         </Box>
       
     </Box>

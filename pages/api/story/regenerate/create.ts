@@ -77,7 +77,7 @@ export const swaggerStoryGenerate = {
                   "type": "string",
                   "description": "The schedule for the story"
                 },
-                "attractions": {
+                "locations": {
                   "type": "array",
                   "items": {
                     "type": "string"
@@ -114,7 +114,7 @@ export const swaggerStoryGenerate = {
                       "schedule": {
                         "type": "string"
                       },
-                      "attractions": {
+                      "locations": {
                         "type": "array",
                         "items": {
                           "type": "string"
