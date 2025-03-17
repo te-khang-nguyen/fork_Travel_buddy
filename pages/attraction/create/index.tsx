@@ -64,7 +64,7 @@ const CreateAttractionForm: React.FC = () => {
                 description_thumbnail: data.thumbnail_description || '',
                 primary_photo: thumbnailUrl,
                 primary_photo_id: image_id,
-                // order_of_appearance: -1,
+                order_of_appearance: -1,
             });
             // await router.replace(`/attraction/${newLocationData?.data.id}/edit`);
             await router.replace(`/destination/${destination_id}/edit`);

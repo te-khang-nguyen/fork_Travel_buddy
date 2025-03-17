@@ -19,6 +19,7 @@ import {
   convertExperienceDetailsToFeatures,
   Location,
 } from "@/libs/services/user/experience";
+import { useGetLocationsInExperienceQuery } from '@/libs/services/user/location';
 import { Experience } from '@/libs/services/business/experience';
 import { useCallSearchAgentMutation } from '@/libs/services/agents/search';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
@@ -29,6 +30,11 @@ import LikeButton from '@/app/components/destination/LikeButton';
 import IDidItSection from '@/app/components/destination/IDidItButton';
 import QRModal from '@/app/components/generic_components/QRModal';
 import ChatBoxSection, { ChatInitialContent } from '@/app/components/generic_components/ChatBotInterface';
+import OverviewSection from '@/app/components/destination/OverviewSection';
+import TopAttractionsSection from '@/app/components/destination/TopAttractionsSection';
+import CallToActionSection from '@/app/components/destination/CallToActionSection';
+import VideoSection from '@/app/components/destination/VideoSection';
+import ImageSection from '@/app/components/destination/ImageSection';
 
 const destinationTags = (destinationName, attractions) => [
         {tagName: "travel distances", fullText: `How far is it to travel between attractions?\nList of attractions:\n${attractions}
@@ -52,7 +58,8 @@ const ExperienceHomePage: React.FC = () => {
   const { destination_id } = router.query;
   const { data: destination, isLoading } = useGetExperiencePublicQuery({ id: destination_id as string });
   // const { data: childrenExperiences, isLoading: childrenLoading } = useGetChildrenExperiencesQuery({ id: destination_id as string });
-  const { data: attractions, isLoading: attractionsLoading } = useGetLocationsPublicQuery({ id: destination_id as string });
+  // const { data: attractions, isLoading: attractionsLoading } = useGetLocationsPublicQuery({ id: destination_id as string });
+  const { data: attractions } = useGetLocationsInExperienceQuery({ experience_id: destination_id as string });
   const { data: destination_details } = useGetExperienceDetailsPublicQuery({ id: destination_id as string })
   
   const { data: iconic_photos } = useGetIconicPhotosPublicQuery({ id: destination_id as string });
@@ -89,11 +96,6 @@ const ExperienceHomePage: React.FC = () => {
   useEffect(()=>{
     setChecked((prev)=>!prev);
   },[chatResponse, displayMess]);
-
-  const handleOpenChat = () => {
-    setOpenChat((prev) => !prev);
-    // setAnchorEl(event.currentTarget);
-  }
 
   const handleAttractionChatInit = (attraction: Location) => {
     // setAnchorEl(event.currentTarget);
@@ -135,224 +137,113 @@ const ExperienceHomePage: React.FC = () => {
   
   if (isLoading) return <LoadingSkeleton isLoading={true}/>;
   
-  const VideoSection: React.FC<{destination: Experience}> = ({destination}) => {
-    return(
-    <Box
-      sx={{
-        position: 'relative',
-        width: '100vw',
-        left: '50%',
-        right: '50%',
-        marginLeft: '-50vw',
-        marginRight: '-50vw',
-        height: '600px',
-        overflow: 'hidden',
-        mb: 4,
-      }}
-    >
-      <Box
-        component="video"
-        autoPlay
-        loop
-        muted
-        playsInline
-        sx={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-        }}
-      >
-        {/* <source src="/videos/edited.mp4" type="video/mp4" /> */}
-        <source src={destination.primary_video} type="video/mp4" />
+  // const VideoSection: React.FC<{destination: Experience}> = ({destination}) => {
+  //   return(
+  //   <Box
+  //     sx={{
+  //       position: 'relative',
+  //       width: '100vw',
+  //       left: '50%',
+  //       right: '50%',
+  //       marginLeft: '-50vw',
+  //       marginRight: '-50vw',
+  //       height: '600px',
+  //       overflow: 'hidden',
+  //       mb: 4,
+  //     }}
+  //   >
+  //     <Box
+  //       component="video"
+  //       autoPlay
+  //       loop
+  //       muted
+  //       playsInline
+  //       sx={{
+  //         width: '100%',
+  //         height: '100%',
+  //         objectFit: 'cover',
+  //       }}
+  //     >
+  //       {/* <source src="/videos/edited.mp4" type="video/mp4" /> */}
+  //       <source src={destination.primary_video} type="video/mp4" />
         
-        Your browser does not support the video tag.
-      </Box>
-      {/* Video Overlay */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          textAlign: 'center',
-          color: 'white',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          p: 3,
-          borderRadius: 2,
-          width: '60%',
-        }}
-      >
-        <Typography variant="h2" gutterBottom>
-          {destination.name}
-        </Typography>
-        <Typography variant="subtitle1">
-          {destination.thumbnail_description}
-        </Typography>
-      </Box>
-    </Box>
-    )
-  }
+  //       Your browser does not support the video tag.
+  //     </Box>
+  //     {/* Video Overlay */}
+  //     <Box
+  //       sx={{
+  //         position: 'absolute',
+  //         top: '50%',
+  //         left: '50%',
+  //         transform: 'translate(-50%, -50%)',
+  //         textAlign: 'center',
+  //         color: 'white',
+  //         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  //         p: 3,
+  //         borderRadius: 2,
+  //         width: '60%',
+  //       }}
+  //     >
+  //       <Typography variant="h2" gutterBottom>
+  //         {destination.name}
+  //       </Typography>
+  //       <Typography variant="subtitle1">
+  //         {destination.thumbnail_description}
+  //       </Typography>
+  //     </Box>
+  //   </Box>
+  //   )
+  // }
 
-  const ImageSection: React.FC<{destination: Experience}> = ({destination}) => {
-    return (
-      <Box
-        sx={{
-          position: 'relative',
-          width: '100vw',
-          left: '50%',
-          right: '50%',
-          marginLeft: '-50vw',
-          marginRight: '-50vw',
-          height: '600px',
-          overflow: 'hidden',
-          mb: 4,
-        }}
-      >
-        <img
-          src={destination.primary_photo}
-          alt="Experience"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-        {/* Image Overlay */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            textAlign: 'center',
-            color: 'white',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            p: 3,
-            borderRadius: 2,
-            width: '60%',
-          }}
-        >
-          <Typography variant="h2" gutterBottom>
-            {destination.name}
-          </Typography>
-          <Typography variant="subtitle1">
-            {destination.thumbnail_description}
-          </Typography>
-        </Box>
-      </Box>
-    );
-  }
-
-  const OverviewSection: React.FC<{destination: Experience}> = ({destination}) => {
-    return(
-      <Paper elevation={0} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Overview
-        </Typography>
-        <Typography variant="body1" paragraph>
-        {destination.description}
-        </Typography>
-      </Paper>
-    )
-  }
-
-  const CallToActionSection: React.FC<{destination: Experience}> = ({destination}) => {
-    return(
-      <><Typography variant="h5" align="center" sx={{ mt: 6, mb: 4 }}>
-        {`Not in ${destination.name}? Maybe explore our other destinations?`}
-      </Typography>
-      <Button
-        variant="contained"
-        color="secondary"
-        size="large"
-        href="#"
-        onClick={() => router.push('select')}
-        sx={{ mx: 'auto', mb: 6, maxWidth: 200, alignItems: 'center', display: 'flex' }}
-      >
-        Explore
-      </Button></>
-    )
-  }
-
-  const MainSection: React.FC<{destination: Experience, childrenExperiences: Experience[]}> = ({destination, childrenExperiences}) => {
-    return(
-      <>
-        <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
-          Explore destinations within {destination.name}
-        </Typography>
-        <Grid container spacing={4} sx={{ mt: 4 }}>
-          {childrenExperiences?.map((child, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={child.primary_photo}
-                  alt={child.name}
-                />
-                <CardContent>
-                  <Typography variant="h5" gutterBottom>
-                    {child.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {child.thumbnail_description}
-                  </Typography>
-                  <Button variant="contained" color="primary" 
-                    onClick={() => router.push(`/destination/${child.id}`)} 
-                    sx={{ mt: 2 }}
-                  >
-                    Learn More
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </>
-    )
-  }
-
-  const TopAttractionsSection: React.FC<{attractions: Location[]}> = ({attractions}) => {
-    const sortedAttractions = attractions.slice().sort((a, b) => a.order_of_appearance - b.order_of_appearance);
-
-    return(
-      <>
-      <Typography variant="h4" gutterBottom align="center" sx={{ mt: 6 }}>
-          Top attractions for you
-        </Typography>
-        <Grid container spacing={4} sx={{ mt: 4 }}>
-          {sortedAttractions?.map((feature, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={feature.primary_photo}
-                  alt={feature.title}
-                />
-                <CardContent>
-                  <Typography variant="h5" gutterBottom>
-                    {feature.title}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {feature.description_thumbnail}
-                  </Typography>
-                  <Button 
-                    variant="contained" 
-                    color="primary" 
-                    onClick={(event) => handleAttractionChatInit(feature)} 
-                    sx={{ mt: 2 }}
-                  >
-                    Learn More
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </>
-    )
-  }
+  // const ImageSection: React.FC<{destination: Experience}> = ({destination}) => {
+  //   return (
+  //     <Box
+  //       sx={{
+  //         position: 'relative',
+  //         width: '100vw',
+  //         left: '50%',
+  //         right: '50%',
+  //         marginLeft: '-50vw',
+  //         marginRight: '-50vw',
+  //         height: '600px',
+  //         overflow: 'hidden',
+  //         mb: 4,
+  //       }}
+  //     >
+  //       <img
+  //         src={destination.primary_photo}
+  //         alt="Experience"
+  //         style={{
+  //           width: '100%',
+  //           height: '100%',
+  //           objectFit: 'cover',
+  //         }}
+  //       />
+  //       {/* Image Overlay */}
+  //       <Box
+  //         sx={{
+  //           position: 'absolute',
+  //           top: '50%',
+  //           left: '50%',
+  //           transform: 'translate(-50%, -50%)',
+  //           textAlign: 'center',
+  //           color: 'white',
+  //           backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  //           p: 3,
+  //           borderRadius: 2,
+  //           width: '60%',
+  //         }}
+  //       >
+  //         <Typography variant="h2" gutterBottom>
+  //           {destination.name}
+  //         </Typography>
+  //         <Typography variant="subtitle1">
+  //           {destination.thumbnail_description}
+  //         </Typography>
+  //       </Box>
+  //     </Box>
+  //   );
+  // }
 
   const QRSection: React.FC = () => (<>
       <Box
@@ -421,7 +312,7 @@ const ExperienceHomePage: React.FC = () => {
             <IconicPhotos photos={iconic_photos}/>
 
             {/* Top attractions */}
-            <TopAttractionsSection attractions={attractions} />
+            <TopAttractionsSection attractions={attractions} handleAttractionChatInit={handleAttractionChatInit}/>
 
             {/* Call to Action */}
             <CallToActionSection destination={destination} />

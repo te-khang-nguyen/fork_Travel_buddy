@@ -11,7 +11,7 @@ export interface Attraction {
     hours?: string;
     description: string;
     description_thumbnail: string;
-    order_of_appearance?: number;
+    order_of_appearance: number;
 }
 
 interface AttractionResponse {

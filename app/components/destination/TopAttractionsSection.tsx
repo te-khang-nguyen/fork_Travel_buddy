@@ -9,16 +9,18 @@ import {
  } from "@mui/material";
 import { useRouter } from "next/router";
 import ButtonInEditSection from "@/app/components/destination/ButtonInEditSection";
-import { Attraction } from "@/libs/services/business/attraction";
+import { Location } from "@/libs/services/business/location";
 
 const TopAttractionsSection: React.FC<{
-    attractions: Attraction[],
-    edit_mode: boolean,
+    attractions: Location[],
+    edit_mode?: boolean,
+    handleAttractionChatInit?: any,
 }> = ({
     attractions,
-    edit_mode=false
+    edit_mode=false,
+    handleAttractionChatInit={},
 }) => {
-    const router = useRouter();
+    const sortedAttractions = attractions.slice().sort((a, b) => a.order_of_appearance - b.order_of_appearance);
     return(
       <>
       <Box display="flex" justifyContent="center" alignItems="center" sx={{ mt: 6 }}>
@@ -28,7 +30,7 @@ const TopAttractionsSection: React.FC<{
         {edit_mode ? <ButtonInEditSection type="attraction"/> : null}
       </Box>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {attractions?.map((feature, index) => (
+          {sortedAttractions?.map((feature, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card>
                 <CardMedia
@@ -47,7 +49,7 @@ const TopAttractionsSection: React.FC<{
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => router.push(`/attraction/${feature.id}`)}
+                        onClick={(event) => handleAttractionChatInit(feature)} 
                         sx={{ mt: 2 }
                     }>
                         Learn More

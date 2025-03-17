@@ -13,7 +13,7 @@ export interface Location {
     description: string;
     description_thumbnail: string;
     location_info?: LocationInfo[];
-    order_of_appearance?: number;
+    order_of_appearance: number;
 }
 
 

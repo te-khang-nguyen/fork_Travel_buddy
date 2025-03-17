@@ -69,7 +69,8 @@ const IconicPhotos = ({ photos, edit_mode = false, control = null }) => {
               }}
             >
               {/* Delete Button */}
-              <IconButton
+              {edit_mode && isEditing 
+              ? (<IconButton
                 aria-label="delete"
                 sx={{
                   position: "absolute", // Position the button absolutely within the Box
@@ -95,7 +96,9 @@ const IconicPhotos = ({ photos, edit_mode = false, control = null }) => {
                 }}
               >
                 <DeleteIcon />
-              </IconButton>
+              </IconButton>)
+              : null
+              }
               {/* Image */}
               <Box
                 component="img"
