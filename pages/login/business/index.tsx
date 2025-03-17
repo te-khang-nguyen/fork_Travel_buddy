@@ -26,9 +26,11 @@ function AdminLogin() {
       setSnackbarOpen(true);
     } else {
       const accessToken = (result.data as any).access_token;
+      const userId = (result.data as any).userId;
       setRole("business");
       localStorage.setItem("role", "business");
       localStorage.setItem("jwt", accessToken);
+      localStorage.setItem("account", userId);
       router.push("/dashboard/business");
     }
   };

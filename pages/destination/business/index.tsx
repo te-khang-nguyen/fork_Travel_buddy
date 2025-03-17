@@ -11,14 +11,15 @@ import {
     Box,
   } from '@mui/material';  
 import { 
-    useGetAllExperiencesQuery,
+    useGetExperienceByBusinessQuery,
   } from "@/libs/services/user/experience";
 import { Experience } from '@/libs/services/business/experience';
   
 
 const SelectExperience = () => {
   const router = useRouter();
-  const { data: allExperiences, isLoading } = useGetAllExperiencesQuery();
+  const business_id = localStorage.getItem('account') || '';
+  const { data: allExperiences, isLoading } = useGetExperienceByBusinessQuery({id: business_id});
   if (isLoading) return <CircularProgress />;
   const MainSection: React.FC<{allExperiences: Experience[]}> = ({allExperiences}) => {
     return(
@@ -80,7 +81,11 @@ const SelectExperience = () => {
     
     <Container maxWidth={false} sx={{ width: '90%' }}>
         {allExperiences 
-            ? <MainSection allExperiences={allExperiences}/>
+            ? <MainSection allExperiences={
+                Array.isArray(allExperiences)
+                  ? allExperiences
+                  : Array(allExperiences)
+              }/>
             : "No destinations found"
         }
     </Container>

@@ -1,0 +1,33 @@
+import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { NextApiRequest, NextApiResponse } from "next";
+
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse
+) {
+    if (req.method !== 'GET') {
+        res.status(405).send({ message: 'Only GET requests allowed' })
+        return
+    }
+
+    // Extract authorization token
+    const token = req.headers.authorization?.split(" ")[1];
+    // Create Supabase client
+    const supabase = createApiClient(token);
+
+    const businessId = req.query["business-id"];
+
+    try {
+        const { data, error: experienceQueryError } = await supabase
+            .from("experiences")
+            .select("*")
+            .eq("created_by", businessId);
+
+        if (experienceQueryError) {
+            return res.status(400).json({ error: experienceQueryError.message });
+        }
+        return res.status(200).json({ data });
+    } catch (err: any) {
+        return res.status(500).json({ error: err.message || "An error has occurred while retrieving the challenge information."});
+    }
+}

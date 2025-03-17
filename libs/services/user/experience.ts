@@ -188,6 +188,13 @@ const ExperienceApi = createApi({
       }),
       transformResponse: ((res: IconicPhotosResponseList) => res.data)
     }),
+    getExperienceByBusiness: builder.query<Experience, {id: string}>({
+      query: ({id}) => ({
+        url: `/experiences/business`,
+        params: {"business-id" : id},
+      }),
+      transformResponse: ((res: ExperienceResponse) => res.data)
+    }),
   }),
 });
 
@@ -204,5 +211,6 @@ export const {
   useGetChildrenExperiencesPublicQuery,
   useGetLocationsPublicQuery,
   useGetIconicPhotosPublicQuery,
+  useGetExperienceByBusinessQuery,
 } = ExperienceApi;
 export { ExperienceApi };

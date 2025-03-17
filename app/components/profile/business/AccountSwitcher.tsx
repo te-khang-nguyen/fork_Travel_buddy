@@ -7,11 +7,16 @@ import {
   } from "@mui/material";
 
 import { useGetAllProfilesQuery, BusinessProfile } from "@/libs/services/business/profile";
+import { useRouter } from "next/router";
   
 // New component for Account Switcher
 const AccountSwitcher = () => {
   const [selectedAccount, setSelectedAccount] = useState(localStorage.getItem("account-name") || "Switch Account");
-  const { data: allProfiles, isLoading, isError, error } = useGetAllProfilesQuery();
+  const { data: allProfiles, isLoading, isError, error, refetch } = useGetAllProfilesQuery();
+  const router = useRouter();
+  useEffect(() => {
+      refetch(); // Triggers API refetch when route changes
+  }, [router.asPath]);
   // Ensure allAccounts is always an array
   const allAccounts: BusinessProfile[] = Array.isArray(allProfiles) 
     ? allProfiles
