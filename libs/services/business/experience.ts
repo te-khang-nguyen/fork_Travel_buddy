@@ -19,7 +19,7 @@ export interface Experience {
     description?: string;
     thumbnail_description?: string;
     primary_video?: string;
-    primary_video_id?: string;
+    primary_video_id?: string | null;
     parent_experience?: string | null; // Use null for optional fields
 }
 

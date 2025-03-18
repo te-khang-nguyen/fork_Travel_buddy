@@ -10,7 +10,7 @@ export default async function handler(
     return
   }
 
-  const experience_id = req.query?.["experience-id"];
+  const experienceId = req.query?.["experience-id"];
 
   // Extract authorization token
   const token = req.headers.authorization?.split(" ")[1];
@@ -21,18 +21,12 @@ export default async function handler(
     data: { user },
   } = await supabase.auth.getUser(token);
 
-  // const { data: userData, error: userError } = await supabase
-  //   .from("businessprofiles")
-  //   .select("type")
-  //   .eq("businessid", user!.id)
-  //   .single();
 
   try {
     const { data, error } = await supabase
       .from("experiences")
       .select("*")
-      .eq("id", experience_id)
-      .eq("created_by", user!.id)
+      .eq("id", experienceId)
       .single();
 
     if (error) {
@@ -51,8 +45,8 @@ export const swaggerExpGet = {
     `"/api/v1/experiences": {
       "get": {
         "tags": ["experience"],
-        "summary": "Get a destination by ID",
-        "description": "Retrieve a destination by its ID.",
+        "summary": "Get a experience by ID",
+        "description": "Retrieve a experience by its ID.",
         "security": [
           {
             "bearerAuth": []
@@ -66,12 +60,12 @@ export const swaggerExpGet = {
               "type": "string"
             },
             "required": true,
-            "description": "The ID of the destination to retrieve"
+            "description": "The ID of the experience to retrieve"
           }
         ],
         "responses": {
           "200": {
-            "description": "Destination retrieved successfully",
+            "description": "Experience retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {

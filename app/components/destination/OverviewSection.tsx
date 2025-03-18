@@ -1,10 +1,11 @@
 import { Typography, TextField, Paper, Box, Button } from "@mui/material";
 import { useState } from "react";
 import { Destination, useUpdateDestinationMutation } from "@/libs/services/business/destination";
+import { Experience } from "@/libs/services/business/experience";
 import { useRouter } from "next/router";
 
 interface OverviewSectionProps {
-    destination: Destination;
+    destination: Experience;
     edit_mode?: boolean;
 }
 

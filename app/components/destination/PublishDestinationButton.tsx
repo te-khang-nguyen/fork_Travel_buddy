@@ -1,10 +1,11 @@
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
 import { Destination, useUpdateDestinationMutation } from "@/libs/services/business/destination";
+import { Experience } from "@/libs/services/business/experience";
 import { useRouter } from "next/router";
 
 interface PublishButtonProps {
-    destination: Destination;
+    destination: Experience;
 }
 
 const PublishButton: React.FC<PublishButtonProps> = ({ destination }) => {

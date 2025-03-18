@@ -1,10 +1,11 @@
 import CustomCarousel from "../generic_components/CustomCarousel";
 import { useRouter } from "next/router";
-import { Destination } from "@/libs/services/business/destination";
+// import { Destination } from "@/libs/services/business/destination";
+import { Experience } from "@/libs/services/business/experience";
 import { Content } from "@/app/components/generic_components/CustomCarousel";
 
 interface DestinationCarouselProps {
-    destinations: Destination[] | undefined;
+    destinations: Experience[] | undefined;
     header?: string;
     filter_mode?: "active" | "all"
 }
@@ -19,7 +20,7 @@ const DestinationCarousel:React.FC<DestinationCarouselProps> = ({
         router.push(`/destination/${destinationId}`);
     };
 
-    const transformDestinations = (destinations: Destination[] | undefined, filter_mode?: string): Content[] => {
+    const transformDestinations = (destinations: Experience[] | undefined, filter_mode?: string): Content[] => {
         if (destinations){
             return destinations
                 .filter(

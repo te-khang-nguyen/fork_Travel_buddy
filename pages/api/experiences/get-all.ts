@@ -20,20 +20,12 @@ export default async function handler(
       data: { user },
     } = await supabase.auth.getUser(token);
 
-    // const { 
-    //   data: userData, 
-    //   error: userError 
-    // } = await supabase
-    //   .from("businessprofiles")
-    //   .select("type")
-    //   .eq("businessid", user!.id)
-    //   .single();
 
     try {
         const { data, error } = await supabase
             .from("experiences")
             .select("*")
-            .eq("created_by", user!.id);
+            .eq("status", "active");
 
         if (error) {
             return res.status(400).json({ error: error.message });
@@ -51,8 +43,8 @@ export const swaggerExpGetAll = {
   `"/api/v1/experiences/  ": {
       "get": {
         "tags": ["experience"],
-        "summary": "Get all active destinations",
-        "description": "Retrieve all active destinations.",
+        "summary": "Get all active experiences",
+        "description": "Retrieve all active experiences.",
         "security": [
           {
             "bearerAuth": []
@@ -60,7 +52,7 @@ export const swaggerExpGetAll = {
         ],
         "responses": {
           "200": {
-            "description": "A list of active destinations",
+            "description": "A list of active experiences",
             "content": {
               "application/json": {
                 "schema": {

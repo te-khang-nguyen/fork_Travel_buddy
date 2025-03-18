@@ -158,7 +158,7 @@ const CreateExperienceForm: React.FC = () => {
             }
 
             let videoUrl = "";
-            let video_id = "";
+            let video_id = null;
             if (data.banner_video) {
                 const videoResponse = await uploadVideo({
                     videoBase64: data.banner_video,
@@ -171,7 +171,7 @@ const CreateExperienceForm: React.FC = () => {
                     mimeType: 'video',
                     usage: 'primary_video',
                 }).unwrap();
-                video_id = videoAssetResponse.data.id || "";
+                video_id = videoAssetResponse.data.id || null;
             }
 
             const { 
@@ -188,7 +188,7 @@ const CreateExperienceForm: React.FC = () => {
                 primary_video: videoUrl,
                 primary_photo_id: image_id,
                 photos_id: otherMediaAssetsUrl,
-                primary_video_id: video_id,
+                primary_video_id: video_id ?? null,
             });
 
             for ( const img_id of otherMediaAssetsUrl ) {

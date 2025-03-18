@@ -1,12 +1,13 @@
 import { Box, Button, Typography, TextField } from "@mui/material";
 import { Destination } from "@/libs/services/business/destination";
+import { Experience } from "@/libs/services/business/experience";
 import { useRouter } from 'next/router';
 import { useCreateMediaAssetMutation, useUploadImageMutation } from '@/libs/services/storage/upload';
 import { useUpdateDestinationMutation } from '@/libs/services/business/destination';
 import { useState } from 'react';
 
 interface ImageSectionProps {
-    destination: Destination;
+    destination: Experience;
     edit_mode?: boolean;
 }
 
