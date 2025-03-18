@@ -5,7 +5,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import ButtonInEditSection from "./ButtonInEditSection";
 import { useRouter } from "next/router";
-import { useUpdateDestinationDetailsMutation, useDeleteDestinationDetailsMutation } from "@/libs/services/business/destination";
+// import { useUpdateDestinationDetailsMutation, useDeleteDestinationDetailsMutation } from "@/libs/services/business/destination";
+import { useUpdateExperienceDetailsMutation, useDeleteExperienceDetailsMutation } from "@/libs/services/business/experience";
 
 const IconicPhotos = ({ photos, edit_mode = false, control = null }) => {
   // State to manage editable photo names
@@ -29,8 +30,10 @@ const IconicPhotos = ({ photos, edit_mode = false, control = null }) => {
     }));
   };
 
-  const [updateDestinationDetails] = useUpdateDestinationDetailsMutation();
-  const [deleteDestinationDetails] = useDeleteDestinationDetailsMutation();
+  // const [updateDestinationDetails] = useUpdateDestinationDetailsMutation();
+  // const [deleteDestinationDetails] = useDeleteDestinationDetailsMutation();
+  const [updateDestinationDetails] = useUpdateExperienceDetailsMutation();
+  const [deleteDestinationDetails] = useDeleteExperienceDetailsMutation();
 
 
   const handleSave = (photoId: string) => {
@@ -69,7 +72,7 @@ const IconicPhotos = ({ photos, edit_mode = false, control = null }) => {
               }}
             >
               {/* Delete Button */}
-              {edit_mode && isEditing 
+              {edit_mode 
               ? (<IconButton
                 aria-label="delete"
                 sx={{

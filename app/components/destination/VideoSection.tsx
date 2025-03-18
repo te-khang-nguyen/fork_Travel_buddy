@@ -3,7 +3,7 @@ import { Box, Typography, Button, TextField } from '@mui/material';
 import { useUpdateExperienceMutation } from '@/libs/services/business/experience';
 import { useRouter } from 'next/router';
 import { Experience } from '@/libs/services/business/experience';
-import { useUploadVideoMutation } from '@/libs/services/storage/upload';
+import { useUploadVideoMutation, useCreateMediaAssetMutation } from '@/libs/services/storage/upload';
 
 interface VideoSectionProps {
   destination: Experience;
@@ -20,6 +20,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ destination, edit_mode = fa
   const [editedName, setEditedName] = useState(destination.name);
   const [editedDescription, setEditedDescription] = useState(destination.thumbnail_description);
   const [updateExperience] = useUpdateExperienceMutation();
+  const [createMediaAsset] = useCreateMediaAssetMutation();
 
   // Pause video and optionally disable autoplay when in edit mode
   useEffect(() => {
@@ -60,9 +61,19 @@ const VideoSection: React.FC<VideoSectionProps> = ({ destination, edit_mode = fa
         }).unwrap();
 
         const videoUrl = videoResponse?.signedUrl || "";
+
+        const mediaAssetResponse = await createMediaAsset({
+            signedUrl: videoUrl,
+            mimeType: 'video',
+            usage: 'banner',
+        }).unwrap();
+        const video_id = mediaAssetResponse.data.id || "";
         updateExperience({
             id : String(destination_id),
-            data : {primary_video : videoUrl}
+            data : {
+              primary_video : videoUrl,
+              primary_video_id: video_id,
+            }
         });
     } catch (error) {
         console.error('Error uploading video:', error);

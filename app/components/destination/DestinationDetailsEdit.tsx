@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Box, Button, Typography, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { Feature } from "./DestinationDetails";
-import { useDeleteDestinationDetailsMutation } from "@/libs/services/business/destination";
+// import { useDeleteDestinationDetailsMutation } from "@/libs/services/business/destination";
+import { useDeleteExperienceDetailsMutation } from "@/libs/services/business/experience";
 
 interface GroupedFeaturesEditPageProps {
   features: Feature[];
@@ -46,7 +47,8 @@ const GroupedFeaturesEditPage: React.FC<GroupedFeaturesEditPageProps> = ({ featu
         return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
     };
 
-    const [deleteDesDetails] = useDeleteDestinationDetailsMutation();
+    // const [deleteDesDetails] = useDeleteDestinationDetailsMutation();
+    const [deleteDesDetails] = useDeleteExperienceDetailsMutation();
     const deleteFeatureFromAPI = async (type: string, id: string) => {
         // Replace with your actual API call
         console.log(`Deleting feature of type ${type} with id ${id}`);

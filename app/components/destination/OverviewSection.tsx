@@ -1,7 +1,7 @@
 import { Typography, TextField, Paper, Box, Button } from "@mui/material";
 import { useState } from "react";
-import { Destination, useUpdateDestinationMutation } from "@/libs/services/business/destination";
-import { Experience } from "@/libs/services/business/experience";
+// import { Destination, useUpdateDestinationMutation } from "@/libs/services/business/destination";
+import { Experience, useUpdateExperienceMutation } from "@/libs/services/business/experience";
 import { useRouter } from "next/router";
 
 interface OverviewSectionProps {
@@ -14,7 +14,8 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ destination, edit_mod
     const [description, setDescription] = useState(destination.description);
     const router = useRouter();
     const { destination_id } = router.query;
-    const [updateDestination] = useUpdateDestinationMutation();
+    // const [updateDestination] = useUpdateDestinationMutation();
+    const [updateDestination] = useUpdateExperienceMutation();
 
     const handleDescriptionChange = () => {
       updateDestination({

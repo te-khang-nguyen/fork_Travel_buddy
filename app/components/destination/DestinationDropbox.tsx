@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, Control } from 'react-hook-form';
-import { useGetAllExperiencesQuery } from '@/libs/services/user/experience';
+// import { useGetAllExperiencesQuery } from '@/libs/services/user/experience';
+import { useGetAllExperiencesBusinessQuery } from '@/libs/services/business/experience';
 
 interface Destination {
   id: string;
@@ -19,7 +20,7 @@ interface DestinationDropboxProps {
 const DestinationDropbox: React.FC<DestinationDropboxProps> = ({ control, title, optional = false, default_value }) => {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
-    const {data: allDestinations} = useGetAllExperiencesQuery();
+    const {data: allDestinations} = useGetAllExperiencesBusinessQuery();
     useEffect(() => {
       if (allDestinations) {
           setDestinations(allDestinations.map((item) => ({

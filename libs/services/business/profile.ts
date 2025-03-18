@@ -55,7 +55,13 @@ const BusinessProfileApi = createApi({
       }),
       transformResponse: (response: { data: BusinessProfile[] }) => response.data
     }),
-
+    getCurrentProfile: builder.query<BusinessProfile, void>({
+      query: () => ({
+        url: `/profile/business`,
+        params: { user_id: "" },
+      }),
+      transformResponse: (response: { data: BusinessProfile }) => response.data
+    }),
     updateProfile: builder.mutation<ProfileRes, ProfileReq>({
       query: (payload) => ({
         url: `/profile`,
@@ -72,6 +78,7 @@ const BusinessProfileApi = createApi({
 export const {
   useGetProfileQuery,
   useGetAllProfilesQuery,
+  useGetCurrentProfileQuery,
   useUpdateProfileMutation,
 } =
   BusinessProfileApi;

@@ -7,7 +7,8 @@ import Dialog from '@mui/material/Dialog';
 import { DialogContent } from '@mui/material';
 import ImageUploader from "@app/components/image_picker/ImagePicker";
 import { useUploadImageMutation, useCreateMediaAssetMutation } from '@/libs/services/storage/upload';
-import { useCreateDestinationDetailsMutation } from '@/libs/services/business/destination';
+// import { useCreateDestinationDetailsMutation } from '@/libs/services/business/destination';
+import { useCreateExperienceDetailsMutation } from '@/libs/services/business/experience';
 const typeMapping = {
   image: {
     text: "Add a photo",
@@ -32,7 +33,8 @@ const ButtonInEditSection = ({type}) => {
   const [openModal, setOpenModal] = useState(false);
   const [uploadImage] = useUploadImageMutation();
   const [createMediaAsset] = useCreateMediaAssetMutation();
-  const [createDestinationDetails] = useCreateDestinationDetailsMutation();
+  // const [createDestinationDetails] = useCreateDestinationDetailsMutation();
+  const [createDestinationDetails] = useCreateExperienceDetailsMutation();
   const router = useRouter();
   const { destination_id } = router.query;
   const handleClick = () => {
@@ -76,7 +78,8 @@ const ButtonInEditSection = ({type}) => {
               usage: 'thumbnail',
           }).unwrap();
           await createDestinationDetails({
-              destination_id : String(destination_id),
+              // destination_id : String(destination_id),
+              experience_id : String(destination_id),
               type : "iconic_photos",
               name : "placeholder",
               text : "Please click to change name",

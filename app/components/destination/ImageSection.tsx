@@ -1,9 +1,9 @@
 import { Box, Button, Typography, TextField } from "@mui/material";
-import { Destination } from "@/libs/services/business/destination";
-import { Experience } from "@/libs/services/business/experience";
+// import { Destination } from "@/libs/services/business/destination";
+import { Experience, useUpdateExperienceMutation } from "@/libs/services/business/experience";
 import { useRouter } from 'next/router';
 import { useCreateMediaAssetMutation, useUploadImageMutation } from '@/libs/services/storage/upload';
-import { useUpdateDestinationMutation } from '@/libs/services/business/destination';
+// import { useUpdateDestinationMutation } from '@/libs/services/business/destination';
 import { useState } from 'react';
 
 interface ImageSectionProps {
@@ -20,7 +20,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({destination, edit_mode}) => 
     const [editingDescription, setEditingDescription] = useState(false);
     const [editedName, setEditedName] = useState(destination.name);
     const [editedDescription, setEditedDescription] = useState(destination.thumbnail_description);
-    const [updateDestination] = useUpdateDestinationMutation();
+    const [updateDestination] = useUpdateExperienceMutation();
 
     const handleChangeImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files && event.target.files[0];
@@ -58,7 +58,10 @@ const ImageSection: React.FC<ImageSectionProps> = ({destination, edit_mode}) => 
             const image_id = mediaAssetResponse.data.id || "";
             updateDestination({
                 id : String(destination_id),
-                data : {primary_photo : image_id}
+                data : {
+                    primary_photo: imageUrl,
+                    primary_photo_id : image_id
+                }
             });
         } catch (error) {
             console.error('Error uploading image:', error);

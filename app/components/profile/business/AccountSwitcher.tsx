@@ -6,17 +6,34 @@ import {
     SelectChangeEvent,
   } from "@mui/material";
 
-import { useGetAllProfilesQuery, BusinessProfile } from "@/libs/services/business/profile";
+import { 
+  useGetAllProfilesQuery, 
+  BusinessProfile,
+  useGetCurrentProfileQuery,
+} from "@/libs/services/business/profile";
 import { useRouter } from "next/router";
   
 // New component for Account Switcher
 const AccountSwitcher = () => {
-  const [selectedAccount, setSelectedAccount] = useState(localStorage.getItem("account-name") || "Switch Account");
   const { data: allProfiles, isLoading, isError, error, refetch } = useGetAllProfilesQuery();
+  const { data: currentProfile } = useGetCurrentProfileQuery();
+
+  const [selectedAccount, setSelectedAccount] = useState(localStorage.getItem("account-name") || currentProfile?.businessname || "Switch account");
+
   const router = useRouter();
   useEffect(() => {
       refetch(); // Triggers API refetch when route changes
   }, [router.asPath]);
+
+  useEffect(() => {
+    // Only update if there's no account in localStorage yet
+    if (currentProfile && !localStorage.getItem("account-name")) {
+      setSelectedAccount(currentProfile.businessname);
+      localStorage.setItem("account", currentProfile.businessid);
+      localStorage.setItem("account-name", currentProfile.businessname);
+    }
+  }, [currentProfile]);
+
   // Ensure allAccounts is always an array
   const allAccounts: BusinessProfile[] = Array.isArray(allProfiles) 
     ? allProfiles
@@ -32,7 +49,14 @@ const AccountSwitcher = () => {
   };
 
   if (isLoading) {
-    return <Box>Loading...</Box>;
+    return <Box sx={{
+      width: '20%',
+      maxWidth: '300px',
+      minWidth: '100px',
+      padding: 1,
+      marginLeft: 'auto',
+      marginRight: 5,
+    }}>Loading...</Box>;
   }
 
   if (isError) {

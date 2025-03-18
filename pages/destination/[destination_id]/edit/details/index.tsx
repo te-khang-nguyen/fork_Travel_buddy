@@ -16,7 +16,10 @@ import { useForm } from "react-hook-form";
 
 import LoadingSkeleton from "@/app/components/kits/LoadingSkeleton";
 import AdminDetails from '@/app/components/destination/AdminDetails';
-import { useCreateExperienceDetailsMutation } from '@/libs/services/business/experience';
+import {
+  useCreateExperienceDetailsMutation, 
+  useDeleteExperienceDetailsMutation,
+} from '@/libs/services/business/experience';
 import { getDesDetailsInput } from '@/pages/destination/create';
 import { useUploadImagesMutation } from '@/libs/services/storage/upload';
 import GroupedFeaturesEditPage from '@/app/components/destination/DestinationDetailsEdit';

@@ -1,7 +1,7 @@
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
-import { Destination, useUpdateDestinationMutation } from "@/libs/services/business/destination";
-import { Experience } from "@/libs/services/business/experience";
+// import { Destination, useUpdateDestinationMutation } from "@/libs/services/business/destination";
+import { Experience, useUpdateExperienceMutation } from "@/libs/services/business/experience";
 import { useRouter } from "next/router";
 
 interface PublishButtonProps {
@@ -11,7 +11,8 @@ interface PublishButtonProps {
 const PublishButton: React.FC<PublishButtonProps> = ({ destination }) => {
     const router = useRouter();
     const { destination_id } = router.query;
-    const [updateDestination] = useUpdateDestinationMutation();
+    // const [updateDestination] = useUpdateDestinationMutation();
+    const [updateDestination] = useUpdateExperienceMutation();
 
     const [current_status, setCurrentStatus] = useState(destination.status);
 

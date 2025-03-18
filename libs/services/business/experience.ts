@@ -28,6 +28,11 @@ interface ExperienceResponse {
     error?: string;
 }
 
+interface ExperiencesResponse {
+  data: Experience[];
+  error?: string;
+}
+
 export type ExperienceReq = Omit<Experience, 'id' | 'created_at' | 'updated_at' | 'created_by'>;
 
 export interface createDesDetailsReq {
@@ -124,7 +129,13 @@ const ExperienceBusinessApi = createApi({
         method: "DELETE",
         params: {dd_id}
       })
-    })
+    }),
+    getAllExperiencesBusiness: builder.query<Experience[], void>({
+      query: () => ({
+        url: `/experiences/business`
+      }),
+      transformResponse: ((res:ExperiencesResponse) => res.data)
+    }),
   }),
 });
 
@@ -134,5 +145,6 @@ export const {
   useCreateExperienceDetailsMutation,
   useUpdateExperienceDetailsMutation,
   useDeleteExperienceDetailsMutation,
+  useGetAllExperiencesBusinessQuery,
 } = ExperienceBusinessApi;
 export { ExperienceBusinessApi };
