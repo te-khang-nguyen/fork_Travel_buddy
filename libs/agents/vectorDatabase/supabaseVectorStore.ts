@@ -17,15 +17,15 @@ const supabaseVectorDb = async ({
     chunkOverlap,
     withAnalyzer = false
 }: VectorDbProps) => {
-    const embeddings = new GoogleGenerativeAIEmbeddings({
-            model: embeddingModel, // 768 dimensions
-            taskType: TaskType.RETRIEVAL_DOCUMENT,
-            title: "Document title",
-    });
-
-    // const embeddings = new OpenAIEmbeddings({
-    //     model: "text-embedding-3-small",
+    // const embeddings = new GoogleGenerativeAIEmbeddings({
+    //         model: embeddingModel, // 768 dimensions
+    //         taskType: TaskType.RETRIEVAL_DOCUMENT,
+    //         title: "Document title",
     // });
+
+    const embeddings = new OpenAIEmbeddings({
+        model: "text-embedding-3-small",
+    });
 
     const customSupabaseClient = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_VECTORSTORE_URL!,
