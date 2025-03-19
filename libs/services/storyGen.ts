@@ -24,10 +24,15 @@ async function generateLocationStories(
     }
 
     const systemPrompt = `
+    You are an expert in travel storytelling.
     Create a cohesive story based on the following tour details:
 
     Writing Style: 
-    - Strictly follow and write the story in the style specified in the [Brand Voice]
+    - Strictly follow and write the story in the style specified in the [Brand Voice].
+    - The writing style should not be overtly formal if it is not stated in the [Brand Voice].
+    - Never use jargon or technical terms unless specified in the [Brand Voice].
+    - Keep the tone conversational and engaging.
+    - Never write in a promotional tone.
     
     Input Format:
     [Destination] is the name of the experience for which the story is written.
@@ -92,7 +97,7 @@ async function generateLocationStories(
     }
 
     const seoSystemPrompt = `
-    Act as a master in SEO (Search Engine Optimization) and generate contents based on the following requirements:
+    You are a master in SEO (Search Engine Optimization). Generate contents based on the following requirements:
     
     - [Long tail keyword]: The long tail keyword relevant to this [Story]. It should be a phrase and not a full sentence.
     - [Title]: a catchy title that includes the [Long tail keyword].

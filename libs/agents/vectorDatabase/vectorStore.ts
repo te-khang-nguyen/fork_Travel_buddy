@@ -5,6 +5,7 @@ import { Document } from "@langchain/core/documents";
 
 import { similarity as ml_distance_similarity } from "ml-distance";
 
+
 interface InMemoryVector {
   content: string;
   embedding: number[];
@@ -117,7 +118,7 @@ interface VectorDbInitializerProps {
   documents: Document[]
 };
 
-export const VectorDbInitializer = async ({documents}: VectorDbInitializerProps ) => {
+export const CustomVectorDbInitializer = async ({documents}: VectorDbInitializerProps ) => {
 
   const vectorstore = new CustomVectorStore(new OpenAIEmbeddings());
 
@@ -125,3 +126,5 @@ export const VectorDbInitializer = async ({documents}: VectorDbInitializerProps 
 
   return vectorstore;
 };
+
+

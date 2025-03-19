@@ -1,62 +1,63 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { generateLocationStories } from "@/libs/services/storyGen";
+// import { generateLocationStories } from "@/libs/services/storyGen";
+import { generateLocationStories } from "@/libs/agents/story/storyGenerator";
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-    // Validate request method
-    if (req.method !== "POST") {
-        return res.status(405).json({ error: "Method not allowed!" });
+  // Validate request method
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed!" });
+  }
+
+  // Extract body
+  const {
+    destination,
+    attractions,
+    experience,
+    locations,
+    notes,
+    media_urls,
+    brand_voice,
+    story_length,
+    channel_type
+  } = req.body;
+
+  try {
+
+    const { data: storyData, error } = await generateLocationStories(
+      experience ?? destination,
+      locations ? locations?.join("\n") : attractions?.join("\n"),
+      notes,
+      media_urls,
+      brand_voice,
+      channel_type,
+      story_length,
+    );
+
+    if (error) {
+      console.error("Story insertion error:", error);
+      return res.status(400).json({ error: error.message });
     }
 
-    // Extract body
-    const { 
-      destination,
-      attractions,
-      experience, 
-      locations, 
-      notes, 
-      media_urls, 
-      brand_voice, 
-      story_length, 
-      channel_type 
-    } = req.body;
+    // Successful response
+    return res.status(201).json({
+      data: storyData
+    });
 
-    try {
-        // Insert story into database
-        const { data: storyData, error } = await generateLocationStories(
-                experience ?? destination,
-                locations? locations?.join("\n") : attractions?.join("\n"), 
-                notes,
-                media_urls,
-                brand_voice,
-                channel_type,
-                story_length,
-        );
-
-        if (error) {
-            console.error("Story insertion error:", error);
-            return res.status(400).json({ error: error.message });
-        }
-
-        // Successful response
-        return res.status(201).json({ 
-            data: storyData
-        });
-
-    } catch (catchError) {
-        console.error("Unexpected error:", catchError);
-        return res.status(500).json({ error: "Internal server error" });
-    }
+  } catch (catchError) {
+    console.error("Unexpected error:", catchError);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 
 // Workaround to enable Swagger on production 
 export const swaggerStoryGenerate = {
-    index:18, 
-    text:
-`"/api/v1/story/generate": {
+  index: 18,
+  text:
+    `"/api/v1/story/generate": {
     "post": {
       "tags": ["story"],
       "summary": "Generate a new story",
