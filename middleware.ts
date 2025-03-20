@@ -23,6 +23,7 @@ export function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
   if (url.pathname === "/api/docs") {
+    setHeaders(res);
     return res;
   }
 
@@ -31,7 +32,9 @@ export function middleware(req: NextRequest) {
     const params = Array.from(url.searchParams.entries());
     const paramsString = params.length > 0? 
       '?' + params.map((item: any)=> `${item[0]}=${item[1]}`).join('&') : '';
-    return NextResponse.rewrite(new URL(newPath + paramsString, req.url));
+    const rewriteRes = NextResponse.rewrite(new URL(newPath + paramsString, req.url));
+    setHeaders(rewriteRes);
+    return rewriteRes;
   }
 
   // If path includes '/api' and not include '/auth, trigger API authorization logic
@@ -45,28 +48,31 @@ export function middleware(req: NextRequest) {
     return isAuthenticated(jwt).then((result) => {
       // Check the validity of the JWT, if invalid, deny access to API
       if (!result && !url.pathname.includes('/public')) {
-        return NextResponse.json(
+        const res = NextResponse.json(
           { success: false, message: "Unauthorized" },
           { status: 401 }
-        )
+        );
+        setHeaders(res);
+        return res;
       } else if (result || (!result && url.pathname.includes('/public'))) {
 
         const newPath = apiRoutingCRUD(req);
         if (!newPath){
-          return NextResponse.json(
+          const res = NextResponse.json(
             { success: false, message: "Method Undefined!" },
             { status: 405 }
-          )
+          );
+          setHeaders(res);
+          return res;
         } else {
-          return NextResponse.rewrite(new URL(newPath, req.url));
+          const res = NextResponse.rewrite(new URL(newPath, req.url));
+          setHeaders(res);
+          return res;
         }
-        
       }
     })
   }
 
-  setHeaders(res);
-  console.log("Middleware response content:",res)
   return res; // Allow access for other cases
 }
 
