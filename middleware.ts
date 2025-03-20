@@ -12,9 +12,10 @@ export function middleware(req: NextRequest) {
     const res = new NextResponse(null, {
       status: 204, // No Content
       headers: {
-        'Access-Control-Allow-Origin': req.headers.get('origin') || '*', // Or specify your allowed origin(s)
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'X-Requested-With, Content-Type, Authorization',
+        'Access-Control-Allow-Origin': origin || '*', // Or specify your allowed origin(s)
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE',
+        'Access-Control-Allow-Headers': '*',
         'Access-Control-Max-Age': '86400', // 24 hours
       },
     });
@@ -22,9 +23,10 @@ export function middleware(req: NextRequest) {
   }
 
   const res = NextResponse.next();
-  res.headers.set('Access-Control-Allow-Origin', origin);
-  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
-  res.headers.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
+  res.headers.set('Access-Control-Allow-Origin', origin || '*');
+  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
+  res.headers.set('Access-Control-Allow-Headers', '*');
+  res.headers.set('Access-Control-Allow-Credentials', 'true');
 
   if (url.pathname === "/api/docs") {
     return res;
