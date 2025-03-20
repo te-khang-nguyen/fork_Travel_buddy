@@ -32,17 +32,11 @@ import { NextApiRequest, NextApiResponse } from "next";
  */
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req,
+  res
 ) {
 
-  if (req.method === 'OPTIONS') {
-      res.setHeader('Access-Control-Allow-Origin', '*'); // Or specify your allowed origin(s)
-      res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, Accept, x-requested-with, x-client-id')
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-      res.setHeader('Access-Control-Max-Age', '86400');
-      return res.status(200).end();
-  }
+  console.log(res);
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });

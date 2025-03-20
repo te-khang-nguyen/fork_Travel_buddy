@@ -10,21 +10,17 @@ export const setHeaders = (res: NextResponse) => {
   res.headers.set('Access-Control-Max-Age', '86400');
 }
 
-
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
 
   if (url.pathname.includes('/api')
     && req.method === 'OPTIONS') {
-    const res = new NextResponse("OK", {
-      status: 200,
-    });
+    const res = new NextResponse("OK", { status: 200 });
     setHeaders(res);
     return res;
   }
 
   const res = NextResponse.next();
-  
 
   if (url.pathname === "/api/docs") {
     return res;
@@ -70,6 +66,7 @@ export function middleware(req: NextRequest) {
   }
 
   setHeaders(res);
+  console.log("Middleware response content:",res)
   return res; // Allow access for other cases
 }
 
