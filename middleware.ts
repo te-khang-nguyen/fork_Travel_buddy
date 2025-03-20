@@ -5,17 +5,15 @@ import { apiRoutingCRUD } from './libs/services/utils';
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
-  const origin = req.headers.get('origin') ?? '*';
 
   if (url.pathname.includes('/api')
     && req.method === 'OPTIONS') {
     const res = new NextResponse("OK", {
       status: 200,
       headers: {
-        'Access-Control-Allow-Origin': origin || '*', // Or specify your allowed origin(s)
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE',
-        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Origin': '*', // Or specify your allowed origin(s)
+        'Access-Control-Allow-Headers': 'Authorization, Content-Type, Accept, x-requested-with, x-client-id',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Max-Age': '86400', // 24 hours
       },
     });
@@ -23,10 +21,10 @@ export function middleware(req: NextRequest) {
   }
 
   const res = NextResponse;
-  res.next().headers.set('Access-Control-Allow-Origin', origin || '*');
-  res.next().headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
-  res.next().headers.set('Access-Control-Allow-Headers', '*');
-  res.next().headers.set('Access-Control-Allow-Credentials', 'true');
+  // res.next().headers.set('Access-Control-Allow-Origin', origin || '*');
+  // res.next().headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
+  // res.next().headers.set('Access-Control-Allow-Headers', '*');
+  // res.next().headers.set('Access-Control-Allow-Credentials', 'true');
 
   if (url.pathname === "/api/docs") {
     return res.next();
