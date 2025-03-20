@@ -3,6 +3,14 @@ import { NextRequest } from 'next/server';
 import isAuthenticated from './libs/services/authorization';
 import { apiRoutingCRUD } from './libs/services/utils';
 
+export const setHeaders = (res: NextResponse) => {
+  res.headers.set('Access-Control-Allow-Origin', '*'); // Or specify your allowed origin(s)
+  res.headers.set('Access-Control-Allow-Headers', 'Authorization, Content-Type, Accept, x-requested-with, x-client-id')
+  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  res.headers.set('Access-Control-Max-Age', '86400');
+}
+
+
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
 
@@ -10,24 +18,16 @@ export function middleware(req: NextRequest) {
     && req.method === 'OPTIONS') {
     const res = new NextResponse("OK", {
       status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*', // Or specify your allowed origin(s)
-        'Access-Control-Allow-Headers': 'Authorization, Content-Type, Accept, x-requested-with, x-client-id',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Max-Age': '86400', // 24 hours
-      },
     });
+    setHeaders(res);
     return res;
   }
 
-  const res = NextResponse;
-  // res.next().headers.set('Access-Control-Allow-Origin', origin || '*');
-  // res.next().headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
-  // res.next().headers.set('Access-Control-Allow-Headers', '*');
-  // res.next().headers.set('Access-Control-Allow-Credentials', 'true');
+  const res = NextResponse.next();
+  
 
   if (url.pathname === "/api/docs") {
-    return res.next();
+    return res;
   }
 
   if (url.pathname.includes('/api/v1/auth')) {
@@ -35,7 +35,7 @@ export function middleware(req: NextRequest) {
     const params = Array.from(url.searchParams.entries());
     const paramsString = params.length > 0? 
       '?' + params.map((item: any)=> `${item[0]}=${item[1]}`).join('&') : '';
-    return res.rewrite(new URL(newPath + paramsString, req.url));
+    return NextResponse.rewrite(new URL(newPath + paramsString, req.url));
   }
 
   // If path includes '/api' and not include '/auth, trigger API authorization logic
@@ -49,7 +49,7 @@ export function middleware(req: NextRequest) {
     return isAuthenticated(jwt).then((result) => {
       // Check the validity of the JWT, if invalid, deny access to API
       if (!result && !url.pathname.includes('/public')) {
-        return res.json(
+        return NextResponse.json(
           { success: false, message: "Unauthorized" },
           { status: 401 }
         )
@@ -57,19 +57,20 @@ export function middleware(req: NextRequest) {
 
         const newPath = apiRoutingCRUD(req);
         if (!newPath){
-          return res.json(
+          return NextResponse.json(
             { success: false, message: "Method Undefined!" },
             { status: 405 }
           )
         } else {
-          return res.rewrite(new URL(newPath, req.url));
+          return NextResponse.rewrite(new URL(newPath, req.url));
         }
         
       }
     })
   }
 
-  return res.next(); // Allow access for other cases
+  setHeaders(res);
+  return res; // Allow access for other cases
 }
 
 export const config = {

@@ -41,7 +41,7 @@ export default async function handler(
       res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, Accept, x-requested-with, x-client-id')
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
       res.setHeader('Access-Control-Max-Age', '86400');
-      return res;
+      return res.status(200).end();
   }
 
   if (req.method !== "POST") {
