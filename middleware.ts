@@ -6,10 +6,11 @@ import { apiRoutingCRUD } from './libs/services/utils';
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
 
-  if (req.method === 'OPTIONS') {
+  if (url.pathname.includes('/api')
+      && req.method === 'OPTIONS') {
     const res = NextResponse.next();
     res.headers.append('Access-Control-Allow-Origin', '*');
-    res.headers.append('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.headers.append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
     res.headers.append('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
     return res;
   }
