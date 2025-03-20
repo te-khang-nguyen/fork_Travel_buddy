@@ -5,18 +5,15 @@ import { apiRoutingCRUD } from './libs/services/utils';
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
+  const res = NextResponse.next();
+  res.headers.append('Access-Control-Allow-Origin', '*');
+  res.headers.append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
+  res.headers.append('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
 
   if (url.pathname.includes('/api')
-      && req.method === 'OPTIONS') {
-    const res = NextResponse.next();
-    res.headers.append('Access-Control-Allow-Origin', '*');
-    res.headers.append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
-    res.headers.append('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
+      && (req.method === 'OPTIONS' 
+      || url.pathname.includes('/docs'))) {
     return res;
-  }
-
-  if (url.pathname == '/api/docs') {
-    return NextResponse.next(); // Allow access for other cases
   }
 
   if (url.pathname.includes('/api/v1/auth')) {
@@ -58,7 +55,7 @@ export function middleware(req: NextRequest) {
     })
   }
 
-  return NextResponse.next(); // Allow access for other cases
+  return res; // Allow access for other cases
 }
 
 export const config = {
