@@ -9,8 +9,8 @@ export function middleware(req: NextRequest) {
 
   if (url.pathname.includes('/api')
     && req.method === 'OPTIONS') {
-    const res = new NextResponse(null, {
-      status: 204, // No Content
+    const res = new NextResponse("OK", {
+      status: 200,
       headers: {
         'Access-Control-Allow-Origin': origin || '*', // Or specify your allowed origin(s)
         'Access-Control-Allow-Credentials': 'true',
@@ -21,12 +21,12 @@ export function middleware(req: NextRequest) {
     });
     return res;
   }
-
-  const res = NextResponse.next();
-  res.headers.set('Access-Control-Allow-Origin', origin || '*');
-  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
-  res.headers.set('Access-Control-Allow-Headers', '*');
-  res.headers.set('Access-Control-Allow-Credentials', 'true');
+  
+  const res = NextResponse;
+  res.next().headers.set('Access-Control-Allow-Origin', origin || '*');
+  res.next().headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
+  res.next().headers.set('Access-Control-Allow-Headers', '*');
+  res.next().headers.set('Access-Control-Allow-Credentials', 'true');
 
   if (url.pathname === "/api/docs") {
     return res;
@@ -37,7 +37,7 @@ export function middleware(req: NextRequest) {
     const params = Array.from(url.searchParams.entries());
     const paramsString = params.length > 0? 
       '?' + params.map((item: any)=> `${item[0]}=${item[1]}`).join('&') : '';
-    return NextResponse.rewrite(new URL(newPath + paramsString, req.url));
+    return res.rewrite(new URL(newPath + paramsString, req.url));
   }
 
   // If path includes '/api' and not include '/auth, trigger API authorization logic
@@ -51,7 +51,7 @@ export function middleware(req: NextRequest) {
     return isAuthenticated(jwt).then((result) => {
       // Check the validity of the JWT, if invalid, deny access to API
       if (!result && !url.pathname.includes('/public')) {
-        return Response.json(
+        return res.json(
           { success: false, message: "Unauthorized" },
           { status: 401 }
         )
@@ -59,17 +59,19 @@ export function middleware(req: NextRequest) {
 
         const newPath = apiRoutingCRUD(req);
         if (!newPath){
-          return Response.json(
+          return res.json(
             { success: false, message: "Method Undefined!" },
             { status: 405 }
           )
         } else {
-          return NextResponse.rewrite(new URL(newPath, req.url));
+          return res.rewrite(new URL(newPath, req.url));
         }
         
       }
     })
   }
+
+  console.log("MISSED CONDITIONAL RESPONSE");
 
   return res; // Allow access for other cases
 }
