@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 // import { generateLocationStories } from "@/libs/services/storyGen";
-import { generateLocationStories } from "@/libs/agents/story/storyGenerator";
+import { generateStories } from "@/libs/agents/story/storyGenerator";
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,7 +26,7 @@ export default async function handler(
 
   try {
 
-    const { data: storyData, error } = await generateLocationStories(
+    const { data: storyData, error } = await generateStories(
       experience ?? destination,
       locations ? locations?.join("\n") : attractions?.join("\n"),
       notes,

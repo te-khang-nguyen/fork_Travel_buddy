@@ -17,6 +17,9 @@ const supabaseVectorDb = async ({
     chunkOverlap,
     withAnalyzer = false
 }: VectorDbProps) => {
+
+    // To use gemini embedding, create new supabase tables with the embedding vector dimension as 3072.
+    // Then process and store the data sources again under the new vertor embedding scheme.
     // const embeddings = new GoogleGenerativeAIEmbeddings({
     //         model: embeddingModel, // 768 dimensions
     //         taskType: TaskType.RETRIEVAL_DOCUMENT,

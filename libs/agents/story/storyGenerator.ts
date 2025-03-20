@@ -30,7 +30,7 @@ const airTableDataPrep = [{
 }];
 
 
-async function generateLocationStories(
+async function generateStories(
     experience: string,
     locations: string,
     notes: string,
@@ -42,12 +42,14 @@ async function generateLocationStories(
     let chatInitialCompletion: string | null
     let chatSeoCompletion: string | null;
 
+    // Init vertor store for original reference sources
     const supabaseVectorStoreRaw = await supabaseVectorDb({
         // dataPreparation: airTableDataPrep,
         chunkSize: 2000,
         chunkOverlap: 20
     });
 
+    // Init vertor store for featrue extracted from reference sources
     const supabaseVectorStoreImplicit = await supabaseVectorDb({
         // dataPreparation: airTableDataPrep,
         withAnalyzer: true,
@@ -57,6 +59,7 @@ async function generateLocationStories(
 
     const numberOfKeywords = "TWO";
 
+    // Prompt for LLM to summarize and generate questions based on user's input
     const prompt = [
         {
             role:"system",
@@ -68,7 +71,7 @@ async function generateLocationStories(
                 - [Pillar]: the main context that the piece of content is 
                 - [Additional information]: list of addition contexts related to [Pillar]. It could be a list of ativities, locations, etc.
                 
-                Analyze the user's input contents and generate ${numberOfKeywords} non-overlapping questions relevant to user's inputs that are powerful for vector searching.
+                Analyze the user's inputs and generate ${numberOfKeywords} non-overlapping questions relevant to user's inputs that are powerful for vector searching.
                 Output format must be a JSON object of ${numberOfKeywords} questions.
                 
                 Example output: 
@@ -83,7 +86,7 @@ async function generateLocationStories(
                     },
                     ...
                 ]
-            `
+            `.trim()
         },
         {
             role: 'user',
@@ -91,17 +94,20 @@ async function generateLocationStories(
             - [Writing Ideas]: ${notes}
             - [Pillar]: ${experience}
             - [Additional information]: ${locations}
-            `
+            `.trim()
         },
     ];
 
+    // LLM summarize user's input and generate questions
     const result = (await ggleClient.invoke(prompt)).content
 
+    // Process questions output format from LLM
     const keywordsArray = JSON.parse((result as string)?.replace("```json", "")
                                                         .replace("```", "")).questions;
         
         // .split(',');
 
+    // Vector search on original reference database using the generated questions
     const vectorSearchedDocs = (await Promise.all(
         keywordsArray.map( async (keyword)=>{
             const output = await supabaseVectorStoreRaw
@@ -109,6 +115,7 @@ async function generateLocationStories(
             return output.map((item) => item.pageContent);
     }))).flat();
     
+    // Vector search on extracted feature database using the generated questions
     const vectorSearchedAnalysis = (await Promise.all(
         keywordsArray.map(async (keyword) => {
             const output = await supabaseVectorStoreImplicit
@@ -116,6 +123,7 @@ async function generateLocationStories(
             return output.map((item) => item.pageContent);
     }))).flat();
 
+    // LLM summary of user's media (images, videos) 
     const mediaSummary = (await Promise.all(media.map(async (item, index) => {
         const prompt = getImageAnalysisPrompt({
             url: item,
@@ -134,6 +142,7 @@ async function generateLocationStories(
         return `Photo No.${index + 1}: ${result}`;
     }))).join("\n\n");
 
+    // Get content generating prompt with user's imputs, media summary, and vector search results
     const messages = getStoryPrompt({
         experience: experience,
         locations: locations,
@@ -147,7 +156,7 @@ async function generateLocationStories(
     });
 
     try {
-
+        // LLM content generation using the content generating prompt
         chatInitialCompletion = (await client.chat.completions.create({
             model: "gpt-4o",
             messages: messages as any,
@@ -159,6 +168,7 @@ async function generateLocationStories(
         return { error: "Failed to call OpenAI model" };
     }
 
+    // Get prompt for generating SEO elements
     const seoMessages = getSeoPrompt({
         chatInitialCompletion: chatInitialCompletion,
         channelType
@@ -166,6 +176,7 @@ async function generateLocationStories(
 
 
     try {
+        // LLM generating SEO elements based on the generated story and user's inputs
         chatSeoCompletion = (await client.chat.completions.create({
             model: "gpt-4o-mini",
             messages: seoMessages as any,
@@ -176,6 +187,7 @@ async function generateLocationStories(
                                                  .replace("```", "")
         const output = JSON.parse(processedOuput as string)
 
+        // return the SEO elements and the SEO-modified story. 
         return { data: output };
     } catch (error) {
         console.error("Error calling OpenAI model:", error);
@@ -206,4 +218,4 @@ async function generateLocationStories(
     // }
 }
 
-export { generateLocationStories };
+export { generateStories };
