@@ -5,14 +5,28 @@ import { apiRoutingCRUD } from './libs/services/utils';
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
-  const res = NextResponse.next();
-  res.headers.append('Access-Control-Allow-Origin', '*');
-  res.headers.append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
-  res.headers.append('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
+  const origin = req.headers.get('origin') ?? '*';
 
   if (url.pathname.includes('/api')
-      && (req.method === 'OPTIONS' 
-      || url.pathname.includes('/docs'))) {
+    && req.method === 'OPTIONS') {
+    const res = new NextResponse(null, {
+      status: 204, // No Content
+      headers: {
+        'Access-Control-Allow-Origin': req.headers.get('origin') || '*', // Or specify your allowed origin(s)
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'X-Requested-With, Content-Type, Authorization',
+        'Access-Control-Max-Age': '86400', // 24 hours
+      },
+    });
+    return res;
+  }
+
+  const res = NextResponse.next();
+  res.headers.set('Access-Control-Allow-Origin', origin);
+  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+  res.headers.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
+
+  if (url.pathname === "/api/docs") {
     return res;
   }
 
