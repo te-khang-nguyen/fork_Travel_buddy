@@ -15,9 +15,9 @@ export function middleware(req: NextRequest) {
 
   if (url.pathname.includes('/api')
     && req.method === 'OPTIONS') {
-    const res = new NextResponse("OK", { status: 200 });
-    setHeaders(res);
-    return res;
+    const preflightRes = new NextResponse("OK", { status: 200 });
+    setHeaders(preflightRes);
+    return preflightRes;
   }
 
   const res = NextResponse.next();
@@ -48,31 +48,32 @@ export function middleware(req: NextRequest) {
     return isAuthenticated(jwt).then((result) => {
       // Check the validity of the JWT, if invalid, deny access to API
       if (!result && !url.pathname.includes('/public')) {
-        const res = NextResponse.json(
+        const unAuthRes = NextResponse.json(
           { success: false, message: "Unauthorized" },
           { status: 401 }
         );
-        setHeaders(res);
-        return res;
+        setHeaders(unAuthRes);
+        return unAuthRes;
       } else if (result || (!result && url.pathname.includes('/public'))) {
 
         const newPath = apiRoutingCRUD(req);
         if (!newPath){
-          const res = NextResponse.json(
+          const undefinedRes = NextResponse.json(
             { success: false, message: "Method Undefined!" },
             { status: 405 }
           );
-          setHeaders(res);
-          return res;
+          setHeaders(undefinedRes);
+          return undefinedRes;
         } else {
-          const res = NextResponse.rewrite(new URL(newPath, req.url));
-          setHeaders(res);
-          return res;
+          const successRes = NextResponse.rewrite(new URL(newPath, req.url));
+          setHeaders(successRes);
+          return successRes;
         }
       }
     })
   }
 
+  setHeaders(res);
   return res; // Allow access for other cases
 }
 
