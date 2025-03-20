@@ -21,7 +21,7 @@ export function middleware(req: NextRequest) {
     });
     return res;
   }
-  
+
   const res = NextResponse;
   res.next().headers.set('Access-Control-Allow-Origin', origin || '*');
   res.next().headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
@@ -29,7 +29,7 @@ export function middleware(req: NextRequest) {
   res.next().headers.set('Access-Control-Allow-Credentials', 'true');
 
   if (url.pathname === "/api/docs") {
-    return res;
+    return res.next();
   }
 
   if (url.pathname.includes('/api/v1/auth')) {
@@ -71,9 +71,7 @@ export function middleware(req: NextRequest) {
     })
   }
 
-  console.log("MISSED CONDITIONAL RESPONSE");
-
-  return res; // Allow access for other cases
+  return res.next(); // Allow access for other cases
 }
 
 export const config = {
