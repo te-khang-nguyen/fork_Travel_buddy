@@ -25,6 +25,11 @@ export interface LocationInfo {
     description_thumbnail: string;
 }
 
+export interface ActivityInfo {
+  description: string;
+  description_thumbnail: string;
+}
+
 export interface Location {
     id: string;
     experience_id: string;
@@ -37,6 +42,20 @@ export interface Location {
     description: string;
     description_thumbnail: string;
     order_of_appearance: number;
+}
+
+export interface Activity {
+  id: string;
+  experience_id: string;
+  title: string;
+  primary_photo: string;
+  photos: string[];
+  hours: string;
+  status: string;
+  location_info: ActivityInfo[];
+  description: string;
+  description_thumbnail: string;
+  order_of_appearance: number;
 }
 
 interface LocationResponseList {

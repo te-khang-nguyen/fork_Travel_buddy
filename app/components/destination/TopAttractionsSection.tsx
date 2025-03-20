@@ -25,7 +25,7 @@ const TopAttractionsSection: React.FC<{
       <>
       <Box display="flex" justifyContent="center" alignItems="center" sx={{ mt: 6 }}>
         <Typography variant="h4" sx={{ lineHeight: 'normal', mb: 0 }}>
-          Top Attractions For You
+          Top Activities For You
         </Typography>
         {edit_mode ? <ButtonInEditSection type="attraction"/> : null}
       </Box>

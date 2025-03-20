@@ -17,6 +17,8 @@ import { ExperienceBusinessApi } from './services/business/experience';
 import { ExperienceApi } from './services/user/experience';
 import { LocationBusinessApi } from './services/business/location';
 import { LocationUserApi } from './services/user/location';
+import { ActivityBusinessApi } from './services/business/activity';
+import { ActivityUserApi } from './services/user/activity';
 
 export const store = configureStore({
   reducer: {
@@ -37,6 +39,8 @@ export const store = configureStore({
     [ExperienceApi.reducerPath]: ExperienceApi.reducer,
     [LocationBusinessApi.reducerPath]: LocationBusinessApi.reducer,
     [LocationUserApi.reducerPath]: LocationUserApi.reducer,
+    [ActivityBusinessApi.reducerPath]: ActivityBusinessApi.reducer,
+    [ActivityUserApi.reducerPath]: ActivityUserApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -58,5 +62,7 @@ export const store = configureStore({
       .concat(ExperienceApi.middleware)
       .concat(LocationBusinessApi.middleware)
       .concat(LocationUserApi.middleware)
+      .concat(ActivityBusinessApi.middleware)
+      .concat(ActivityUserApi.middleware)
 });
 

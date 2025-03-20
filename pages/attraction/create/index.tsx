@@ -7,6 +7,7 @@ import ImageInput from "@/app/components/destination/CustomImageUpload";
 import { useForm } from "react-hook-form";
 import DestinationDropbox from "@/app/components/destination/DestinationDropbox";
 import { useCreateLocationMutation } from "@/libs/services/business/location";
+import { useCreateActivityMutation } from "@/libs/services/business/activity";
 import { useCreateMediaAssetMutation } from "@/libs/services/storage/upload";
 
 interface FormData {
@@ -25,6 +26,7 @@ const CreateAttractionForm: React.FC = () => {
     const [uploadImage] = useUploadImageMutation();
     const [createMediaAsset] = useCreateMediaAssetMutation();
     const [createLocation] = useCreateLocationMutation();
+    const [createActivity] = useCreateActivityMutation();
 
     const { handleSubmit, control } = useForm<FormData>({
         defaultValues: {
@@ -58,6 +60,18 @@ const CreateAttractionForm: React.FC = () => {
             const { 
                 data: newLocationData 
             } = await createLocation({
+                experience_id: data.destination_id,
+                title: data.attraction_title,
+                description: data.description,
+                description_thumbnail: data.thumbnail_description || '',
+                primary_photo: thumbnailUrl,
+                primary_photo_id: image_id,
+                order_of_appearance: -1,
+            });
+
+            const { 
+                data: newActivityData 
+            } = await createActivity({
                 experience_id: data.destination_id,
                 title: data.attraction_title,
                 description: data.description,

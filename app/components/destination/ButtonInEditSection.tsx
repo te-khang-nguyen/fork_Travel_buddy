@@ -16,7 +16,7 @@ const typeMapping = {
     routing: null,
   },
   attraction: {
-    text: "Add an attraction",
+    text: "Add an activity",
     icon: <AttractionsIcon /> ,
     routing: '/attraction/create',
   },
