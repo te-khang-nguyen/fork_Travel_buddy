@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 import isAuthenticated from './libs/services/authorization';
 import { apiRoutingCRUD } from './libs/services/utils';
 
@@ -22,6 +22,15 @@ export function middleware(req: NextRequest) {
   if (url.pathname.includes('/api') 
       && !url.pathname.includes('/auth') 
       && !url.pathname.includes('/docs')) {
+    
+    // if (req.method === 'OPTIONS') {
+    //   const res = NextResponse.next();
+    //   res.headers.append('Access-Control-Allow-Origin', '*');
+    //   res.headers.append('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    //   res.headers.append('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
+    //   return res;
+    // }
+    
     // Get the stored JWT in the request headers
     const jwt = req.headers.get('authorization')?.split(' ')[1];
 
