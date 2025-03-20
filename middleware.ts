@@ -24,13 +24,16 @@ export function middleware(req: NextRequest) {
       && !url.pathname.includes('/docs')) {
     
     if (req.method === 'OPTIONS') {
+      console.log(req);
       const res = NextResponse.next();
       res.headers.append('Access-Control-Allow-Origin', '*');
       res.headers.append('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       res.headers.append('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
       return res;
     }
-    
+
+    console.log(req);
+
     // Get the stored JWT in the request headers
     const jwt = req.headers.get('authorization')?.split(' ')[1];
 
