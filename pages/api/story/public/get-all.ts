@@ -17,7 +17,7 @@ export default async function handler(
             .from("stories")
             .select(`*, 
               media_assets(url), 
-              channels(channel_type), 
+              channels(channel_type, name), 
               userprofiles(email, firstname, lastname, media_assets(url))
             `)
             .eq("status", "PUBLISHED")
@@ -87,14 +87,10 @@ export const swaggerPublicStoryGetAll = {
                           }
                         },
                         "channels": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "channel_type": {
-                                "type": "string"
-                              }
-                            }
+                          "type": "object",
+                          "properties": {
+                            "channel_type": { "type": "string" },
+                            "name": { "type": "string" }
                           }
                         },
                         "userprofiles": {

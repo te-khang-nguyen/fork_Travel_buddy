@@ -13,7 +13,6 @@ import {
 import { useRouter } from 'next/router';
 import { 
   useGetExperiencePublicQuery,
-  useGetLocationsPublicQuery,
   useGetExperienceDetailsPublicQuery,
   useGetIconicPhotosPublicQuery,
   useGetExperienceVisitsByUserIdQuery,
@@ -21,12 +20,10 @@ import {
   convertExperienceDetailsToFeatures,
   Location,
 } from "@/libs/services/user/experience";
-import { useGetLocationsInExperienceQuery } from '@/libs/services/user/location';
 import { 
   useGetActivitiesInExperienceQuery,
   useGetActivitiesInExperiencePublicQuery
  } from '@/libs/services/user/activity';
-import { Experience } from '@/libs/services/business/experience';
 import { useCallSearchAgentMutation } from '@/libs/services/agents/search';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
@@ -65,7 +62,7 @@ const ExperienceHomePage: React.FC = () => {
   const { data: destination, isLoading } = useGetExperiencePublicQuery({ id: destination_id as string });
   // const { data: childrenExperiences, isLoading: childrenLoading } = useGetChildrenExperiencesQuery({ id: destination_id as string });
   // const { data: attractions, isLoading: attractionsLoading } = useGetLocationsPublicQuery({ id: destination_id as string });
-  const { data: attractions } = useGetActivitiesInExperienceQuery({ experience_id: destination_id as string });
+  const { data: attractions } = useGetActivitiesInExperiencePublicQuery({ experience_id: destination_id as string });
   const { data: destination_details } = useGetExperienceDetailsPublicQuery({ id: destination_id as string })
   const { data: iconic_photos } = useGetIconicPhotosPublicQuery({ id: destination_id as string });
   const { data: visitsData } = useGetExperienceVisitsByUserIdQuery({id: destination_id as string});

@@ -23,15 +23,13 @@ import {
 import { 
     useUploadImageMutation 
 } from "@/libs/services/storage/upload";
+
 import {
     useGetAllExperiencesPublicQuery,
     useGetLocationsPublicQuery,
 } from "@/libs/services/user/experience";
 
-import {
-    useGetAllDestinationsQuery,
-    useGetAttractionsQuery,
-} from "@/libs/services/user/destination";
+import { useGetActivitiesInExperienceQuery } from "@/libs/services/user/activity";
 
 import {
     useCreateChannelMutation,
@@ -114,8 +112,8 @@ const CreateStoryUI = () => {
 
     const { 
         data: attractionsData
-    } = useGetLocationsPublicQuery({
-        id: destinationId
+    } = useGetActivitiesInExperienceQuery({
+        experience_id: destinationId
     }, 
     {
         skip: !destinationId || destinationId === "1"

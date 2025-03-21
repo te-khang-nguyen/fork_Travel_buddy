@@ -6,7 +6,7 @@ export const channelsDescription = {
 
 function getStoryPrompt({
   experience,
-  locations,
+  activities,
   notes,
   mediaSummary,
   brandVoice,
@@ -16,7 +16,7 @@ function getStoryPrompt({
   storyLength = 45
 }: {
   experience: string;
-  locations: string;
+  activities: string;
   notes: string;
   mediaSummary: string;
   brandVoice: string;
@@ -30,9 +30,9 @@ function getStoryPrompt({
     You are a travel storytelling expert writing in the provided [Brand Voice]. Create an engaging, cohesive first-person narrative based exclusively on these inputs:
 
     Inputs:
-    - [Destination]: Name of travel experience.
-    - [Locations]: List of locations relevant to [Destination].
-    - [Tour Notes]: Text containing detailed context; may explicitly mention [Locations].
+    - [Experience]: Name of travel experience.
+    - [Activities]: List of activities/atrractions relevant to [Experience].
+    - [Tour Notes]: Text containing detailed context; may explicitly mention [Activities].
     - [Brand Voice]: Defines writing style.
     - [Media Summary]: Descriptions of user's uploaded media.
     - [Analysis]: Techniques to incorporate.
@@ -41,8 +41,8 @@ function getStoryPrompt({
     Guidelines:
     - Strictly adhere to [Brand Voice]: conversational, engaging, concise, factual, and non-promotional.
     - Use storytelling techniques from [Analysis].
-    - Use [Tour Notes] as the focal points, connect it creatively with [Destination].
-    - If any location in [Locations] is mentioned in [Tour Notes], clearly highlight it. Otherwise, skip the [Locations].
+    - Use [Tour Notes] as the focal points, connect it creatively with [Experience].
+    - If any activity/atrraction in [Activities] is mentioned in [Tour Notes], clearly highlight it. Otherwise, skip the [Activities].
     - In case there are multiple paragraphs, generate each paragraph with exactly ${storyLength} words, separated by blank lines.
     - Spin negative sentiments into positive, uplifting conclusions.
     - Naturally incorporate relevant [Media Summary] details.
@@ -63,8 +63,8 @@ function getStoryPrompt({
       content: `Content to follow:
           - [Brand Voice]: ${brandVoice}
           - [Tour Notes]: ${notes}
-          - [Destination]: ${experience}
-          - [Locations]: ${locations}
+          - [Experience]: ${experience}
+          - [Activities]: ${activities}
           - [Channel]: ${channelsDescription[channelType.toLowerCase().split(" ").join("_")]}
           - [Media Summary]: ${mediaSummary}
           - [Analysis]: ${storyStructure?.map((item, index) =>
@@ -190,12 +190,12 @@ function getImageAnalysisPrompt({
         You're an expert photo analyst. Carefully analyze the user's uploaded image based solely on:
 
         Inputs:
-        - [Experience]: Name of the overall experience or destination (consisting of multiple attractions).
-        - [Locations]: List of location names relevant to the [Experience].
+        - [Experience]: Name of the overall experience or experience (consisting of multiple attractions).
+        - [Activities]: List of activity/atrraction names relevant to the [Experience].
         
         Instructions:
         - Summarize the image clearly, accurately, and factually.
-        - Explicitly connect image details to relevant [Locations] or [Experience] when possible.
+        - Explicitly connect image details to relevant [Activities] or [Experience] when possible.
         - If no clear connections exist, provide only a general summary of the image content.
         - NEVER invent details not present in the image.
         - NEVER refer to images by numbers (e.g., "Photo No.1").
@@ -213,7 +213,7 @@ function getImageAnalysisPrompt({
           text: `
             Context: 
             - [Experience]: ${relatedQueries?.experience}
-            - [Locations]: ${relatedQueries?.locations}
+            - [Activities]: ${relatedQueries?.activities}
             - [Request]: Tell me the content of this image
           `
         },

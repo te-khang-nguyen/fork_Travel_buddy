@@ -14,6 +14,7 @@ import {
   convertExperienceDetailsToFeatures,
   useGetIconicPhotosQuery,
 } from "@/libs/services/user/experience";
+import { useGetActivitiesInExperienceQuery } from "@/libs/services/user/activity";
 import { Experience } from '@/libs/services/business/experience';
 
 import GroupedFeaturesPopup, {Feature} from "@/app/components/destination/DestinationDetails";
@@ -32,7 +33,10 @@ const EditExperiencePage: React.FC = () => {
   const { destination_id } = router.query;
   const { data: destination, isLoading } = useGetExperienceQuery({ id: destination_id as string });
   // const { data: childrenExperiences, isLoading: childrenLoading } = useGetChildrenExperiencesQuery({ id: destination_id as string });
-  const { data: attractions, isLoading: attractionsLoading } = useGetLocationsQuery({ id: destination_id as string });
+  const { 
+    data: attractions, 
+    isLoading: attractionsLoading 
+  } = useGetActivitiesInExperienceQuery({ experience_id: destination_id as string });
   const { data: destination_details } = useGetExperienceDetailsQuery({ id: destination_id as string })
 
   const { data: iconic_photos } = useGetIconicPhotosQuery({ id: destination_id as string });

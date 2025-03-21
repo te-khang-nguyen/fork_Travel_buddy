@@ -52,7 +52,7 @@ export const swaggerDestVisitsCreate = {
     text:
 `"/api/v1/experiences/visits/ ": {
     "post": {
-      "tags": ["experience"],
+      "tags": ["visits"],
       "summary": "Store user's visits to an experience.",
       "description": "Store user's visits to an experience."",
       "security": [

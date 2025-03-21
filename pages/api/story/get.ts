@@ -4,7 +4,7 @@ import { StorySingleRes } from "@/libs/services/user/story";
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<StorySingleRes>
+    res: NextApiResponse
 ) {
     if (req.method !== "GET") {
         return res.status(405).json({ error: "Method not allowed!" });
@@ -23,7 +23,12 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select("*, experiences(name), destinations(name), media_assets(url), channels(channel_type)")
+            .select(`*, 
+              experiences(name), 
+              destinations(name), 
+              media_assets(url), 
+              channels(channel_type, name)
+              userprofiles(email, firstname, lastname, media_assets(url))`)
             .eq("id", storyId)
             .single();
 
@@ -113,6 +118,20 @@ export const swaggerStoryGet = {
                           "properties": {
                             "channel_type": { "type": "string" },
                             "name": { "type": "string" }
+                          }
+                        },
+                        "userprofiles": {
+                          "type": "object",
+                          "properties": {
+                            "email": { "type": "string" },
+                            "firstname": { "type": "string" },
+                            "lastname": { "type": "string" },
+                            "media_assets": {
+                              "type": "object",
+                              "properties": {
+                                "url":"string"
+                              }
+                            }
                           }
                         }
                       }

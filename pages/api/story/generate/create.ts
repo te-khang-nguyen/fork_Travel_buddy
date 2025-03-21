@@ -15,8 +15,9 @@ export default async function handler(
   const {
     destination,
     attractions,
-    experience,
     locations,
+    experience,
+    activities,
     notes,
     media_urls,
     brand_voice,
@@ -28,7 +29,7 @@ export default async function handler(
 
     const { data: storyData, error } = await generateStories(
       experience ?? destination,
-      locations ? locations?.join("\n") : attractions?.join("\n"),
+      activities ? activities?.join("\n") : attractions? attractions?.join("\n") : locations?.join("\n"),
       notes,
       media_urls,
       brand_voice,
@@ -78,7 +79,7 @@ export const swaggerStoryGenerate = {
                   "type": "string",
                   "description": "The name of the selected destination."
                 },
-                "locations": {
+                "activities": {
                   "type": "array",
                   "items": {
                     "type": "string"

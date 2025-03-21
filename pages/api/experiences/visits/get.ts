@@ -50,7 +50,7 @@ export const swaggerLocationGet = {
   text:
     `"/api/v1/experiences/visits": {
       "get": {
-        "tags": ["experience"],
+        "tags": ["visits"],
         "summary": "Get a location by destination ID",
         "description": "Retrieve a location by destination ID.",
         "security": [

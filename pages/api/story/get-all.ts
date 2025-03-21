@@ -27,7 +27,7 @@ export default async function handler(
             .from("stories")
             .select(`*, 
               media_assets(url),
-              channels(channel_type),
+              channels(channel_type, name),
               userprofiles(email, firstname, lastname, media_assets(url))
             `)
             .eq("user_id", user!.id);

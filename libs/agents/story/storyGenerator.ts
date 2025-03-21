@@ -32,7 +32,7 @@ const airTableDataPrep = [{
 
 async function generateStories(
     experience: string,
-    locations: string,
+    activities: string,
     notes: string,
     media: string[],
     brandVoice: string,
@@ -69,7 +69,7 @@ async function generateStories(
                 Input format:
                 - [Writing Ideas]: user's idea for writing a piece of content
                 - [Pillar]: the main context that the piece of content is 
-                - [Additional information]: list of addition contexts related to [Pillar]. It could be a list of ativities, locations, etc.
+                - [Additional information]: list of addition contexts related to [Pillar]. It could be a list of ativities, activities, etc.
                 
                 Analyze the user's inputs and generate ${numberOfKeywords} non-overlapping questions relevant to user's inputs that are powerful for vector searching.
                 Output format must be a JSON object of ${numberOfKeywords} questions.
@@ -93,7 +93,7 @@ async function generateStories(
             content: `Keywords are required to be generated for the following contents:
             - [Writing Ideas]: ${notes}
             - [Pillar]: ${experience}
-            - [Additional information]: ${locations}
+            - [Additional information]: ${activities}
             `.trim()
         },
     ];
@@ -129,7 +129,7 @@ async function generateStories(
             url: item,
             relatedQueries: {
                 experience: experience,
-                locations: locations
+                activities: activities
             }
         });
 
@@ -145,7 +145,7 @@ async function generateStories(
     // Get content generating prompt with user's imputs, media summary, and vector search results
     const messages = getStoryPrompt({
         experience: experience,
-        locations: locations,
+        activities: activities,
         brandVoice: brandVoice,
         notes: notes,
         mediaSummary: mediaSummary,

@@ -17,7 +17,12 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select("*, experiences(name), destinations(name), media_assets(url), channels(channel_type)")
+            .select(`*, 
+              experiences(name), 
+              destinations(name), 
+              media_assets(url), 
+              channels(channel_type)
+              userprofiles(email, firstname, lastname, media_assets(url))`)
             .eq("id", storyId)
             .single();
 
@@ -102,12 +107,22 @@ export const swaggerPublicStoryGet = {
                         }
                       },
                       "channels": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "channel_type": {
-                              "type": "string"
+                        "type": "object",
+                        "properties": {
+                          "channel_type": { "type": "string" },
+                          "name": { "type": "string" }
+                        }
+                      },
+                      "userprofiles": {
+                        "type": "object",
+                        "properties": {
+                          "email": { "type": "string" },
+                          "firstname": { "type": "string" },
+                          "lastname": { "type": "string" },
+                          "media_assets": {
+                            "type": "object",
+                            "properties": {
+                              "url":"string"
                             }
                           }
                         }
