@@ -49,6 +49,14 @@ export interface StoryProps {
   channels?: {
     channel_type: string;
     name?: string;
+  };
+  userprofiles?: {
+    email: string;
+    firstname: string;
+    lastname: string;
+    media_assets: {
+      url: string;
+    };
   }
 }
 

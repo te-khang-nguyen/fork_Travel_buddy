@@ -15,7 +15,11 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select("*, media_assets(url), channels(channel_type)")
+            .select(`*, 
+              media_assets(url), 
+              channels(channel_type), 
+              userprofiles(email, firstname, lastname, media_assets(url))
+            `)
             .eq("status", "PUBLISHED")
             .eq("channels.channel_type", "Travel Buddy");
 
@@ -89,6 +93,20 @@ export const swaggerPublicStoryGetAll = {
                             "properties": {
                               "channel_type": {
                                 "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "userprofiles": {
+                          "type": "object",
+                          "properties": {
+                            "email": { "type": "string" },
+                            "firstname": { "type": "string" },
+                            "lastname": { "type": "string" },
+                            "media_assets": {
+                              "type": "object",
+                              "properties": {
+                                "url":"string"
                               }
                             }
                           }

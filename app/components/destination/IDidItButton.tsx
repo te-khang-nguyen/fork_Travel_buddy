@@ -3,22 +3,18 @@ import { useEffect, useState } from "react";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
-const IDidItSection = ({id}: {id: string}) => {
-    const [liked, setLiked] = useState(false);
-    const chosenIds = JSON.parse(localStorage.getItem("chosenIds") || "[]");
-
-    console.log(chosenIds?.includes(id));
-
-    useEffect(()=>{
-      setLiked(chosenIds?.includes(id));
-    },[chosenIds]);
+const IDidItSection = ({
+  checked,
+  text,
+  onClick
+}: {
+  checked: boolean;
+  text?:string;
+  onClick?: () => void;
+}) => {
     
     const handleClick = () => {
-        setLiked(prev => !prev);
-        localStorage.setItem("chosenIds", JSON.stringify([...chosenIds, id]));
-
-    // TODO: Add your API call here to update the status in the database.
-    // e.g., updateLikeStatus(!liked);
+        onClick?.();
     };
     return(
       <Box sx={{ 
@@ -26,11 +22,10 @@ const IDidItSection = ({id}: {id: string}) => {
         <Button
             onClick={handleClick}
             // color="white"
-            variant={liked ? "contained" : "contained"}
+            variant={checked ? "contained" : "contained"}
             // Conditionally show the icon only when not in the "Like" state.
-            startIcon={!chosenIds?.includes(id)? !liked
+            startIcon={!checked
                 ? <CheckBoxOutlineBlankIcon /> 
-                : <CheckBoxIcon />
                 : <CheckBoxIcon />
             }
             sx={{
@@ -39,7 +34,7 @@ const IDidItSection = ({id}: {id: string}) => {
                 height: '40px',
                 minWidth: '140px',
                 // Increase opacity when in "not like" state
-                opacity: liked ? 1.0 : 1.0,
+                opacity: checked ? 1.0 : 1.0,
                 borderRadius: 2,
                 boxShadow: "none",
                 backgroundColor: "rgba(252, 252, 252, 0)",
@@ -50,9 +45,10 @@ const IDidItSection = ({id}: {id: string}) => {
                 fontSize: {xs: "15px", sm: "20px" , lg: "20px"}
             }}
             disableRipple
+            disabled={checked}
         >
-            {/* {liked ? "I did it" : "Let's do it"} */}
-            {"I Did It!"}
+            {/* {checked ? "I did it" : "Let's do it"} */}
+            {text ?? "I Did It!"}
         </Button>
       </Box>
     )

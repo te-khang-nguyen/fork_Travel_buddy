@@ -16,11 +16,16 @@ import {
   useGetLocationsPublicQuery,
   useGetExperienceDetailsPublicQuery,
   useGetIconicPhotosPublicQuery,
+  useGetExperienceVisitsByUserIdQuery,
+  useCreateExperienceVisitsByUserIdMutation,
   convertExperienceDetailsToFeatures,
   Location,
 } from "@/libs/services/user/experience";
 import { useGetLocationsInExperienceQuery } from '@/libs/services/user/location';
-import { useGetActivitiesInExperienceQuery } from '@/libs/services/user/activity';
+import { 
+  useGetActivitiesInExperienceQuery,
+  useGetActivitiesInExperiencePublicQuery
+ } from '@/libs/services/user/activity';
 import { Experience } from '@/libs/services/business/experience';
 import { useCallSearchAgentMutation } from '@/libs/services/agents/search';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
@@ -62,10 +67,11 @@ const ExperienceHomePage: React.FC = () => {
   // const { data: attractions, isLoading: attractionsLoading } = useGetLocationsPublicQuery({ id: destination_id as string });
   const { data: attractions } = useGetActivitiesInExperienceQuery({ experience_id: destination_id as string });
   const { data: destination_details } = useGetExperienceDetailsPublicQuery({ id: destination_id as string })
-  
   const { data: iconic_photos } = useGetIconicPhotosPublicQuery({ id: destination_id as string });
+  const { data: visitsData } = useGetExperienceVisitsByUserIdQuery({id: destination_id as string});
 
   const [ callSearchAgent, {isLoading: searchAgentLoading} ] = useCallSearchAgentMutation();
+  const [ recordVisit ] = useCreateExperienceVisitsByUserIdMutation();
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [openChat, setOpenChat] = useState(false);
@@ -78,7 +84,8 @@ const ExperienceHomePage: React.FC = () => {
   });
   const [userInputs, setUserInputs] = useState<string>("");
   const [displayMess, setDisplayMess] = useState<string[]>([]);
-  const [checked, setChecked] = React.useState(false);
+  const [checkIn, setCheckIn] = useState<boolean>(false);
+  const [checked, setChecked] = useState(false);
 
 
   useEffect(()=>{
@@ -97,6 +104,12 @@ const ExperienceHomePage: React.FC = () => {
   useEffect(()=>{
     setChecked((prev)=>!prev);
   },[chatResponse, displayMess]);
+
+  useEffect(()=>{
+    if(visitsData){
+      setCheckIn(true);
+    }
+  },[visitsData]);
 
   const handleAttractionChatInit = (attraction: Location) => {
     // setAnchorEl(event.currentTarget);
@@ -133,6 +146,16 @@ const ExperienceHomePage: React.FC = () => {
   const handleClearChat = () => {
     setChatResponse([]);
     setDisplayMess([]);
+  }
+
+  const handleCheckIn = async () =>{
+    setCheckIn(true);
+    const result = await recordVisit({id: destination_id as string});
+
+    if(result.error){
+      console.error(result.error);
+      setCheckIn(false);
+    }
   }
 
   
@@ -334,7 +357,7 @@ const ExperienceHomePage: React.FC = () => {
             />
 
             {/* Fixed Destinatio visit button */}
-            <IDidItSection id={destination_id as string}/>
+            <IDidItSection checked={checkIn} onClick={handleCheckIn}/>
           </>
         ) : (
           <Typography variant="h6">Experience not found</Typography> // Fallback UI

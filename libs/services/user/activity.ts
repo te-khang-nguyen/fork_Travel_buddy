@@ -3,7 +3,8 @@ import { baseQuery } from "@/libs/supabase/baseQuery";
 import { Activity } from "../user/experience";
 
 interface GetActivityResponse {
-    data: Activity[];
+  data: Activity[];
+  error?: string;
 }
 
 const ActivityUserApi = createApi({
@@ -13,7 +14,20 @@ const ActivityUserApi = createApi({
     getActivitiesInExperience: builder.query<Activity[], { experience_id: string }>({
       query: ({ experience_id }) => ({
         url: `/activities/experience`,
-        params: {"experience-id": experience_id},
+        params: { "experience-id": experience_id },
+        method: "GET",
+      }),
+      transformResponse: (response: GetActivityResponse): Activity[] =>
+        response.data,
+    }),
+
+    getActivitiesInExperiencePublic: builder.query<
+      Activity[],
+      { experience_id: string }
+    >({
+      query: ({ experience_id }) => ({
+        url: `/experiences/public/activities`,
+        params: { "experience-id": experience_id },
         method: "GET",
       }),
       transformResponse: (response: GetActivityResponse): Activity[] =>
@@ -22,7 +36,8 @@ const ActivityUserApi = createApi({
   }),
 });
 
-export const { 
+export const {
   useGetActivitiesInExperienceQuery,
+  useGetActivitiesInExperiencePublicQuery
 } = ActivityUserApi;
 export { ActivityUserApi };

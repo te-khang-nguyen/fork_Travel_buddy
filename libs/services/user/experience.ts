@@ -214,6 +214,24 @@ const ExperienceApi = createApi({
       }),
       transformResponse: ((res: ExperienceResponse) => res.data)
     }),
+    getExperienceVisitsByUserId: builder.query<{created_at: string}, { id: string }>({
+      query: ({ id }) => ({
+        url: `/experiences/visits`,
+        params: { "experience-id": id },
+      }),
+      transformResponse: ((res: { data: { created_at: string } }) => res.data)
+    }),
+    createExperienceVisitsByUserId: builder.mutation<
+      { created_at: string }, 
+      { id: string }
+    >({
+      query: ({ id }) => ({
+        url: `/experiences/visits`,
+        method: "POST",
+        body: { experience_id: id },
+      }),
+      transformResponse: ((res: { data: { created_at: string } }) => res.data)
+    }),
   }),
 });
 
@@ -231,5 +249,7 @@ export const {
   useGetLocationsPublicQuery,
   useGetIconicPhotosPublicQuery,
   useGetExperienceByBusinessQuery,
+  useGetExperienceVisitsByUserIdQuery,
+  useCreateExperienceVisitsByUserIdMutation,
 } = ExperienceApi;
 export { ExperienceApi };

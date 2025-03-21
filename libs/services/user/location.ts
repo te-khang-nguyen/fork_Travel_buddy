@@ -25,6 +25,6 @@ const LocationUserApi = createApi({
 });
 
 export const { 
-  useGetLocationsInExperienceQuery,
+  useGetLocationsInExperienceQuery
 } = LocationUserApi;
 export { LocationUserApi };

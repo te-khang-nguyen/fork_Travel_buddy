@@ -25,7 +25,11 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select(`*, media_assets(url)`)
+            .select(`*, 
+              media_assets(url),
+              channels(channel_type),
+              userprofiles(email, firstname, lastname, media_assets(url))
+            `)
             .eq("user_id", user!.id);
 
         if (error) {
@@ -103,6 +107,20 @@ export const swaggerStoryGetAll = {
                             "properties": {
                               "channel_type": { "type": "string" },
                               "name": { "type": "string" }
+                            }
+                          },
+                          "userprofiles": {
+                            "type": "object",
+                            "properties": {
+                              "email": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "media_assets": { 
+                                "type": "object",
+                                "properties": {
+                                  "url":"string"
+                                }
+                              }
                             }
                           }
                         }
