@@ -210,7 +210,7 @@ const CreateStoryUI = () => {
         const { data: generatedStory, error: generateError } = await generateStory({
             payload: {
                 experienceName: options?.find((item) => item.id === destinationId)?.name,
-                locations: attractionsTitles,
+                activities: attractionsTitles,
                 notes: userInputs.userQuestionSubmission,
                 media: storageUrls,
                 brandVoice: matchedChannel?.["brand_voice"],
