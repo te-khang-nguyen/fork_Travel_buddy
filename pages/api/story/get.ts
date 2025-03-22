@@ -27,7 +27,7 @@ export default async function handler(
               experiences(name), 
               destinations(name), 
               media_assets(url), 
-              channels(channel_type, name)
+              channels(channel_type, name),
               userprofiles(email, firstname, lastname, media_assets(url))`)
             .eq("id", storyId)
             .single();

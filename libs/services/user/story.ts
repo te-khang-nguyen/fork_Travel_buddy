@@ -12,7 +12,7 @@ export interface StoryReq {
         story_content?: string;
         media?: string[];
         status?: string;
-        locations?: string[];
+        activities?: string[];
         experienceName?: string;
         storyLength?: number;
         brandVoice?: string;
@@ -80,7 +80,7 @@ const StoryApi = createApi({
               method: "POST",
               body: {
                 experience: payload?.experienceName,
-                locations: payload?.locations,
+                activities: payload?.activities,
                 notes: payload?.notes,
                 media_urls: payload?.media,
                 brand_voice: payload?.brandVoice,
