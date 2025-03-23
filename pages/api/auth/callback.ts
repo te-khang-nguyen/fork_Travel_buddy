@@ -94,8 +94,14 @@ export default async function handler(req, res) {
         .json({ error: "Failed to fetch user information." });
     }
 
-    // // Extract user ID and additional info if needed
+    // Extract user ID and additional info if needed
     const userId = user?.user?.id;
+
+    const { 
+      data: profileData 
+    } = await supabase.from("userprofiles")
+                .select("*")
+                .eq("userid", userId);
 
     if (!userId) {
       return res.status(500).json({ error: "User ID not found in response." });
@@ -105,7 +111,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       access_token,
       user_id: userId,
-      user, // Include additional user info if needed
+      profileData, // Include additional user info if needed
     });
   } catch (err) {
     console.error("Unexpected error during OAuth callback:", err);
@@ -167,7 +173,29 @@ export const swaggerCallback = {
                     "type": "string"
                   },
                   "user": {
-                    "type": "object"
+                    "type": "object",
+                    "properties": {
+                      "userid": { "type": "string" },
+                      "username": { "type": "string" },
+                      "email": { "type": "string" },
+                      "firstname": { "type": "string" },
+                      "lastname": { "type": "string" },
+                      "preferences": { "type": "string" },
+                      "facebook": { "type": "string" },
+                      "instagram": { "type": "string" },
+                      "x": { "type": "string" },
+                      "phone": { "type": "string" },
+                      "createdAt": { "type": "string" },
+                      "avatar_id": { "type": "string" },
+                      "media_assets": {
+                        "type": "object",
+                        "properties": {
+                          "url" : {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
