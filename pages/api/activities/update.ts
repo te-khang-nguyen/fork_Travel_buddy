@@ -51,7 +51,7 @@ export const swaggerBusinessActivityUpdate = {
 `"/api/v1/activities/": {
     "put": {
       "tags": ["activity"],
-      "summary": "Update activity details",
+      "summary": "Update information for an activity.",
       "description": "Update the details of a specific activity by its ID.",
       "security": [
         {

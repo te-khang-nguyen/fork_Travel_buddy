@@ -50,11 +50,11 @@ export default async function handler(
 export const swaggerDestVisitsCreate = {
     index:17, 
     text:
-`"/api/v1/experiences/visits/ ": {
+`"/api/v1/experiences/visits/": {
     "post": {
       "tags": ["visits"],
       "summary": "Store user's visits to an experience.",
-      "description": "Store user's visits to an experience."",
+      "description": "Store user's visits to an experience.",
       "security": [
         {
           "bearerAuth": []
@@ -86,7 +86,9 @@ export const swaggerDestVisitsCreate = {
                   "data": {
                     "type": "object",
                     "properties": {
-                      "created_at": { "type": "string" }
+                      "created_at": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -101,7 +103,9 @@ export const swaggerDestVisitsCreate = {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "error": { "type": "string" }
+                  "error": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -114,7 +118,9 @@ export const swaggerDestVisitsCreate = {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": { "type": "string" }
+                  "message": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -127,7 +133,9 @@ export const swaggerDestVisitsCreate = {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "error": { "type": "string" }
+                  "error": {
+                    "type": "string"
+                  }
                 }
               }
             }

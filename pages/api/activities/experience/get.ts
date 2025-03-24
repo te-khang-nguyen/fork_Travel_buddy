@@ -40,3 +40,115 @@ export default async function handler(
     }
 
 };
+
+// Workaround to enable Swagger on production 
+export const swaggerBusinessActivitiesByExperienceIdGet = {
+    index: 16,
+    text:
+`"/api/v1/activities/experience": {
+      "get": {
+        "tags": ["activity"],
+        "summary": "Get activities by experience ID for B2B user",
+        "description": "Retrieve activities by experience ID for B2B user.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "experience-id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the experience to retrieve activities for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activities retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "experience_id": { "type": "string" },
+                          "title": { "type": "string" },
+                          "primary_photo": { "type": "string" },
+                          "photos": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          },
+                          "hours": { "type": "string" },
+                          "status": { "type": "string" },
+                          "attraction_info": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "description": { "type": "string" },
+                                "description_thumbnail": { "type": "string" }
+                              }
+                            }
+                          },
+                          "description": { "type": "string" },
+                          "description_thumbnail": { "type": "string" },
+                          "url_slug": { "type": "string" },
+                          "primary_keyword": { "type": "string" },
+                          "address": { "type": "string" },
+                          "order_of_appearance": { "type": "number" },
+                          "primary_photo_id": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`
+}

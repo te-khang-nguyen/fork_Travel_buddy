@@ -45,83 +45,90 @@ export default async function handler(
 };
 
 // Workaround to enable Swagger on production 
-export const swaggerLocationGet = {
+export const swaggerDestVisitsGet = {
   index: 17,
   text:
-    `"/api/v1/experiences/visits": {
-      "get": {
-        "tags": ["visits"],
-        "summary": "Get a location by destination ID",
-        "description": "Retrieve a location by destination ID.",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "experience-id",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The ID of the destination to retrieve attractions for"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Attractions retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                        "type": "object",
-                        "properties": {
-                          "created_at": { "type": "string" },
-                        }
+`"/api/v1/experiences/visits": {
+    "get": {
+      "tags": ["visits"],
+      "summary": "Get visit information for a user by experience ID.",
+      "description": "Retrieve visit information for a user by experience ID.",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "experience-id",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "The ID of the exeprience to retrieve the visit"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Visit information retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": { "type": "string" }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string"
                   }
                 }
               }
             }
-          },
-          "405": {
-            "description": "Method not allowed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string" }
+          }
+        },
+        "405": {
+          "description": "Method not allowed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
                   }
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": { "type": "string" }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string"
                   }
                 }
               }
@@ -129,5 +136,6 @@ export const swaggerLocationGet = {
           }
         }
       }
-    }`
+    }
+  }`
 }

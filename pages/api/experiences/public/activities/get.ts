@@ -35,7 +35,7 @@ export default async function handler(
 };
 
 // Workaround to enable Swagger on production 
-export const swaggerPublicLocationGet = {
+export const swaggerPublicActivitiesGet = {
     index:16, 
     text:
 `"/api/v1/experiences/public/activities": {

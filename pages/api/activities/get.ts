@@ -46,7 +46,7 @@ export const swaggerBusinessActivityGet = {
 `"/api/v1/activities": {
     "get": {
       "tags": ["activity"],
-      "summary": "Get activity details",
+      "summary": "Get data for an activity by its ID.",
       "description": "Retrieve details of a specific activity by its ID.",
       "security": [
         {
