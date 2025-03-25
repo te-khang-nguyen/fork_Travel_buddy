@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { data: authData, error: authError } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `https://fork-tbp-fe-hosting.vercel.app/auth/callbackv1` },
+      // options: { redirectTo: `https://fork-tbp-fe-hosting.vercel.app/auth/callbackv1` },
     });
 
     if (authError) {
