@@ -72,8 +72,13 @@ export default async function handler(
 
         const { data: profileData, error: profileError } = await supabase
             .from("profile")
-            .select("*")
-            .eq("business_id", user!.id);
+            .select("business_id")
+            .eq("business_id", user!.id)
+            .single();
+        
+        if (!profileData) {
+            return res.status(400).json({ error: "This user has no access!" });
+        }
 
         if (profileError) {
             return res.status(400).json({ error: "No access!" });
@@ -81,7 +86,7 @@ export default async function handler(
 
         return res
             .status(200)
-            .json({ access_token: session.access_token, userId: session.user.id });
+            .json({ access_token: session.access_token, userId: profileData.business_id });
     } catch (err) {
         return res
             .status(500)
