@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { businessName, email, phone, password } = req.body;
+  const { businessName, email, phone, description, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required!" });
@@ -65,11 +65,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Create user profile
-    const businessname = businessName || "";
+    // const businessname = ;
     const userProfile = {
       email,
-      businessname,
+      businessname: businessName,
       phone: phone || "",
+      description: description || "",
     };
 
     const { error: profileError } = await supabase
