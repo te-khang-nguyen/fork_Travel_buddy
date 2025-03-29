@@ -47,6 +47,21 @@ export default async function handler(req, res) {
 
     // Extract user ID and additional info if needed
     const userId = user?.id;
+
+    const { data: profileData } = await supabase
+        .from("businessprofiles")
+        .select("*")
+        .single();
+
+    if(profileData){
+      // Return the access token and user ID
+      return res.status(200).json({
+        access_token,
+        user_id: userId,
+        user: profileData, // Include additional user info if needed
+      });
+    }
+
     const avatar = user?.user_metadata?.avatar_url;
     const email = user?.email;
     const userName = user?.user_metadata?.name;
@@ -72,7 +87,7 @@ export default async function handler(req, res) {
     }
 
     const { 
-      data: profileData 
+      data: newProfileData 
     } = await supabase.from("businessprofiles")
                 .insert({
                   userid: userId,
@@ -92,7 +107,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       access_token,
       user_id: userId,
-      user: profileData, // Include additional user info if needed
+      user: newProfileData, // Include additional user info if needed
     });
   } catch (err) {
     console.error("Unexpected error during OAuth callback:", err);

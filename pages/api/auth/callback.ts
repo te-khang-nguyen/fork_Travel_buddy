@@ -1,54 +1,5 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 
-/**
- * @swagger
- * /api/auth/callback:
- *   get:
- *     tags:
- *       - auth
- *     summary: OAuth callback
- *     description: Handle the OAuth callback and set the Supabase session.
- *     parameters:
- *       - in: query
- *         name: access_token
- *         schema:
- *           type: string
- *         required: true
- *         description: The access token from the OAuth provider
- *       - in: query
- *         name: refresh_token
- *         schema:
- *           type: string
- *         required: true
- *         description: The refresh token from the OAuth provider
- *       - in: query
- *         name: error
- *         schema:
- *           type: string
- *         required: false
- *         description: Error message from the OAuth provider
- *     responses:
- *       200:
- *         description: Successfully authenticated
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 access_token:
- *                   type: string
- *                 user_id:
- *                   type: string
- *                 user:
- *                   type: object
- *       400:
- *         description: Bad request
- *       405:
- *         description: Method not allowed
- *       500:
- *         description: Internal server error
- */
-
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -70,7 +21,7 @@ export default async function handler(req, res) {
 
   try {
     // Set the access token for Supabase session
-    const { data: session, error: sessionError } =
+    const { error: sessionError } =
       await supabase.auth.setSession({
         access_token,
         refresh_token,
@@ -96,6 +47,22 @@ export default async function handler(req, res) {
 
     // Extract user ID and additional info if needed
     const userId = user?.id;
+
+    const { data: profileData } = await supabase
+        .from("userprofiles")
+        .select("*")
+        .single();
+
+    if(profileData){
+      // Return the access token and user ID
+      return res.status(200).json({
+        access_token,
+        user_id: userId,
+        user: profileData, // Include additional user info if needed
+      });
+    }
+
+
     const avatar = user?.user_metadata?.avatar_url;
     const email = user?.email;
     const userName = user?.user_metadata?.name;
@@ -122,7 +89,7 @@ export default async function handler(req, res) {
     }
 
     const { 
-      data: profileData 
+      data: newProfileData 
     } = await supabase.from("userprofiles")
                 .insert({
                   userid: userId,
@@ -143,7 +110,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       access_token,
       user_id: userId,
-      user: profileData, // Include additional user info if needed
+      user: newProfileData, // Include additional user info if needed
     });
   } catch (err) {
     console.error("Unexpected error during OAuth callback:", err);
