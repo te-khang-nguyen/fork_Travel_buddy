@@ -1,54 +1,5 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 
-/**
- * @swagger
- * /api/auth/callback:
- *   get:
- *     tags:
- *       - auth
- *     summary: OAuth callback
- *     description: Handle the OAuth callback and set the Supabase session.
- *     parameters:
- *       - in: query
- *         name: access_token
- *         schema:
- *           type: string
- *         required: true
- *         description: The access token from the OAuth provider
- *       - in: query
- *         name: refresh_token
- *         schema:
- *           type: string
- *         required: true
- *         description: The refresh token from the OAuth provider
- *       - in: query
- *         name: error
- *         schema:
- *           type: string
- *         required: false
- *         description: Error message from the OAuth provider
- *     responses:
- *       200:
- *         description: Successfully authenticated
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 access_token:
- *                   type: string
- *                 user_id:
- *                   type: string
- *                 user:
- *                   type: object
- *       400:
- *         description: Bad request
- *       405:
- *         description: Method not allowed
- *       500:
- *         description: Internal server error
- */
-
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -81,7 +32,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Failed to set session." });
     }
 
-    // // Fetch user details
+    // Fetch user details
     const { 
       data: { user }, 
       error: userError 
@@ -99,8 +50,7 @@ export default async function handler(req, res) {
     const avatar = user?.user_metadata?.avatar_url;
     const email = user?.email;
     const userName = user?.user_metadata?.name;
-    const firstName = user?.user_metadata?.full_name.split(" ")[0];
-    const lastName = user?.user_metadata?.full_name.split(" ")[1]
+    const businessName = "Travel Buddy B2B";
 
     const toMediaAssets = {
       user_id: userId,
@@ -113,9 +63,9 @@ export default async function handler(req, res) {
       data: mediaData,
       error: mediaErr
     } = await supabase.from("media_assets")
-      .insert(toMediaAssets)
-      .select("*")
-      .single();
+                      .insert(toMediaAssets)
+                      .select("*")
+                      .single();
 
     if(mediaErr){
       res.status(500).json({ error: mediaErr.message });
@@ -123,14 +73,13 @@ export default async function handler(req, res) {
 
     const { 
       data: profileData 
-    } = await supabase.from("userprofiles")
+    } = await supabase.from("businessprofiles")
                 .insert({
                   userid: userId,
                   email: email,
                   username: userName,
-                  firstname: firstName,
-                  lastname: lastName,
-                  avatar_id: mediaData!.id
+                  businessname: businessName,
+                  logo_id: mediaData!.id
                 })
                 .select("*, media_assets(url)")
                 .single();
@@ -156,7 +105,7 @@ export default async function handler(req, res) {
 export const swaggerCallback = {
   index:5, 
   text:
-  `"/api/v1/auth/callback": {
+  `"/api/v1/auth/business/callback": {
     "get": {
       "tags": ["auth"],
       "summary": "OAuth callback",
@@ -210,15 +159,13 @@ export const swaggerCallback = {
                       "userid": { "type": "string" },
                       "username": { "type": "string" },
                       "email": { "type": "string" },
-                      "firstname": { "type": "string" },
-                      "lastname": { "type": "string" },
-                      "preferences": { "type": "string" },
+                      "businessname": { "type": "string" },
                       "facebook": { "type": "string" },
                       "instagram": { "type": "string" },
                       "x": { "type": "string" },
                       "phone": { "type": "string" },
-                      "createdAt": { "type": "string" },
-                      "avatar_id": { "type": "string" },
+                      "created": { "type": "string" },
+                      "logo_id": { "type": "string" },
                       "media_assets": {
                         "type": "object",
                         "properties": {
