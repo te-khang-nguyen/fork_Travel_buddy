@@ -24,7 +24,7 @@ export default async function handler(
                 experience_id,
                 user_id: user!.id
         },])
-        .select("created_at")
+        .select("created_at, experience_id")
         .single();
 
         if (error) {
@@ -47,7 +47,7 @@ export default async function handler(
 }
 
 // Workaround to enable Swagger on production 
-export const swaggerDestVisitsCreate = {
+export const swaggerExpVisitsCreate = {
     index:17, 
     text:
 `"/api/v1/experiences/visits/": {
@@ -87,6 +87,9 @@ export const swaggerDestVisitsCreate = {
                     "type": "object",
                     "properties": {
                       "created_at": {
+                        "type": "string"
+                      },
+                      "experience-id": {
                         "type": "string"
                       }
                     }
