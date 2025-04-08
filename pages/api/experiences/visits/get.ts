@@ -56,7 +56,7 @@ export default async function handler(
 export const swaggerExpVisitsGet = {
   index: 17,
   text:
-    `"/api/v1/experiences/visits": {
+`"/api/v1/experiences/visits": {
     "get": {
       "tags": ["visits"],
       "summary": "Get visit information for a user by experience ID.",
@@ -71,10 +71,10 @@ export const swaggerExpVisitsGet = {
           "in": "query",
           "name": "experience-id",
           "schema": {
-            "type": "string"
+            "type": "string",
           },
           "required": true,
-          "description": "The ID of the exeprience to retrieve the visit"
+          "description": "The ID of the experience to retrieve the visit"
         }
       ],
       "responses": {
@@ -84,15 +84,37 @@ export const swaggerExpVisitsGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["data"],
                 "properties": {
                   "data": {
                     "type": "object",
+                    "required": ["created_at", "experience_id"],
                     "properties": {
                       "created_at": {
-                        "type": "string"
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-04-08T10:00:00Z"
                       },
                       "experience_id": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                      },
+                      "stories": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["id", "created_at"],
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                            },
+                            "created_at": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-04-08T10:00:00Z"
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -107,9 +129,11 @@ export const swaggerExpVisitsGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["error"],
                 "properties": {
                   "error": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Invalid experience ID"
                   }
                 }
               }
@@ -122,9 +146,11 @@ export const swaggerExpVisitsGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["error"],
                 "properties": {
-                  "message": {
-                    "type": "string"
+                  "error": {
+                    "type": "string",
+                    "example": "Method not allowed!"
                   }
                 }
               }
@@ -137,9 +163,11 @@ export const swaggerExpVisitsGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["error"],
                 "properties": {
                   "error": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "An error has occurred while retrieving the challenge information."
                   }
                 }
               }
@@ -151,17 +179,3 @@ export const swaggerExpVisitsGet = {
   }`
 }
 
-// "stories": {
-//   "type": "array",
-//     "items": {
-//     "type": "object",
-//       "properties": {
-//       "id": {
-//         "type": "string"
-//       },
-//       "created_at": {
-//         "type": "string"
-//       }
-//     }
-//   }
-// }

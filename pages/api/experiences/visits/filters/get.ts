@@ -61,7 +61,7 @@ export default async function handler(
 export const swaggerExpVisitsFilterGet = {
   index: 17,
   text:
-    `"/api/v1/experiences/visits/filters": {
+  `"/api/v1/experiences/visits/filters": {
     "get": {
       "tags": ["visits"],
       "summary": "Get visit information for a user by experience ID.",
