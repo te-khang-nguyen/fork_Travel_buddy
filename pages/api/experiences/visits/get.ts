@@ -100,10 +100,10 @@ export const swaggerDestVisitsGet = {
                           "type": "object",
                           "properties": {
                             "id": {
-                              "type": string
+                              "type": "string"
                             },
                             "created_at": {
-                              "type": string
+                              "type": "string"
                             }
                           }
                         }
