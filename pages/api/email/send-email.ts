@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { to, mediaUrl} = req.body;
+    const { to, mediaUrl } = req.body;
 
     if (!to  || !mediaUrl) {
         return res.status(400).json({ error: 'Missing required receipient' });

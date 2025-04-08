@@ -6,8 +6,8 @@ export default async function handler(req, res) {
   }
 
   // Extract tokens and error from the query parameters
-  const{ access_token, refresh_token, error } = req.query;
-  
+  const { access_token, refresh_token, error } = req.query;
+
   if (error) {
     console.error("OAuth error:", error);
     return res.status(400).json({ error: "OAuth authentication failed." });
@@ -33,9 +33,9 @@ export default async function handler(req, res) {
     }
 
     // Fetch user details
-    const { 
-      data: { user }, 
-      error: userError 
+    const {
+      data: { user },
+      error: userError
     } = await supabase.auth.getUser(access_token);
 
     if (userError) {
@@ -49,66 +49,60 @@ export default async function handler(req, res) {
     const userId = user?.id;
 
     const { data: profileData } = await supabase
-        .from("businessprofiles")
-        .select("*")
-        .single();
+      .from("businessprofiles")
+      .select("*")
+      .single();
 
-    if(profileData){
+    if (profileData && profileData !== null) {
+      console.log("Existing profile:", profileData);
       // Return the access token and user ID
       return res.status(200).json({
         access_token,
         user_id: userId,
         user: profileData, // Include additional user info if needed
       });
+    } else {
+      const avatar = user?.user_metadata?.avatar_url;
+      const email = user?.email;
+      const userName = user?.user_metadata?.name;
+      const businessName = "Travel Buddy B2B";
+
+      const toMediaAssets = {
+        user_id: userId,
+        url: avatar,
+        usage: "avatar",
+        mime_type: "image/jpeg",
+      };
+
+      const { data: mediaData, error: mediaErr } = await supabase
+        .from("media_assets")
+        .insert(toMediaAssets)
+        .select("*")
+        .single();
+
+      if (mediaErr) {
+        res.status(500).json({ error: mediaErr.message });
+      }
+
+      const { data: newProfileData } = await supabase
+        .from("businessprofiles")
+        .insert({
+          businessid: userId,
+          email: email,
+          username: userName,
+          businessname: businessName,
+          avatar_id: mediaData!.id,
+        })
+        .select("*, media_assets(url)")
+        .single();
+      console.log("New profile:", newProfileData);
+      // Return the access token and user ID
+      return res.status(200).json({
+        access_token,
+        user_id: userId,
+        user: newProfileData, // Include additional user info if needed
+      });
     }
-
-    const avatar = user?.user_metadata?.avatar_url;
-    const email = user?.email;
-    const userName = user?.user_metadata?.name;
-    const businessName = "Travel Buddy B2B";
-
-    const toMediaAssets = {
-      user_id: userId,
-      url: avatar,
-      usage: "avatar",
-      mime_type: "image/jpeg"
-    }
-
-    const {
-      data: mediaData,
-      error: mediaErr
-    } = await supabase.from("media_assets")
-                      .insert(toMediaAssets)
-                      .select("*")
-                      .single();
-
-    if(mediaErr){
-      res.status(500).json({ error: mediaErr.message });
-    }
-
-    const { 
-      data: newProfileData 
-    } = await supabase.from("businessprofiles")
-                .insert({
-                  userid: userId,
-                  email: email,
-                  username: userName,
-                  businessname: businessName,
-                  logo_id: mediaData!.id
-                })
-                .select("*, media_assets(url)")
-                .single();
-
-    if (!userId) {
-      return res.status(500).json({ error: "User ID not found in response." });
-    }
-
-    // Return the access token and user ID
-    return res.status(200).json({
-      access_token,
-      user_id: userId,
-      user: newProfileData, // Include additional user info if needed
-    });
   } catch (err) {
     console.error("Unexpected error during OAuth callback:", err);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -118,9 +112,9 @@ export default async function handler(req, res) {
 
 // Workaround to enable Swagger on production 
 export const swaggerCallback = {
-  index:5, 
+  index: 5,
   text:
-  `"/api/v1/auth/business/callback": {
+    `"/api/v1/auth/business/callback": {
     "get": {
       "tags": ["auth"],
       "summary": "OAuth callback",

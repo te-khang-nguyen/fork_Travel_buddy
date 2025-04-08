@@ -8,12 +8,12 @@ export default async function handler(
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed!" });
   }
-
-  const experienceId = req.query["experience-id"];
   // Extract authorization token
   const token = req.headers.authorization?.split(" ")[1];
   // Create Supabase client
   const supabase = createApiClient(token);
+
+  const [filter] = Object.values(req.query);
 
   const {
     data: { user },
@@ -25,24 +25,29 @@ export default async function handler(
       error
     } = await supabase
       .from("visits")
-      .select("created_at, exprience_id")
-      .eq("user_id", user!.id)
-      .eq("experience_id", experienceId)
-      .single();
+      .select("created_at, experience_id")
+      .eq("user_id", user!.id);
+
+    const {
+      data: storiesData,
+    } = await supabase
+      .from("stories")
+      .select("experience_id")
+      .eq("user_id", user!.id);
+
+    const nonStoryFilter = queryData?.filter(
+      (visit)=> !storiesData?.find((e) => e.experience_id === visit.experience_id)
+    );
+
+    const withStoryFilter = queryData?.filter(
+      (visit)=> storiesData?.find((e) => e.experience_id === visit.experience_id)
+    );
 
     if (error) {
       return res.status(400).json({ error: error.message });
     }
 
-    const {
-      data: storiesData
-    } = await supabase
-      .from("stories")
-      .select("id, created_at")
-      .eq("user_id", user!.id)
-      .eq("experience_id", experienceId);
-
-    return res.status(200).json({ data: {...queryData, stories: storiesData} });
+    return res.status(200).json({ data: filter==="with-story"? withStoryFilter : nonStoryFilter  });
   } catch (err: any) {
     return res.status(500).json({
       error: err.message ||
@@ -56,7 +61,7 @@ export default async function handler(
 export const swaggerDestVisitsGet = {
   index: 17,
   text:
-`"/api/v1/experiences/visits": {
+    `"/api/v1/experiences/visits/filters": {
     "get": {
       "tags": ["visits"],
       "summary": "Get visit information for a user by experience ID.",
@@ -69,12 +74,13 @@ export const swaggerDestVisitsGet = {
       "parameters": [
         {
           "in": "query",
-          "name": "experience-id",
+          "name": "filter",
           "schema": {
             "type": "string"
+            "example": without-filter
           },
           "required": true,
-          "description": "The ID of the exeprience to retrieve the visit"
+          "description": "The filter condition. Can only be 'with-story' or 'without-story'"
         }
       ],
       "responses": {
@@ -93,20 +99,6 @@ export const swaggerDestVisitsGet = {
                       },
                       "experience_id": {
                         "type": "string"
-                      },
-                      "stories": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": string
-                            },
-                            "created_at": {
-                              "type": string
-                            }
-                          }
-                        }
                       }
                     }
                   }
