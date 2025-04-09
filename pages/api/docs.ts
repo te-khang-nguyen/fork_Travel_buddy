@@ -1,9 +1,5 @@
-// pages/api/docs.js
-import swaggerJsdoc from 'swagger-jsdoc';
-
+import { baseUrl } from '@/app/constant';
 import * as swaggerObjs from '.';
-
-// import * as path from 'path';
 
 const swaggerDefinition = {
   openapi: '3.0.0',
@@ -14,7 +10,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:3000/',// 'https://fork-travel-buddy.vercel.app/', // Add your production URL
+      url: baseUrl, // Add your production URL
       description: 'Production server'
     }
   ],
@@ -28,11 +24,6 @@ const swaggerDefinition = {
       }
     }
   },
-  // security: [
-  //   {
-  //     bearerAuth: []
-  //   }
-  // ]
 };
 
 const unSortedSwaggerObjs = Object.values(swaggerObjs).map((obj) => obj);
@@ -45,7 +36,6 @@ const swaggerSpec = {
   "paths": JSON.parse(paths),
 }
 
-// const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 export default function handler(req, res) {
   if (req.method === 'GET') {
@@ -56,46 +46,3 @@ export default function handler(req, res) {
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
-
-
-// import { createSwaggerSpec } from "next-swagger-doc";
-
-// export const getApiDocs = async () => {
-//   const spec = createSwaggerSpec({
-//     apiFolder: "pages/app", // define api folder under app folder
-//     definition: {
-//       openapi: "3.0.0",
-//       info: {
-//         title: "Travel Buddy API",
-//         version: "1.0.0",
-//         description: "API documentation for the Travel Buddy project",
-//       },
-//       servers: [
-//         {
-//           url: 'https://fork-travel-buddy.vercel.app', // Add your production URL
-//           description: 'Production server'
-//         }
-//       ],
-//       components: {
-//         securitySchemes: {
-//           BearerAuth: {
-//             type: "http",
-//             scheme: "bearer",
-//             bearerFormat: "JWT",
-//           },
-//         },
-//       },
-//       security: [
-//         {
-//           BearerAuth: [],
-//         },
-//       ],
-//     },
-//   });
-//   return spec;
-// };
-
-// export default async (req, res) => {
-//   const spec = await getApiDocs();
-//   res.json(spec);
-// };
