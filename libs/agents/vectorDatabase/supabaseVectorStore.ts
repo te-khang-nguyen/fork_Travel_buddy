@@ -42,7 +42,7 @@ const supabaseVectorDb = async ({
     );
 
     const vectorStore = new SupabaseVectorStore(embeddings, {
-        client: customSupabaseClient,
+        client: customSupabaseClient as any,
         tableName: withAnalyzer ? "document_implicit_contents" : "documents",
         queryName: withAnalyzer ? "match_document_implicit_contents" : "match_documents",
     });

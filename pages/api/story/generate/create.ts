@@ -23,7 +23,7 @@ export default async function handler(
     brand_voice,
     story_length,
     channel_type,
-    withNewSource
+    with_new_source
   } = req.body;
 
   try {
@@ -36,6 +36,7 @@ export default async function handler(
       brand_voice,
       channel_type,
       story_length,
+      with_new_source
     );
 
     if (error) {
