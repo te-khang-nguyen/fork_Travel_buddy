@@ -37,21 +37,22 @@ async function generateStories(
     media: string[],
     brandVoice: string,
     channelType: string,
-    storyLength: number = 70
+    storyLength: number = 70,
+    withNewSource: boolean = false
 ): Promise<any> {
     let chatInitialCompletion: string | null
     let chatSeoCompletion: string | null;
 
     // Init vertor store for original reference sources
     const supabaseVectorStoreRaw = await supabaseVectorDb({
-        // dataPreparation: airTableDataPrep,
+        dataPreparation: withNewSource? airTableDataPrep: undefined,
         chunkSize: 2000,
         chunkOverlap: 20
     });
 
     // Init vertor store for featrue extracted from reference sources
     const supabaseVectorStoreImplicit = await supabaseVectorDb({
-        // dataPreparation: airTableDataPrep,
+        dataPreparation: withNewSource? airTableDataPrep: undefined,
         withAnalyzer: true,
         chunkSize: 2000,
         chunkOverlap: 20

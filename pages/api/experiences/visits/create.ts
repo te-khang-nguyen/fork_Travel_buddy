@@ -67,7 +67,7 @@ export const swaggerExpVisitsCreate = {
             "schema": {
               "type": "object",
               "properties": {
-                "experience-id": {
+                "experience_id": {
                   "type": "string"
                 }
               }

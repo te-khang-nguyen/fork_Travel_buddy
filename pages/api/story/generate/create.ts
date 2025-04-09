@@ -22,7 +22,8 @@ export default async function handler(
     media_urls,
     brand_voice,
     story_length,
-    channel_type
+    channel_type,
+    withNewSource
   } = req.body;
 
   try {

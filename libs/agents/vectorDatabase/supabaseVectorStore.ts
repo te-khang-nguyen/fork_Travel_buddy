@@ -11,7 +11,7 @@ import loadersPrep from "./documentLoaders";
 
 const supabaseVectorDb = async ({
     dataPreparation,
-    embeddingModel = "gemini-embedding-exp-03-07",
+    embeddingModel = "models/text-embedding-004",
     rawDocs = [],
     chunkSize,
     chunkOverlap,
@@ -20,19 +20,25 @@ const supabaseVectorDb = async ({
 
     // To use gemini embedding, create new supabase tables with the embedding vector dimension as 3072.
     // Then process and store the data sources again under the new vertor embedding scheme.
-    // const embeddings = new GoogleGenerativeAIEmbeddings({
-    //         model: embeddingModel, // 768 dimensions
-    //         taskType: TaskType.RETRIEVAL_DOCUMENT,
-    //         title: "Document title",
-    // });
-
-    const embeddings = new OpenAIEmbeddings({
-        model: "text-embedding-3-small",
+    const embeddings = new GoogleGenerativeAIEmbeddings({
+            apiKey: process.env.GOOGLE_API_KEY,
+            model: embeddingModel, // 768 dimensions
+            taskType: TaskType.RETRIEVAL_DOCUMENT,
+            title: "Document title",
     });
 
+    // const embeddings = new OpenAIEmbeddings({
+    //     model: "text-embedding-3-small",
+    // });
+
     const customSupabaseClient = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_VECTORSTORE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_VECTORSTORE_ANON_KEY!,
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            db: {
+                schema: "vector_store"
+            }
+        }
     );
 
     const vectorStore = new SupabaseVectorStore(embeddings, {
