@@ -50,6 +50,11 @@ export const swaggerBusinessActivitiesByExperienceIdGet = {
         "tags": ["activity"],
         "summary": "Get activities by experience ID for B2B user",
         "description": "Retrieve activities by experience ID for B2B user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "query",

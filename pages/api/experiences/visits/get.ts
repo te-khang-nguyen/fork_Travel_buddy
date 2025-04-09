@@ -71,7 +71,7 @@ export const swaggerExpVisitsGet = {
           "in": "query",
           "name": "experience-id",
           "schema": {
-            "type": "string",
+            "type": "string"
           },
           "required": true,
           "description": "The ID of the experience to retrieve the visit"
@@ -84,15 +84,12 @@ export const swaggerExpVisitsGet = {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["data"],
                 "properties": {
                   "data": {
                     "type": "object",
-                    "required": ["created_at", "experience_id"],
                     "properties": {
                       "created_at": {
                         "type": "string",
-                        "format": "date-time",
                         "example": "2024-04-08T10:00:00Z"
                       },
                       "experience_id": {
@@ -103,14 +100,12 @@ export const swaggerExpVisitsGet = {
                         "type": "array",
                         "items": {
                           "type": "object",
-                          "required": ["id", "created_at"],
                           "properties": {
                             "id": {
-                              "type": "string",
+                              "type": "string"
                             },
                             "created_at": {
                               "type": "string",
-                              "format": "date-time",
                               "example": "2024-04-08T10:00:00Z"
                             }
                           }

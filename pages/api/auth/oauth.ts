@@ -49,7 +49,7 @@ export const swaggerOAuth = {
                 "provider": {
                   "type": "string",
                   "description": "The OAuth provider"
-                }
+                },
                 "redirectLink": {
                   "type": "string",
                   "description": "The callback link to redirect user to after OAuth"

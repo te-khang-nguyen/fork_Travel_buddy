@@ -61,7 +61,7 @@ export default async function handler(
 export const swaggerExpVisitsFilterGet = {
   index: 17,
   text:
-  `"/api/v1/experiences/visits/filters": {
+`"/api/v1/experiences/visits/filters": {
     "get": {
       "tags": ["visits"],
       "summary": "Get visit information for a user by experience ID.",
@@ -76,8 +76,9 @@ export const swaggerExpVisitsFilterGet = {
           "in": "query",
           "name": "filter",
           "schema": {
-            "type": "string"
-            "example": without-filter
+            "type": "string",
+            "example": "without-story",
+            "enum": ["with-story", "without-story"]
           },
           "required": true,
           "description": "The filter condition. Can only be 'with-story' or 'without-story'"
@@ -92,13 +93,18 @@ export const swaggerExpVisitsFilterGet = {
                 "type": "object",
                 "properties": {
                   "data": {
-                    "type": "object",
-                    "properties": {
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "experience_id": {
-                        "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "experience_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        }
                       }
                     }
                   }
@@ -113,6 +119,7 @@ export const swaggerExpVisitsFilterGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["error"],
                 "properties": {
                   "error": {
                     "type": "string"
@@ -128,6 +135,7 @@ export const swaggerExpVisitsFilterGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["message"],
                 "properties": {
                   "message": {
                     "type": "string"
@@ -143,6 +151,7 @@ export const swaggerExpVisitsFilterGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["error"],
                 "properties": {
                   "error": {
                     "type": "string"
