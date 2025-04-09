@@ -25,7 +25,7 @@ export default async function handler(
       error
     } = await supabase
       .from("visits")
-      .select("created_at, exprience_id")
+      .select("created_at, experience_id")
       .eq("user_id", user!.id)
       .eq("experience_id", experienceId)
       .single();
