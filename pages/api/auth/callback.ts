@@ -52,9 +52,9 @@ export default async function handler(req, res) {
     const userName = user?.user_metadata?.name;
     const firstName = user?.user_metadata?.full_name.split(" ")[0];
     const lastName = user?.user_metadata?.full_name.split(" ")[1];
-    const lastSignInAt = new Date(user?.last_sign_in_at!);
+    const lastSignInAt = new Date(user?.last_sign_in_at ?? "");
     const lastSignInAtString = lastSignInAt.toISOString().split(".")[0];
-    const createdAt = new Date(user?.created_at!);
+    const createdAt = new Date(user?.created_at ?? "");
     const createdAtString = createdAt.toISOString().split(".")[0];
     const firstTime = (createdAtString === lastSignInAtString) 
       || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000);
