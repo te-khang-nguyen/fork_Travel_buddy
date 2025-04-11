@@ -47,6 +47,17 @@ export default async function handler(req, res) {
 
     // Extract user ID and additional info if needed
     const userId = user?.id;
+    const avatar = user?.user_metadata?.avatar_url;
+    const email = user?.email;
+    const userName = user?.user_metadata?.name;
+    const firstName = user?.user_metadata?.full_name.split(" ")[0];
+    const lastName = user?.user_metadata?.full_name.split(" ")[1];
+    const lastSignInAt = new Date(user?.last_sign_in_at!);
+    const lastSignInAtString = lastSignInAt.toISOString().split(".")[0];
+    const createdAt = new Date(user?.created_at!);
+    const createdAtString = createdAt.toISOString().split(".")[0];
+    const firstTime = (createdAtString === lastSignInAtString) 
+      || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000);
 
     const { data: profileData } = await supabase
         .from("userprofiles")
@@ -61,13 +72,6 @@ export default async function handler(req, res) {
         user: profileData, // Include additional user info if needed
       });
     }
-
-
-    const avatar = user?.user_metadata?.avatar_url;
-    const email = user?.email;
-    const userName = user?.user_metadata?.name;
-    const firstName = user?.user_metadata?.full_name.split(" ")[0];
-    const lastName = user?.user_metadata?.full_name.split(" ")[1]
 
     const toMediaAssets = {
       user_id: userId,
@@ -110,6 +114,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       access_token,
       user_id: userId,
+      first_time: firstTime,
       user: newProfileData, // Include additional user info if needed
     });
   } catch (err) {
@@ -170,6 +175,9 @@ export const swaggerCallback = {
                   },
                   "user_id": {
                     "type": "string"
+                  },
+                  "first_time": {
+                    "type": "boolean"
                   },
                   "user": {
                     "type": "object",
