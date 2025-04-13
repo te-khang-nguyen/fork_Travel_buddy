@@ -95,6 +95,7 @@ export const swaggerProfileCreate = {
           "application/json": {
             "schema": {
               "type": "object",
+              "required": ["firstname", "lastname"],
               "properties": {
                 "username": { "type": "string" },
                 "email": { "type": "string" },
@@ -104,7 +105,7 @@ export const swaggerProfileCreate = {
                 "facebook": { "type": "string" },
                 "instagram": { "type": "string" },
                 "x": { "type": "string" },
-                "phone": { "type": "string" },
+                "phone": { "type": "string" }
               }
             }
           }

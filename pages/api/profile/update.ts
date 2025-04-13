@@ -98,8 +98,7 @@ export const swaggerProfileUpdate = {
                       "facebook": { "type": "string" },
                       "instagram": { "type": "string" },
                       "x": { "type": "string" },
-                      "phone": { "type": "string" },
-                      "createdAt": { "type": "string" }
+                      "phone": { "type": "string" }
               }
             }
           }
