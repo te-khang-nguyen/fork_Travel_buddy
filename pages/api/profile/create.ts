@@ -65,7 +65,7 @@ export default async function handler(
 }
 
 // Workaround to enable Swagger on production 
-export const swaggerProfileUpdate = {
+export const swaggerProfileCreate = {
     index:8, 
     text:
 `"/api/v1/profile/ ": {

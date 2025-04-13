@@ -62,6 +62,7 @@ export default async function handler(req, res) {
     const { data: profileData } = await supabase
         .from("userprofiles")
         .select("*")
+        .eq("userid", userId)
         .single();
     
     

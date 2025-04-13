@@ -6,6 +6,7 @@ export { swaggerUserLogout } from './auth/logout';
 export { swaggerCallback } from './auth/callback';
 export { swaggerOAuth } from './auth/oauth';
 export { swaggerProfileGet } from './profile/get';
+export { swaggerProfileCreate } from './profile/create';
 export { swaggerProfileUpdate } from './profile/update';
 export { swaggerProfileAvatarUpdate } from './profile/avatar/update';
 export { swaggerBusinessProfileGet } from './profile/business/get';
