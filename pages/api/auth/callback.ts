@@ -65,8 +65,6 @@ export default async function handler(req, res) {
         .eq("userid", userId)
         .single();
     
-    
-
     if(profileData){
       // Return the access token and user ID
       return res.status(200).json({
@@ -120,7 +118,6 @@ export default async function handler(req, res) {
         });
       }
     }
-
     
   } catch (err) {
     console.error("Unexpected error during OAuth callback:", err);

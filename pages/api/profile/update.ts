@@ -90,7 +90,7 @@ export const swaggerProfileUpdate = {
             "schema": {
               "type": "object",
               "properties": {
-                "username": { "type": "string" },
+                      "username": { "type": "string" },
                       "email": { "type": "string" },
                       "firstname": { "type": "string" },
                       "lastname": { "type": "string" },
