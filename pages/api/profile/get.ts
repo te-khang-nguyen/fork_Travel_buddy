@@ -59,7 +59,7 @@ export const swaggerProfileGet = {
           "schema": {
             "type": "string"
           },
-          "required": true,
+          "required": false,
           "description": "The role of the user ('business' for B2B profiles, 'user'/empty for Traveler profiles)"
         }
       ],
