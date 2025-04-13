@@ -6,8 +6,8 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'PUT') {
-        res.status(405).send({ message: 'Only PUT requests allowed' });
+    if (req.method !== 'POST') {
+        res.status(405).send({ message: 'Method not allowed' });
         return;
     }
 
@@ -20,7 +20,12 @@ export default async function handler(
         data: { user },
     } = await supabase.auth.getUser(token);
 
-    
+    const lastSignInAt = new Date(user?.last_sign_in_at ?? "");
+    const lastSignInAtString = lastSignInAt.toISOString().split(".")[0];
+    const createdAt = new Date(user?.created_at ?? "");
+    const createdAtString = createdAt.toISOString().split(".")[0];
+    const firstTime = (createdAtString === lastSignInAtString) 
+      || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000);
 
     try {
         if ("email" in Object.keys(payload)) {
@@ -39,10 +44,11 @@ export default async function handler(
             data: updateData, 
             error: updateError
         } = await supabase.from(`${finalRole}profiles`)
-                    .update({
+                    .insert({
+                        [`${finalRole}id`]: user!.id,
+                        email: payload?.email ?? user?.email,
                         ...payload
                     })
-                    .eq(`${finalRole}id`, user!.id)
                     .select()
                     .single();
 
@@ -50,7 +56,7 @@ export default async function handler(
             return res.status(400).json({ error: updateError });
         }
 
-        return res.status(200).json({ data: updateData });
+        return res.status(200).json({ data: {...updateData, first_time: firstTime} });
     } catch (err: any) {
         return res.status(500).json({ 
             error: err.message || "An error occurred while updating user profile"
@@ -62,11 +68,11 @@ export default async function handler(
 export const swaggerProfileUpdate = {
     index:8, 
     text:
-`"/api/v1/profile/": {
-    "put": {
+`"/api/v1/profile/ ": {
+    "post": {
       "tags": ["profile"],
-      "summary": "Update user profile",
-      "description": "Update the profile of a user based on their role.",
+      "summary": "Create a user profile",
+      "description": "Create a new profile of a auth user.",
       "security": [
         {
           "bearerAuth": []
@@ -89,17 +95,17 @@ export const swaggerProfileUpdate = {
           "application/json": {
             "schema": {
               "type": "object",
+              "required": ["firstname", "lastname"],
               "properties": {
                 "username": { "type": "string" },
-                      "email": { "type": "string" },
-                      "firstname": { "type": "string" },
-                      "lastname": { "type": "string" },
-                      "preferences": { "type": "string" },
-                      "facebook": { "type": "string" },
-                      "instagram": { "type": "string" },
-                      "x": { "type": "string" },
-                      "phone": { "type": "string" },
-                      "createdAt": { "type": "string" }
+                "email": { "type": "string" },
+                "firstname": { "type": "string" },
+                "lastname": { "type": "string" },
+                "preferences": { "type": "string" },
+                "facebook": { "type": "string" },
+                "instagram": { "type": "string" },
+                "x": { "type": "string" },
+                "phone": { "type": "string" },
               }
             }
           }
@@ -133,6 +139,9 @@ export const swaggerProfileUpdate = {
                       },
                       "updated_at": {
                         "type": "string"
+                      },
+                      "first_time": {
+                        "type": "boolean"
                       }
                     }
                   }

@@ -12,6 +12,7 @@ export default async function handler(
     }
 
     const { role } = req.query;
+    const finalRole = role === "user" || !role ? "user" : "business";
 
     const token = req.headers.authorization?.split(' ')[1];
 
@@ -21,9 +22,9 @@ export default async function handler(
 
     try {
         const { data: profileData, error } = await supabase
-            .from(`${role}profiles`)
+            .from(`${finalRole}profiles`)
             .select('*, media_assets(url)')
-            .eq(`${role}id`, user!.id)
+            .eq(`${finalRole}id`, user!.id)
             .single();
 
         if (error) {
@@ -59,7 +60,7 @@ export const swaggerProfileGet = {
             "type": "string"
           },
           "required": true,
-          "description": "The role of the user (e.g., 'business', 'user')"
+          "description": "The role of the user ('business' for B2B profiles, 'user'/empty for Traveler profiles)"
         }
       ],
       "responses": {

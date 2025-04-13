@@ -63,12 +63,15 @@ export default async function handler(req, res) {
         .from("userprofiles")
         .select("*")
         .single();
+    
+    
 
     if(profileData){
       // Return the access token and user ID
       return res.status(200).json({
         access_token,
         user_id: userId,
+        first_time: firstTime,
         user: profileData, // Include additional user info if needed
       });
     }
@@ -106,17 +109,16 @@ export default async function handler(req, res) {
                 .select("*, media_assets(url)")
                 .single();
 
-    if (!userId) {
-      return res.status(500).json({ error: "User ID not found in response." });
+    if (!newProfileData) {
+      return res.status(500).json({ error: "Fail to create new profile for OAuth user." });
+    } else {
+      return res.status(200).json({
+        access_token,
+        user_id: userId,
+        first_time: firstTime,
+        user: newProfileData, // Include additional user info if needed
+      });
     }
-
-    // Return the access token and user ID
-    return res.status(200).json({
-      access_token,
-      user_id: userId,
-      first_time: firstTime,
-      user: newProfileData, // Include additional user info if needed
-    });
   } catch (err) {
     console.error("Unexpected error during OAuth callback:", err);
     return res.status(500).json({ error: "Internal Server Error" });

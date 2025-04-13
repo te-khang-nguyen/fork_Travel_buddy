@@ -53,7 +53,7 @@ export default async function handler(
 export const swaggerBusinessProfileGet = {
   index:9, 
   text:
-`"/api/v1/business/profile": {
+`"/api/v1/profile/business": {
     "get": {
       "tags": ["profile"],
       "summary": "Retrieve a business profile by ID",

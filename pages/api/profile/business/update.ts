@@ -53,7 +53,7 @@ export default async function handler(
 export const swaggerBusinessProfileUpdate = {
     index:9, 
     text:
-`"/api/v1/business/profile/": {
+`"/api/v1/profile/business/": {
     "put": {
       "tags": ["profile"],
       "summary": "Update a B2B profile",
