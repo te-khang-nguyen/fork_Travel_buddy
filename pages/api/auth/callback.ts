@@ -75,51 +75,53 @@ export default async function handler(req, res) {
         first_time: firstTime,
         user: profileData, // Include additional user info if needed
       });
-    }
-
-    const toMediaAssets = {
-      user_id: userId,
-      url: avatar,
-      usage: "avatar",
-      mime_type: "image/jpeg"
-    }
-
-    const {
-      data: mediaData,
-      error: mediaErr
-    } = await supabase.from("media_assets")
-      .insert(toMediaAssets)
-      .select("*")
-      .single();
-
-    if(mediaErr){
-      res.status(500).json({ error: mediaErr.message });
-    }
-
-    const { 
-      data: newProfileData 
-    } = await supabase.from("userprofiles")
-                .insert({
-                  userid: userId,
-                  email: email,
-                  username: userName,
-                  firstname: firstName,
-                  lastname: lastName,
-                  avatar_id: mediaData!.id
-                })
-                .select("*, media_assets(url)")
-                .single();
-
-    if (!newProfileData) {
-      return res.status(500).json({ error: "Fail to create new profile for OAuth user." });
     } else {
-      return res.status(200).json({
-        access_token,
+      const toMediaAssets = {
         user_id: userId,
-        first_time: firstTime,
-        user: newProfileData, // Include additional user info if needed
-      });
+        url: avatar,
+        usage: "avatar",
+        mime_type: "image/jpeg"
+      }
+  
+      const {
+        data: mediaData,
+        error: mediaErr
+      } = await supabase.from("media_assets")
+        .insert(toMediaAssets)
+        .select("*")
+        .single();
+  
+      if(mediaErr){
+        res.status(500).json({ error: mediaErr.message });
+      }
+  
+      const { 
+        data: newProfileData 
+      } = await supabase.from("userprofiles")
+                  .insert({
+                    userid: userId,
+                    email: email,
+                    username: userName,
+                    firstname: firstName,
+                    lastname: lastName,
+                    avatar_id: mediaData!.id
+                  })
+                  .select("*, media_assets(url)")
+                  .single();
+  
+      if (!newProfileData) {
+        return res.status(500).json({ error: "Fail to create new profile for OAuth user." });
+      } else {
+        return res.status(200).json({
+          access_token,
+          user_id: userId,
+          first_time: firstTime,
+          user: newProfileData, // Include additional user info if needed
+        });
+      }
     }
+
+    
   } catch (err) {
     console.error("Unexpected error during OAuth callback:", err);
     return res.status(500).json({ error: "Internal Server Error" });
