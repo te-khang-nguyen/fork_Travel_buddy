@@ -85,7 +85,7 @@ export const swaggerProfileCreate = {
           "schema": {
             "type": "string"
           },
-          "required": true,
+          "required": false,
           "description": "The role of the user ('business' for B2B profiles, 'user'/empty for Traveler profiles)"
         }
       ],
@@ -95,6 +95,7 @@ export const swaggerProfileCreate = {
           "application/json": {
             "schema": {
               "type": "object",
+              "required": ["firstname", "lastname"],
               "properties": {
                 "username": { "type": "string" },
                 "email": { "type": "string" },
