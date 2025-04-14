@@ -44,7 +44,7 @@ export const swaggerExpGet = {
   text:
     `"/api/v1/experiences": {
       "get": {
-        "tags": ["experience"],
+        "tags": ["experience (Auth-user)"],
         "summary": "Get a experience by ID",
         "description": "Retrieve a experience by its ID.",
         "security": [

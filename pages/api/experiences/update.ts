@@ -51,7 +51,7 @@ export const swaggerExpUpdate = {
     text:
 `"/api/v1/experiences/": {
       "put": {
-        "tags": ["experience"],
+        "tags": ["B2B-experience"],
         "summary": "Update a destination",
         "description": "Update the details of an existing destination.",
         "security": [

@@ -71,7 +71,7 @@ export const swaggerExpDetailsCreate = {
     text:
 ` "/api/v1/experiences/details/": {
       "post": {
-        "tags": ["experience"],
+        "tags": ["B2B-experience"],
         "summary": "Create destination details",
         "description": "Create new details for a destination.",
         "security": [

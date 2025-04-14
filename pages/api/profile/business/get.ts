@@ -55,7 +55,7 @@ export const swaggerBusinessProfileGet = {
   text:
 `"/api/v1/profile/business": {
     "get": {
-      "tags": [B2B-profile],
+      "tags": ["B2B-profile"],
       "summary": "Retrieve a business profile by ID",
       "description": "Retrieve the profile of a B2B user.",
       "security": [

@@ -55,7 +55,7 @@ export const swaggerDestLocationLink = {
     text:
 `"/api/v1/experiences/locations/": {
     "post": {
-      "tags": ["experience"],
+      "tags": ["B2B-experience"],
       "summary": "Link a location to an experience",
       "description": "Link a location to an experience.",
       "security": [

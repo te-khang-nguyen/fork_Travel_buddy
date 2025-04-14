@@ -41,7 +41,7 @@ export const swaggerExpGetAll = {
     text:
   `"/api/v1/experiences/business  ": {
       "get": {
-        "tags": ["experience"],
+        "tags": ["B2B-experience"],
         "summary": "Get all experiences",
         "description": "Retrieve all experiences.",
         "security": [
