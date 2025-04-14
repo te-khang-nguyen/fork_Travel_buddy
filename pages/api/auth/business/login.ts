@@ -101,7 +101,7 @@ export const swaggerBussLogin = {
   text:
     `"/api/v1/auth/business/login": {
       "post": {
-        "tags": [B2B-auth],
+        "tags": ["B2B-auth"],
         "summary": "Business login",
         "description": "Authenticate a business user.",
         "requestBody": {

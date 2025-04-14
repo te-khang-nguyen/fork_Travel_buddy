@@ -5,7 +5,7 @@ export { swaggerUserLogin } from './auth/login';
 export { swaggerUserLogout } from './auth/logout';
 export { swaggerCallback } from './auth/callback';
 export { swaggerOAuth } from './auth/oauth';
-// export { swaggerUserAuthNewSession } from './auth/new-session';
+export { swaggerUserAuthNewSession } from './auth/new-session';
 export { swaggerProfileGet } from './profile/get';
 // export { swaggerProfileCreate } from './profile/create';
 export { swaggerProfileUpdate } from './profile/update';
