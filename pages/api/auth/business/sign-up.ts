@@ -51,14 +51,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { businessName, email, phone, description, password } = req.body;
+  const { businessName, email, phone, description, password, parent } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required!" });
   }
 
   try {
-    const { error: authError } = await supabase.auth.signUp({ email, password });
+    const { 
+      data: { user },
+      error: authError 
+    } = await supabase.auth.signUp({ email, password });
+
+    const userId = user?.id;
 
     if (authError) {
       return res.status(400).json({ error: authError.message });
@@ -79,6 +84,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (profileError) {
       return res.status(400).json({ error: profileError.message });
+    }
+
+    if (parent) {
+      const { data: orgProfileData } = await supabase
+        .from("businessprofiles")
+        .select("*")
+        .eq("businessname", parent)
+        .single();
+
+      const { error: orgProfileError }  = await supabase
+        .from("businessprofiles")
+        .update({
+          editors : orgProfileData?.editors ? 
+          [...orgProfileData.editors, userId] : [userId],
+        })
+        .eq("businessname", parent)
+        .select("editors")
+        .single();
+      
+      if (orgProfileError) {
+        return res.status(400).json({ error: orgProfileError.message });
+      }
     }
 
     await supabase.auth.signOut();
@@ -119,6 +146,10 @@ export const swaggerBussSignup = {
                 "password": {
                   "type": "string",
                   "description": "The password for the business user account"
+                },
+                "parent": {
+                  "type": "string",
+                  "description": "The parent business name (optional)"
                 }
               }
             }
