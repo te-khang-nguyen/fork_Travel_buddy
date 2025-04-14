@@ -73,6 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // const businessname = ;
     const userProfile = {
       email,
+      username: user?.user_metadata?.name,
       businessname: businessName,
       phone: phone || "",
       description: description || "",

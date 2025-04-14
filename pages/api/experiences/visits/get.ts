@@ -22,17 +22,12 @@ export default async function handler(
   try {
     const {
       data: queryData,
-      error
     } = await supabase
       .from("visits")
       .select("created_at, experience_id")
       .eq("user_id", user!.id)
       .eq("experience_id", experienceId)
       .single();
-
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    }
 
     const {
       data: storiesData
@@ -42,7 +37,7 @@ export default async function handler(
       .eq("user_id", user!.id)
       .eq("experience_id", experienceId);
 
-    return res.status(200).json({ data: { ...queryData, stories: storiesData } });
+    return res.status(200).json({ data: { visit: queryData? queryData : null , stories: storiesData } });
   } catch (err: any) {
     return res.status(500).json({
       error: err.message ||
@@ -88,13 +83,16 @@ export const swaggerExpVisitsGet = {
                   "data": {
                     "type": "object",
                     "properties": {
-                      "created_at": {
-                        "type": "string",
-                        "example": "2024-04-08T10:00:00Z"
-                      },
-                      "experience_id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                      "visit": {
+                        "type": "object",
+                        "properties": {
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "experience_id": {
+                            "type": "string"
+                          }
+                        }
                       },
                       "stories": {
                         "type": "array",
