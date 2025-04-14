@@ -31,7 +31,7 @@ export const swaggerUserLogout = {
   index:3, 
   text:
   `"/api/v1/auth/logout": {
-    "post": {
+    "get": {
       "tags": ["auth"],
       "summary": "User Login",
       "description": "Authenticate user with email and password",

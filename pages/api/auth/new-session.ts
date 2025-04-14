@@ -35,7 +35,7 @@ export default async function handler(
         access_token: session.access_token, 
         expires_in: session.expires_in,
         refresh_token: session.refresh_token,
-        userId: session.user.id,
+        user_id: session.user.id,
        });
   } catch (err) {
     return res
@@ -84,7 +84,7 @@ export const swaggerUserAuthNewSession = {
                   "refresh_token": {
                     "type": "string"
                   },
-                  "userId": {
+                  "user_id": {
                     "type": "string"
                   }
                 }
