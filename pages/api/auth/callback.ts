@@ -132,7 +132,7 @@ export const swaggerCallback = {
   text:
   `"/api/v1/auth/callback": {
     "get": {
-      "tags": ["auth"],
+      "tags": ["auth (for Web App)"],
       "summary": "OAuth callback",
       "description": "Handle the OAuth callback and set the Supabase session.",
       "parameters": [

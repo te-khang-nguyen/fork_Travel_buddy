@@ -20,6 +20,19 @@ export default async function handler(
         data: { user },
     } = await supabase.auth.getUser(token);
 
+    const userId = user?.id;
+    const avatar = user?.user_metadata?.avatar_url;
+    const email = user?.email;
+    const userName = user?.user_metadata?.name;
+    const firstName = user?.user_metadata?.full_name.split(" ")[0];
+    const lastName = user?.user_metadata?.full_name.split(" ")[1];
+    const lastSignInAt = new Date(user?.last_sign_in_at ?? "");
+    const lastSignInAtString = lastSignInAt.toISOString().split(".")[0];
+    const createdAt = new Date(user?.created_at ?? "");
+    const createdAtString = createdAt.toISOString().split(".")[0];
+    const firstTime = (createdAtString === lastSignInAtString) 
+      || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000);
+
     try {
         const { data: profileData, error } = await supabase
             .from(`${finalRole}profiles`)
@@ -27,11 +40,53 @@ export default async function handler(
             .eq(`${finalRole}id`, user!.id)
             .single();
 
-        if (error) {
-            return res.status(400).json({ error: error.message });
+        if (error || !profileData) {
+          const toMediaAssets = {
+            user_id: userId,
+            url: avatar,
+            usage: "avatar",
+            mime_type: "image/jpeg"
+          }
+      
+          const {
+            data: mediaData,
+            error: mediaErr
+          } = await supabase.from("media_assets")
+            .insert(toMediaAssets)
+            .select("*")
+            .single();
+      
+          if(mediaErr){
+            res.status(500).json({ error: mediaErr.message });
+          }
+      
+          const { 
+            data: newProfileData 
+          } = await supabase.from("userprofiles")
+                      .insert({
+                        userid: userId,
+                        email: email,
+                        username: userName,
+                        firstname: firstName,
+                        lastname: lastName,
+                        avatar_id: mediaData!.id
+                      })
+                      .select("*, media_assets(url)")
+                      .single();
+      
+          if (!newProfileData) {
+            return res.status(500).json({ error: "Fail to create new profile for OAuth user." });
+          } else {
+            return res.status(200).json({
+              data: { ...newProfileData, first_time: firstTime }
+            });
+          }
+        } else if(!error || profileData) {
+          return res.status(200).json({ 
+            data: { ...profileData, first_time: firstTime } 
+          });
         }
 
-        return res.status(200).json({ data: profileData });
     } catch (err: any) {
         return res.status(500).json({ error: err.message || "An error has occurred while retrieving the user profile." });
     }
@@ -93,7 +148,8 @@ export const swaggerProfileGet = {
                             "type": "string"
                           }
                         }
-                      }
+                      },
+                      "first_time": { "type": "boolean" }
                     }
                   }
                 }

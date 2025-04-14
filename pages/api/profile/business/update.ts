@@ -55,7 +55,7 @@ export const swaggerBusinessProfileUpdate = {
     text:
 `"/api/v1/profile/business/": {
     "put": {
-      "tags": ["profile"],
+      "tags": [B2B-profile],
       "summary": "Update a B2B profile",
       "description": "Update the profile of a B2B user.",
       "security": [
