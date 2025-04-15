@@ -38,6 +38,7 @@ export { swaggerExpDetailsCreate } from './experiences/details/create';
 export { swaggerPublicExpGet } from './experiences/public/get';
 export { swaggerPublicExpGetAll } from './experiences/public/get-all';
 export { swaggerPublicExpDetailsGet } from './experiences/public/details/get';
+export { swaggerPublicExpStoryGet } from './experiences/public/stories/get';
 export { swaggerPublicExpIconicPhotosGet } from './experiences/public/iconicPhotos/get';
 export { swaggerPublicExpIconicPhotosGetAll } from './experiences/public/iconicPhotos/get-all';
 export { swaggerPublicActivitiesGet } from './experiences/public/activities/get';
