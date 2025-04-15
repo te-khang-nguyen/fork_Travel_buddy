@@ -15,7 +15,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const uploadId = uuidv4();
-  const uploadDir = join(process.cwd(), 'uploads', uploadId);
+  const uploadDir = join(`${process.cwd()}/.next/server/pages/api/`, 'uploads', uploadId);
   const metaFile = join(uploadDir, 'metadata.json');
 
   try {
