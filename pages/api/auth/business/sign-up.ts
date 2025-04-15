@@ -96,6 +96,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .select("*")
         .eq("businessname", parent)
         .single();
+      
+      if (!orgProfileData) {
+        return res.status(400).json({ error: "Parent business not found!" });
+      }
 
       const { data: editorsData, error: orgProfileError }  = await supabase
         .from("businessprofiles")
