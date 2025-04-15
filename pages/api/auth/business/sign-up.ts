@@ -57,18 +57,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Email and password are required!" });
   }
 
+  let addedEditor = null;
+
+  const { 
+    data: { user },
+    error: authError 
+  } = await supabase.auth.signUp({ email, password });
+
+  const userId = user?.id;
+
+  if (authError) {
+    return res.status(400).json({ error: authError.message });
+  }
+
   try {
-    const { 
-      data: { user },
-      error: authError 
-    } = await supabase.auth.signUp({ email, password });
-
-    const userId = user?.id;
-
-    if (authError) {
-      return res.status(400).json({ error: authError.message });
-    }
-
+    
     // Create user profile
     // const businessname = ;
     const userProfile = {
@@ -94,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .eq("businessname", parent)
         .single();
 
-      const { error: orgProfileError }  = await supabase
+      const { data: editorsData, error: orgProfileError }  = await supabase
         .from("businessprofiles")
         .update({
           editors : orgProfileData?.editors ? 
@@ -105,12 +108,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .single();
       
       if (orgProfileError) {
-        return res.status(400).json({ error: orgProfileError.message });
+        return res.status(500).json({ error: "Fail to insert new editor!" + orgProfileError.message });
+      } else {
+        console.log("Editors updated:", editorsData);
+        // Add the new editor to the list of editors
+        addedEditor = editorsData?.editors.includes(userId);
       }
     }
 
     await supabase.auth.signOut();
-    return res.status(200).json({ message: "User created successfully!" });
+    return res.status(200).json({ message: "User created successfully!", editors: addedEditor });
   } catch (err: any) {
     return res.status(500).json({ error: err.message || "An unknown error occurred." });
   }
@@ -166,6 +173,9 @@ export const swaggerBussSignup = {
                 "type": "object",
                 "properties": {
                   "message": {
+                    "type": "string"
+                  },
+                  "addedEditor": {
                     "type": "string"
                   }
                 }
