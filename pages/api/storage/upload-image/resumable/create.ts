@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
       if (metadata.receivedParts.length === metadata.totalParts) {
         const finalFileName = `${uploadId}_${metadata.fileName}`;
-        const finalFilePath = join(process.cwd(), 'uploads', finalFileName);
+        const finalFilePath = join(`${process.cwd()}/.next/server/pages/api/`, 'uploads', finalFileName);
         const writeStreamFinal = createWriteStream(finalFilePath);
 
         // Combine all parts
