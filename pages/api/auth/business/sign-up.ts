@@ -147,6 +147,10 @@ export const swaggerBussSignup = {
                   "type": "string",
                   "description": "The name of the business"
                 },
+                "userName": {
+                  "type": "string",
+                  "description": "The name of the user account"
+                },
                 "email": {
                   "type": "string",
                   "description": "The email of the business user"
