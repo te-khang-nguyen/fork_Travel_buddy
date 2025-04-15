@@ -39,6 +39,7 @@ export { swaggerPublicExpGet } from './experiences/public/get';
 export { swaggerPublicExpGetAll } from './experiences/public/get-all';
 export { swaggerPublicExpDetailsGet } from './experiences/public/details/get';
 export { swaggerPublicExpIconicPhotosGet } from './experiences/public/iconicPhotos/get';
+export { swaggerPublicExpIconicPhotosGetAll } from './experiences/public/iconicPhotos/get-all';
 export { swaggerPublicActivitiesGet } from './experiences/public/activities/get';
 export { swaggerExpVisitsCreate } from './experiences/visits/create';
 export { swaggerExpVisitsGet } from './experiences/visits/get';

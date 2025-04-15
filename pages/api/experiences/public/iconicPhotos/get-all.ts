@@ -10,13 +10,10 @@ export default async function handler(
         return
     }
 
-    const experience_id = req.query["experience-id"];
-
     try {
         const query = supabase
             .from('experience_details')
             .select('*, media_assets ( url )')
-            .eq('experience_id', experience_id)
             .eq('type', 'iconic_photos')
         
         const { data, error } = await query;
@@ -43,25 +40,14 @@ export default async function handler(
 }
 
 // Workaround to enable Swagger on production 
-export const swaggerPublicExpIconicPhotosGet = {
+export const swaggerPublicExpIconicPhotosGetAll = {
     index:17, 
     text:
-`"/api/v1/experiences/public/iconicPhotos": {
+`"/api/v1/experiences/public/iconicPhotos ": {
       "get": {
         "tags": ["experience"],
-        "summary": "Get iconic photos by experience ID for a non-authenticated user",
-        "description": "Retrieve iconic photos by experience ID for a non-authenticated user.",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "experience-id",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The ID of the experience to retrieve iconic photos for"
-          }
-        ],
+        "summary": "Get all iconic photos for a non-authenticated user",
+        "description": "Retrieve all iconic photos for a non-authenticated user.",
         "responses": {
           "200": {
             "description": "Iconic photos retrieved successfully",
