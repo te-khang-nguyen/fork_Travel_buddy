@@ -1,129 +1,194 @@
-import { join } from 'path';
-import { createReadStream, createWriteStream, existsSync, readFileSync, writeFileSync, unlinkSync, rmdirSync } from 'fs';
-import { IncomingForm } from 'formidable';
+// pages/api/upload.ts
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { NextApiRequest, NextApiResponse } from 'next';
+import { IncomingForm, File as FormidableFile } from 'formidable';
+import { promises as fs } from 'fs';
+// import { Readable } from 'stream';
+
+// Type definitions
+interface UploadSession {
+  id: string;
+  file_name: string;
+  total_parts: number;
+  received_parts: number[];
+  status: string;
+}
+
+interface FormDataFields {
+  uploadId: string[];
+  partNumber: string[];
+}
+
+interface FormDataFiles {
+  chunk: FormidableFile[];
+}
 
 export const config = {
   api: {
-    bodyParser: false,
-  },
+    bodyParser: false
+  }
 };
 
-export default async function handler(req, res) {
+async function parseFormData(req: NextApiRequest): Promise<{
+  fields: FormDataFields;
+  files: FormDataFiles;
+}> {
+  return new Promise((resolve, reject) => {
+    const form = new IncomingForm();
+
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      resolve({
+        fields: fields as unknown as FormDataFields,
+        files: files as unknown as FormDataFiles
+      });
+    });
+  });
+}
+
+async function readFile(filepath: string): Promise<Buffer> {
+  return fs.readFile(filepath);
+}
+
+async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
+  // List all chunks
+  const { data: chunks, error: listError } = await supabase.storage
+    .from(process.env.SUPABASE_BUCKET_NAME!)
+    .list(uploadSession.id);
+
+  if (listError) return { error: listError } ;
+  if (!chunks) return { error: 'No chunks found'};
+
+  // Sort chunks numerically by part number
+  const sortedChunks = chunks
+    .filter(chunk => chunk.name.startsWith('part-'))
+    .sort((a, b) => {
+      const aNum = parseInt(a.name.split('-')[1]);
+      const bNum = parseInt(b.name.split('-')[1]);
+      return aNum - bNum;
+    });
+
+  // Download and concatenate all chunks
+  let combinedBuffer = Buffer.alloc(0);
+  
+  for (const chunk of sortedChunks) {
+    const { data, error: downloadError } = await supabase.storage
+      .from("experience")
+      .download(`${uploadSession.id}/${chunk.name}`);
+
+    if (downloadError) return { error: downloadError };
+    
+    combinedBuffer = Buffer.concat([combinedBuffer, Buffer.from(await data.arrayBuffer())]);
+  }
+
+  // Upload final file
+  const { data: uploadTask, error: uploadError } = await supabase.storage
+    .from(process.env.SUPABASE_BUCKET_NAME!)
+    .upload(uploadSession.file_name, combinedBuffer, {
+      contentType: 'image/png',
+      upsert: false
+    });
+
+  if (uploadError) return { error: uploadError };
+
+  // Clean up chunks
+  const { error: deleteError } = await supabase.storage
+    .from(process.env.SUPABASE_BUCKET_NAME!)
+    .remove(sortedChunks.map(chunk => `${uploadSession.id}/${chunk.name}`));
+
+  if (deleteError) return { error: deleteError };
+
+  // Update database record
+  const { error: updateError } = await supabase
+    .from('uploads')
+    .update({ 
+      status: 'completed',
+      received_parts: Array.from({ length: uploadSession.total_parts }, (_, i) => i + 1)
+    })
+    .eq('id', uploadSession.id);
+
+  if (updateError) return { error: updateError };
+
+  const { data, error } = await supabase.storage
+            .from('experience')
+            .createSignedUrl(uploadTask.path, 60 * 60 * 24 * 365);
+  
+  if(error) return { error };
+  
+  return {data: data?.signedUrl};
+  
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const token = req.headers.authorization?.split(' ')[1];
   const supabase = createApiClient(token);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser(token!);
 
-  const form = new IncomingForm();
+  try {
+    const formData = await parseFormData(req);
+    const uploadId = formData.fields.uploadId[0];
+    const partNumber = formData.fields.partNumber[0];
+    const chunk = formData.files.chunk[0];
 
-  form.parse(req, async (err: any, fields: any, files: any) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error parsing form data' });
-    }
-
-    const { uploadId, partNumber } = fields;
-    const chunk = files.chunk;
-
+    // Validate inputs
     if (!uploadId || !partNumber || !chunk) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const uploadDir = join(process.cwd(), 'uploads', uploadId);
-    const metaFile = join(uploadDir, 'metadata.json');
+    // Get upload session
+    const { data: uploadSession, error: sessionError } = await supabase
+      .from('uploads')
+      .select('*')
+      .eq('id', uploadId)
+      .single();
 
-    if (!existsSync(uploadDir)) {
-      return res.status(404).json({ error: 'Upload session not found' });
-    }
+    if (sessionError) throw sessionError;
+    if (!uploadSession) throw new Error('Upload session not found');
 
-    try {
-      const metadata = JSON.parse(readFileSync(metaFile, 'utf8'));
-      const partNum = parseInt(partNumber);
-
-      if (metadata.receivedParts.includes(partNum)) {
-        return res.status(200).json({ message: 'Part already uploaded' });
-      }
-
-      const chunkPath = join(uploadDir, `${partNum}.part`);
-      const readStream = createReadStream(chunk.filepath);
-      const writeStream = createWriteStream(chunkPath);
-
-      readStream.pipe(writeStream);
-
-      await new Promise((resolve, reject) => {
-        writeStream.on('finish', () => resolve('Stream successfully!'));
-        writeStream.on('error', reject);
+    // Upload chunk to Supabase Storage
+    const chunkName = `${uploadSession.id}/part-${partNumber}`;
+    const chunkBuffer = await readFile(chunk.filepath);
+    
+    const { error: uploadError } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET_NAME!)
+      .upload(chunkName, chunkBuffer, {
+        contentType: chunk.mimetype || 'application/octet-stream',
+        upsert: false
       });
 
-      metadata.receivedParts.push(partNum);
-      writeFileSync(metaFile, JSON.stringify(metadata));
+    if (uploadError) throw uploadError;
 
-      if (metadata.receivedParts.length === metadata.totalParts) {
-        const finalFileName = `${uploadId}_${metadata.fileName}`;
-        const finalFilePath = join(`${process.cwd()}/.next/server/pages/api/`, 'uploads', finalFileName);
-        const writeStreamFinal = createWriteStream(finalFilePath);
+    // Update upload session
+    const { error: updateError } = await supabase
+      .from('uploads')
+      .update({
+        received_parts: [...uploadSession.received_parts, parseInt(partNumber)],
+        status: 'uploading'
+      })
+      .eq('id', uploadSession.id);
 
-        // Combine all parts
-        for (let i = 1; i <= metadata.totalParts; i++) {
-          const partPath = join(uploadDir, `${i}.part`);
-          const readStreamPart = createReadStream(partPath);
-          readStreamPart.pipe(writeStreamFinal, { end: false });
-          await new Promise((resolve) => readStreamPart.on('end', () => resolve('Stream read!')));
-          unlinkSync(partPath);
-        }
+    if (updateError) throw updateError;
 
-        writeStreamFinal.end();
+    // Check if all parts uploaded
+    if (uploadSession.received_parts.length + 1 === uploadSession.total_parts) {
+     const {data, error} = await finalizeUpload(uploadSession, supabase);
+      // Cleanup temporary file
+      await fs.unlink(chunk.filepath);
 
-        // Wait for final file to be written
-        await new Promise((resolve) => writeStreamFinal.on('finish', () => resolve('Final file written!')));
-
-        // Upload to Supabase Storage
-        const fileBuffer = readFileSync(finalFilePath);
-        const { data: uploadTask, error: uploadError } = await supabase.storage
-          .from("experience")
-          .upload(`${user?.id}/${finalFileName}`, fileBuffer, {
-            contentType: 'application/octet-stream',
-            upsert: false,
-          });
-
-        if (uploadError) {
-          throw new Error(`Supabase upload failed: ${uploadError.message}`);
-        }
-
-        // Get public URL
-        const { data: urlData } = await supabase.storage
-          .from("experience")
-          .createSignedUrl(uploadTask.path, 60 * 60 * 24 * 365);
-
-        // Cleanup local files
-        unlinkSync(finalFilePath);
-        unlinkSync(metaFile);
-        rmdirSync(uploadDir);
-
-        res.status(200).json({ 
-          message: 'Upload complete', 
-          fileName: finalFileName,
-          storageUrl: urlData?.signedUrl
-        });
-      } else {
-        res.status(200).json({ message: 'Chunk uploaded successfully' });
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      
-      // Cleanup on error
-      if (existsSync(metaFile)) unlinkSync(metaFile);
-      if (existsSync(uploadDir)) rmdirSync(uploadDir, { recursive: true });
-
-      res.status(500).json({ 
-        error: 'Internal server error',
-        details: error
+      return res.status(200).json({ 
+        message: 'Chunk uploaded successfully',
+        signedUrl: data
       });
     }
-  });
+
+    
+  } catch (error) {
+    console.error('Upload error:', error);
+    return res.status(500).json({ 
+      error: error instanceof Error ? error.message : 'Internal server error'
+    });
+  }
 }

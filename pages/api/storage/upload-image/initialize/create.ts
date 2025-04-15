@@ -1,34 +1,32 @@
-import { v4 as uuidv4 } from 'uuid';
-import { join } from 'path';
-import { mkdirSync, writeFileSync } from 'fs';
-import { NextApiRequest, NextApiResponse } from "next";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  const token = req.headers.authorization?.split(' ')[1];
+  const supabase = createApiClient(token);
 
   const { fileName, totalParts } = req.body;
 
-  if (!fileName || !totalParts) {
-    return res.status(400).json({ error: 'Missing fileName or totalParts' });
-  }
-
-  const uploadId = uuidv4();
-  const uploadDir = join(`${process.cwd()}/.next/server/pages/api/`, 'uploads', uploadId);
-  const metaFile = join(uploadDir, 'metadata.json');
-
   try {
-    mkdirSync(uploadDir, { recursive: true });
-    writeFileSync(metaFile, JSON.stringify({
-      fileName,
-      totalParts: parseInt(totalParts),
-      receivedParts: []
-    }));
+    // Create upload session in database
+    const { data, error } = await supabase
+      .from('uploads')
+      .insert([{
+        file_name: fileName,
+        total_parts: totalParts,
+        received_parts: [],
+        status: 'initialized'
+      }])
+      .select()
+      .single();
 
-    res.status(200).json({ uploadId });
+    if (error) throw error;
+
+    res.status(200).json({ uploadId: data.id });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: error });
   }
 }
