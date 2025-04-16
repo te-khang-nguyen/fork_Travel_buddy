@@ -47,6 +47,8 @@ async function parseFormData(req: NextApiRequest): Promise<{
     });
 
     form.parse(req, (err, fields, files) => {
+      console.log('Parsed fields:', fields);
+      console.log('Parsed files:', files);
       if (err) reject(err);
       resolve({
         fields: fields as unknown as FormDataFields,
@@ -138,7 +140,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const supabase = createApiClient(token);
 
   try {
+    console.log('Received request:', req.headers);
     const formData = await parseFormData(req);
+    console.log('Parsed form data:', formData);
     const uploadId = formData.fields.uploadId[0];
     const partNumber = formData.fields.partNumber[0];
     const chunk = formData.files.chunk[0];
