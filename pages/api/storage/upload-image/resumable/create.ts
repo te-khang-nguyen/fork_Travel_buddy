@@ -81,7 +81,7 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
 
   // Sort chunks numerically by part number
   const sortedChunks = chunks
-    .filter(chunk => chunk.name.startsWith('part-'))
+    .filter(chunk=> chunk.name.startsWith('part-'))
     .sort((a, b) => {
       const aNum = parseInt(a.name.split('-')[1]);
       const bNum = parseInt(b.name.split('-')[1]);
@@ -92,22 +92,37 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
   let combinedBuffer = Buffer.alloc(0);
   
   for (const chunk of sortedChunks) {
-    const { data, error: downloadError } = await supabase.storage
+    const { 
+      data, 
+      error: downloadError
+    } = await supabase.storage
       .from('story')
       .download(`${uploadSession.id}/${chunk.name}`);
 
     if (downloadError) return { error: downloadError };
     
-    combinedBuffer = Buffer.concat([combinedBuffer, Buffer.from(await data.arrayBuffer())]);
+    combinedBuffer = Buffer.concat([
+      combinedBuffer, 
+      Buffer.from(await data.arrayBuffer())
+    ]);
   }
 
+  console.log("Combined buffer size:", combinedBuffer, "Length: ", combinedBuffer.length);
+
   // Upload final file
-  const { data: uploadTask, error: uploadError } = await supabase.storage
+  const { 
+    data: uploadTask, 
+    error: uploadError 
+  } = await supabase.storage
     .from('story')
-    .upload(uploadSession.file_name, combinedBuffer, {
-      contentType: 'image/png',
-      upsert: false
-    });
+    .upload(
+      uploadSession.file_name, 
+      combinedBuffer, 
+      {
+        contentType: 'image/png',
+        upsert: false
+      }
+    );
 
   if (uploadError) return { error: uploadError };
 
@@ -129,13 +144,16 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
 
   if (updateError) return { error: updateError };
 
-  const { data, error } = await supabase.storage
+  const { 
+    data: finalStorageData, 
+    error 
+  } = await supabase.storage
             .from('story')
             .createSignedUrl(uploadTask.path, 60 * 60 * 24 * 365);
   
   if(error) return { error };
   
-  return {data: data?.signedUrl};
+  return { data: finalStorageData?.signedUrl };
   
 }
 
