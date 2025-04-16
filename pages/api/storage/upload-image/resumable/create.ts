@@ -77,7 +77,9 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
     .list(uploadSession.id);
 
   if (listError) return { error: listError } ;
-  if (!chunks) return { error: 'No chunks found'};
+  if (!chunks || chunks.length === 0) return { error: 'No chunks found'};
+
+  console.log("Retrieved chunks:", chunks);
 
   // Sort chunks numerically by part number
   const sortedChunks = chunks
@@ -87,8 +89,6 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
       const bNum = parseInt(b.name.split('-')[1]);
       return aNum - bNum;
     });
-  
-  console.log("Sorted chunks:", sortedChunks);
 
   if (sortedChunks.length !== uploadSession.total_parts) {
     return { error: 'Not all chunks uploaded' };
