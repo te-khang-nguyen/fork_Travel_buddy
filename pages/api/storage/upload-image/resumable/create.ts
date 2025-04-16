@@ -40,16 +40,23 @@ async function parseFormData(req: NextApiRequest): Promise<{
       // Add these explicit options:
       maxFileSize: 5 * 1024 * 1024, // 5MB
       allowEmptyFiles: false,
-      filter: ({ mimetype }) => {
-        // Only allow certain file types if needed
-        return !!mimetype?.includes('multipart/form-data');
+      uploadDir: `/tmp`, // ← Critical for Vercel/serverless
+      filter: (part) => {
+        // Only process the 'chunk' field as file
+        return part.name === 'chunk';
       }
     });
 
+    // Debugging logs
+    form.on('fileBegin', (name, file) => {
+      console.log(`Upload started: ${name} → ${file.filepath}`);
+    });
+
+    form.on('file', (name, file) => {
+      console.log(`Upload completed: ${name} → ${file.filepath}`);
+    });
+
     form.parse(req, (err, fields, files) => {
-      console.error('Formidable error:', err);
-      console.log('Parsed fields:', fields);
-      console.log('Parsed files:', files);
       if (err) reject(err);
       resolve({
         fields: fields as unknown as FormDataFields,
