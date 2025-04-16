@@ -193,10 +193,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (updateError) return res.status(500).json({ error: updateError });
 
     // Check if all parts uploaded
-    if (uploadSession.received_parts.length + 1 === uploadSession.total_parts) {
-     const {data} = await finalizeUpload(uploadSession, supabase);
+    if (uploadSession.received_parts.length + 1 === uploadSession.total_parts
+        || parseInt(partNumber) === uploadSession.total_parts
+    ) {
+     console.log("Total parts uploaded:", uploadSession.total_parts + 1);
+     const {data, error} = await finalizeUpload(uploadSession, supabase);
       // Cleanup temporary file
       await fs.unlink(chunk.filepath);
+
+      if (error) {
+        return res.status(500).json({ error });
+      }
       return res.status(200).json({ 
         message: 'Upload completed successfully',
         url: data
