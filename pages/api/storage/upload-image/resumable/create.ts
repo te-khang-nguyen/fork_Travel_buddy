@@ -74,7 +74,11 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
   // List all chunks
   const { data: chunks, error: listError } = await supabase.storage
     .from('story')
-    .list(uploadSession.id);
+    .list(uploadSession.id, {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'created_at', order: 'asc' },
+    });
 
   if (listError) return { error: listError } ;
   if (!chunks || chunks.length === 0) return { error: 'No chunks found'};
@@ -192,8 +196,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .eq('id', uploadId)
       .single();
 
-    if (sessionError) throw sessionError;
-    if (!uploadSession) throw new Error('Upload session not found');
+    if (sessionError) return { error: sessionError };
+    if (!uploadSession) return { error: 'Upload session not found' };
 
     // Upload chunk to Supabase Storage
     const chunkName = `${uploadSession.id}/part-${partNumber}`;
@@ -221,9 +225,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if all parts uploaded
     if (uploadSession.received_parts.length === uploadSession.total_parts
-        || parseInt(partNumber) === uploadSession.total_parts
-    ) {
-     console.log("Total parts uploaded:", uploadSession.total_parts);
+        || parseInt(partNumber) === uploadSession.total_parts) {
      const {data, error} = await finalizeUpload(uploadSession, supabase);
       // Cleanup temporary file
       await fs.unlink(chunk.filepath);
