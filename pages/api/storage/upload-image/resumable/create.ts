@@ -208,7 +208,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const chunkName = `${uploadSession.id}/part-${partNumber}`;
     const chunkBuffer = await readFile(chunk.filepath);
     
-    const { error: uploadError } = await supabase.storage
+    const { data: storageData, error: uploadError } = await supabase.storage
       .from('story')
       .upload(chunkName, chunkBuffer, {
         contentType: chunk.mimetype || 'application/octet-stream',
@@ -217,21 +217,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (uploadError) throw uploadError;
 
+    console.log(`Uploaded storage data: ${storageData}`);
+
     // Update upload session
-    const { error: updateError } = await supabase
+    const { data: updatedSession, error: updateError } = await supabase
       .from('uploads')
       .update({
         received_parts: [...uploadSession.received_parts, parseInt(partNumber)],
         status: 'uploading'
       })
-      .eq('id', uploadSession.id);
+      .eq('id', uploadSession.id)
+      .select("*")
+      .single();
 
     if (updateError) return res.status(500).json({ error: updateError });
 
     // Check if all parts uploaded
-    if (uploadSession.received_parts.length === uploadSession.total_parts
-        || parseInt(partNumber) === uploadSession.total_parts) {
-     const {data, error} = await finalizeUpload(uploadSession, supabase);
+    if (updatedSession.received_parts.length === updatedSession.total_parts) {
+     const {data, error} = await finalizeUpload(updatedSession, supabase);
       // Cleanup temporary file
       await fs.unlink(chunk.filepath);
 
