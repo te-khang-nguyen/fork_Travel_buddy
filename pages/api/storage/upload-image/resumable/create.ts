@@ -70,11 +70,11 @@ async function readFile(filepath: string): Promise<Buffer> {
   return fs.readFile(filepath);
 }
 
-async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
+async function finalizeUpload(uploadSession: UploadSession, supabase: any, path: string) {
   // List all chunks
   const { data: chunks, error: listError } = await supabase.storage
     .from('story')
-    .list(uploadSession.id, {
+    .list(path, {
       limit: 100,
       offset: 0,
       sortBy: { column: 'created_at', order: 'asc' },
@@ -206,14 +206,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log("Chunk name:", chunkName);
     
-    const { error: uploadError } = await supabase.storage
+    const { data: storageData, error: uploadError } = await supabase.storage
       .from('story')
       .upload(chunkName, chunkBuffer, {
         contentType: chunk.mimetype || 'application/octet-stream',
         upsert: false
       });
 
-    if (uploadError) throw uploadError;
+    if (uploadError) return res.status(500).json({ error: uploadError });
+
+    console.log("Chunk uploaded:", storageData?.path);
 
     // Update upload session
     const { data: updatedSession, error: updateError } = await supabase
@@ -230,7 +232,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if all parts uploaded
     if (updatedSession.received_parts.length === updatedSession.total_parts) {
-     const {data, error} = await finalizeUpload(updatedSession, supabase);
+     const {data, error} = await finalizeUpload(updatedSession, supabase, `${storageData?.path?.split('/')[0]}`);
       // Cleanup temporary file
       await fs.unlink(chunk.filepath);
 
