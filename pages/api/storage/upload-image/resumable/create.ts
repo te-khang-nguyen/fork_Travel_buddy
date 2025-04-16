@@ -81,14 +81,11 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
     });
 
   if (listError) return { error: listError } ;
-  console.log("Session:", uploadSession);
   console.log("Retrieved chunks:", chunks);
   if (!chunks || chunks.length === 0) return { error: {
     message: 'No chunks found',
     uploadSession
   }};
-
-  console.log("Retrieved chunks:", chunks);
 
   // Sort chunks numerically by part number
   const sortedChunks = chunks
@@ -120,9 +117,6 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
       combinedBuffer, 
       Buffer.from(await data.arrayBuffer())
     ]);
-
-    console.log(`Downloaded chunk: ${chunk.name} Size: ${data.size}`);
-    console.log("Combined buffer size:", combinedBuffer, "Length: ", combinedBuffer.length);
   }
 
   console.log("Combined buffer size:", combinedBuffer, "Length: ", combinedBuffer.length);
@@ -200,6 +194,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .select('*')
       .eq('id', uploadId)
       .single();
+    
+    console.log("Upload session:", uploadSession.id);
 
     if (sessionError) return { error: sessionError };
     if (!uploadSession) return { error: 'Upload session not found' };
@@ -207,8 +203,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Upload chunk to Supabase Storage
     const chunkName = `${uploadSession.id}/part-${partNumber}`;
     const chunkBuffer = await readFile(chunk.filepath);
+
+    console.log("Chunk name:", chunkName);
     
-    const { data: storageData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('story')
       .upload(chunkName, chunkBuffer, {
         contentType: chunk.mimetype || 'application/octet-stream',
@@ -216,8 +214,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
     if (uploadError) throw uploadError;
-
-    console.log(`Uploaded storage data: ${storageData}`);
 
     // Update upload session
     const { data: updatedSession, error: updateError } = await supabase
