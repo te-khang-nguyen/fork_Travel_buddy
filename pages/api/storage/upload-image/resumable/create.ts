@@ -149,7 +149,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const formData = await parseFormData(req);
-    console.log('Parsed form data:', formData);
     const uploadId = formData.fields.uploadId[0];
     const partNumber = formData.fields.partNumber[0];
     const chunk = formData.files.chunk[0];
@@ -191,20 +190,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
       .eq('id', uploadSession.id);
 
-    if (updateError) throw updateError;
+    if (updateError) return res.status(500).json({ error: updateError });
 
     // Check if all parts uploaded
     if (uploadSession.received_parts.length + 1 === uploadSession.total_parts) {
      const {data} = await finalizeUpload(uploadSession, supabase);
       // Cleanup temporary file
       await fs.unlink(chunk.filepath);
-
       return res.status(200).json({ 
-        message: 'Chunk uploaded successfully',
-        signedUrl: data
+        message: 'Upload completed successfully',
+        url: data
+      });
+    } else {
+      return res.status(200).json({ 
+        message: 'Chunk uploaded successfully'
       });
     }
-
     
   } catch (error) {
     console.error('Upload error:', error);
