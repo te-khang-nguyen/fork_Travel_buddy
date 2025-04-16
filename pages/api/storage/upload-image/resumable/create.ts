@@ -73,7 +73,7 @@ async function readFile(filepath: string): Promise<Buffer> {
 async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
   // List all chunks
   const { data: chunks, error: listError } = await supabase.storage
-    .from(process.env.SUPABASE_BUCKET_NAME!)
+    .from('story')
     .list(uploadSession.id);
 
   if (listError) return { error: listError } ;
@@ -103,7 +103,7 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
 
   // Upload final file
   const { data: uploadTask, error: uploadError } = await supabase.storage
-    .from(process.env.SUPABASE_BUCKET_NAME!)
+    .from('story')
     .upload(uploadSession.file_name, combinedBuffer, {
       contentType: 'image/png',
       upsert: false
@@ -113,7 +113,7 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
 
   // Clean up chunks
   const { error: deleteError } = await supabase.storage
-    .from(process.env.SUPABASE_BUCKET_NAME!)
+    .from('story')
     .remove(sortedChunks.map(chunk => `${uploadSession.id}/${chunk.name}`));
 
   if (deleteError) return { error: deleteError };
