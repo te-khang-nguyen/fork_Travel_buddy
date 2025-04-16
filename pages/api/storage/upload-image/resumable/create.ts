@@ -78,13 +78,13 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
   } = await supabase
     .storage
     .from('story')
-    .list();
-    // `${uploadSession.id}/`, {
-    //   limit: 100,
-    //   offset: 0,
-    //   sortBy: { column: 'created_at', order: 'asc' },
-    //   search: 'part-'
-    // }
+    .list(uploadSession.id, {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'created_at', order: 'asc' },
+      search: 'part-'
+    });
+    
 
   if (listError) return { error: listError } ;
   console.log("Retrieved chunks:", chunks);
@@ -128,52 +128,50 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
   console.log("Combined buffer size:", combinedBuffer, "Length: ", combinedBuffer.length);
 
   // Upload final file
-  // const { 
-  //   data: uploadTask, 
-  //   error: uploadError 
-  // } = await supabase.storage
-  //   .from('story')
-  //   .upload(
-  //     uploadSession.file_name, 
-  //     combinedBuffer, 
-  //     {
-  //       contentType: 'image/png',
-  //       upsert: false
-  //     }
-  //   );
+  const { 
+    data: uploadTask, 
+    error: uploadError 
+  } = await supabase.storage
+    .from('story')
+    .upload(
+      uploadSession.file_name, 
+      combinedBuffer, 
+      {
+        contentType: 'image/png',
+        upsert: false
+      }
+    );
 
-  // if (uploadError) return { error: uploadError };
+  if (uploadError) return { error: uploadError };
 
   // Clean up chunks
-  // const { error: deleteError } = await supabase.storage
-  //   .from('story')
-  //   .remove(sortedChunks.map(chunk => `${uploadSession.id}/${chunk.name}`));
+  const { error: deleteError } = await supabase.storage
+    .from('story')
+    .remove(sortedChunks.map(chunk => `${uploadSession.id}/${chunk.name}`));
 
-  // if (deleteError) return { error: deleteError };
+  if (deleteError) return { error: deleteError };
 
   // Update database record
-  // const { error: updateError } = await supabase
-  //   .from('uploads')
-  //   .update({ 
-  //     status: 'completed',
-  //     received_parts: Array.from({ length: uploadSession.total_parts }, (_, i) => i + 1)
-  //   })
-  //   .eq('id', uploadSession.id);
+  const { error: updateError } = await supabase
+    .from('uploads')
+    .update({ 
+      status: 'completed',
+      received_parts: Array.from({ length: uploadSession.total_parts }, (_, i) => i + 1)
+    })
+    .eq('id', uploadSession.id);
 
-  // if (updateError) return { error: updateError };
+  if (updateError) return { error: updateError };
 
-  // const { 
-  //   data: finalStorageData, 
-  //   error 
-  // } = await supabase.storage
-  //           .from('story')
-  //           .createSignedUrl(uploadTask.path, 60 * 60 * 24 * 365);
+  const { 
+    data: finalStorageData, 
+    error 
+  } = await supabase.storage
+            .from('story')
+            .createSignedUrl(uploadTask.path, 60 * 60 * 24 * 365);
   
-  // if(error) return { error };
+  if(error) return { error };
   
-  // return { data: finalStorageData?.signedUrl };
-
-  return { data: uploadSession.file_name };
+  return { data: finalStorageData?.signedUrl };
   
 }
 
@@ -210,7 +208,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const chunkName = `${uploadSession.id}/part-${partNumber}`;
     const chunkBuffer = await readFile(chunk.filepath);
     
-    const { data: storageData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('story')
       .upload(chunkName, chunkBuffer, {
         contentType: chunk.mimetype || 'application/octet-stream',
@@ -218,8 +216,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
     if (uploadError) return res.status(500).json({ error: uploadError });
-
-    console.log("Storage path:", storageData?.path);
 
     // Update upload session
     const { data: updatedSession, error: updateError } = await supabase
