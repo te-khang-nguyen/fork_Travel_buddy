@@ -87,6 +87,12 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
       const bNum = parseInt(b.name.split('-')[1]);
       return aNum - bNum;
     });
+  
+  console.log("Sorted chunks:", sortedChunks);
+
+  if (sortedChunks.length !== uploadSession.total_parts) {
+    return { error: 'Not all chunks uploaded' };
+  }
 
   // Download and concatenate all chunks
   let combinedBuffer = Buffer.alloc(0);
@@ -105,6 +111,9 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
       combinedBuffer, 
       Buffer.from(await data.arrayBuffer())
     ]);
+
+    console.log(`Downloaded chunk: ${chunk.name} Size: ${data.size}`);
+    console.log("Combined buffer size:", combinedBuffer, "Length: ", combinedBuffer.length);
   }
 
   console.log("Combined buffer size:", combinedBuffer, "Length: ", combinedBuffer.length);
@@ -211,10 +220,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (updateError) return res.status(500).json({ error: updateError });
 
     // Check if all parts uploaded
-    if (uploadSession.received_parts.length + 1 === uploadSession.total_parts
+    if (uploadSession.received_parts.length === uploadSession.total_parts
         || parseInt(partNumber) === uploadSession.total_parts
     ) {
-     console.log("Total parts uploaded:", uploadSession.total_parts + 1);
+     console.log("Total parts uploaded:", uploadSession.total_parts);
      const {data, error} = await finalizeUpload(uploadSession, supabase);
       // Cleanup temporary file
       await fs.unlink(chunk.filepath);
