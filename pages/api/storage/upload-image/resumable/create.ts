@@ -12,6 +12,7 @@ interface UploadSession {
   total_parts: number;
   received_parts: number[];
   status: string;
+  mime_type: string;
 }
 
 interface FormDataFields {
@@ -61,7 +62,11 @@ async function readFile(filepath: string): Promise<Buffer> {
   return fs.readFile(filepath);
 }
 
-async function finalizeUpload(uploadSession: UploadSession, supabase: any, userId: string) {
+async function finalizeUpload(
+  uploadSession: UploadSession, 
+  supabase: any, 
+  userId: string
+) {
   // List all chunks
   const { 
     data: chunks, 
@@ -125,7 +130,7 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any, userI
       `${userId}/${uploadSession.file_name}`, 
       combinedBuffer, 
       {
-        contentType: 'image/png',
+        contentType: uploadSession?.mime_type ?? 'image/jpg',
         upsert: false
       }
     );
@@ -247,4 +252,129 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
+}
+
+export const swaggerStorageResumableUpload = {
+  index:40, 
+  text:
+`"/api/v1/storage/upload-image/resumable": {
+  "post": {
+    "tags": ["storage"],
+    "summary": "Upload a chunk of a multipart image upload",
+    "description": "Handles the upload of individual chunks in a multipart upload session",
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "multipart/form-data": {
+          "schema": {
+            "type": "object",
+            "required": ["uploadId", "partNumber", "chunk"],
+            "properties": {
+              "uploadId": {
+                "type": "string",
+                "description": "ID of the upload session"
+              },
+              "partNumber": {
+                "type": "string",
+                "description": "Sequential number of the chunk being uploaded"
+              },
+              "chunk": {
+                "type": "string",
+                "format": "binary",
+                "description": "The chunk file data"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Chunk uploaded successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Chunk uploaded successfully"
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Upload completed successfully"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Signed URL of the completed upload"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Missing required fields"
+                }
+              }
+            }
+          }
+        }
+      },
+      "405": {
+        "description": "Method not allowed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Method not allowed"
+                }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message from the server"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}`,
 }

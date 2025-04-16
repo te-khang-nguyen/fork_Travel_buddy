@@ -17,11 +17,18 @@ export default async function handler(
             error 
         } = await supabase
             .from("stories")
-            .select(`*, 
+            .select(`
+              id,
+              status,
+              created_at,
+              seo_title_tag, 
+              hashtags,
               experiences(name), 
               media_assets(url),
-              userprofiles(email, firstname, lastname, media_assets(url))`)
-            .eq("experience_id", experienceId);
+              userprofiles(email, firstname, lastname, media_assets(url))
+            `.trim())
+            .eq("experience_id", experienceId)
+            .eq("status", "PUBLISHED");
 
         if (error) {
             return res.status(400).json({ error: error.message });
@@ -41,7 +48,7 @@ export const swaggerPublicExpStoryGet = {
     text:
 `"/api/v1/experiences/public/travelerPhotos": {
     "get": {
-        "tags": ["story"],
+        "tags": ["experience"],
         "summary": "Get all stories",
         "description": "Retrieve all stories with their media assets",
         "security": [
@@ -65,10 +72,6 @@ export const swaggerPublicExpStoryGet = {
                           "id": { "type": "string" },
                           "status": { "type": "string" },
                           "created_at": { "type": "string" },
-                          "user_id": { "type": "string" },
-                          "experience_id": { "type": "string" },
-                          "notes": { "type": "string" },
-                          "story_content": { "type": "string" },
                           "media_assets": {
                             "type": "array",
                             "items": {
@@ -79,10 +82,6 @@ export const swaggerPublicExpStoryGet = {
                             }
                           },
                           "seo_title_tag": { "type": "string" },
-                          "seo_meta_desc": { "type": "string" },
-                          "seo_excerpt": { "type": "string" },
-                          "seo_slug": { "type": "string" },
-                          "long_tail_keyword": { "type": "string" },
                           "hashtags": {
                             "type": "array",
                             "items": { "type": "string" }

@@ -15,6 +15,8 @@ export { swaggerBusinessProfileGetAll } from './profile/business/get-all';
 export { swaggerBusinessProfileUpdate } from './profile/business/update';
 export { swaggerStorageImgUpload } from './storage/upload-image/create';
 export { swaggerStorageVideoUpload } from './storage/upload-video/create';
+export { swaggerStorageResumableUploadInit } from './storage/upload-image/initialize/create';
+export { swaggerStorageResumableUpload } from './storage/upload-image/resumable/create';
 export { swaggerChannelCreate } from './channel/create';
 export { swaggerChannelGetAll } from './channel/get-all';
 export { swaggerChannelUpdate } from './channel/update';
