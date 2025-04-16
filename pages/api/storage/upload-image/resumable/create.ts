@@ -93,7 +93,7 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
   
   for (const chunk of sortedChunks) {
     const { data, error: downloadError } = await supabase.storage
-      .from("experience")
+      .from('story')
       .download(`${uploadSession.id}/${chunk.name}`);
 
     if (downloadError) return { error: downloadError };
@@ -130,7 +130,7 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
   if (updateError) return { error: updateError };
 
   const { data, error } = await supabase.storage
-            .from('experience')
+            .from('story')
             .createSignedUrl(uploadTask.path, 60 * 60 * 24 * 365);
   
   if(error) return { error };
@@ -174,7 +174,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const chunkBuffer = await readFile(chunk.filepath);
     
     const { error: uploadError } = await supabase.storage
-      .from(process.env.SUPABASE_BUCKET_NAME!)
+      .from('story')
       .upload(chunkName, chunkBuffer, {
         contentType: chunk.mimetype || 'application/octet-stream',
         upsert: false
@@ -195,7 +195,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if all parts uploaded
     if (uploadSession.received_parts.length + 1 === uploadSession.total_parts) {
-     const {data, error} = await finalizeUpload(uploadSession, supabase);
+     const {data} = await finalizeUpload(uploadSession, supabase);
       // Cleanup temporary file
       await fs.unlink(chunk.filepath);
 
