@@ -47,15 +47,6 @@ async function parseFormData(req: NextApiRequest): Promise<{
       }
     });
 
-    // Debugging logs
-    form.on('fileBegin', (name, file) => {
-      console.log(`Upload started: ${name} → ${file.filepath}`);
-    });
-
-    form.on('file', (name, file) => {
-      console.log(`Upload completed: ${name} → ${file.filepath}`);
-    });
-
     form.parse(req, (err, fields, files) => {
       if (err) reject(err);
       resolve({
@@ -70,7 +61,7 @@ async function readFile(filepath: string): Promise<Buffer> {
   return fs.readFile(filepath);
 }
 
-async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
+async function finalizeUpload(uploadSession: UploadSession, supabase: any, userId: string) {
   // List all chunks
   const { 
     data: chunks, 
@@ -87,7 +78,6 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
     
 
   if (listError) return { error: listError } ;
-  console.log("Retrieved chunks:", chunks);
   if (!chunks || chunks.length === 0) return { error: {
     message: 'No chunks found',
     uploadSession
@@ -125,8 +115,6 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
     ]);
   }
 
-  console.log("Combined buffer size:", combinedBuffer, "Length: ", combinedBuffer.length);
-
   // Upload final file
   const { 
     data: uploadTask, 
@@ -134,7 +122,7 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
   } = await supabase.storage
     .from('story')
     .upload(
-      uploadSession.file_name, 
+      `${userId}/${uploadSession.file_name}`, 
       combinedBuffer, 
       {
         contentType: 'image/png',
@@ -182,6 +170,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const token = req.headers.authorization?.split(' ')[1];
   const supabase = createApiClient(token);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser(token);
 
   try {
     const formData = await parseFormData(req);
@@ -232,7 +224,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if all parts uploaded
     if (updatedSession.received_parts.length === updatedSession.total_parts) {
-     const {data, error} = await finalizeUpload(updatedSession, supabase);
+     const {data, error} = await finalizeUpload(updatedSession, supabase, user?.id ?? "");
       // Cleanup temporary file
       await fs.unlink(chunk.filepath);
 
