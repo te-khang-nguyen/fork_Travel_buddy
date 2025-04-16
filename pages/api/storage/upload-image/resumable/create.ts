@@ -81,7 +81,12 @@ async function finalizeUpload(uploadSession: UploadSession, supabase: any) {
     });
 
   if (listError) return { error: listError } ;
-  if (!chunks || chunks.length === 0) return { error: 'No chunks found'};
+  console.log("Session:", uploadSession);
+  console.log("Retrieved chunks:", chunks);
+  if (!chunks || chunks.length === 0) return { error: {
+    message: 'No chunks found',
+    uploadSession
+  }};
 
   console.log("Retrieved chunks:", chunks);
 
