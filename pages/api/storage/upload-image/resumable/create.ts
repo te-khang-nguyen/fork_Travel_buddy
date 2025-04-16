@@ -34,7 +34,17 @@ async function parseFormData(req: NextApiRequest): Promise<{
   files: FormDataFiles;
 }> {
   return new Promise((resolve, reject) => {
-    const form = new IncomingForm();
+    const form = new IncomingForm({
+      multiples: false,
+      keepExtensions: true,
+      // Add these explicit options:
+      maxFileSize: 5 * 1024 * 1024, // 5MB
+      allowEmptyFiles: false,
+      filter: ({ mimetype }) => {
+        // Only allow certain file types if needed
+        return !!mimetype?.includes('multipart/form-data');
+      }
+    });
 
     form.parse(req, (err, fields, files) => {
       if (err) reject(err);
