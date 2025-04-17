@@ -39,7 +39,7 @@ export default async function handler(
 
     return res.status(200).json({ 
       data: { 
-        visit: queryData ?? null,
+        visit: queryData && queryData!.is_visited ? queryData : null,
         stories: storiesData 
       }
     });
