@@ -43,7 +43,7 @@ export default async function handler(
 export const swaggerPublicExpIconicPhotosGetAll = {
     index:17, 
     text:
-`"/api/v1/experiences/public/iconicPhotos": {
+`"/api/v1/experiences/public/iconicPhotos ": {
   "get": {
     "tags": ["experience"],
     "summary": "Get all iconic photos for a non-authenticated user",
