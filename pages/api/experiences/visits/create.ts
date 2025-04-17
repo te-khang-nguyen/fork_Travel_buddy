@@ -16,15 +16,19 @@ export default async function handler(
 
         const { data: { user } } = await supabase.auth.getUser(token);
 
-        const { experience_id } = req.body;
+        const { experience_id, status } = req.body;
  
         const { data, error } = await supabase
         .from("visits")
-        .insert([{
-                experience_id,
-                user_id: user!.id
-        },])
-        .select("created_at, experience_id")
+        .upsert({
+              experience_id,
+              user_id: user!.id,
+              status: status
+        },
+        {
+            onConflict: 'experience_id, user_id',
+        })
+        .select("created_at, experience_id, status")
         .single();
 
         if (error) {

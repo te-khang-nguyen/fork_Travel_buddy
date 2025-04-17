@@ -46,123 +46,125 @@ export default async function handler(
 export const swaggerPublicExpStoryGet = {
     index:17, 
     text:
-`"/api/v1/experiences/public/travelerPhotos": {
+`"/api/experiences/public/travelerPhotos": {
     "get": {
-        "tags": ["experience"],
-        "summary": "Get all stories",
-        "description": "Retrieve all stories with their media assets",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A list of stories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": { "type": "string" },
-                          "status": { "type": "string" },
-                          "created_at": { "type": "string" },
-                          "media_assets": {
-                            "type": "array",
-                            "items": {
+      "tags": ["experience"],
+      "summary": "Get all stories",
+      "description": "Retrieve all stories with their media assets",
+      "parameters": [
+        {
+          "name": "experience-id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the experience to fetch stories for"
+        }
+      ],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "A list of stories",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "status": { "type": "string", "enum": ["PUBLISHED"] },
+                        "created_at": { "type": "string", "format": "date-time" },
+                        "media_assets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": { "type": "string", "format": "uri" }
+                            }
+                          }
+                        },
+                        "seo_title_tag": { "type": "string" },
+                        "hashtags": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "experiences": {
+                          "type": "object",
+                          "properties": {
+                            "name": { "type": "string" }
+                          }
+                        },
+                        "userprofiles": {
+                          "type": "object",
+                          "properties": {
+                            "email": { "type": "string", "format": "email" },
+                            "firstname": { "type": "string" },
+                            "lastname": { "type": "string" },
+                            "media_assets": {
                               "type": "object",
                               "properties": {
-                                "url": { "type": "string" }
-                              }
-                            }
-                          },
-                          "seo_title_tag": { "type": "string" },
-                          "hashtags": {
-                            "type": "array",
-                            "items": { "type": "string" }
-                          },
-                          "experiences": {
-                            "type": "object",
-                            "properties": {
-                              "name": { "type": "string" }
-                            }
-                          },
-                          "userprofiles": {
-                            "type": "object",
-                            "properties": {
-                              "email": { "type": "string" },
-                              "firstname": { "type": "string" },
-                              "lastname": { "type": "string" },
-                              "media_assets": { 
-                                "type": "object",
-                                "properties": {
-                                  "url":"string"
-                                }
+                                "url": { "type": "string", "format": "uri" }
                               }
                             }
                           }
                         }
                       }
-                    },
-                    "error": {
-                      "type": "string"
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  }
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
                 }
               }
             }
-          },
-          "405": {
-            "description": "Method not allowed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  }
+          }
+        },
+        "405": {
+          "description": "Method not allowed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  }
+          }
+        },
+        "500": {
+          "description": "Internal server error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" }
                 }
               }
             }
           }
         }
       }
+    }
   }`
 }
