@@ -105,17 +105,7 @@ export const swaggerPublicExpIconicPhotosGet = {
                               "description": "Type of tip: dos, don'ts, or best_time"
                             }
                           }
-                        },
-                        "example": [
-                          {
-                            "text": "Avoid harsh midday sun or use shaded areas for balanced exposure",
-                            "type": "don'ts"
-                          },
-                          {
-                            "text": "Golden hour (early morning or late afternoon) for soft, warm tones",
-                            "type": "best_time"
-                          }
-                        ]
+                        }
                       },
                       "media_assets": {
                         "type": "object",
