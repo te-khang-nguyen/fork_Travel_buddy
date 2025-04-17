@@ -98,7 +98,7 @@ export const swaggerExpVisitsGet = {
                             "type": "string"
                           },
                           "status": {
-                            "type": "boolean",
+                            "type": "boolean"
                           }
                         }
                       },
