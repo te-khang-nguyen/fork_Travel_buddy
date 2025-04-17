@@ -47,125 +47,141 @@ export const swaggerPublicExpIconicPhotosGet = {
     index:17, 
     text:
 `"/api/v1/experiences/public/iconicPhotos": {
-      "get": {
-        "tags": ["experience"],
-        "summary": "Get iconic photos by experience ID for a non-authenticated user",
-        "description": "Retrieve iconic photos by experience ID for a non-authenticated user.",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "experience-id",
+  "get": {
+    "tags": ["experience"],
+    "summary": "Get iconic photos by experience ID for a non-authenticated user",
+    "description": "Retrieve iconic photos by experience ID for a non-authenticated user.",
+    "parameters": [
+      {
+        "in": "query",
+        "name": "experience-id",
+        "schema": {
+          "type": "string"
+        },
+        "required": true,
+        "description": "The ID of the experience to retrieve iconic photos for"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Iconic photos retrieved successfully",
+        "content": {
+          "application/json": {
             "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The ID of the experience to retrieve iconic photos for"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Iconic photos retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "experience_id": { "type": "string" },
+                      "type": { "type": "string" },
+                      "name": { "type": "string" },
+                      "text": { "type": "string" },
+                      "created_at": { 
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "updated_at": { 
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "media_id": { "type": "string" },
+                      "tips": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["text", "type"],
+                          "properties": {
+                            "text": {
+                              "type": "string",
+                              "description": "Tips for the iconic photo"
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": ["dos", "don'ts", "best_time"],
+                              "description": "Type of tip: dos, don'ts, or best_time"
+                            }
+                          }
+                        },
+                        "example": [
+                          {
+                            "text": "Avoid harsh midday sun or use shaded areas for balanced exposure",
+                            "type": "don'ts"
+                          },
+                          {
+                            "text": "Golden hour (early morning or late afternoon) for soft, warm tones",
+                            "type": "best_time"
+                          }
+                        ]
+                      },
+                      "media_assets": {
                         "type": "object",
                         "properties": {
-                          "id": { "type": "string" },
-                          "experience_id": { "type": "string" },
-                          "type": { "type": "string" },
-                          "name": { "type": "string" },
-                          "text": { "type": "string" },
-                          "created_at": { "type": "string" },
-                          "updated_at": { "type": "string" },
-                          "media_id": { "type": "string" },
-                          "tips": { 
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "text": {
-                                  "type": "string",
-                                  "description": "Tips for the iconic photo"
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "enum": ["dos", "don'ts", "best_time"],
-                                  "description": "Type of tip: dos, don'ts, or best_time"
-                                }
-                              },
-                            }
-                            example: "[
-                              {
-                              "text": "Avoid harsh midday sun or use shaded areas for balanced exposure",
-                              "type": "don'ts"
-                              },
-                              {
-                              "text": "Golden hour (early morning or late afternoon) for soft, warm tones",
-                              "type": "best_time"
-                              },
-                            ]"
-                          },
-                          "media_assets": { 
-                            "type": "object",
-                            "properties": {
-                              "url": { 
-                                "type": "string" 
-                              }
-                            }
+                          "url": {
+                            "type": "string",
+                            "format": "uri"
                           }
                         }
                       }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "405": {
-            "description": "Method not allowed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": { "type": "string" }
+                    },
+                    "required": [
+                      "id",
+                      "experience_id",
+                      "type",
+                      "name",
+                      "created_at",
+                      "updated_at"
+                    ]
                   }
                 }
               }
             }
           }
         }
+      },
+      "400": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "405": {
+        "description": "Method not allowed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": { "type": "string" }
+              }
+            }
+          }
+        }
       }
-    }`
+    }
+  }
+}`
 }

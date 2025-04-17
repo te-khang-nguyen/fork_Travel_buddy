@@ -95,6 +95,9 @@ export const swaggerExpVisitsCreate = {
                       },
                       "experience-id": {
                         "type": "string"
+                      },
+                      "status": {
+                        "type": "boolean"
                       }
                     }
                   }

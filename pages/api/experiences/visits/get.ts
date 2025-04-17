@@ -37,7 +37,12 @@ export default async function handler(
       .eq("user_id", user!.id)
       .eq("experience_id", experienceId);
 
-    return res.status(200).json({ data: { visit: queryData? queryData : null , stories: storiesData } });
+    return res.status(200).json({ 
+      data: { 
+        visit: queryData || !queryData!.status? queryData : null , 
+        stories: storiesData 
+      }
+    });
   } catch (err: any) {
     return res.status(500).json({
       error: err.message ||
@@ -91,6 +96,9 @@ export const swaggerExpVisitsGet = {
                           },
                           "experience_id": {
                             "type": "string"
+                          },
+                          "status": {
+                            "type": "boolean",
                           }
                         }
                       },
