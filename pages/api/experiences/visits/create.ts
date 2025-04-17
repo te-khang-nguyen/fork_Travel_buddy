@@ -16,14 +16,13 @@ export default async function handler(
 
         const { data: { user } } = await supabase.auth.getUser(token);
 
-        const { experience_id, status } = req.body;
+        const { experience_id } = req.body;
  
         const { data, error } = await supabase
         .from("visits")
         .upsert({
               experience_id,
               user_id: user!.id,
-              status: status
         },
         {
             onConflict: 'experience_id, user_id',
