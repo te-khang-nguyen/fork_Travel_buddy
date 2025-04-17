@@ -98,7 +98,7 @@ export const swaggerExpVisitsGet = {
                             "type": "string"
                           },
                           "is_visited": {
-                            "type": "boolean",
+                            "type": "boolean"
                           }
                         }
                       },
