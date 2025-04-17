@@ -24,9 +24,7 @@ export default async function handler(
               experience_id,
               user_id: user!.id,
         },
-        {
-            onConflict: 'experience_id, user_id',
-        })
+        { onConflict: 'id' })
         .select("created_at, experience_id, status")
         .single();
 
