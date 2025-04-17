@@ -25,7 +25,7 @@ export default async function handler(
       error
     } = await supabase
       .from("visits")
-      .select("created_at, experience_id")
+      .select("created_at, experience_id, is_visited")
       .eq("user_id", user!.id);
 
     const {
@@ -104,6 +104,9 @@ export const swaggerExpVisitsFilterGet = {
                         "experience_id": {
                           "type": "string",
                           "format": "uuid"
+                        },
+                        "is_visited": {
+                          "type": "boolean"
                         }
                       }
                     }

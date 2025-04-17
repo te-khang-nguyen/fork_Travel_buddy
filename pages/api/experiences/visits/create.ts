@@ -25,7 +25,7 @@ export default async function handler(
               user_id: user!.id,
         },
         { onConflict: 'id' })
-        .select("created_at, experience_id, status")
+        .select("created_at, experience_id, is_visited")
         .single();
 
         if (error) {
@@ -93,7 +93,7 @@ export const swaggerExpVisitsCreate = {
                       "experience-id": {
                         "type": "string"
                       },
-                      "status": {
+                      "is_visited": {
                         "type": "boolean"
                       }
                     }
