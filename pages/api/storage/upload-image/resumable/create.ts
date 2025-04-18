@@ -132,10 +132,11 @@ async function finalizeUpload(
       combinedBuffer, 
       {
         contentType: uploadSession?.mime_type ?? 'image/jpeg',
-        upsert: false
+        upsert: true
       }
     );
   
+  console.log('File path name', `${userId}/${uploadSession.file_name}`);
   console.log('Upload task:', uploadTask);
 
   if (uploadError) return { error: uploadError ?? 'Error uploading final file' };
