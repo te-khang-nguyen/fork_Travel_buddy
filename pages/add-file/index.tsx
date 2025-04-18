@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { supabase_vector_store } from "@/libs/supabase/supabase_client";
 
-// @ts-ignore
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
-// @ts-ignore
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.entry";
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
