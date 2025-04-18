@@ -80,13 +80,17 @@ async function finalizeUpload(
       sortBy: { column: 'created_at', order: 'asc' },
       search: 'part-'
     });
-    
 
   if (listError) return { error: listError } ;
+
+  console.log('Chunks:', chunks);
+
   if (!chunks || chunks.length === 0) return { error: {
     message: 'No chunks found',
     uploadSession
   }};
+
+  
 
   // Sort chunks numerically by part number
   const sortedChunks = chunks
@@ -118,6 +122,9 @@ async function finalizeUpload(
       combinedBuffer, 
       Buffer.from(await data.arrayBuffer())
     ]);
+
+    console.log('Chunk downloaded:', data);
+    console.log('Combined buffer:', combinedBuffer);
   }
 
   // Upload final file
@@ -134,6 +141,8 @@ async function finalizeUpload(
         upsert: false
       }
     );
+  
+  console.log('Upload task:', uploadTask);
 
   if (uploadError) return { error: uploadError };
 
@@ -229,8 +238,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if all parts uploaded
     if (updatedSession.received_parts.length === updatedSession.total_parts) {
-     const {data, error} = await finalizeUpload(updatedSession, supabase, user?.id ?? "");
-      // Cleanup temporary file
+      const {data, error} = await finalizeUpload(updatedSession, supabase, user?.id ?? "");
+      console.log(data)
       await fs.unlink(chunk.filepath);
 
       if (error) {
