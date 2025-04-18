@@ -93,14 +93,8 @@ export const swaggerPublicExpIconicPhotosGetAll = {
                           }
                         }
                       },
-                      "media_assets": {
-                        "type": "object",
-                        "properties": {
-                          "url": {
-                            "type": "string",
-                            "format": "uri"
-                          }
-                        }
+                      "url": {
+                        "type": "string"
                       }
                     },
                     "required": [
