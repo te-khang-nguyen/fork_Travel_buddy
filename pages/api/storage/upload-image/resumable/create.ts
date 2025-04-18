@@ -82,9 +82,6 @@ async function finalizeUpload(
     });
 
   if (listError) return { error: listError } ;
-
-  console.log('Chunks:', chunks);
-
   if (!chunks || chunks.length === 0) return { error: {
     message: 'No chunks found',
     uploadSession
@@ -122,9 +119,6 @@ async function finalizeUpload(
       combinedBuffer, 
       Buffer.from(await data.arrayBuffer())
     ]);
-
-    console.log('Chunk downloaded:', data);
-    console.log('Combined buffer:', combinedBuffer);
   }
 
   // Upload final file
@@ -137,14 +131,14 @@ async function finalizeUpload(
       `${userId}/${uploadSession.file_name}`, 
       combinedBuffer, 
       {
-        contentType: uploadSession?.mime_type ?? 'image/jpg',
+        contentType: uploadSession?.mime_type ?? 'image/jpeg',
         upsert: false
       }
     );
   
   console.log('Upload task:', uploadTask);
 
-  if (uploadError) return { error: uploadError };
+  if (uploadError) return { error: uploadError ?? 'Error uploading final file' };
 
   // Clean up chunks
   const { error: deleteError } = await supabase.storage
@@ -239,7 +233,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Check if all parts uploaded
     if (updatedSession.received_parts.length === updatedSession.total_parts) {
       const {data, error} = await finalizeUpload(updatedSession, supabase, user?.id ?? "");
-      console.log(data)
+
       await fs.unlink(chunk.filepath);
 
       if (error) {
