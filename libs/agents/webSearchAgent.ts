@@ -11,7 +11,8 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableConfig } from "@langchain/core/runnables";
 import { AIMessage } from "@langchain/core/messages";
 
-const EXASEARCH_API_KEY = process.env.EXASEARCH_API_KEY;
+const EXASEARCH_API_KEY = process.env.NEXT_PUBLIC_EXASEARCH_API_KEY;
+const exaClient = new Exa(EXASEARCH_API_KEY);
 
 export const systemPromptTemplate = ({ 
     numerOfWords,
@@ -132,16 +133,16 @@ export default searchAgent;
 
 export async function webSearchAgent({
     query,
-    retrieverApiKey,
+    // retrieverApiKey: EXASEARCH_API_KEY,
     numberOfSearchResults = 3,
   }: {
     query: string;
-    retrieverApiKey?: string;
+    // retrieverApiKey?: string;
     numberOfSearchResults?: number;
   }) {
-    const apiKey = retrieverApiKey || process.env.NEXT_PUBLIC_EXASEARCH_API_KEY;
-    if (!apiKey) throw new Error("NEXT_PUBLIC_EXASEARCH_API_KEY is missing");
-    const exaClient = new Exa(apiKey);
+    // const apiKey = retrieverApiKey || process.env.NEXT_PUBLIC_EXASEARCH_API_KEY;
+    // if (!apiKey) throw new Error("NEXT_PUBLIC_EXASEARCH_API_KEY is missing");
+    // const exaClient = new Exa(apiKey);
     const results = await exaClient.search(query, {
       numResults: numberOfSearchResults,
     });
@@ -152,7 +153,3 @@ export async function webSearchAgent({
       snippet: r.text || r.snippet,
     }));
   }
-  
-
-
-
