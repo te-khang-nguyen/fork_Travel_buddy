@@ -21,7 +21,7 @@ export async function infoOutputAgent({
 }: {
   query: string,
   dbResults: any[],
-  webResults: any[],
+  webResults: string,
   conversationHistory?: { user: string, bot: string }[],
 }) {
   const language = detectLanguage(query);
@@ -82,8 +82,8 @@ export async function infoOutputAgent({
           ? `Kết quả từ cơ sở dữ liệu:\n${midScoreDbResults.map(r => r.text).join("\n---\n")}\n\n`
           : `Database results:\n${midScoreDbResults.map(r => r.text).join("\n---\n")}\n\n`;
         prompt += language === "vi"
-          ? `Kết quả từ tìm kiếm web:\n${webResults.map(r => r.snippet || r.content).join("\n---\n")}\n\n`
-          : `Web search results:\n${webResults.map(r => r.snippet || r.content).join("\n---\n")}\n\n`;
+          ? `Kết quả từ tìm kiếm web:\n${webResults}\n\n`
+          : `Web search results:\n${webResults}\n\n`;
         prompt += language === "vi"
           ? `Hãy tổng hợp thông tin từ cả hai nguồn trên. Nếu bạn sử dụng thông tin từ kết quả tìm kiếm web, hãy nói rõ với người dùng rằng bạn đã sử dụng nguồn từ web, không chỉ từ cơ sở dữ liệu nội bộ. Phong cách trả lời: ${tone}.`
           : `Please synthesize information from both the moderately relevant database results and the web search results above. If you use any information from web search, you must clearly indicate to the user that it comes from web search, not just our internal database. Answer in a ${tone} style.`;
@@ -93,8 +93,8 @@ export async function infoOutputAgent({
           ? `Không có kết quả phù hợp từ cơ sở dữ liệu. Dưới đây là các kết quả từ tìm kiếm web:\n\n`
           : `No relevant database results found. Here are the web search results:\n\n`;
         prompt += language === "vi"
-          ? `Kết quả từ tìm kiếm web:\n${webResults.map(r => r.snippet || r.content).join("\n---\n")}\n\n`
-          : `Web search results:\n${webResults.map(r => r.snippet || r.content).join("\n---\n")}\n\n`;
+          ? `Kết quả từ tìm kiếm web:\n${webResults}\n\n`
+          : `Web search results:\n${webResults}\n\n`;
         prompt += language === "vi"
           ? `Hãy trả lời câu hỏi dựa trên các kết quả tìm kiếm web ở trên. Bạn phải nói rõ với người dùng rằng câu trả lời của bạn dựa trên thông tin từ web, không phải từ cơ sở dữ liệu nội bộ. Phong cách trả lời: ${tone}.`
           : `Please answer the user's question based only on the web search results above. You must clearly indicate to the user that your answer is based on web search information, not from our internal database. Answer in a ${tone} style.`;

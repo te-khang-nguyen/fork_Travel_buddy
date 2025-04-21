@@ -1,43 +1,56 @@
 import React, { useState } from "react";
 import { semanticSearchAgent } from "@/libs/agents/semanticSearchAgent";
-import { webSearchAgent } from "@/libs/agents/webSearchAgent";
+import { useCallSearchAgentMutation } from "@/libs/services/agents/search";
 import { infoOutputAgent } from "@/libs/agents/infoOutputAgent";
 
 const ChatbotTBTest = () => {
   const [question, setQuestion] = useState("");
   const [dbResults, setDbResults] = useState<any[]>([]);
-  const [webResults, setWebResults] = useState<any[]>([]);
+  const [webResults, setWebResults] = useState<string>("");
   const [finalAnswer, setFinalAnswer] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  const [queryingDb, setQueryingDb] = useState(false);
+  const [searchingWeb, setSearchingWeb] = useState(false);
+  const [finalizingAnswer, setFinalizingAnswer] = useState(false);
   const [error, setError] = useState("");
+  const [searchAgent] = useCallSearchAgentMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setFinalizingAnswer(true);
+    setQueryingDb(true);
     setError("");
     setDbResults([]);
-    setWebResults([]);
+    setWebResults("");
     setFinalAnswer("");
     try {
       // Run both agents in parallel
-      const [db, web] = await Promise.all([
-        semanticSearchAgent(question, 3),
-        webSearchAgent({ query: question, numberOfSearchResults: 3 })
+      const [db] = await Promise.all([
+        semanticSearchAgent(question, 3)
       ]);
+      setQueryingDb(false);
+      const filtered_db = db.filter(r => r.similarity > 0.8);
+      if (!filtered_db || filtered_db.length === 0) {
+        setSearchingWeb(true);
+        const webSearchResult = await searchAgent({
+          "query": question,
+          "word_limit": 100
+        }).unwrap();
+        setSearchingWeb(false);
+        setWebResults(webSearchResult.answer || "No web result");
+      }
       setDbResults(db);
-      setWebResults(web);
 
       // Compose final answer
       const answer = await infoOutputAgent({
         query: question,
         dbResults: db,
-        webResults: web,
+        webResults
       });
       setFinalAnswer(answer || "Cannot answer");
     } catch (err: any) {
       setError(err.message || "Error searching");
     }
-    setLoading(false);
+    setFinalizingAnswer(false);
   };
 
   return (
@@ -65,9 +78,9 @@ const ChatbotTBTest = () => {
         />
         <button
         type="submit"
-        disabled={loading || !question.trim()}
+        disabled={finalizingAnswer || !question.trim()}
         style={{
-            background: loading
+            background: finalizingAnswer
             ? "#b5c6e0"
             : "linear-gradient(90deg, #a8edea 0%, #fed6e3 100%)", // pastel blue-pink
             color: "#333",
@@ -76,14 +89,17 @@ const ChatbotTBTest = () => {
             padding: "10px 20px",
             fontWeight: 600,
             fontSize: 16,
-            cursor: loading || !question.trim() ? "not-allowed" : "pointer",
+            cursor: finalizingAnswer || !question.trim() ? "not-allowed" : "pointer",
             boxShadow: "0 2px 8px rgba(180,180,255,0.07)",
             transition: "background 0.2s, box-shadow 0.2s",
-            opacity: loading || !question.trim() ? 0.6 : 1,
+            opacity: finalizingAnswer || !question.trim() ? 0.6 : 1,
             marginLeft: 4,
         }}
         >
-        {loading ? "Searching..." : "Ask"}
+        {searchingWeb ? "Searching the web..." 
+        : queryingDb ? "Querying Database..."
+        : finalizingAnswer ? "Finalizing..."
+        : "Ask"}
         </button>
       </form>
       {error && <div style={{ color: "red", margin: "12px 0" }}>{error}</div>}
@@ -118,16 +134,7 @@ const ChatbotTBTest = () => {
             <>
               <h4>Top Web Results:</h4>
               <ol>
-                {webResults.map((item, idx) => (
-                  <li key={idx} style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 14, color: "#555" }}>
-                      <b>Source:</b> {item.url || item.title || "N/A"}
-                    </div>
-                    <div style={{ whiteSpace: "pre-wrap", background: "#f7f7f7", padding: 8 }}>
-                      {item.snippet || item.content || ""}
-                    </div>
-                  </li>
-                ))}
+                {webResults}
               </ol>
             </>
           )}
