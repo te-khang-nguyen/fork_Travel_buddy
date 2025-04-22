@@ -69,8 +69,8 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
 `"/api/v1/experiences/visits/with-stories": {
   "get": {
     "tags": ["visits"],
-    "summary": "Get visit information for a user by experience ID.",
-    "description": "Retrieve visit information for a user by experience ID.",
+    "summary": "Check if all visited experiences have associated stories",
+    "description": "Returns the status of stories for all visited experiences for the authenticated user",
     "security": [
       {
         "bearerAuth": []
@@ -78,11 +78,12 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
     ],
     "responses": {
       "200": {
-        "description": "Visit information retrieved successfully",
+        "description": "Story status check completed successfully",
         "content": {
           "application/json": {
             "schema": {
               "type": "object",
+              "required": ["data"],
               "properties": {
                 "data": {
                   "type": "object",
@@ -102,13 +103,37 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
                     }
                   }
                 }
+              },
+              "example": {
+                "data": {
+                  "message": "At least 1 visited experience does not have story",
+                  "completed": false
+                }
+              }
+            },
+            "examples": {
+              "incomplete": {
+                "value": {
+                  "data": {
+                    "message": "At least 1 visited experience does not have story",
+                    "completed": false
+                  }
+                }
+              },
+              "complete": {
+                "value": {
+                  "data": {
+                    "message": "All visited experiences have stories",
+                    "completed": true
+                  }
+                }
               }
             }
           }
         }
       },
       "400": {
-        "description": "Bad request",
+        "description": "Bad request - invalid input or processing error",
         "content": {
           "application/json": {
             "schema": {
@@ -116,7 +141,25 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
               "required": ["error"],
               "properties": {
                 "error": {
-                  "type": "string"
+                  "type": "string",
+                  "example": "Invalid request parameters"
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - missing or invalid bearer token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["error"],
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Missing authentication token"
                 }
               }
             }
@@ -124,15 +167,16 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
         }
       },
       "405": {
-        "description": "Method not allowed",
+        "description": "Method not allowed - only GET requests are supported",
         "content": {
           "application/json": {
             "schema": {
               "type": "object",
-              "required": ["message"],
+              "required": ["error"],
               "properties": {
-                "message": {
-                  "type": "string"
+                "error": {
+                  "type": "string",
+                  "example": "Method not allowed!"
                 }
               }
             }
@@ -148,7 +192,8 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
               "required": ["error"],
               "properties": {
                 "error": {
-                  "type": "string"
+                  "type": "string",
+                  "example": "An error has occurred while retrieving the challenge information."
                 }
               }
             }
