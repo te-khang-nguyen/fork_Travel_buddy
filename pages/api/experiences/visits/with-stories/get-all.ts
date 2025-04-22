@@ -49,8 +49,8 @@ export default async function handler(
 
     return res.status(200).json({ 
       data: nonStoryFilter && nonStoryFilter?.length > 0 
-      ? "At least 1 visited experience does not have story"
-      : "All visited experiences have stories" 
+      ? { message: "At least 1 visited experience does not have story", completed: false }
+      : { message: "All visited experiences have stories", completed: true }
     });
 
   } catch (err: any) {
@@ -67,85 +67,103 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
   index: 17,
   text:
 `"/api/v1/experiences/visits/with-stories": {
-    "get": {
-      "tags": ["visits"],
-      "summary": "Get visit information for a user by experience ID.",
-      "description": "Retrieve visit information for a user by experience ID.",
-      "security": [
-        {
-          "bearerAuth": []
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Visit information retrieved successfully",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "oneOf": [
-                    {
+  "get": {
+    "tags": ["visits"],
+    "summary": "Get visit information for a user by experience ID.",
+    "description": "Retrieve visit information for a user by experience ID.",
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Visit information retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "required": ["message", "completed"],
+                  "properties": {
+                    "message": {
                       "type": "string",
-                      "example": "At least 1 visited experience does not have story",
-                      "description": "Message returned when user has one visited experience without at least 1 story"
+                      "enum": [
+                        "At least 1 visited experience does not have story",
+                        "All visited experiences have stories"
+                      ],
+                      "description": "Status message about stories for visited experiences"
                     },
-                    {
-                      "type": "string",
-                      "example": "All visited experiences have stories" ,
-                      "description": "Message returned when user has stories for all visited experiences"
+                    "completed": {
+                      "type": "boolean",
+                      "description": "Flag indicating if all visited experiences have stories",
+                      "example": false
                     }
-                   ]
+                  },
+                  "examples": {
+                    "incomplete": {
+                      "value": {
+                        "message": "At least 1 visited experience does not have story",
+                        "completed": false
+                      }
+                    },
+                    "complete": {
+                      "value": {
+                        "message": "All visited experiences have stories",
+                        "completed": true
+                      }
+                    }
                   }
                 }
               }
             }
           }
-        },
-        "400": {
-          "description": "Bad request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["error"],
-                "properties": {
-                  "error": {
-                    "type": "string"
-                  }
+        }
+      },
+      "400": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["error"],
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
               }
             }
           }
-        },
-        "405": {
-          "description": "Method not allowed",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["message"],
-                "properties": {
-                  "message": {
-                    "type": "string"
-                  }
+        }
+      },
+      "405": {
+        "description": "Method not allowed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["message"],
+              "properties": {
+                "message": {
+                  "type": "string"
                 }
               }
             }
           }
-        },
-        "500": {
-          "description": "Internal server error",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["error"],
-                "properties": {
-                  "error": {
-                    "type": "string"
-                  }
+        }
+      },
+      "500": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["error"],
+              "properties": {
+                "error": {
+                  "type": "string"
                 }
               }
             }
@@ -153,5 +171,6 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
         }
       }
     }
-  }`
+  }
+}`
 }
