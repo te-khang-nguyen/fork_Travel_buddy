@@ -80,7 +80,7 @@ export const swaggerExpVisitsGet = {
                     "type": "object",
                     "properties": {
                       "visit": {
-                        "type": "boolean",
+                        "type": "boolean"
                       }
                     }
                   }
