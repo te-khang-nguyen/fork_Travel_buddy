@@ -29,18 +29,9 @@ export default async function handler(
       .eq("experience_id", experienceId)
       .single();
 
-    const {
-      data: storiesData
-    } = await supabase
-      .from("stories")
-      .select("id, created_at")
-      .eq("user_id", user!.id)
-      .eq("experience_id", experienceId);
-
     return res.status(200).json({ 
       data: { 
-        visit: queryData && queryData!.is_visited ? queryData : null,
-        stories: storiesData 
+        visit: queryData ? queryData!.is_visited : null,
       }
     });
   } catch (err: any) {
@@ -60,7 +51,7 @@ export const swaggerExpVisitsGet = {
     "get": {
       "tags": ["visits"],
       "summary": "Get visit information for a user by experience ID.",
-      "description": "Retrieve visit information for a user by experience ID.",
+      "description": "Retrieve visit information for a user by experience ID. Can return null if user data has not been found, return true if user has selected visit button, return false if user has deselected visit button",
       "security": [
         {
           "bearerAuth": []
@@ -89,33 +80,7 @@ export const swaggerExpVisitsGet = {
                     "type": "object",
                     "properties": {
                       "visit": {
-                        "type": "object",
-                        "properties": {
-                          "created_at": {
-                            "type": "string"
-                          },
-                          "experience_id": {
-                            "type": "string"
-                          },
-                          "is_visited": {
-                            "type": "boolean"
-                          }
-                        }
-                      },
-                      "stories": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "created_at": {
-                              "type": "string",
-                              "example": "2024-04-08T10:00:00Z"
-                            }
-                          }
-                        }
+                        "type": "boolean",
                       }
                     }
                   }
