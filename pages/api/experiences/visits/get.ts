@@ -24,14 +24,14 @@ export default async function handler(
       data: queryData,
     } = await supabase
       .from("visits")
-      .select("created_at, experience_id, is_visited")
+      .select("is_visited")
       .eq("user_id", user!.id)
       .eq("experience_id", experienceId)
       .single();
 
     return res.status(200).json({ 
       data: { 
-        visit: queryData ? queryData!.is_visited : null,
+        is_visited: queryData ? queryData!.is_visited : null,
       }
     });
   } catch (err: any) {
@@ -79,7 +79,7 @@ export const swaggerExpVisitsGet = {
                   "data": {
                     "type": "object",
                     "properties": {
-                      "visit": {
+                      "is_visited": {
                         "type": "boolean"
                       }
                     }

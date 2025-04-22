@@ -16,7 +16,7 @@ export default async function handler(
 
     const { data: { user } } = await supabase.auth.getUser(token);
 
-    const { experience_id } = req.body;
+    const [experience_id] = Object.values(req.body);
 
     const { data: visitData } = await supabase
       .from("visits")
@@ -94,7 +94,7 @@ export const swaggerExpVisitsCreate = {
             "schema": {
               "type": "object",
               "properties": {
-                "experience_id": {
+                "experience-id": {
                   "type": "string"
                 }
               }
@@ -119,7 +119,7 @@ export const swaggerExpVisitsCreate = {
                       "user_id": {
                         "type": "string"
                       },
-                      "experience-id": {
+                      "experience_id": {
                         "type": "string"
                       },
                       "created_at": {
