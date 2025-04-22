@@ -33,7 +33,8 @@ export default async function handler(
       .select("experience_id")
       .eq("user_id", user!.id);
 
-    const nonStoryFilter = queryData?.filter(
+    const nonStoryFilter = queryData?.length === 0 
+        && storiesData?.length === 0? queryData?.filter(
       (visit) => {
         if (!storiesData?.find((e) => e.experience_id === visit.experience_id)
         && visit.is_visited === true){
@@ -41,16 +42,24 @@ export default async function handler(
             experience_id: visit.experience_id,
           };
         }
-    });
+    }) : [];
 
     if (error) {
       return res.status(400).json({ error: error.message });
     }
 
+    const responseBody = nonStoryFilter.length > 0 
+    ? { 
+          message: "At least 1 visited experience does not have story", 
+          completed: false 
+      }
+    : { 
+          message: "All visited experiences have stories", 
+          completed: true 
+      }
+
     return res.status(200).json({ 
-      data: nonStoryFilter && nonStoryFilter?.length > 0 
-      ? { message: "At least 1 visited experience does not have story", completed: false }
-      : { message: "All visited experiences have stories", completed: true }
+      data: responseBody
     });
 
   } catch (err: any) {

@@ -44,8 +44,8 @@ export { swaggerPublicExpStoryGet } from './experiences/public/travelerPhotos/ge
 export { swaggerPublicExpIconicPhotosGet } from './experiences/public/iconicPhotos/get';
 export { swaggerPublicExpIconicPhotosGetAll } from './experiences/public/iconicPhotos/get-all';
 export { swaggerPublicActivitiesGet } from './experiences/public/activities/get';
-export { swaggerExpVisitsCreate } from './experiences/visits/create';
-export { swaggerExpVisitsGet } from './experiences/visits/get';
+// export { swaggerExpVisitsCreate } from './experiences/visits/create';
+// export { swaggerExpVisitsGet } from './experiences/visits/get';
 // export { swaggerExpVisitsCheckStoriesGetAll } from './experiences/visits/with-stories/get-all';
 export { swaggerBussChallengeCreate } from './experiences/challenge/business/create';
 export { swaggerBussChallengeGetAll } from './experiences/challenge/business/get-all';
