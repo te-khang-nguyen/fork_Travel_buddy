@@ -101,20 +101,6 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
                       "description": "Flag indicating if all visited experiences have stories",
                       "example": false
                     }
-                  },
-                  "examples": {
-                    "incomplete": {
-                      "value": {
-                        "message": "At least 1 visited experience does not have story",
-                        "completed": false
-                      }
-                    },
-                    "complete": {
-                      "value": {
-                        "message": "All visited experiences have stories",
-                        "completed": true
-                      }
-                    }
                   }
                 }
               }
