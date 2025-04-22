@@ -49,8 +49,8 @@ export default async function handler(
 
     return res.status(200).json({ 
       data: nonStoryFilter && nonStoryFilter?.length > 0 
-      ? nonStoryFilter 
-      : "User have at least 1 story for each existing experience" 
+      ? "At least 1 visited experience does not have story"
+      : "All visited experiences have stories" 
     });
 
   } catch (err: any) {
@@ -87,22 +87,13 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
                   "data": {
                     "oneOf": [
                     {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": ["experience_id"],
-                        "properties": {
-                          "experience_id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "Unique identifier of the experience"
-                          }
-                        }
-                      }
+                      "type": "string",
+                      "example": "At least 1 visited experience does not have story",
+                      "description": "Message returned when user has one visited experience without at least 1 story"
                     },
                     {
                       "type": "string",
-                      "example": "User have at least 1 story for each existing experience",
+                      "example": "All visited experiences have stories" ,
                       "description": "Message returned when user has stories for all visited experiences"
                     }
                    ]
