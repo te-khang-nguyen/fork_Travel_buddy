@@ -98,8 +98,7 @@ export const swaggerExpVisitsCheckStoriesGetAll = {
                     },
                     "completed": {
                       "type": "boolean",
-                      "description": "Flag indicating if all visited experiences have stories",
-                      "example": false
+                      "description": "Flag indicating if all visited experiences have stories"
                     }
                   }
                 }
