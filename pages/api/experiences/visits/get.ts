@@ -31,7 +31,8 @@ export default async function handler(
 
     return res.status(200).json({ 
       data: { 
-        is_visited: queryData ? queryData!.is_visited : null,
+        is_visited: queryData || queryData!.is_visited 
+                    ? true : false,
       }
     });
   } catch (err: any) {
