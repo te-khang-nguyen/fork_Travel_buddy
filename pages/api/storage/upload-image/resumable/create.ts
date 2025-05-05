@@ -299,7 +299,7 @@ export const swaggerStorageResumableUpload = {
       "200": {
         "description": "Chunk uploaded successfully",
         "content": {
-          "application/json": {
+          "multipart/form-data; boundary=----WebKitFormBoundary...": {
             "schema": {
               "type": "object",
               "oneOf": [

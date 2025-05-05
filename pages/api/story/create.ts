@@ -107,11 +107,24 @@ export const swaggerStoryCreate = {
           "application/json": {
             "schema": {
               "type": "object",
+              "required": ["experience_id", "channel_id", "story_content"],
               "properties": {
-                "experience_id": { "type": "string" },
-                "channel_id": { "type": "string" },
-                "notes": { "type": "string" },
-                "story_content": { "type": "string" },
+                "experience_id": { 
+                  "type": "string",
+                  "description": "ID of the associated experience"
+                },
+                "channel_id": { 
+                  "type": "string",
+                  "description": "ID of the channel where story will be published"
+                },
+                "notes": { 
+                  "type": "string",
+                  "description": "Additional notes for the story"
+                },
+                "story_content": { 
+                  "type": "string",
+                  "description": "Main content of the story"
+                },
                 "media": {
                   "type": "array",
                   "items": {
@@ -122,6 +135,7 @@ export const swaggerStoryCreate = {
                       },
                       {
                         "type": "object",
+                        "required": ["url"],
                         "properties": {
                           "url": {
                             "type": "string",
@@ -131,20 +145,36 @@ export const swaggerStoryCreate = {
                             "type": "string",
                             "description": "Storage path of the media item"
                           }
-                        },
+                        }
                       }
                     ]
                   },
                   "description": "Array of media items that can be either URLs or objects with url and path"
                 },
-                "seo_title_tag": { "type": "string" },
-                "seo_meta_desc": { "type": "string" },
-                "seo_excerpt": { "type": "string" },
-                "seo_slug": { "type": "string" },
-                "long_tail_keyword": { "type": "string" },
+                "seo_title_tag": { 
+                  "type": "string",
+                  "description": "SEO title tag for the story"
+                },
+                "seo_meta_desc": { 
+                  "type": "string",
+                  "description": "SEO meta description"
+                },
+                "seo_excerpt": { 
+                  "type": "string",
+                  "description": "Short excerpt for SEO purposes"
+                },
+                "seo_slug": { 
+                  "type": "string",
+                  "description": "URL slug for the story"
+                },
+                "long_tail_keyword": { 
+                  "type": "string",
+                  "description": "Long-tail keyword for SEO"
+                },
                 "hashtags": {
                   "type": "array",
-                  "items": { "type": "string" }
+                  "items": { "type": "string" },
+                  "description": "List of hashtags associated with the story"
                 }
               }
             }
@@ -159,19 +189,25 @@ export const swaggerStoryCreate = {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "Story created successfully"
-                  },
-                  "id": {
-                    "type": "string"
-                  },
-                  "media": {
-                    "type": "array",
-                    "items": {
-                      type": "string"
-                    },
-                    "description": "list of IDs for uploaded media in the media_assets entity"
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Story created successfully"
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "Created story ID"
+                      },
+                      "media": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "List of IDs for uploaded media in the media_assets entity"
+                      }
+                    }
                   }
                 }
               }
@@ -185,7 +221,10 @@ export const swaggerStoryCreate = {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "error": { "type": "string" }
+                  "error": { 
+                    "type": "string",
+                    "description": "Error message"
+                  }
                 }
               }
             }
@@ -198,7 +237,10 @@ export const swaggerStoryCreate = {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": { "type": "string" }
+                  "error": { 
+                    "type": "string",
+                    "description": "Authentication error message"
+                  }
                 }
               }
             }
@@ -211,7 +253,10 @@ export const swaggerStoryCreate = {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": { "type": "string" }
+                  "error": { 
+                    "type": "string",
+                    "description": "Method not allowed message"
+                  }
                 }
               }
             }
@@ -224,7 +269,10 @@ export const swaggerStoryCreate = {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "error": { "type": "string" }
+                  "error": { 
+                    "type": "string",
+                    "description": "Internal server error message"
+                  }
                 }
               }
             }
