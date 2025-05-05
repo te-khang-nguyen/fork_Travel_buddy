@@ -1,56 +1,54 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
 
-interface CommentsRequestBody {
-    media?: Array<{
-        url: string;
-        path?: string;
-    }>;
-    [key: string]: any;
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   // Validate request method
-  if (req.method !== "PUT") {
+  if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed!" });
   }
 
-  const comment_id = req.query['comment-id'] as string;
-
   // Extract parameters
-  const {media, ...rest} = req.body as CommentsRequestBody;
+  const story_id = req.query['story-id'] as string;
+  if (!story_id) {
+    return res.status(400).json({ error: "Missing story ID" });
+  }
 
   // Extract authorization token
   const token = req.headers.authorization?.split(' ')[1];
 
   // Create Supabase client
   const supabase = createApiClient(token);
+  // Get authenticated user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   try {
     // Insert story into database
-    const { data, error } = await supabase
-            .from("comments")
-            .update([{
-                ...rest
-            }])
-            .eq('id', comment_id)
-            .select('id, content')
+    const { data } = await supabase
+            .from("likes")
+            .select('*')
+            .eq('story_id', story_id)
+            .eq('user_id', user?.id)
             .single();
 
-    if (error) {
-      return res.status(400).json({ error: error.message });
+    // Successful response
+    // If no data is found, return a response indicating no like exists
+    if (!data) {
+      return res.status(200).json({ 
+        status: false ,
+        like_id: null
+      });
     }
 
-    // Successful response
+    // If data is found, return the like ID
+    // and a status indicating the like exists
     return res.status(200).json({
-      data: {
-        message: "Comment updated successfully",
-        id: data?.id,
-        updated_comment: data?.content
-      }
+        status: true,
+        like_id: data.id
     });
 
   } catch (catchError) {
@@ -60,14 +58,14 @@ export default async function handler(
 }
 
 // Workaround to enable Swagger on production 
-export const swaggerStoryCommentsUpdate = {
+export const swaggerStoryLikesGet = {
   index: 24,
   text:
-`"/api/v1/story/comments/": {
-  "put": {
+`"/api/v1/story/likes": {
+  "post": {
     "tags": ["story"],
-    "summary": "Update a comment",
-    "description": "Update an existing comment on a story",
+    "summary": "Check if the current user has liked a story",
+    "description": "Returns the like status and like ID (if exists) for the authenticated user and a given story.",
     "security": [
       {
         "bearerAuth": []
@@ -76,54 +74,43 @@ export const swaggerStoryCommentsUpdate = {
     "parameters": [
       {
         "in": "query",
-        "name": "comment-id",
+        "name": "story-id",
         "schema": {
           "type": "string"
         },
         "required": true,
-        "description": "ID of the comment to update"
+        "description": "ID of the story to check like status for"
       }
     ],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "content": {
-                "type": "string",
-                "description": "Updated comment text"
-              }
-            }
-          }
-        }
-      }
-    },
     "responses": {
       "200": {
-        "description": "Comment updated successfully",
+        "description": "Like status retrieved successfully",
         "content": {
           "application/json": {
             "schema": {
               "type": "object",
               "properties": {
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Comment updated successfully"
-                    },
-                    "id": {
-                      "type": "string",
-                      "description": "ID of the updated comment"
-                    },
-                    "updated_comment": {
-                      "type": "string",
-                      "description": "Updated comment text"
-                    }
-                  }
+                "status": {
+                  "type": "boolean",
+                  "description": "True if the user has liked the story, false otherwise"
+                },
+                "like_id": {
+                  "type": ["string", "null"],
+                  "description": "ID of the like record if exists, otherwise null"
+                }
+              }
+            },
+            "examples": {
+              "liked": {
+                "value": {
+                  "status": true,
+                  "like_id": "123e4567-e89b-12d3-a456-426614174000"
+                }
+              },
+              "not_liked": {
+                "value": {
+                  "status": false,
+                  "like_id": null
                 }
               }
             }
@@ -131,7 +118,7 @@ export const swaggerStoryCommentsUpdate = {
         }
       },
       "400": {
-        "description": "Bad request - invalid input",
+        "description": "Bad request - missing or invalid story ID",
         "content": {
           "application/json": {
             "schema": {
@@ -139,7 +126,7 @@ export const swaggerStoryCommentsUpdate = {
               "properties": {
                 "error": {
                   "type": "string",
-                  "example": "Invalid comment data"
+                  "example": "Missing story ID"
                 }
               }
             }

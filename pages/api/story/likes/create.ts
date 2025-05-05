@@ -83,7 +83,7 @@ export default async function handler(
 export const swaggerStoryLikesCreate = {
   index: 24,
   text:
-`"/api/v1/story/likes": {
+`"/api/v1/story/likes/": {
   "post": {
     "tags": ["story"],
     "summary": "Toggle like status for a story",

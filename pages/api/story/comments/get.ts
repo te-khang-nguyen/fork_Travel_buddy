@@ -11,7 +11,10 @@ export default async function handler(
   }
 
   // Extract parameters
-  const { story_id } = req.body;
+  const story_id = req.query['story-id'] as string;
+  if (!story_id) {
+    return res.status(400).json({ error: "Missing story ID" });
+  }
 
   // Extract authorization token
   const token = req.headers.authorization?.split(' ')[1];
@@ -62,7 +65,7 @@ export const swaggerStoryCommentsGet = {
     "parameters": [
       {
         "in": "query",
-        "name": "story_id",
+        "name": "story-id",
         "schema": {
           "type": "string"
         },
