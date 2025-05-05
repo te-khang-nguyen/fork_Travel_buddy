@@ -29,6 +29,7 @@ export { swaggerStoryDel } from './story/delete';
 export { swaggerPublicStoryGetAll } from './story/public/get-all';
 export { swaggerPublicStoryGet } from './story/public/get';
 export { swaggerStoryLikesCreate } from './story/likes/create';
+export { swaggerStoryLikesGet } from './story/likes/get';
 export { swaggerStoryCommentsCreate } from './story/comments/create';
 export { swaggerStoryCommentsGet } from './story/comments/get';
 export { swaggerStoryCommentsUpdate } from './story/comments/update';

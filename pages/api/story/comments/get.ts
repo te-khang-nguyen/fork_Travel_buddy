@@ -35,12 +35,7 @@ export default async function handler(
     }
 
     // Successful response
-    return res.status(201).json({
-      data: {
-        message: "Story created successfully",
-        ...data
-      }
-    });
+    return res.status(201).json({data: data});
 
   } catch (catchError) {
     console.error("Unexpected error:", catchError);
