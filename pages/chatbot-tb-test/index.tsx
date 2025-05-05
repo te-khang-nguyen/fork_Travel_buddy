@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { semanticSearchAgent } from "@/libs/agents/semanticSearchAgent";
 import { useCallSearchAgentMutation } from "@/libs/services/agents/search";
+import { useCallClassifierAgentMutation } from "@/libs/services/agents/classifier";
 import { infoOutputAgent } from "@/libs/agents/infoOutputAgent";
+import { intentPrediction } from "@/libs/services/agents/classifier";
+
+interface ClassifierResponse {
+  intents: intentPrediction[];
+}
 
 const ChatbotTBTest = () => {
   const [question, setQuestion] = useState("");
@@ -13,40 +19,70 @@ const ChatbotTBTest = () => {
   const [finalizingAnswer, setFinalizingAnswer] = useState(false);
   const [error, setError] = useState("");
   const [searchAgent] = useCallSearchAgentMutation();
+  const [classifierAgent] = useCallClassifierAgentMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFinalizingAnswer(true);
-    setQueryingDb(true);
     setError("");
     setDbResults([]);
     setWebResults("");
     setFinalAnswer("");
     try {
-      // Run both agents in parallel
-      const [db] = await Promise.all([
-        semanticSearchAgent(question, 3)
-      ]);
-      setQueryingDb(false);
-      const filtered_db = db.filter(r => r.similarity > 0.8);
-      if (!filtered_db || filtered_db.length === 0) {
-        setSearchingWeb(true);
-        const webSearchResult = await searchAgent({
-          "query": question,
-          "word_limit": 100
-        }).unwrap();
-        setSearchingWeb(false);
-        setWebResults(webSearchResult.answer || "No web result");
+      // Get the classified intents with proper type assertion
+      const response = await classifierAgent({ query: question }).unwrap();
+      const classifierResponse = response as ClassifierResponse;
+      
+      // Ensure intents exists and is an array
+      if (!classifierResponse?.intents || !Array.isArray(classifierResponse.intents)) {
+        throw new Error('Invalid intents format received');
       }
-      setDbResults(db);
 
-      // Compose final answer
-      const answer = await infoOutputAgent({
-        query: question,
-        dbResults: db,
-        webResults
-      });
-      setFinalAnswer(answer || "Cannot answer");
+      // Now safely sort the intents
+      const sortedIntents = [...classifierResponse.intents].sort((a, b) => b.confidence - a.confidence);
+      const primaryIntent = sortedIntents[0];
+      
+      // Route to the appropriate handler
+      switch (primaryIntent.intent) {
+        case 'find_location':
+          setFinalAnswer("Getting location info from database (coming soon)...");
+          break;
+        case 'get_travel_info':
+          // Run both agents in parallel
+          setQueryingDb(true);
+          const [db] = await Promise.all([
+            semanticSearchAgent(question, 3)
+          ]);
+          setQueryingDb(false);
+          const filtered_db = db.filter(r => r.similarity > 0.8);
+          if (!filtered_db || filtered_db.length === 0) {
+            setSearchingWeb(true);
+            const webSearchResult = await searchAgent({
+              "query": question,
+              "word_limit": 100
+            }).unwrap();
+            setSearchingWeb(false);
+            setWebResults(webSearchResult.answer || "No web result");
+          }
+          setDbResults(db);
+
+          // Compose final answer
+          const answer = await infoOutputAgent({
+            query: question,
+            dbResults: db,
+            webResults
+          });
+          setFinalAnswer(answer || "Cannot answer");
+          break;
+        case 'book_reserve':
+          setFinalAnswer("Let me redirect to another AI agent to book your tour/hotel... (Coming soon)");
+          break;
+        case 'general_query':
+          setFinalAnswer("Answering general query... (Implementing)");
+          break;
+        default:
+          setFinalAnswer("Answering general query... (Implementing)");
+      }
     } catch (err: any) {
       setError(err.message || "Error searching");
     }

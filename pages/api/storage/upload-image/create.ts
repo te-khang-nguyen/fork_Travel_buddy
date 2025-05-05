@@ -65,7 +65,10 @@ interface ImageUploadInput {
 }
 
 interface SignedUrlResponse {
-  data?: string;
+  data?: {
+    url: string | null | undefined;
+    path: string | null;
+  };
   error?: any;
 }
 
@@ -91,7 +94,7 @@ export const imageToStorage = async (
     .from(inputobj.bucket)
     .createSignedUrl(uploadTask.data.path, 60 * 60 * 24 * 365);
 
-  return { data: data?.signedUrl };
+  return { data: { url: data?.signedUrl, path: uploadTask.data.path }, error };
 };
 
 export const config = {
@@ -158,7 +161,7 @@ export default async function handler(
       };
 
       const {
-        data : signedUrl,
+        data: storageData,
         error: uploadError
       } = await imageToStorage(toStorageUpload, supabase);
 
@@ -172,7 +175,8 @@ export default async function handler(
 
       return res.status(200).json({
           success: true,
-          signedUrl: signedUrl,
+          signedUrl: storageData?.url,
+          filePath: storageData?.path,
           message: 'File uploaded successfully!'
       });
     } catch (error) {
@@ -238,6 +242,10 @@ export const swaggerStorageImgUpload = {
                   "signedUrl": {
                     "type": "string",
                     "description": "The signed URL of the uploaded image"
+                  },
+                  "filePath": {
+                    "type": "string",
+                    "description": "The path of the uploaded image"
                   },
                   "message": {
                     "type": "string",

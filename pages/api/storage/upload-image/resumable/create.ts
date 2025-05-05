@@ -165,7 +165,7 @@ async function finalizeUpload(
   
   if(error) return { error };
   
-  return { data: finalStorageData?.signedUrl };
+  return { data: { url: finalStorageData?.signedUrl, path: uploadTask.path } };
   
 }
 
@@ -239,7 +239,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       return res.status(200).json({ 
         message: 'Upload completed successfully',
-        url: data
+        signedUrl: data?.url,
+        filePath: data?.path
       });
     } else {
       return res.status(200).json({ 
@@ -316,9 +317,13 @@ export const swaggerStorageResumableUpload = {
                       "type": "string",
                       "example": "Upload completed successfully"
                     },
-                    "url": {
+                    "signedUrl": {
                       "type": "string",
                       "description": "Signed URL of the completed upload"
+                    },
+                    "filePath": {
+                      "type": "string",
+                      "description": "path to of the uploaded file in supabase storage"
                     }
                   }
                 }

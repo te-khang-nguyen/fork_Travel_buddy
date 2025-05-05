@@ -19,6 +19,7 @@ import { LocationBusinessApi } from './services/business/location';
 import { LocationUserApi } from './services/user/location';
 import { ActivityBusinessApi } from './services/business/activity';
 import { ActivityUserApi } from './services/user/activity';
+import { ClassifierAgentApi } from './services/agents/classifier';
 
 export const store = configureStore({
   reducer: {
@@ -41,6 +42,7 @@ export const store = configureStore({
     [LocationUserApi.reducerPath]: LocationUserApi.reducer,
     [ActivityBusinessApi.reducerPath]: ActivityBusinessApi.reducer,
     [ActivityUserApi.reducerPath]: ActivityUserApi.reducer,
+    [ClassifierAgentApi.reducerPath]: ClassifierAgentApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -64,5 +66,6 @@ export const store = configureStore({
       .concat(LocationUserApi.middleware)
       .concat(ActivityBusinessApi.middleware)
       .concat(ActivityUserApi.middleware)
+      .concat(ClassifierAgentApi.middleware)
 });
 

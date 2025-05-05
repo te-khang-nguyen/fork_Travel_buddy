@@ -42,9 +42,10 @@ export default async function handler(
 
     const toMediaAssets = media.map((mediaItem) => ({
       user_id: user!.id,
-      url: mediaItem,
+      url: mediaItem.url ?? mediaItem,
       usage: "story",
-      mime_type: "image/jpeg"
+      mime_type: "image/jpeg",
+      storage_path: mediaItem.path ?? null,
     }))
 
     const {
@@ -114,8 +115,27 @@ export const swaggerStoryCreate = {
                 "media": {
                   "type": "array",
                   "items": {
-                    "type": "string"
-                  }
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "description": "Direct URL of the media item"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string",
+                            "description": "URL of the media item"
+                          },
+                          "path": {
+                            "type": "string",
+                            "description": "Storage path of the media item"
+                          }
+                        },
+                      }
+                    ]
+                  },
+                  "description": "Array of media items that can be either URLs or objects with url and path"
                 },
                 "seo_title_tag": { "type": "string" },
                 "seo_meta_desc": { "type": "string" },
@@ -149,7 +169,7 @@ export const swaggerStoryCreate = {
                   "media": {
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      type": "string"
                     },
                     "description": "list of IDs for uploaded media in the media_assets entity"
                   }
