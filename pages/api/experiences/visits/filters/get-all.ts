@@ -13,8 +13,6 @@ export default async function handler(
   // Create Supabase client
   const supabase = createApiClient(token);
 
-  const [filter] = Object.values(req.query);
-
   const {
     data: { user },
   } = await supabase.auth.getUser(token);
@@ -25,7 +23,7 @@ export default async function handler(
       error
     } = await supabase
       .from("visits")
-      .select("created_at, experience_id")
+      .select("experience_id")
       .eq("user_id", user!.id);
 
     const {
@@ -35,10 +33,6 @@ export default async function handler(
       .select("experience_id")
       .eq("user_id", user!.id);
 
-    const nonStoryFilter = queryData?.filter(
-      (visit)=> !storiesData?.find((e) => e.experience_id === visit.experience_id)
-    );
-
     const withStoryFilter = queryData?.filter(
       (visit)=> storiesData?.find((e) => e.experience_id === visit.experience_id)
     );
@@ -47,7 +41,7 @@ export default async function handler(
       return res.status(400).json({ error: error.message });
     }
 
-    return res.status(200).json({ data: filter==="with-story"? withStoryFilter : nonStoryFilter  });
+    return res.status(200).json({ data: withStoryFilter });
   } catch (err: any) {
     return res.status(500).json({
       error: err.message ||
@@ -58,10 +52,10 @@ export default async function handler(
 };
 
 // Workaround to enable Swagger on production 
-export const swaggerDestVisitsGet = {
+export const swaggerExpCompletionGetAll = {
   index: 17,
   text:
-    `"/api/v1/experiences/visits/filters": {
+`"/api/v1/experiences/visits/filters": {
     "get": {
       "tags": ["visits"],
       "summary": "Get visit information for a user by experience ID.",
@@ -76,8 +70,9 @@ export const swaggerDestVisitsGet = {
           "in": "query",
           "name": "filter",
           "schema": {
-            "type": "string"
-            "example": without-filter
+            "type": "string",
+            "example": "without-story",
+            "enum": ["with-story", "without-story"]
           },
           "required": true,
           "description": "The filter condition. Can only be 'with-story' or 'without-story'"
@@ -92,13 +87,21 @@ export const swaggerDestVisitsGet = {
                 "type": "object",
                 "properties": {
                   "data": {
-                    "type": "object",
-                    "properties": {
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "experience_id": {
-                        "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "experience_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "is_visited": {
+                          "type": "boolean"
+                        }
                       }
                     }
                   }
@@ -113,6 +116,7 @@ export const swaggerDestVisitsGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["error"],
                 "properties": {
                   "error": {
                     "type": "string"
@@ -128,6 +132,7 @@ export const swaggerDestVisitsGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["message"],
                 "properties": {
                   "message": {
                     "type": "string"
@@ -143,6 +148,7 @@ export const swaggerDestVisitsGet = {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["error"],
                 "properties": {
                   "error": {
                     "type": "string"

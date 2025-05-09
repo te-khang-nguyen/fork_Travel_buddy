@@ -7,7 +7,7 @@ export { swaggerCallback } from './auth/callback';
 export { swaggerOAuth } from './auth/oauth';
 export { swaggerUserAuthNewSession } from './auth/new-session';
 export { swaggerProfileGet } from './profile/get';
-// export { swaggerProfileCreate } from './profile/create';
+export { swaggerProfileCreate } from './profile/create';
 export { swaggerProfileUpdate } from './profile/update';
 export { swaggerProfileAvatarUpdate } from './profile/avatar/update';
 export { swaggerBusinessProfileGet } from './profile/business/get';
@@ -69,3 +69,14 @@ export { swaggerBusinessActivityCreate } from './activities/create';
 export { swaggerBusinessActivityGet } from './activities/get';
 export { swaggerBusinessActivityUpdate } from './activities/update';
 export { swaggerBusinessActivitiesByExperienceIdGet } from './activities/experience/get';
+export { 
+    swaggerAgentChatAgent, 
+    swaggerAgentChatAgentResetMemory, 
+    swaggerAgentChatAgentSwitchModel,
+    swaggerAgentLocalDocumentsToVectorDb,
+    swaggerAgentMediaToVectorDb,
+    swaggerAgentResearchAgent,
+    swaggerAgentResearchAgentFromRequest,
+    swaggerAgentTextToVectorDb,
+    swaggerAgentVectorDbInspect
+} from './agents/foreignServer';

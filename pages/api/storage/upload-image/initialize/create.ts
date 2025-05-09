@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 export const swaggerStorageResumableUploadInit = {
-  index:40, 
+  index:31, 
   text:
 `"/api/v1/storage/upload-image/initialize": {
       "post": {
