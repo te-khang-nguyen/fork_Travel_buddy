@@ -65,19 +65,6 @@ export const swaggerExpCompletionGetAll = {
           "bearerAuth": []
         }
       ],
-      "parameters": [
-        {
-          "in": "query",
-          "name": "filter",
-          "schema": {
-            "type": "string",
-            "example": "without-story",
-            "enum": ["with-story", "without-story"]
-          },
-          "required": true,
-          "description": "The filter condition. Can only be 'with-story' or 'without-story'"
-        }
-      ],
       "responses": {
         "200": {
           "description": "Visit information retrieved successfully",
@@ -91,16 +78,9 @@ export const swaggerExpCompletionGetAll = {
                     "items": {
                       "type": "object",
                       "properties": {
-                        "created_at": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
                         "experience_id": {
                           "type": "string",
                           "format": "uuid"
-                        },
-                        "is_visited": {
-                          "type": "boolean"
                         }
                       }
                     }

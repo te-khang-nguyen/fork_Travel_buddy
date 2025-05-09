@@ -54,20 +54,25 @@ export default async function handler(
       return res.status(400).json({ error: error.message });
     }
 
-    const { data: reportLink, error: reportLinkError } = await supabaseSecondary
+    const { 
+      data: reportLink, 
+      error: reportLinkError 
+    } = await supabaseSecondary
       .from("reporters_stories")
-      .insert({
+      .insert([{
         story_id: data?.id,
         reporter_id: reporter_id,
         experience_id: experience_id,
-    })
+      }])
+      .select()
+      .single();
 
     if (reportLinkError) {
       console.log(reportLinkError.message);
     }
 
     if (reportLink) {
-      console.log("Failed to create report link");
+      console.log(reportLink);
     }
 
     const toMediaAssets = media.map((mediaItem) => ({
@@ -107,7 +112,8 @@ export default async function handler(
       data: {
         message: "Story created successfully",
         id: data?.id,
-        media: mediaData?.map((item) => item.id)
+        media: mediaData?.map((item) => item.id),
+        linksToTripReport: reportLink ?? null
       }
     });
 

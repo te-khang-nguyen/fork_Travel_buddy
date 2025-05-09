@@ -8,15 +8,15 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import theme from "@/app/theme";
 import { GlobalContextProvider } from "@/app/GlobalContextProvider";
 import withAuthRedirect from "@/app/Layout/WithAuthRedirect";
-import { Roboto } from 'next/font/google';
+// import { Roboto } from 'next/font/google';
 import { MetadataProvider } from "@/app/Layout/MetadataContextWrapper";
 // import { PageProvider } from "@/app/Layout/DynamicUiTracker";
 
-const roboto = Roboto({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['300', '400', '500', '700']
-});
+// const roboto = Roboto({
+//   subsets: ['latin'],
+//   display: 'swap',
+//   weight: ['300', '400', '500', '700']
+// });
 
 const NO_DRAWER_BUTTON_PAGES = [
   "/recovery",
@@ -27,10 +27,11 @@ const NO_DRAWER_BUTTON_PAGES = [
 ];
 
 const THEME = createTheme({
-  ...theme,
-  typography: {
-    "fontFamily": roboto.style.fontFamily,
-  }
+  ...theme
+  // ,
+  // typography: {
+  //   "fontFamily": roboto.style.fontFamily,
+  // }
 })
 
 const MainContent = ({ Component, pageProps }: AppProps) => {
