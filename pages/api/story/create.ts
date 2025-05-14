@@ -71,9 +71,9 @@ export default async function handler(
       console.log(reportLinkError.message);
     }
 
-    if (reportLink) {
-      console.log(reportLink);
-    }
+    // if (reportLink) {
+    //   console.log(reportLink);
+    // }
 
     const toMediaAssets = media.map((mediaItem) => ({
       user_id: user!.id,
@@ -127,7 +127,7 @@ export default async function handler(
 export const swaggerStoryCreate = {
   index: 19,
   text:
-`"/api/v1/story ": {
+`"/api/v1/story/ ": {
   "post": {
     "tags": ["story"],
     "summary": "Create a new story",
