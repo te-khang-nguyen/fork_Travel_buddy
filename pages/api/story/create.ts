@@ -152,26 +152,8 @@ export const swaggerStoryCreate = {
               "media": {
                 "type": "array",
                 "items": {
-                  "oneOf": [
-                    {
-                      "type": "string",
-                      "description": "Direct URL of the media item"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "url": {
-                          "type": "string",
-                          "description": "URL of the media item"
-                        },
-                        "path": {
-                          "type": "string",
-                          "description": "Storage path of the media item"
-                        }
-                      },
-                      "required": ["url"]
-                    }
-                  ]
+                  "type": "string",
+                  "description": "Direct URL of the media item"
                 },
                 "description": "Array of media items that can be either URLs or objects with url and path"
               },
