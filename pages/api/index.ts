@@ -39,7 +39,7 @@ export { swaggerExpCreate } from './experiences/create';
 export { swaggerExpUpdate } from './experiences/update';
 export { swaggerExpDetailsCreate } from './experiences/details/create';
 // export { swaggerExpGet } from './experiences/get';
-// export { swaggerExpGetAll } from './experiences/get-all';
+export { swaggerExpGetAll } from './experiences/get-all';
 // export { swaggerExpChildrenGet } from './experiences/children/get';
 // export { swaggerExpDetailsGet } from './experiences/details/get';
 // export { swaggerExpIconicPhotosGet } from './experiences/iconicPhotos/get';
@@ -53,7 +53,7 @@ export { swaggerPublicActivitiesGet } from './experiences/public/activities/get'
 export { swaggerExpVisitsCreate } from './experiences/visits/create';
 export { swaggerExpVisitsGet } from './experiences/visits/get';
 export { swaggerExpVisitsCheckStoriesGetAll } from './experiences/visits/with-stories/get-all';
-export { swaggerExpCompletionGetAll } from './experiences/visits/filters/get-all';
+// export { swaggerExpCompletionGetAll } from './experiences/visits/filters/get-all';
 export { swaggerBussChallengeCreate } from './experiences/challenge/business/create';
 export { swaggerBussChallengeGetAll } from './experiences/challenge/business/get-all';
 export { swaggerBussChallengeDel } from './experiences/challenge/business/delete';

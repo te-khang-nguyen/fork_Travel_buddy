@@ -16,6 +16,10 @@ export default async function handler(
             .from("experiences")
             .select("*")
             .eq("status", "active");
+        
+        const { visits, stories, ...rest } = data as any;
+
+
 
         if (error) {
             return res.status(400).json({ error: error.message });

@@ -22,15 +22,24 @@ export default async function handler(
 
 
     try {
-        const { data, error } = await supabase
-            .from("experiences")
-            .select("*")
-            .eq("status", "active");
+        const { data, error } = await supabase.from("experiences")
+            .select('*,visits(count),stories(count)')
+            .eq('status', 'active')
+            .eq('visits.user_id',user!.id)
+            .eq('stories.user_id',user!.id);
+          
+        const newData = data?.map((item) => {
+          const {visits, stories, ...rest} = item;
+          return {
+            ...rest,
+            completed: visits?.[0]?.count > 0 && stories?.[0]?.count > 0
+          };
+        })
 
         if (error) {
             return res.status(400).json({ error: error.message });
         }
-        return res.status(200).json({ data });
+        return res.status(200).json({ newData });
     } catch (err: any) {
         return res.status(500).json({ error: err.message || "An error has occurred while retrieving the challenge information."});
     }
@@ -80,7 +89,8 @@ export const swaggerExpGetAll = {
                           "description": { "type": "string" },
                           "thumbnail_description": { "type": "string" },
                           "primary_video": { "type": "string" },
-                          "parent_destination": { "type": "string" }
+                          "parent_destination": { "type": "string" },
+                          "completed": {"type":"boolean"}
                         }
                       }
                     }
