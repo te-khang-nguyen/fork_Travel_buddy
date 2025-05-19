@@ -106,9 +106,43 @@ export default async function handler(
           b2cId = profileDataB2C?.userid
         }
 
+        const { 
+          data: queryData, 
+        } = await supabase
+          .from("channels")
+          .select("id")
+          .eq("user_id", user?.id);
+
+        let channels;
+        if (queryData && queryData.length === 0) {
+          const { data: newChannelData } = await supabase.from("channels").insert([
+            {
+                user_id: user?.id,
+                name: 'A casual traveler',
+                channel_type: ' Travel Buddy',
+                url: 'https://fork-tbp-fe-hosting.vercel.app',
+                brand_voice: `
+                  I am a casual traveler who loves to explore new places. 
+                  I always want to learn more about culture and daily activities from the locals.
+                  At the end of a trip, I often share my honest thoughts about the journey in a polite way and also expresses gratitude for the everything encountered during the trip.
+                `.trim(),
+            }
+          ]).select("id");
+
+          channels = newChannelData ?? []
+        } else if (queryData && queryData.length > 0){
+          channels = queryData
+        }
+
+        console.log(channels);
+
         return res
             .status(200)
-            .json({ access_token: session.access_token, userId: profileData.businessid, b2cId: b2cId });
+            .json({ 
+              access_token: session.access_token, 
+              userId: profileData.businessid, 
+              b2cId: b2cId,
+            });
     } catch (err) {
         return res
             .status(500)

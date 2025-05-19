@@ -52,6 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .single();
 
     let B2CProfile = {};
+    let channelId = '';
     if (!profileDataB2C) {
       const { data: newB2CProfileData } = await supabase
           .from("userprofiles")
@@ -63,6 +64,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .select("*, media_assets(url)")
           .single();
       B2CProfile = newB2CProfileData;
+
+      const { data } = await supabase.from("channels").insert([
+        {
+            user_id: user?.id,
+            name: 'A casual traveler',
+            channel_type: ' Travel Buddy',
+            url: 'https://fork-tbp-fe-hosting.vercel.app',
+            brand_voice: `
+              I am a casual traveler who loves to explore new places. 
+              I always want to learn more about culture and daily activities from the locals.
+              At the end of a trip, I often share my honest thoughts about the journey in a polite way and also expresses gratitude for the everything encountered during the trip.
+            `.trim(),
+        }
+      ]).select("id").single();
+
+      channelId = data?.id;
     } else {
       B2CProfile = profileDataB2C
     }
@@ -102,7 +119,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message: "User created successfully!", 
       editors: addedEditor,
       withB2cProfile: Object.keys(B2CProfile).length > 0,
-      userId: userId
+      userId: userId,
+      channelId: channelId
     });
 
   } catch (err: any) {
@@ -173,6 +191,9 @@ export const swaggerBussSignup = {
                     "type": "boolean"
                   },
                   "userId": {
+                    "type": "string"
+                  },
+                  "channelId": {
                     "type": "string"
                   }
                 }
