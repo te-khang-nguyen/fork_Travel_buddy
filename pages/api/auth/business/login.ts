@@ -71,9 +71,9 @@ export default async function handler(
         }
 
         const { data: profileData, error: profileError } = await supabase
-            .from("profile")
-            .select("business_id")
-            .eq("business_id", user!.id)
+            .from("businessprofiles")
+            .select("businessid, username")
+            .eq("businessid", user!.id)
             .single();
         
         if (!profileData) {
@@ -84,9 +84,31 @@ export default async function handler(
             return res.status(400).json({ error: "No access!" });
         }
 
+        const { data: profileDataB2C } = await supabase
+          .from("userprofiles")
+          .select("userid")
+          .eq("userid", user!.id)
+          .single();
+  
+        let b2cId;
+        if (!profileDataB2C) {
+          const { data: newB2CProfileData } = await supabase
+            .from("userprofiles")
+            .insert({
+              userid: user!.id,
+              email: email,
+              username: profileData.username,
+            })
+            .select("userid")
+            .single();
+            b2cId = newB2CProfileData?.userid;
+        } else {
+          b2cId = profileDataB2C?.userid
+        }
+
         return res
             .status(200)
-            .json({ access_token: session.access_token, userId: profileData.business_id });
+            .json({ access_token: session.access_token, userId: profileData.businessid, b2cId: b2cId });
     } catch (err) {
         return res
             .status(500)
@@ -136,6 +158,9 @@ export const swaggerBussLogin = {
                       "type": "string"
                     },
                     "userId": {
+                      "type": "string"
+                    },
+                    "b2cId": {
                       "type": "string"
                     }
                   }

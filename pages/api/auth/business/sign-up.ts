@@ -1,51 +1,6 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-/**
- * @swagger
- * /api/auth/business/sign-up:
- *   post:
- *     tags:
- *       - auth/business
- *     summary: Sign up a new business user
- *     description: Create a new business user account.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               businessName:
- *                 type: string
- *                 description: The name of the business
- *               email:
- *                 type: string
- *                 description: The email of the business user
- *               phone:
- *                 type: string
- *                 description: The phone number of the business user
- *               password:
- *                 type: string
- *                 description: The password for the business user account
- *     responses:
- *       200:
- *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *       400:
- *         description: Bad request
- *       405:
- *         description: Method not allowed
- *       500:
- *         description: Internal server error
- */
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -90,6 +45,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: profileError.message });
     }
 
+    const { data: profileDataB2C } = await supabase
+      .from("userprofiles")
+      .select("*, media_assets(url)")
+      .eq("userid", userId)
+      .single();
+
+    let B2CProfile = {};
+    if (!profileDataB2C) {
+      const { data: newB2CProfileData } = await supabase
+          .from("userprofiles")
+          .insert({
+            userid: userId,
+            email: email,
+            username: userName,
+          })
+          .select("*, media_assets(url)")
+          .single();
+      B2CProfile = newB2CProfileData;
+    } else {
+      B2CProfile = profileDataB2C
+    }
+
     if (parent) {
       const { data: orgProfileData } = await supabase
         .from("businessprofiles")
@@ -121,7 +98,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     await supabase.auth.signOut();
-    return res.status(200).json({ message: "User created successfully!", editors: addedEditor });
+    return res.status(200).json({ 
+      message: "User created successfully!", 
+      editors: addedEditor,
+      withB2cProfile: Object.keys(B2CProfile).length > 0,
+      userId: userId
+    });
+
   } catch (err: any) {
     return res.status(500).json({ error: err.message || "An unknown error occurred." });
   }
@@ -184,6 +167,12 @@ export const swaggerBussSignup = {
                     "type": "string"
                   },
                   "addedEditor": {
+                    "type": "string"
+                  },
+                  "withB2cProfile": {
+                    "type": "boolean"
+                  },
+                  "userId": {
                     "type": "string"
                   }
                 }

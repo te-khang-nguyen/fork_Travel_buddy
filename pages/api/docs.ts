@@ -10,7 +10,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: baseUrl, // Add your production URL
+      url:"http://localhost:3001",//baseUrl, // Add your production URL
       description: 'Production server'
     }
   ],
