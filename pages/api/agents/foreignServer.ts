@@ -258,7 +258,11 @@ const swaggerAgentResearchAgent = {
     "tags": ["research"],
     "summary": "Research a topic",
     "description": "Performs research using the provided parameters.",
-    "security": [],
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
     "requestBody": {
       "required": true,
       "content": {
@@ -333,7 +337,11 @@ const swaggerAgentResearchAgentFromRequest = {
     "tags": ["research"],
     "summary": "Process query",
     "description": "Processes a research query and returns vectorized results.",
-    "security": [],
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
     "requestBody": {
       "required": true,
       "content": {
@@ -396,7 +404,11 @@ const swaggerAgentVectorDbInspect = {
     "tags": ["research"],
     "summary": "Get research results",
     "description": "Returns research results for a query or image query.",
-    "security": [],
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
     "requestBody": {
       "required": true,
       "content": {
@@ -484,7 +496,11 @@ const swaggerAgentTextToVectorDb = {
     "tags": ["vector-database"],
     "summary": "Process raw text",
     "description": "Processes raw text and returns vectorized document data.",
-    "security": [],
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
     "requestBody": {
       "required": true,
       "content": {
@@ -558,7 +574,11 @@ const swaggerAgentLocalDocumentsToVectorDb = {
     "tags": ["vector-database"],
     "summary": "Convert Blob to Document",
     "description": "Uploads a file and converts its content into a document.",
-    "security": [],
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
     "requestBody": {
       "required": true,
       "content": {
@@ -627,7 +647,11 @@ const swaggerAgentMediaToVectorDb = {
     "tags": ["vector-database"],
     "summary": "Convert Media Blob to Document",
     "description": "Uploads media files and converts them into documents with metadata.",
-    "security": [],
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
     "requestBody": {
       "required": true,
       "content": {
@@ -690,6 +714,181 @@ const swaggerAgentMediaToVectorDb = {
 }`
 }
 
+const swaggerStoryWorkflow = {
+    index: 19,
+    text:`
+    "/api/v1/story/stream": {
+      "servers": [
+        {
+          "url": "${agentServeOrigin}"
+        }
+      ],
+      "post": {
+        "tags": ["story"],
+        "summary": "Stream story posts generation",
+        "description": "Generate and stream story posts based on provided media and parameters",
+        "security": [
+            {
+                "bearerAuth": []
+            }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "experience_id": {
+                    "type": "string",
+                    "description": "ID of the experience"
+                  },
+                  "notes": {
+                    "type": "string",
+                    "description": "Additional notes for the story"
+                  },
+                  "media": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Array of media files to be processed"
+                  },
+                  "channel_type_list": {
+                    "type": "string",
+                    "description": "Comma-separated list of channel types",
+                    "example": "instagram,facebook,linkedin,tiktok,travel_buddy"
+                  },
+                  "story_length": {
+                    "type": "integer",
+                    "description": "Length of the story",
+                    "example": 70
+                  },
+                  "reporter_id": {
+                    "type": "string",
+                    "description": "ID of the reporter"
+                  }
+                },
+                "required": [
+                  "experience_id",
+                  "notes",
+                  "media",
+                  "channel_type_list"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with streaming story posts",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "experience_id": {
+                            "type": "string",
+                            "description": "ID of the experience"
+                          },
+                          "notes": {
+                            "type": "string",
+                            "description": "Additional notes for the story"
+                          },
+                          "media": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Media URLs"
+                          },
+                          "channel_id": {
+                            "type": "string",
+                            "description": "ID of the channel"
+                          },
+                          "story_length": {
+                            "type": "integer",
+                            "description": "Length of the story"
+                          },
+                          "reporter_id": {
+                            "type": "string",
+                            "description": "ID of the reporter",
+                            "nullable": true
+                          },
+                          "channel_type": {
+                            "type": "string",
+                            "description": "Type of channel",
+                            "nullable": true
+                          },
+                          "seo_title_tag": {
+                            "type": "string",
+                            "description": "SEO title tag",
+                            "nullable": true
+                          },
+                          "seo_meta_desc": {
+                            "type": "string",
+                            "description": "SEO meta description",
+                            "nullable": true
+                          },
+                          "seo_excerpt": {
+                            "type": "string",
+                            "description": "SEO excerpt",
+                            "nullable": true
+                          },
+                          "seo_slug": {
+                            "type": "string",
+                            "description": "SEO slug",
+                            "nullable": true
+                          },
+                          "long_tail_keyword": {
+                            "type": "string",
+                            "description": "Long tail keyword",
+                            "nullable": true
+                          },
+                          "hashtags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "List of hashtags",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "description": "Error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+`
+};
+
 export {
     swaggerAgentChatAgent,
     swaggerAgentChatAgentSwitchModel,
@@ -699,5 +898,6 @@ export {
     swaggerAgentVectorDbInspect,
     swaggerAgentTextToVectorDb,
     swaggerAgentLocalDocumentsToVectorDb,
-    swaggerAgentMediaToVectorDb
+    swaggerAgentMediaToVectorDb,
+    swaggerStoryWorkflow
 }

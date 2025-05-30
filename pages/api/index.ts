@@ -20,8 +20,8 @@ export { swaggerStorageResumableUpload } from './storage/upload-image/resumable/
 export { swaggerChannelCreate } from './channel/create';
 export { swaggerChannelGetAll } from './channel/get-all';
 export { swaggerChannelUpdate } from './channel/update';
-export { swaggerStoryGenerate } from './story/generate/create';
-export { swaggerStoryCreate } from './story/create';
+// export { swaggerStoryGenerate } from './story/generate/create';
+// export { swaggerStoryCreate } from './story/create';
 export { swaggerStoryGetAll } from './story/get-all';
 export { swaggerStoryGet } from './story/get';
 export { swaggerStoryUpdate } from './story/update';
@@ -79,5 +79,6 @@ export {
     swaggerAgentResearchAgent,
     swaggerAgentResearchAgentFromRequest,
     swaggerAgentTextToVectorDb,
-    swaggerAgentVectorDbInspect
+    swaggerAgentVectorDbInspect,
+    swaggerStoryWorkflow
 } from './agents/foreignServer';
