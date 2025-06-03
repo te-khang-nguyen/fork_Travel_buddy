@@ -92,6 +92,36 @@ export default async function handler(req, res) {
       if(mediaErr){
         res.status(500).json({ error: mediaErr.message });
       }
+      let channels: any;
+      // Check if the user has any channels
+      const { 
+        data: queryData, 
+      } = await supabase
+        .from("channels")
+        .select("id")
+        .eq("user_id", user?.id);
+
+      if (queryData && queryData.length === 0) {
+        const { data: newChannelData } = await supabase.from("channels").insert([
+          {
+              user_id: user?.id,
+              name: 'A casual traveler',
+              channel_type: ' Travel Buddy',
+              url: 'https://fork-tbp-fe-hosting.vercel.app',
+              brand_voice: `
+                I am a casual traveler who loves to explore new places. 
+                I always want to learn more about culture and daily activities from the locals.
+                At the end of a trip, I often share my honest thoughts about the journey in a polite way and also expresses gratitude for the everything encountered during the trip.
+              `.trim(),
+          }
+        ]).select("id");
+
+        channels = newChannelData ?? []
+      } else if (queryData && queryData.length > 0){
+        channels = queryData
+      }
+
+      console.log(channels);
   
       const { 
         data: newProfileData 
@@ -110,6 +140,7 @@ export default async function handler(req, res) {
       if (!newProfileData) {
         return res.status(500).json({ error: "Fail to create new profile for OAuth user." });
       } else {
+
         return res.status(200).json({
           access_token,
           user_id: userId,
@@ -117,6 +148,7 @@ export default async function handler(req, res) {
           user: newProfileData, // Include additional user info if needed
         });
       }
+
     }
     
   } catch (err) {
