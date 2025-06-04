@@ -21,7 +21,7 @@ export default async function handler(
   } = await supabase.auth.getUser(token);
 
   const userId = user?.id;
-  const avatar = user?.user_metadata?.avatar_url;
+  const avatar = user?.user_metadata?.avatar_url || "";
   const email = user?.email;
   const lastSignInAt = new Date(user?.last_sign_in_at ?? "");
   const lastSignInAtString = lastSignInAt.toISOString().split(".")[0];
@@ -62,7 +62,8 @@ export default async function handler(
       }
 
       const {
-        data: newProfileData
+        data: newProfileData,
+        error: profileErr
       } = await supabase.from("userprofiles")
         .insert({
           userid: userId,
@@ -76,7 +77,7 @@ export default async function handler(
         .single();
 
       if (!newProfileData) {
-        return res.status(500).json({ error: "Fail to create new profile for OAuth user." });
+        return res.status(500).json({ error: "Fail to create new profile for OAuth user.", detail: profileErr });
       } else {
         return res.status(200).json({
           data: { ...newProfileData, first_time: firstTime }

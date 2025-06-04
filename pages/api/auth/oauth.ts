@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { data: authData, error: authError } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: (redirectLink as string) ?? `https://fork-tbp-fe-hosting.vercel.app/auth/callbackv1` },
+      options: { redirectTo: (redirectLink as string) ?? `https://travelbuddy8.com/auth/callbackv1` },
     });
 
     if (authError) {
