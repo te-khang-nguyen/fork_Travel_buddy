@@ -24,6 +24,7 @@ export default async function handler(
             primary_photo,
             primary_photo_id,
             photos,
+            photos_id,
             hours,
             description,
             description_thumbnail,
@@ -40,6 +41,7 @@ export default async function handler(
                 primary_photo,
                 primary_photo_id,
                 photos,
+                photos_id,
                 hours,
                 status : 'inactive',
                 description,
@@ -93,6 +95,10 @@ export const swaggerBusinessActivityCreate = {
                 "primary_photo": { "type": "string" },
                 "primary_photo_id": { "type": "string" },
                 "photos": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "photos_id": {
                   "type": "array",
                   "items": { "type": "string" }
                 },

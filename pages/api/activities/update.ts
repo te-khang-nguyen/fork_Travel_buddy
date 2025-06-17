@@ -83,6 +83,10 @@ export const swaggerBusinessActivityUpdate = {
                   "type": "array",
                   "items": { "type": "string" }
                 },
+                "photos_id": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
                 "hours": { "type": "string" },
                 "description": { "type": "string" },
                 "description_thumbnail": { "type": "string" },
