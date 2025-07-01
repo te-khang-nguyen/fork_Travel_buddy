@@ -1,13 +1,24 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Provider } from "@supabase/supabase-js";
-import { supabase } from "@/libs/supabase/supabase_client";
+import { createClient } from "@supabase/supabase-js";
 
+//add type of variable later
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+    },
+  }
+);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
-
+  
   const { provider, redirectLink } = req.body as { provider: Provider; redirectLink: string };
 
   if (!provider) {
@@ -17,7 +28,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { data: authData, error: authError } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: (redirectLink as string) ?? `https://travelbuddy8.com/auth/callbackv1` },
+      options: { 
+        redirectTo: redirectLink ?? `https://travelbuddy8.com/auth/callbackv1`
+      },
     });
 
     if (authError) {

@@ -21,11 +21,13 @@ export default async function handler(
         const { data, error: experienceQueryError } = await supabase
             .from("experiences")
             .select("*")
+            .in("status", ["active", "inactive"])
             .eq("created_by", businessId);
 
         if (experienceQueryError) {
             return res.status(400).json({ error: experienceQueryError.message });
         }
+        
         return res.status(200).json({ data });
     } catch (err: any) {
         return res.status(500).json({ error: err.message || "An error has occurred while retrieving the challenge information."});
