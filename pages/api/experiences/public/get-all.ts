@@ -15,11 +15,10 @@ export default async function handler(
         const { data, error } = await supabase
             .from("experiences")
             .select("*")
-            .eq("status", "active");
+            .eq("status", "active")
+            .order("created_at", { ascending: false });
         
-        const { visits, stories, ...rest } = data as any;
-
-
+        // const { visits, stories, ...rest } = data as any;
 
         if (error) {
             return res.status(400).json({ error: error.message });
