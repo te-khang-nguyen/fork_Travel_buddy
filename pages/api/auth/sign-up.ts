@@ -13,11 +13,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { error: authError } = await supabase.auth.signUp({ email, password });
-
-    if (authError) {
-      return res.status(400).json({ error: authError.message });
+    const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+    
+    if (authError || !authData) {
+      return res.status(400).json({ error: authError?.message });
     }
+
+    const userId = authData.user?.id;
+    const accessToken = authData.session?.access_token;
 
     const userProfile =
       firstName !== lastName
@@ -42,8 +45,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: profileError.message });
     }
 
-    await supabase.auth.signOut();
-    return res.status(200).json({ message: "User created successfully!" });
+    // await supabase.auth.signOut();
+    return res.status(200).json({ 
+      message: "User created successfully!",
+      userId: userId,
+      access_token: accessToken,
+    });
   } catch (err: any) {
     return res.status(500).json({ error: err.message || "An unknown error occurred." });
   }
