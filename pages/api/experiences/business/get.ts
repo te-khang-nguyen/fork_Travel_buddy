@@ -22,12 +22,13 @@ export default async function handler(
             .from("experiences")
             .select("*")
             .in("status", ["active", "inactive"])
-            .eq("created_by", businessId);
+            .eq("created_by", businessId)
+            .order("created_at", { ascending: false });
 
         if (experienceQueryError) {
             return res.status(400).json({ error: experienceQueryError.message });
         }
-        
+
         return res.status(200).json({ data });
     } catch (err: any) {
         return res.status(500).json({ error: err.message || "An error has occurred while retrieving the challenge information."});
