@@ -115,7 +115,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    await supabase.auth.signOut();
+    // await supabase.auth.signOut();
     return res.status(200).json({ 
       message: "User created successfully!", 
       editors: addedEditor,
