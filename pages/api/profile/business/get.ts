@@ -22,13 +22,13 @@ export default async function handler(
         } = await supabase.auth.getUser(token);
 
         const { 
-            data : userData, 
-            error : userError 
+            data: userData, 
+            error: userError 
         } = await supabase
-        .from("businessprofiles")
-        .select("*")
-        .eq("businessid", user?.id)
-        .single();
+          .from("businessprofiles")
+          .select("*")
+          .eq("businessid", user?.id)
+          .single();
 
         if (userError) {
             return res.status(400).json({
@@ -37,9 +37,34 @@ export default async function handler(
             });
         }
 
+        const { data: companyAccounts, error: companyError } = await supabase
+          .from("company_accounts")
+          .select("*");
+        
+        if (companyError) {
+            return res.status(500).json({
+                success: false,
+                error: companyError.message
+            });
+        }
+
+        const isPartOf = companyAccounts?.map((item) => {
+            if (item.editors.includes(user?.id)) {
+                return item;
+            }
+        }).filter(item => item !== undefined);
+
+        if (!isPartOf || isPartOf.length === 0) {
+            return res.status(403).json({
+                success: false,
+                error: 'User is not part of any company accounts'
+            });
+        }
+
         return res.status(200).json({
             data: userData,
-            success: true
+            success: true,
+            companies: isPartOf
         });
     } catch (error) {
         return res.status(500).json({

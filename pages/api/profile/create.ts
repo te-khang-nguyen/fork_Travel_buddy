@@ -43,14 +43,15 @@ export default async function handler(
         const {
             data: updateData, 
             error: updateError
-        } = await supabase.from(`${finalRole}profiles`)
-                    .insert({
-                        [`${finalRole}id`]: user!.id,
-                        email: payload?.email ?? user?.email,
-                        ...payload
-                    })
-                    .select()
-                    .single();
+        } = await supabase
+            .from(`${finalRole}profiles`)
+            .insert({
+              [`${finalRole}id`]: user!.id,
+              email: payload?.email ?? user?.email,
+              ...payload
+            })
+            .select()
+            .single();
 
         if (updateError) {
             return res.status(400).json({ error: updateError });
