@@ -29,7 +29,7 @@ export default async function handler(
         }
         
         const isPartOf = companyData?.map((item) => {
-            if (item.editors.includes(userId)) {
+            if (item.editors && item.editors.includes(userId)) {
                 return item.id;
             }
         }).filter(item => item !== undefined);
@@ -37,13 +37,15 @@ export default async function handler(
         const { data, error: experienceQueryError } = await supabase
             .from("experiences")
             .select("*")
-            .in("owned_by", isPartOf);
+            .in("owned_by", isPartOf)
+            .order("created_at", { ascending: true });
         
         if (companyId) {
             const { data: experienceData } = await supabase
                 .from("experiences")
                 .select("*")
-                .eq("owned_by", companyId);
+                .eq("owned_by", companyId)
+                .order("created_at", { ascending: true });
 
             if (experienceData) {
                 return res.status(200).json({ data: experienceData });

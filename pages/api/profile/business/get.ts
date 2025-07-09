@@ -49,7 +49,7 @@ export default async function handler(
         }
 
         const isPartOf = companyAccounts?.map((item) => {
-            if (item.editors.includes(user?.id)) {
+            if (item.editors && item.editors.includes(user?.id)) {
                 return item;
             }
         }).filter(item => item !== undefined);
@@ -67,9 +67,10 @@ export default async function handler(
             companies: isPartOf
         });
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
             success: false,
-            error: 'Internal server error'
+            error: 'Internal server error: ' + error
         });
     }
 }
