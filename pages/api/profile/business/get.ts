@@ -12,7 +12,7 @@ export default async function handler(
     }
 
     try {
-        const { user_id } = req.query;
+        const { 'user-id': user_id, 'company': company } = req.query;
 
         const token = req.headers.authorization?.split(' ')[1];
         const supabase = createApiClient(token);
@@ -26,8 +26,11 @@ export default async function handler(
             error: userError 
         } = await supabase
           .from("businessprofiles")
-          .select("*")
-          .eq("businessid", user?.id)
+          .select(`
+            *,
+            company_members(role,company_accounts(id,name))
+          `)
+          .eq("businessid", user_id || user?.id)
           .single();
 
         if (userError) {
@@ -37,34 +40,19 @@ export default async function handler(
             });
         }
 
-        const { data: companyAccounts, error: companyError } = await supabase
-          .from("company_accounts")
-          .select("*");
-        
-        if (companyError) {
-            return res.status(500).json({
-                success: false,
-                error: companyError.message
-            });
-        }
+        const isPartOf = userData?.company_members?.map((item) => (
+          {
+            ...item.company_accounts, role: item.role
+          }
+        )).filter(item => item !== undefined && item.name === company);
 
-        const isPartOf = companyAccounts?.map((item) => {
-            if (item.editors && item.editors.includes(user?.id)) {
-                return item;
-            }
-        }).filter(item => item !== undefined);
+        const {company_members, ...userProfile} = userData;
 
-        if (!isPartOf || isPartOf.length === 0) {
-            return res.status(403).json({
-                success: false,
-                error: 'User is not part of any company accounts'
-            });
-        }
+        console.log(company_members);
 
         return res.status(200).json({
-            data: userData,
+            data: {...userProfile, companies: isPartOf},
             success: true,
-            companies: isPartOf
         });
     } catch (error) {
         console.error(error);

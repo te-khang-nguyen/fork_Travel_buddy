@@ -20,83 +20,35 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
+    if (req.method !== 'PUT') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token);
 
-    const { companyId, emails } = req.body;
+    const { 'company-id': companyId, 'role': role, 'member-id': memberId } = req.body;
 
     if (!companyId) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const { data: companyData, error: companyError } = await supabase
-            .from('company_accounts')
-            .select('*')
-            .eq('id', companyId)
-            .single();
-
-        if (companyError || !companyData) {
-            return res.status(404).json({ error: 'Company not found' });
-        }
-
-        const newMembers = Promise.all(emails.map(async (email: string) => {
-            // Create a account for the new user if it doesn't exist with randomized password
-            const password = generateRandomPassword(8);
-            const { data: userData, error: userError } = await supabase
-                .from('businessprofiles')
-                .select('*')
-                .eq('email', email)
-                .single();
-
-            if (userError || !userData) {
-                const { data: {user} } = await supabase.auth.signUp({ email, password });
-                
-                if (userError || !user) {
-                    return res.status(400).json({ error: userError?.message });
-                }
-                
-                const { data: newUser, error: newUserError } = await supabase
-                    .from('businessprofiles')
-                    .insert({
-                        businessid: user.id,
-                        email,
-                        businessname: `Member of ${companyData.name}`,
-                    })
-                    .select('*')
-                    .single();
-
-                if (newUserError || !newUser) {
-                    return res.status(400).json({ error: newUserError?.message });
-                }
-                
-                return newUser.id;
-            }
-
-            return userData.businessid;
-        }));
-        
-        const newMembersList = await newMembers;
-        
         const { data, error } = await supabase
             .from('company_members')
-            .insert(newMembersList.map((memberId) => ({
-                company_id: companyId,
-                member_id: memberId,
-                role: 'member'
-            })))
+            .update({
+                role: role
+            })
+            .eq('member_id', memberId)
             .select('*')
             .single();
 
         if (error) {
-            return res.status(500).json({ error: error.message });
+          return res.status(500).json({ error: error.message });
         }
 
         return res.status(201).json({ data });
+
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
     }

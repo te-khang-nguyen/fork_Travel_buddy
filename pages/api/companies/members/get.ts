@@ -12,7 +12,7 @@ export default async function handler(
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token);
 
-    const { "company-id": companyId } = req.query;
+    const { "company-id": companyId, "role": role } = req.query;
 
     try {
         if (!companyId) {
@@ -21,7 +21,7 @@ export default async function handler(
 
         const { data: companyData, error: companyError } = await supabase
             .from('company_accounts')
-            .select('*')
+            .select('*, company_members(member_id,role,created_at,businessprofiles(username,email))')
             .eq('id', companyId)
             .single();
 
@@ -29,18 +29,20 @@ export default async function handler(
             return res.status(404).json({ error: 'Company not found' });
         }
 
-        const members = companyData.members;
+        let companyMembers = companyData.company_members.map((member: any) => ({
+            id: member.member_id,
+            role: member.role,
+            username: member.businessprofiles?.username,
+            email: member.businessprofiles?.email,
+            joined_on: member.created_at
+        }));
 
-        const {data: memberProfiles, error: memberError} = await supabase
-            .from('businessprofiles')
-            .select('*')
-            .in('email', members || []);
-        
-        if (memberError) {
-            return res.status(500).json({ error: memberError.message });
+        if (role) {
+            companyMembers = companyMembers
+                .filter((member: any) => member.role === role);
         }
         
-        return res.status(201).json({ data: memberProfiles });
+        return res.status(201).json({ data: companyMembers });
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
     }

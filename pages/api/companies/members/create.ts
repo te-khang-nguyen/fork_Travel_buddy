@@ -1,5 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import crypto from 'crypto';
+
+function generateRandomPassword(length: number): string {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+  let password = "";
+  const randomValues = new Uint32Array(length); // Use Uint8Array for smaller values if preferred
+  crypto.getRandomValues(randomValues);
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = randomValues[i] % characters.length;
+    password += characters.charAt(randomIndex);
+  }
+
+  return password;
+}
 
 export default async function handler(
     req: NextApiRequest,
@@ -28,13 +43,52 @@ export default async function handler(
         if (companyError || !companyData) {
             return res.status(404).json({ error: 'Company not found' });
         }
-        
-        const newMembersList = [...(companyData.members || []), ...emails];
 
+        const newMembers = Promise.all(emails.map(async (email: string) => {
+            // Create a account for the new user if it doesn't exist with randomized password
+            const password = generateRandomPassword(8);
+            const { data: userData, error: userError } = await supabase
+                .from('businessprofiles')
+                .select('*')
+                .eq('email', email)
+                .single();
+
+            if (userError || !userData) {
+                const { data: {user} } = await supabase.auth.signUp({ email, password });
+                
+                if (userError || !user) {
+                    return res.status(400).json({ error: userError?.message });
+                }
+                
+                const { data: newUser, error: newUserError } = await supabase
+                    .from('businessprofiles')
+                    .insert({
+                        businessid: user.id,
+                        email,
+                        businessname: `Member of ${companyData.name}`,
+                    })
+                    .select('*')
+                    .single();
+
+                if (newUserError || !newUser) {
+                    return res.status(400).json({ error: newUserError?.message });
+                }
+                
+                return newUser.id;
+            }
+
+            return userData.businessid;
+        }));
+        
+        const newMembersList = await newMembers;
+        
         const { data, error } = await supabase
-            .from('company_accounts')
-            .update({ members: newMembersList })
-            .eq('id', companyId)
+            .from('company_members')
+            .insert(newMembersList.map((memberId) => ({
+                company_id: companyId,
+                member_id: memberId,
+                role: 'member'
+            })))
             .select('*')
             .single();
 

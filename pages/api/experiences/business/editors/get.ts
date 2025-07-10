@@ -20,37 +20,26 @@ export default async function handler(
         const { data: { user }} = await supabase.auth.getUser(token);
         const userId = user?.id;
     
-        const { data: companyData } = await supabase
-            .from("company_accounts")
-            .select("*");
+        const { data: companyData, error: companyError } = await supabase
+            .from('company_accounts')
+            .select('id,company_members!inner(member_id,role)')
+            .eq('id', companyId)
+            .eq('company_members.member_id', userId)
+            .eq('company_members.role', 'editor');
 
-        if (!companyData) {
-            return res.status(404).json({ error: "No company accounts found." });
+        if (companyError || !companyData) {
+          return res.status(404).json({ error: 'User is not an editor for any existing company' });
         }
-        
-        const isPartOf = companyData?.map((item) => {
-            if (item.editors && item.editors.includes(userId)) {
-                return item.id;
-            }
-        }).filter(item => item !== undefined);
 
-        const { data, error: experienceQueryError } = await supabase
+        const { 
+          data, 
+          error: experienceQueryError 
+        } = await supabase
             .from("experiences")
             .select("*")
-            .in("owned_by", isPartOf)
+            .in("status", ["active", "inactive", "internal"])
+            .in("owned_by", companyData.map((company: any) => company.id))
             .order("created_at", { ascending: true });
-        
-        if (companyId) {
-            const { data: experienceData } = await supabase
-                .from("experiences")
-                .select("*")
-                .eq("owned_by", companyId)
-                .order("created_at", { ascending: true });
-
-            if (experienceData) {
-                return res.status(200).json({ data: experienceData });
-            }
-        }
 
         if (experienceQueryError) {
             return res.status(400).json({ error: experienceQueryError.message });

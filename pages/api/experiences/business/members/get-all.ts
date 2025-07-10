@@ -19,22 +19,16 @@ export default async function handler(
     try {
         const { data: { user }} = await supabase.auth.getUser(token);
         const userId = user?.id || "";
-    
+
         const { data: companyData, error: companyError } = await supabase
-            .from("company_accounts")
-            .select("*");
+            .from('company_accounts')
+            .select('id,company_members!inner(member_id,role)')
+            .eq('company_members.member_id', userId)
+            .in('company_members.role', ['member', 'editor']);
 
-        if (companyError || !companyData || companyData.length === 0) {
-            return res.status(400).json({ error: companyError?.message || "No company accounts found." });
+        if (companyError || !companyData) {
+            return res.status(404).json({ error: 'Company not found' });
         }
-
-        // console.log(companyData);
-        
-        const isPartOf = companyData?.map((item) => {
-            if (item.members && item.members.includes(userId)) {
-                return item.id;
-            }
-        }).filter(item => item !== undefined);
 
         const { 
           data, 
@@ -43,7 +37,7 @@ export default async function handler(
             .from("experiences")
             .select("*")
             .in("status", ["active", "inactive", "internal"])
-            .in("owned_by", isPartOf)
+            .in("owned_by", companyData.map((company: any) => company.id))
             .order("created_at", { ascending: true });
 
         if (experienceQueryError) {
