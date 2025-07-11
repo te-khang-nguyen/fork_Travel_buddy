@@ -24,6 +24,8 @@ export default async function handler(
             .select('*, company_members(member_id,role,created_at,businessprofiles(username,email,businessname))')
             .eq('id', companyId)
             .is('company_members.is_deleted', false)
+            .order('created_at', { referencedTable: 'company_members', ascending: false })
+            .order('role', { referencedTable: 'company_members', ascending: false })
             .single();
 
         if (companyError || !companyData) {
