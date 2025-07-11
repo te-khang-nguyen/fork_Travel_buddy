@@ -49,8 +49,6 @@ export default async function handler(
             return res.status(404).json({ error: 'Company not found' });
         }
 
-        console.log(companyData);
-
         const newMembers = Promise.all(emails.map(async (email: string) => {
             // Create a account for the new user if it doesn't exist with randomized password
             

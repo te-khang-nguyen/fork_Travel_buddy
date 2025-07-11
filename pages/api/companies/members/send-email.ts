@@ -1,7 +1,5 @@
 import sgMail from '@sendgrid/mail';
 
-sgMail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_KEY!);
-
 export default async function mailSendHandler({
     sender, senderName, to, cc, bcc, subject, html
 }:{
@@ -13,6 +11,8 @@ export default async function mailSendHandler({
     subject: string,
     html: string,
 }) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
+
     const rawMessage: sgMail.MailDataRequired = {
         to: to,
         from: {
