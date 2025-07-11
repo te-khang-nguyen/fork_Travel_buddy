@@ -21,7 +21,7 @@ export default async function handler(
 
         const { data: companyData, error: companyError } = await supabase
             .from('company_accounts')
-            .select('*, company_members(member_id,role,created_at,businessprofiles(username,email))')
+            .select('*, company_members(member_id,role,created_at,businessprofiles(username,email,businessname))')
             .eq('id', companyId)
             .is('company_members.is_deleted', false)
             .single();
@@ -35,6 +35,7 @@ export default async function handler(
             role: member.role,
             username: member.businessprofiles?.username,
             email: member.businessprofiles?.email,
+            businessname: member.businessprofiles?.businessname,
             joined_on: member.created_at
         }));
 
