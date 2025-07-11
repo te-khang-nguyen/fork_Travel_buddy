@@ -24,7 +24,7 @@ export default async function handler(
             .from('company_accounts')
             .select('id,company_members!inner(member_id,role)')
             .eq('company_members.member_id', userId)
-            .in('company_members.role', ['member', 'editor']);
+            //.in('company_members.role', ['member', 'editor', 'admin']);
 
         if (companyError || !companyData) {
             return res.status(404).json({ error: 'Company not found' });

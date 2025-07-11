@@ -3,12 +3,14 @@ export const memberCreationEmailTemplate = ({
     email,
     password,
     redirect_link,
+    recovery_link,
     isNew,
 }: {
     companyName: string;
     email: string;
     password?: string;
     redirect_link: string;
+    recovery_link: string;
     isNew: boolean;
 }) => {
     return `
@@ -71,6 +73,9 @@ export const memberCreationEmailTemplate = ({
                                             </tr>
                                         </table>
                                         <p style="margin: 0 0 15px;">For security reasons, we strongly recommend changing your password after your first login.</p>`}
+                                        ${!isNew && 
+                                        `<p style="margin: 0 0 15px;">For security reasons, if you have not changed your password after your first login, we recommend changing your password.</p>`}
+                                        <p style="margin: 0 0 15px;">Link to password recovery: <a href="${recovery_link}">Change Password</a></p>
                                         <p style="margin: 0 0 30px;">If your email is linked to a Google or Apple account, you can also use those options to sign in.</p>
                                         
                                         <table border="0" cellspacing="0" cellpadding="0" align="center" style="margin: 0 auto;">

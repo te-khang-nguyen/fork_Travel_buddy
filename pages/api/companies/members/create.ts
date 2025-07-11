@@ -52,7 +52,7 @@ export default async function handler(
 
         const newMembers = Promise.all(emails.map(async (email: string) => {
             // Create a account for the new user if it doesn't exist with randomized password
-            
+            const redirectLinkHost = (new URL(redirect_link)).host;
             const { data: userData, error: userError } = await supabase
                 .from('businessprofiles')
                 .select('*')
@@ -86,6 +86,7 @@ export default async function handler(
                     email,
                     password,
                     redirect_link,
+                    recovery_link: `https://${redirectLinkHost}/auth/forgot-password`,
                     isNew: true,
                 });
 
@@ -110,6 +111,7 @@ export default async function handler(
               companyName: companyData.name,
               email,
               redirect_link,
+              recovery_link: `https://${redirectLinkHost}/auth/forgot-password`,
               isNew: false,
             });
 
