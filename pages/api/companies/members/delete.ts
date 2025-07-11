@@ -21,10 +21,7 @@ export default async function handler(
     try {
         const { data, error } = await supabase
             .from('company_members')
-            .update({
-                role: 'none',
-                is_deleted: true
-            })
+            .delete()
             .eq('member_id', memberId)
             .eq('company_id', companyId)
             .select('*')
