@@ -32,7 +32,7 @@ export default async function handler(
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token);
 
-    const { companyId, emails } = req.body;
+    const { companyId, emails, redirect_link } = req.body;
 
     if (!companyId) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -84,16 +84,17 @@ export default async function handler(
                     sender: 'hello@travelbuddy8.com',
                     senderName: 'Travel Buddy 8',
                     to: [email],
+                    bcc: ["trac.nguyen@edge8.ai"],
                     subject: 'Welcome to Travel Buddy 8 Trip report platform',
                     html: `
                     <p>Hi there,</p><br/>
-                    <p>You have been added as a member of ${companyData.name}</p>
+                    <p>You have been added as a member of ${companyData.name} on our platform</p>
                     <p>Below are your credentials:</p>
                     <p>Username: <b>${email}</b></p>
                     <p>Password: <b>${password}</b></p>
                     <p>For security reasons, we recommend changing your password after your first login.</p>
                     <p>If your email is linked to Google or Apple ID, you use our login with Google or Apple ID.</p>
-                    <a href="${baseUrl}/auth/login">Click the here to login</a><br/>
+                    <a href="${redirect_link}">Click the here to login</a><br/>
                     <br/>
                     <p>Best regards,</p>
                     <p>Travel Buddy 8 Team</p>
@@ -106,6 +107,27 @@ export default async function handler(
                 }
                 
                 return newUser.businessid;
+            }
+
+            const mailSendResp = await mailSendHandler({
+              sender: 'hello@travelbuddy8.com',
+              senderName: 'Travel Buddy 8',
+              to: [email],
+              bcc: ["trac.nguyen@edge8.ai"],
+              subject: 'Welcome to Travel Buddy 8 Trip report platform',
+              html: `
+              <p>Hi there,</p><br/>
+              <p>You have been added as a member of ${companyData.name} on our platform</p>
+              <a href="${redirect_link}">Click the here to login</a><br/>
+              <br/>
+              <p>Best regards,</p>
+              <p>Travel Buddy 8 Team</p>
+              `,
+            });
+
+            if(mailSendResp.error){
+              console.log(mailSendResp.error);
+              return res.status(500).json({ error: mailSendResp.error });
             }
 
             return userData.businessid;
