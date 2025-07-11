@@ -31,6 +31,7 @@ export default async function handler(
             company_members(role,company_accounts(id,name))
           `)
           .eq("businessid", user_id || user?.id)
+          .is('company_members.is_deleted', false)
           .single();
 
         if (userError) {

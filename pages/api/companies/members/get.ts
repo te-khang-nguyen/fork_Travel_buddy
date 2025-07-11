@@ -23,6 +23,7 @@ export default async function handler(
             .from('company_accounts')
             .select('*, company_members(member_id,role,created_at,businessprofiles(username,email))')
             .eq('id', companyId)
+            .is('company_members.is_deleted', false)
             .single();
 
         if (companyError || !companyData) {

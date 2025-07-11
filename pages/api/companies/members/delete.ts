@@ -1,139 +1,41 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
-import mailSendHandler from "./send-email";
-import crypto from 'crypto';
-
-const baseUrl = process.env.NODE_ENV === 'production' ? 
-process.env.NEXT_PUBLIC_BASE_URL
-: 'http://localhost:3000';
-
-function generateRandomPassword(length: number): string {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
-  let password = "";
-  const randomValues = new Uint32Array(length); // Use Uint8Array for smaller values if preferred
-  crypto.getRandomValues(randomValues);
-
-  for (let i = 0; i < length; i++) {
-    const randomIndex = randomValues[i] % characters.length;
-    password += characters.charAt(randomIndex);
-  }
-
-  return password;
-}
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
+    if (req.method !== 'DELETE') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token);
 
-    const { companyId, emails } = req.body;
+    const { 'company-id': companyId, 'member-id': memberId } = req.body;
 
     if (!companyId) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const { data: companyData, error: companyError } = await supabase
-            .from('company_accounts')
-            .select('name')
-            .eq('id', companyId)
-            .single();
-
-        if (companyError || !companyData) {
-            return res.status(404).json({ error: 'Company not found' });
-        }
-
-        console.log(companyData);
-
-        const newMembers = Promise.all(emails.map(async (email: string) => {
-            // Create a account for the new user if it doesn't exist with randomized password
-            
-            const { data: userData, error: userError } = await supabase
-                .from('businessprofiles')
-                .select('*')
-                .eq('email', email)
-                .single();
-              
-            if (userError || !userData) {
-                const password = generateRandomPassword(8);
-                const { data: { user } } = await supabase.auth.signUp({ email, password });
-                
-                if (!user) {
-                    return res.status(400).json({ error: 'User not found' });
-                }
-                
-                const { data: newUser, error: newUserError } = await supabase
-                    .from('businessprofiles')
-                    .insert({
-                        businessid: user.id,
-                        email,
-                        businessname: `Member of ${companyData.name}`,
-                    })
-                    .select('*')
-                    .single();
-
-                if (newUserError || !newUser) {
-                    return res.status(400).json({ error: newUserError?.message });
-                }
-
-                const mailSendResp = await mailSendHandler({
-                    sender: 'hello@travelbuddy8.com',
-                    senderName: 'Travel Buddy 8',
-                    to: [email],
-                    subject: 'Welcome to Travel Buddy 8 Trip report platform',
-                    html: `
-                    <p>Hi there,</p><br/>
-                    <p>You have been added as a member of ${companyData.name}</p>
-                    <p>Below are your credentials:</p>
-                    <p>Username: <b>${email}</b></p>
-                    <p>Password: <b>${password}</b></p>
-                    <p>For security reasons, we recommend changing your password after your first login.</p>
-                    <p>If your email is linked to Google or Apple ID, you use our login with Google or Apple ID.</p>
-                    <a href="${baseUrl}/auth/login">Click the here to login</a><br/>
-                    <br/>
-                    <p>Best regards,</p>
-                    <p>Travel Buddy 8 Team</p>
-                    `,
-                });
-
-                if(mailSendResp.error){
-                  console.log(mailSendResp.error);
-                  return res.status(500).json({ error: mailSendResp.error });
-                }
-                
-                return newUser.businessid;
-            }
-
-            return userData.businessid;
-        }));
-        
-        const newMembersList = (await newMembers).filter((memberId) => memberId !== undefined);
-
-        console.log(newMembersList);
-        
         const { data, error } = await supabase
             .from('company_members')
-            .insert(newMembersList.map((memberId) => ({
-                company_id: companyId,
-                member_id: memberId,
-                role: 'member'
-            })))
-            .select('*');
+            .update({
+                role: 'none',
+                is_deleted: true
+            })
+            .eq('member_id', memberId)
+            .eq('company_id', companyId)
+            .select('*')
+            .single();
 
         if (error) {
-            return res.status(500).json({ error: error.message });
+          return res.status(500).json({ error: error.message });
         }
 
-        return res.status(201).json({ data: {
-          message: 'Members created successfully',
-          data: data
-        } });
+        return res.status(201).json({ data });
+
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
     }

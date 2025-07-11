@@ -1,20 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
-import crypto from 'crypto';
-
-function generateRandomPassword(length: number): string {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-  let password = "";
-  const randomValues = new Uint32Array(length); // Use Uint8Array for smaller values if preferred
-  crypto.getRandomValues(randomValues);
-
-  for (let i = 0; i < length; i++) {
-    const randomIndex = randomValues[i] % characters.length;
-    password += characters.charAt(randomIndex);
-  }
-
-  return password;
-}
 
 export default async function handler(
     req: NextApiRequest,
@@ -40,6 +25,7 @@ export default async function handler(
                 role: role
             })
             .eq('member_id', memberId)
+            .eq('company_id', companyId)
             .select('*')
             .single();
 
