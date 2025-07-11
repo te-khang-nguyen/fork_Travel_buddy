@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { memberCreationEmailTemplate } from "./email-template";
 import mailSendHandler from "./send-email";
 import crypto from 'crypto';
 
@@ -80,25 +81,21 @@ export default async function handler(
                     return res.status(400).json({ error: newUserError?.message });
                 }
 
+                const emailBodyNewMember = memberCreationEmailTemplate({
+                    companyName: companyData.name,
+                    email,
+                    password,
+                    redirect_link,
+                    isNew: true,
+                });
+
                 const mailSendResp = await mailSendHandler({
                     sender: 'hello@travelbuddy8.com',
                     senderName: 'Travel Buddy 8',
                     to: [email],
                     bcc: ["trac.nguyen@edge8.ai"],
                     subject: 'Welcome to Travel Buddy 8 Trip report platform',
-                    html: `
-                    <p>Hi there,</p><br/>
-                    <p>You have been added as a member of ${companyData.name} on our platform</p>
-                    <p>Below are your credentials:</p>
-                    <p>Username: <b>${email}</b></p>
-                    <p>Password: <b>${password}</b></p>
-                    <p>For security reasons, we recommend changing your password after your first login.</p>
-                    <p>If your email is linked to Google or Apple ID, you use our login with Google or Apple ID.</p>
-                    <a href="${redirect_link}">Click the here to login</a><br/>
-                    <br/>
-                    <p>Best regards,</p>
-                    <p>Travel Buddy 8 Team</p>
-                    `,
+                    html: emailBodyNewMember,
                 });
 
                 if(mailSendResp.error){
@@ -109,20 +106,20 @@ export default async function handler(
                 return newUser.businessid;
             }
 
+            const emailBodyReinvite = memberCreationEmailTemplate({
+              companyName: companyData.name,
+              email,
+              redirect_link,
+              isNew: false,
+            });
+
             const mailSendResp = await mailSendHandler({
               sender: 'hello@travelbuddy8.com',
               senderName: 'Travel Buddy 8',
               to: [email],
               bcc: ["trac.nguyen@edge8.ai"],
               subject: 'Welcome to Travel Buddy 8 Trip report platform',
-              html: `
-              <p>Hi there,</p><br/>
-              <p>You have been added as a member of ${companyData.name} on our platform</p>
-              <a href="${redirect_link}">Click the here to login</a><br/>
-              <br/>
-              <p>Best regards,</p>
-              <p>Travel Buddy 8 Team</p>
-              `,
+              html: emailBodyReinvite,
             });
 
             if(mailSendResp.error){
