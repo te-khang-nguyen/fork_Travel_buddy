@@ -21,13 +21,6 @@ export default async function handler(
              data: { user },
         } = await supabase.auth.getUser(token);
 
-        const lastSignInAt = new Date(user?.last_sign_in_at ?? "");
-        const lastSignInAtString = lastSignInAt.toISOString().split(".")[0];
-        const createdAt = new Date(user?.created_at ?? "");
-        const createdAtString = createdAt.toISOString().split(".")[0];
-        const firstTime = (createdAtString === lastSignInAtString)
-          || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000);
-
         const { 
             data: userData, 
             error: userError 
@@ -47,6 +40,14 @@ export default async function handler(
                 error: userError.message
             });
         }
+
+        const lastSignInAt = new Date(user?.last_sign_in_at ?? "");
+        const lastSignInAtString = lastSignInAt.toISOString().split(".")[0];
+        const createdAt = new Date(user?.created_at ?? "");
+        const createdAtString = createdAt.toISOString().split(".")[0];
+        const firstTime = (createdAtString === lastSignInAtString)
+          || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000)
+          || userData?.username === null;
 
         const isPartOf = userData?.company_members?.map((item) => (
           {
