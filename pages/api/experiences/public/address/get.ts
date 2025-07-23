@@ -18,14 +18,13 @@ export default async function handler(
     }
 
     try {
-        const { company_id, address } = req.query;
+        const { company_id } = req.query;
 
-        const query = supabase
-            .from("active_experiences_by_address_and_company_id")
-            .select("*")
-            .or(`owned_by.eq.${company_id},address.eq.${address}`);
-
-        const { data, error } = await query;
+        // Call the PostgreSQL function via Supabase RPC
+        const { data, error } = await supabase
+            .rpc('get_experiences_by_address_and_owner', { 
+                owner_filter: company_id && company_id !== '' ? company_id : null
+            });
 
         if (error) {
             return res.status(400).json({ error: error.message });
