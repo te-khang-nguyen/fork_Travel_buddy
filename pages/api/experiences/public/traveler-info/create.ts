@@ -46,12 +46,22 @@ export default async function handler(
         }
   
         return res.status(200).json({
-          data: data
+          data: {
+            visitor_id: data.id,
+            experience_id: data.experience_id,
+            language: data.language,
+            company_id: data.company_id,
+          }
         });
     }
 
     return res.status(200).json({
-      data: visitorData
+      data: {
+        visitor_id: visitorData.id,
+        experience_id: visitorData.experience_id,
+        language: visitorData.language,
+        company_id: visitorData.company_id,
+      }
     });
 
   } catch (error: any) {
