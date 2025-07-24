@@ -95,10 +95,9 @@ export default async function handler(
                 const emailBodyNewMember = memberCreationEmailTemplate({
                     companyName: companyData.name,
                     email,
-                    password,
+                    password: !userprofileData ? password : undefined,
                     redirect_link,
-                    recovery_link: `https://${redirectLinkHost}/auth/forgot-password`,
-                    isNew: true,
+                    recovery_link: `https://${redirectLinkHost}/auth/forgot-password`
                 });
 
                 const mailSendResp = await mailSendHandler({
@@ -122,8 +121,7 @@ export default async function handler(
               companyName: companyData.name,
               email,
               redirect_link,
-              recovery_link: `https://${redirectLinkHost}/auth/forgot-password`,
-              isNew: false,
+              recovery_link: `https://${redirectLinkHost}/auth/forgot-password`
             });
 
             const mailSendResp = await mailSendHandler({

@@ -3,15 +3,13 @@ export const memberCreationEmailTemplate = ({
     email,
     password,
     redirect_link,
-    recovery_link,
-    isNew,
+    recovery_link
 }: {
     companyName: string;
     email: string;
     password?: string;
     redirect_link: string;
     recovery_link: string;
-    isNew: boolean;
 }) => {
     return `
     <!DOCTYPE html>
@@ -59,7 +57,7 @@ export const memberCreationEmailTemplate = ({
                                             You have been added as a member of <strong>${companyName}</strong> on the Trip report platform.
                                         </p>
                                         
-                                        ${isNew ? `<table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-bottom: 30px;">
+                                        ${password ? `<table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-bottom: 30px;">
                                             <tr>
                                                 <td align="left" style="padding: 20px; background-color: #f0f0f0; border-radius: 5px;">
                                                     <p style="margin: 0 0 15px; font-family: Arial, sans-serif; font-size: 14px; color: #555555;">Below are your login credentials:</p>
@@ -73,7 +71,7 @@ export const memberCreationEmailTemplate = ({
                                             </tr>
                                         </table>
                                         <p style="margin: 0 0 15px;">For security reasons, we strongly recommend changing your password after your first login.</p>` : ''}
-                                        ${!isNew ? `<p style="margin: 0 0 15px;">For security reasons, if you have not changed your password after your first login, we recommend changing your password.</p>` : ''}
+                                        ${!password ? `<p style="margin: 0 0 15px;">For security reasons, if you have not changed your password after your first login, we recommend changing your password.</p>` : ''}
                                         <p style="margin: 0 0 15px;">Link to password recovery: <a href="${recovery_link}">Change Password</a></p>
                                         <p style="margin: 0 0 30px;">If your email is linked to a Google or Apple account, you can also use those options to sign in.</p>
                                         
