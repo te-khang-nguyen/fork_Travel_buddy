@@ -58,19 +58,30 @@ export default async function handler(
                 .select('*')
                 .eq('email', email)
                 .single();
+            
+            const { data: userprofileData, error: userprofileError } = await supabase
+                .from('userprofiles')
+                .select('*')
+                .eq('email', email)
+                .single();
               
-            if (userError || !userData) {
-                const password = generateRandomPassword(8);
+            if (userError || !userData || userprofileError || !userprofileData) {
+              const password = generateRandomPassword(8);
+              let userCredential: any;
+              if(!userprofileData && !userData){
                 const { data: { user } } = await supabase.auth.signUp({ email, password });
-                
+                userCredential = user;
                 if (!user) {
                     return res.status(400).json({ error: 'User not found' });
                 }
+              } else if (userprofileData && !userData){
+                userCredential = { id: userprofileData.userid };
+              }
                 
                 const { data: newUser, error: newUserError } = await supabase
                     .from('businessprofiles')
                     .insert({
-                        businessid: user.id,
+                        businessid: userCredential.id,
                         email,
                         businessname: `Member of ${companyData.name}`,
                     })
