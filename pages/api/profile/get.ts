@@ -21,16 +21,20 @@ export default async function handler(
   } = await supabase.auth.getUser(token);
 
   const userId = user?.id;
-  const avatar = user?.user_metadata?.avatar_url || "";
+  const avatar = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
   const email = user?.email;
   const lastSignInAt = new Date(user?.last_sign_in_at ?? "");
   const lastSignInAtString = lastSignInAt.toISOString().split(".")[0];
   const createdAt = new Date(user?.created_at ?? "");
   const createdAtString = createdAt.toISOString().split(".")[0];
-  const firstTime = (createdAtString === lastSignInAtString)
-    || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000);
+  
 
   try {
+    const { data: visitorData } = await supabase
+      .from("visitors")
+      .select('company_id')
+      .eq("email", email);
+
     const { data: profileData, error } = await supabase
       .from(`${finalRole}profiles`)
       .select('*, media_assets(url)')
@@ -76,16 +80,31 @@ export default async function handler(
         .select("*, media_assets(url)")
         .single();
 
+      const firstTime = (createdAtString === lastSignInAtString)
+        || !userName || !firstName || !lastName
+        || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000);
+
       if (!newProfileData) {
         return res.status(500).json({ error: "Fail to create new profile for OAuth user.", detail: profileErr });
       } else {
         return res.status(200).json({
-          data: { ...newProfileData, first_time: firstTime }
+          data: { 
+            ...newProfileData, 
+            first_time: firstTime,
+            company_ids: visitorData?.map((item) => item.company_id)
+          }
         });
       }
     } else if (!error || profileData) {
+      const firstTime = (createdAtString === lastSignInAtString)
+        || !profileData?.username || !profileData?.firstname || !profileData?.lastname
+        || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000);
       return res.status(200).json({
-        data: { ...profileData, first_time: firstTime }
+        data: { 
+          ...profileData, 
+          first_time: firstTime,
+          company_ids: visitorData?.map((item) => item.company_id)
+        }
       });
     }
 

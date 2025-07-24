@@ -18,12 +18,12 @@ export default async function handler(
     }
 
     try {
-        const { company_id } = req.query;
+        const { companies } = req.query;
 
         // Call the PostgreSQL function via Supabase RPC
         const { data, error } = await supabase
-            .rpc('get_experiences_by_address_and_owner', { 
-                owner_filter: company_id && company_id !== '' ? company_id : null
+            .rpc('get_experiences_by_address_and_owners', { 
+                owner_filters: companies && companies.length > 0 ? companies : null
             });
 
         if (error) {

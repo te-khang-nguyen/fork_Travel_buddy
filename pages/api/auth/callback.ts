@@ -47,7 +47,7 @@ export default async function handler(req, res) {
 
     // Extract user ID and additional info if needed
     const userId = user?.id;
-    const avatar = user?.user_metadata?.avatar_url;
+    const avatar = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
     const email = user?.email;
     const userName = user?.user_metadata?.name;
     const firstName = user?.user_metadata?.full_name.split(" ")[0];
