@@ -20,7 +20,7 @@ export default async function handler(
     const channel_id = req.query?.["channel-id"];
     const updatedData = req.body;
     const token = req.headers.authorization?.split(' ')[1];
-    const supabase = createApiClient(token);
+    const supabase = createApiClient(token!);
 
     try {
         const {

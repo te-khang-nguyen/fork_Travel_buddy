@@ -13,7 +13,7 @@ export default async function handler(
     // Extract authorization token
     const token = req.headers.authorization?.split(" ")[1];
     // Create Supabase client
-    const supabase = createApiClient(token);
+    const supabase = createApiClient(token!);
 
     const storyId = req.query?.["story-id"];
 

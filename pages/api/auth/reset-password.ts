@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: "Unauthorized!" });
   }
 
-  const supabase = createApiClient(token);
+  const supabase = createApiClient(token!);
   const adminSupabase = createApiAdminSupabase();
 
   const { data: { user } } = await supabase.auth.getUser();

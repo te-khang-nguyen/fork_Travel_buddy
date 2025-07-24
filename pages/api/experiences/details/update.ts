@@ -20,7 +20,7 @@ export default async function handler(
         return res.status(401).json({ error: "Unauthorized: Token is missing" });
     }
 
-    const supabase = createApiClient(token);
+    const supabase = createApiClient(token!);
 
     const { dd_id } = req.query;
     const data: Partial<DestinationDetails> = req.body;

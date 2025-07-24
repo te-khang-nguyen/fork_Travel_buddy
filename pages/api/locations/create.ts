@@ -13,7 +13,7 @@ export default async function handler(
 
     try {
         const token = req.headers.authorization?.split(' ')[1];
-        const supabase = createApiClient(token);
+        const supabase = createApiClient(token!);
 
         const {
             data: { user },

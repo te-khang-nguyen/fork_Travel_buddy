@@ -1,4 +1,4 @@
-import { supabase } from "@/libs/supabase/supabase_client";
+import { createApiClient } from "@/libs/supabase/supabaseApi";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Profile } from "@/libs/services/user/profile";
 
@@ -16,9 +16,11 @@ export default async function handler(
 
   const token = req.headers.authorization?.split(' ')[1];
 
+  const supabase = createApiClient(token!);
+
   const {
     data: { user },
-  } = await supabase.auth.getUser(token);
+  } = await supabase.auth.getUser(token!);
 
   const userId = user?.id;
   const avatar = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";

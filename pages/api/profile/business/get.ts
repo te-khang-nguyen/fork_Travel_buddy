@@ -15,7 +15,7 @@ export default async function handler(
         const { 'user-id': user_id, 'company': company } = req.query;
 
         const token = req.headers.authorization?.split(' ')[1];
-        const supabase = createApiClient(token);
+        const supabase = createApiClient(token!);
 
         const {
              data: { user },

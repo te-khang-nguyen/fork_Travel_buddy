@@ -12,7 +12,7 @@ export default async function handler(
     }
 
     const token = req.headers.authorization?.split(' ')[1];
-    const supabase = createApiClient(token);
+    const supabase = createApiClient(token!);
 
     const { challenge_id } = req.query;
     const data = req.body;

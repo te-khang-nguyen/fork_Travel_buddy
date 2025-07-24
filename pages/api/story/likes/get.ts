@@ -20,7 +20,7 @@ export default async function handler(
   const token = req.headers.authorization?.split(' ')[1];
 
   // Create Supabase client
-  const supabase = createApiClient(token);
+  const supabase = createApiClient(token!);
   // Get authenticated user
   const {
     data: { user },

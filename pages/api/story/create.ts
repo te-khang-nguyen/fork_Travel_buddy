@@ -19,7 +19,7 @@ export default async function handler(
   const token = req.headers.authorization?.split(' ')[1];
 
   // Create Supabase client
-  const supabase = createApiClient(token);
+  const supabase = createApiClient(token!);
   const supabaseSecondary = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
