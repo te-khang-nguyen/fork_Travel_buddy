@@ -23,7 +23,7 @@ export default async function handler(
         // Call the PostgreSQL function via Supabase RPC
         const { data, error } = await supabase
             .rpc('get_experiences_by_address_and_owners', { 
-                owner_filters: companies && companies.length > 0 ? companies : null
+                owner_filters: companies && companies.length > 0 ? (companies as string).split(',') : null
             });
 
         if (error) {
