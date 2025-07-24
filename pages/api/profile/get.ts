@@ -30,10 +30,15 @@ export default async function handler(
   
 
   try {
+    console.log(email);
     const { data: visitorData } = await supabase
       .from("visitors")
       .select('company_id')
       .eq("email", email);
+
+    const companyIds = visitorData?.map((item) => item.company_id);
+    const uniqueCompanyIds = Array.from(new Set(companyIds));
+    console.log(uniqueCompanyIds);
 
     const { data: profileData, error } = await supabase
       .from(`${finalRole}profiles`)
@@ -91,7 +96,7 @@ export default async function handler(
           data: { 
             ...newProfileData, 
             first_time: firstTime,
-            company_ids: visitorData?.map((item) => item.company_id)
+            company_ids: companyIds
           }
         });
       }
@@ -103,7 +108,7 @@ export default async function handler(
         data: { 
           ...profileData, 
           first_time: firstTime,
-          company_ids: visitorData?.map((item) => item.company_id)
+          company_ids: companyIds
         }
       });
     }
