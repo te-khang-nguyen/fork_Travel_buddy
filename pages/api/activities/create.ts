@@ -28,7 +28,8 @@ export default async function handler(
             hours,
             description,
             description_thumbnail,
-            order_of_appearance
+            order_of_appearance,
+            highlights,
         } = req.body;
 
         const { data, error } = await supabase
@@ -46,7 +47,8 @@ export default async function handler(
                 status : 'inactive',
                 description,
                 description_thumbnail,
-                order_of_appearance
+                order_of_appearance,
+                highlights,
             },
         ])
         .select("id")
@@ -105,7 +107,11 @@ export const swaggerBusinessActivityCreate = {
                 "hours": { "type": "string" },
                 "description": { "type": "string" },
                 "description_thumbnail": { "type": "string" },
-                "order_of_appearance": { "type": "number" }
+                "order_of_appearance": { "type": "number" },
+                "highlights": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
               }
             }
           }

@@ -90,7 +90,11 @@ export const swaggerBusinessActivityUpdate = {
                 "hours": { "type": "string" },
                 "description": { "type": "string" },
                 "description_thumbnail": { "type": "string" },
-                "order_of_appearance": { "type": "number" }
+                "order_of_appearance": { "type": "number" },
+                "highlights": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
               }
             }
           }

@@ -97,7 +97,11 @@ export const swaggerBusinessActivityGet = {
                       "description_thumbnail": { "type": "string" },
                       "order_of_appearance": { "type": "number" },
                       "created_at": { "type": "string" },
-                      "updated_at": { "type": "string" }
+                      "updated_at": { "type": "string" },
+                      "highlights": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                      },
                     }
                   }
                 }
