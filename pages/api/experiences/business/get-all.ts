@@ -24,7 +24,9 @@ export default async function handler(
     try {
         const { data, error } = await supabase
             .from("experiences")
-            .select("*");
+            .select("*")
+            .in("status", ["active", "inactive"])
+            .order("created_at", { ascending: false });
 
         if (error) {
             return res.status(400).json({ error: error.message });
