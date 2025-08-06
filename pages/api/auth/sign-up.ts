@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const userId = authData.user?.id;  
     const accessToken = authData.session?.access_token;
-    const expiresIn = authData.session?.expires_in;
+    const expiresIn = authData.session?.expires_at;
     const refreshToken = authData.session?.refresh_token;
 
     const userProfile =
@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message: "User created successfully!",
       userId: userId,
       access_token: accessToken,
-      expires_in: expiresIn,
+      expires_at: expiresIn,
       refresh_token: refreshToken,
     });
   } catch (err: any) {

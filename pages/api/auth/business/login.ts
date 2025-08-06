@@ -140,7 +140,7 @@ export default async function handler(
             .status(200)
             .json({ 
               access_token: session.access_token, 
-              expires_in: session.expires_in,
+              expires_at: session.expires_at,
               refresh_token: session.refresh_token,
               userId: profileData.businessid, 
               b2cId: b2cId,
