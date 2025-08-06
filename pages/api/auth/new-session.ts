@@ -17,7 +17,7 @@ export default async function handler(
 
   try {
     const {
-      data: { session },
+      data: { user, session },
       error,
     } = await supabase.auth.refreshSession({ refresh_token: refresh_token as string });
 
@@ -35,7 +35,7 @@ export default async function handler(
         access_token: session.access_token, 
         expires_at: session.expires_at,
         refresh_token: session.refresh_token,
-        user_id: session.user.id,
+        user_id: user?.id,
        });
   } catch (err) {
     return res
