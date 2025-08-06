@@ -19,8 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: authError?.message });
     }
 
-    const userId = authData.user?.id;
+    const userId = authData.user?.id;  
     const accessToken = authData.session?.access_token;
+    const expiresIn = authData.session?.expires_in;
+    const refreshToken = authData.session?.refresh_token;
 
     const userProfile =
       firstName !== lastName
@@ -50,6 +52,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message: "User created successfully!",
       userId: userId,
       access_token: accessToken,
+      expires_in: expiresIn,
+      refresh_token: refreshToken,
     });
   } catch (err: any) {
     return res.status(500).json({ error: err.message || "An unknown error occurred." });

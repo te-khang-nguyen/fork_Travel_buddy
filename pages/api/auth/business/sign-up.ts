@@ -25,6 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const userId = user?.id;  
   const accessToken = session?.access_token;
+  const expiresIn = session?.expires_in;
+  const refreshToken = session?.refresh_token;
 
   try {
     
@@ -122,6 +124,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       withB2cProfile: Object.keys(B2CProfile).length > 0,
       userId: userId,
       access_token: accessToken,
+      expires_in: expiresIn,
+      refresh_token: refreshToken,
       channelId: channelId
     });
 

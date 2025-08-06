@@ -31,7 +31,12 @@ export default async function handler(
 
     return res
       .status(200)
-      .json({ access_token: session.access_token, userId: session.user.id });
+      .json({ 
+        access_token: session.access_token, 
+        expires_in: session.expires_in,
+        refresh_token: session.refresh_token,
+        user_id: session.user.id 
+      });
   } catch (err) {
     return res
       .status(500)

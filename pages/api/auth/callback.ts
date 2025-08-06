@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
   try {
     // Set the access token for Supabase session
-    const { error: sessionError } =
+    const { data: { user, session }, error: sessionError } =
       await supabase.auth.setSession({
         access_token,
         refresh_token,
@@ -33,20 +33,21 @@ export default async function handler(req, res) {
     }
 
     // // Fetch user details
-    const { 
-      data: { user }, 
-      error: userError 
-    } = await supabase.auth.getUser(access_token);
+    // const { 
+    //   data: { user }, 
+    //   error: userError 
+    // } = await supabase.auth.getUser(access_token);
 
-    if (userError) {
-      console.error("Error fetching user data:", userError.message);
-      return res
-        .status(500)
-        .json({ error: "Failed to fetch user information." });
-    }
+    // if (userError) {
+    //   console.error("Error fetching user data:", userError.message);
+    //   return res
+    //     .status(500)
+    //     .json({ error: "Failed to fetch user information." });
+    // }
 
     // Extract user ID and additional info if needed
     const userId = user?.id;
+    const expire_in = session?.expires_in;
     const avatar = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
     const email = user?.email;
     const userName = user?.user_metadata?.name;
@@ -69,6 +70,8 @@ export default async function handler(req, res) {
       // Return the access token and user ID
       return res.status(200).json({
         access_token,
+        refresh_token,
+        expire_in,
         user_id: userId,
         first_time: firstTime,
         user: profileData, // Include additional user info if needed
@@ -143,6 +146,8 @@ export default async function handler(req, res) {
 
         return res.status(200).json({
           access_token,
+          refresh_token,
+          expire_in,
           user_id: userId,
           first_time: firstTime,
           user: newProfileData, // Include additional user info if needed
