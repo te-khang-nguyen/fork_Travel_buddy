@@ -28,7 +28,8 @@ export default async function handler(
         } = await supabase
             .from("activities")
             .select("*")
-            .eq("experience_id", experience_id);
+            .eq("experience_id", experience_id)
+            .order("order_of_appearance", { ascending: true })
 
         if (error) {
             return res.status(400).json({ error: error.message });
