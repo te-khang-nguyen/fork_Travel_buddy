@@ -19,6 +19,7 @@ export default async function handler(
             .from("activities")
             .select("*")
             .eq("experience_id", experience_id)
+            .neq("status", "deleted")
             .order("order_of_appearance", { ascending: true })
             .order("created_at", { ascending: true });
 

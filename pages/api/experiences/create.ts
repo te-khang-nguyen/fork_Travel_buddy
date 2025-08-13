@@ -32,6 +32,8 @@ export default async function handler(
             primary_video,
             primary_video_id,
             parent_experience,
+            status,
+            owned_by,
         } = req.body;
 
         const userId = user?.id;
@@ -54,7 +56,8 @@ export default async function handler(
                 primary_video,
                 primary_video_id,
                 parent_experience,
-                status: "inactive",
+                status: status ?? "inactive",
+                owned_by: owned_by ?? "c7ae75f1-96f0-409d-b5e7-24ce7d304d5a", // default Edge8 AI
             },
         ])
         .select('id, photos_id')
