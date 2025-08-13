@@ -15,14 +15,22 @@ export default async function handler(
     try {
         const { data, error } = await supabase
             .from("experiences")
-            .select("*")
+            .select("*,company_accounts(name),businessprofiles(username)")
             .eq("id", experience_id)
             .single();
 
         if (error) {
             return res.status(400).json({ error: error.message });
         }
-        return res.status(200).json({ data });
+
+        const { company_accounts, businessprofiles, ...rest } = data;
+        return res.status(200).json({ 
+          data:{
+            ...rest, 
+            owner: company_accounts?.name, 
+            created_by: businessprofiles?.username 
+          }
+        });
     } catch (err: any) {
         return res.status(500).json({ error: err.message || "An error has occurred while retrieving the challenge information."});
     }
