@@ -1,5 +1,16 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { TranslationServiceClient } from '@google-cloud/translate';
+
+// Initialize Google Translation Client
+const translationClient = new TranslationServiceClient({
+  credentials: {
+    client_email: process.env.GCP_PROJECT_CLIENT_EMAIL,
+    private_key: process.env.GCP_PROJECT_PRIVATE_KEY,
+  },
+});
+
+const targetKeys = ["name", "description", "thumbnail_description", "address"];
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,7 +21,7 @@ export default async function handler(
         return
     }
 
-    const experience_id = req.query?.["experience-id"];
+    const {"experience-id": experience_id, "language": language} = req.query;
 
     try {
         const { data, error } = await supabase
@@ -21,6 +32,119 @@ export default async function handler(
 
         if (error) {
             return res.status(400).json({ error: error.message });
+        }
+
+        if (language && (language !== "en" || !language.includes("en"))) {
+            const { data: localizedData, error: localizedError } = await supabase
+                .from("experiences_activities_localizations")
+                .select("*")
+                .eq("experience_id", experience_id)
+                .eq("language", language)
+                .single();
+
+            if (localizedError) {
+                console.log("Localized data not found");
+
+                const toBeTranslated = Object.entries(data).reduce((acc, [key, value]) => {
+                    if (targetKeys.includes(key)) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {});
+
+                const projectId = process.env.GCP_PROJECT_CLIENT_ID?.split("-")[0];
+                const [translationResponse] = await translationClient.translateText({
+                    parent: `projects/${projectId}/locations/us-central1`,
+                    targetLanguageCode: language as string   || "en",
+                    contents: Object.values(toBeTranslated)
+                });
+
+
+                if (!translationResponse) {
+                    return res.status(400).json({ error: "Translation failed" });
+                }
+
+                const [followUpQuestionsTranslation] = await translationClient.translateText({
+                  parent: `projects/${projectId}/locations/us-central1`,
+                  targetLanguageCode: language as string   || "en",
+                  contents: data.default_questions
+                });
+
+                if (!followUpQuestionsTranslation) {
+                  console.log("Follow up questions translation failed");
+                  return res.status(400).json({ error: "Translation failed" });
+                }
+
+                const defaultQuestionsTranslation = followUpQuestionsTranslation
+                ?.translations
+                ?.map((translation) => translation?.translatedText || "").filter((translation) => translation !== "");
+
+                const translations = translationResponse?.translations?.map((translation, index) => {
+                    return [
+                        Object.keys(toBeTranslated)[index],
+                        translation?.translatedText || ""
+                    ]
+                })
+
+                const translationsObject = Object.fromEntries(translations || []);
+
+                if (!translations) {
+                    return res.status(400).json({ error: "Translation failed" });
+                }
+
+                const { data: translationUpload, error: translationUploadError } = await supabase
+                    .from("experiences_activities_localizations")
+                    .insert({
+                      experience_id: experience_id,
+                      language: language as string || "en",
+                      default_questions: defaultQuestionsTranslation,
+                      ...translationsObject
+                    })
+                    .select("*")
+                    .single();
+
+                if (translationUploadError) {
+                  console.log("Translation upload failed: \n", translationUploadError);
+                  return res.status(400).json({ error: "Translation upload failed"});
+                }
+
+                const updatedData = Object.entries(data).reduce((acc, [key, value]) => {
+                    if (translations?.find((translation) => translation[0] === key)) {
+                        acc[key] = translations?.find((translation) => translation[0] === key)?.[1];
+                    } else {
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {});
+
+                const { company_accounts, businessprofiles, ...rest } = updatedData as any;
+                return res.status(200).json({ 
+                  data:{
+                    ...rest, 
+                    default_questions: defaultQuestionsTranslation,
+                    owner: company_accounts?.name, 
+                    created_by: businessprofiles?.username 
+                  }
+                });
+            } else {
+              const updatedData = Object.entries(data).reduce((acc, [key, value]) => {
+                if (Object.keys(localizedData).find((localizedKey) => localizedKey === key)) {
+                  acc[key] = localizedData?.[key];
+                } else {
+                  acc[key] = value;
+                }
+                return acc;
+              }, {});
+
+              const { company_accounts, businessprofiles, ...rest } = updatedData as any;
+              return res.status(200).json({ 
+                data:{
+                  ...rest, 
+                  owner: company_accounts?.name, 
+                  created_by: businessprofiles?.username 
+                }
+              });
+            }
         }
 
         const { company_accounts, businessprofiles, ...rest } = data;

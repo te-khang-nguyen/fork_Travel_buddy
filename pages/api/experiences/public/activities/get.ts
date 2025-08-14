@@ -1,5 +1,6 @@
 import { supabase } from "@/libs/supabase/supabase_client";
 import { NextApiRequest, NextApiResponse } from "next";
+import activitiesTranslation from "./translation";
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,6 +11,10 @@ export default async function handler(
     }
 
     const experience_id = req.query["experience-id"];
+    const language = req.query["language"];
+
+    console.log("Experience ID: ", experience_id);
+    console.log("Language: ", language);
     
     try {
         const { 
@@ -25,6 +30,91 @@ export default async function handler(
 
         if (error) {
             return res.status(400).json({ error: error.message });
+        }
+
+        if(language && (language !== "en" || !language.includes("en"))) {
+            console.log("Not English but ", language);
+
+            const { data: translatedData } = await supabase
+                .from("experiences_activities_localizations")
+                .select("*")
+                .eq("experience_id", experience_id)
+                .eq("language", language)
+                .in("activity_id", queryData.map((activity) => activity.id))
+                .order("created_at", { ascending: true });
+
+            if (!translatedData || translatedData.length === 0) {
+              console.log("Translation not found");
+
+              const translatedActivities = await Promise.all(
+                  queryData.map(async (activity) => {
+                      return activitiesTranslation(
+                        {
+                          name: activity.title,
+                          description: activity.description,
+                          thumbnail_description: activity.description_thumbnail,
+                          address: activity.address,
+                          highlights: activity.highlights,
+                        },
+                        language as string
+                      );
+                  })
+              );
+
+              // console.log("Translation: \n", translatedActivities[0]);
+              
+
+              const { data: translationUpload, error: translationUploadError } = await supabase
+                  .from("experiences_activities_localizations")
+                  .insert(translatedActivities.map((activity, index) => {
+                    return {
+                      experience_id: experience_id,
+                      language: language as string || "en",
+                      activity_id: queryData[index].id,
+                      ...activity
+                    }
+                  }))
+                  .select("*")
+
+              if (translationUploadError || !translationUpload) {
+                console.log("Translation upload failed: \n", translationUploadError);
+                return res.status(400).json({ error: "Translation upload failed"});
+              }
+
+              const reversedMapTranslation = translatedActivities.map((activity) => {
+                return {
+                  title: activity.name,
+                  description: activity.description,
+                  description_thumbnail: activity.thumbnail_description,
+                  address: activity.address,
+                  highlights: activity.highlights,
+                }
+              })
+
+              // console.log("Translation uploaded successfully reverse mapping: \n", reversedMapTranslation[0]);
+
+              const updatedData = queryData.map((activity, index) => {
+                return {
+                  ...activity,
+                  ...reversedMapTranslation[index],
+                }
+              })
+
+              // console.log("Translation uploaded successfully: \n", updatedData[0]);
+
+              return res.status(200).json({ data: updatedData });
+            }
+
+            const updatedData = queryData.map((activity) => {
+              return {
+                ...activity,
+                ...translatedData.find((translation) => translation.activity_id === activity.id),
+              }
+            })
+
+            // console.log("Translation uploaded successfully: \n", updatedData[0]);
+
+            return res.status(200).json({ data: updatedData });
         }
 
         return res.status(200).json({ data: queryData });
