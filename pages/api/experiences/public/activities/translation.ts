@@ -19,11 +19,15 @@ export default async function activitiesTranslation(
 ) {
     console.log("Translation started with: \n", language);
     const {highlights, ...rest} = activity;
+    const array = Object.values(rest).filter((value) => value !== null && value !== "");
+    if(array.length === 0) {
+        return activity;
+    }
     const projectId = process.env.GCP_PROJECT_CLIENT_ID?.split("-")[0];
     const [translationResponse] = await translationClient.translateText({
         parent: `projects/${projectId}/locations/us-central1`,
         targetLanguageCode: language as string,
-        contents: Object.values(rest)
+        contents: array
     });
 
     if (!translationResponse) {
