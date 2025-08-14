@@ -106,9 +106,14 @@ export default async function handler(
             }
 
             const updatedData = queryData.map((activity) => {
+              const matchedTranslation = translatedData.find((translation) => translation.activity_id === activity.id);
               return {
                 ...activity,
-                ...translatedData.find((translation) => translation.activity_id === activity.id),
+                title: matchedTranslation?.name,
+                description: matchedTranslation?.description,
+                description_thumbnail: matchedTranslation?.thumbnail_description,
+                address: matchedTranslation?.address,
+                highlights: matchedTranslation?.highlights,
               }
             })
 
