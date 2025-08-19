@@ -18,13 +18,27 @@ export default async function handler(
     }
 
     try {
-        const { companies } = req.query;
+        const { companies, language } = req.query;
 
         // Call the PostgreSQL function via Supabase RPC
         const { data, error } = await supabase
             .rpc('get_experiences_by_address_and_owners', { 
                 owner_filters: companies && companies.length > 0 ? (companies as string).split(',') : null
             });
+        
+        if(language && language !== "en") {
+            const { data: translatedData, error: translatedDataError } = await supabase
+                .rpc('get_translated_experiences_by_address_and_owners', { 
+                    owner_filters: companies && companies.length > 0 ? (companies as string).split(',') : null,
+                    language: language as string
+                });
+
+            if (translatedDataError || !translatedData) {
+                return res.status(400).json({ error: translatedDataError?.message || "Translation not found" });
+            }
+
+            return res.status(200).json({ data: translatedData });
+        }
 
         if (error) {
             return res.status(400).json({ error: error.message });

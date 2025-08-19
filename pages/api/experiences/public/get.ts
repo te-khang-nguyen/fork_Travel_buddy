@@ -35,14 +35,20 @@ export default async function handler(
         }
 
         if (language && (language !== "en" || !language.includes("en"))) {
+            // Check if the translation exists
             const { data: localizedData, error: localizedError } = await supabase
                 .from("experiences_activities_localizations")
                 .select("*")
                 .eq("experience_id", experience_id)
                 .eq("language", language)
+                .is("activity_id", null)
                 .single();
+            
+            console.log("Localized data: ", localizedData);
 
-            if (localizedError) {
+            if (localizedError || !localizedData) {
+                console.log(localizedError);
+                // If the translation doesn't exist, translate the data
                 console.log("Localized data not found");
 
                 const toBeTranslated = Object.entries(data).reduce((acc, [key, value]) => {
