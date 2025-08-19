@@ -83,12 +83,12 @@ export default async function handler(
 
                 const defaultQuestionsTranslation = followUpQuestionsTranslation
                 ?.translations
-                ?.map((translation) => translation?.translatedText || "").filter((translation) => translation !== "");
+                ?.map((translation) => translation?.translatedText?.replaceAll("&#39;", "'") || "").filter((translation) => translation !== "");
 
                 const translations = translationResponse?.translations?.map((translation, index) => {
                     return [
                         Object.keys(toBeTranslated)[index],
-                        translation?.translatedText || ""
+                        translation?.translatedText?.replaceAll("&#39;", "'") || ""
                     ]
                 })
 
@@ -109,7 +109,7 @@ export default async function handler(
                     .select("*")
                     .single();
 
-                if (translationUploadError) {
+                if (translationUploadError || !translationUpload) {
                   console.log("Translation upload failed: \n", translationUploadError);
                   return res.status(400).json({ error: "Translation upload failed"});
                 }
