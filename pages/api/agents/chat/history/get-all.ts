@@ -1,4 +1,3 @@
-import { supabase } from "@/libs/supabase/supabase_client";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
 import { NextApiRequest, NextApiResponse } from "next";
 

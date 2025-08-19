@@ -27,10 +27,11 @@ export default async function handler(
             });
         
         if(language && language !== "en") {
+
             const { data: translatedData, error: translatedDataError } = await supabase
                 .rpc('get_translated_experiences_by_address_and_owners', { 
                     owner_filters: companies && companies.length > 0 ? (companies as string).split(',') : null,
-                    language: language as string
+                    language_code: language as string
                 });
 
             if (translatedDataError || !translatedData) {
