@@ -63,6 +63,7 @@ export default async function handler(
                             thumbnail_description: experience.thumbnail_description,
                             address: experience.address,
                             default_questions: experience.default_questions,
+                            owned_by: experience.owned_by
                         },
                         language as string
                     )
