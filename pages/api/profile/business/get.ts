@@ -53,14 +53,34 @@ export default async function handler(
           {
             ...item.company_accounts, role: item.role
           }
-        )).filter(item => item !== undefined && item.name === company);
+        )).map((item: {
+          id: string;
+          name: string;
+          role: string;
+        }) => {
+          if (company) {
+            if (item.name === company) {
+              return item;
+            }
+            return null;
+          }
+          return item;
+        }).filter((item: {
+          id: string;
+          name: string;
+          role: string;
+        }) => item !== null);
 
         const {company_members, ...userProfile} = userData;
 
         console.log(company_members);
 
         return res.status(200).json({
-            data: {...userProfile, companies: isPartOf, first_time: firstTime},
+            data: {
+              ...userProfile, 
+              companies: isPartOf, 
+              first_time: firstTime
+            },
             success: true,
         });
     } catch (error) {
