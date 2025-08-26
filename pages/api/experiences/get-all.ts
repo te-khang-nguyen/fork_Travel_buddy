@@ -27,7 +27,8 @@ export default async function handler(
             .eq('status', 'active')
             .eq('visits.user_id',user!.id)
             .eq('stories.user_id',user!.id)
-            .in('company_accounts.name', ["Vespa Adventures","The Wink Hotels"])
+            .neq('owned_by', "c7ae75f1-96f0-409d-b5e7-24ce7d304d5a")
+            .not('owned_by', 'is', null)
             .order("created_at", { ascending: false });
           
         const newData = data?.map((item) => {
