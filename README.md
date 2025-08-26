@@ -4,14 +4,14 @@ A comprehensive AI-powered travel platform built with Next.js, TypeScript, and S
 
 ## 🚀 Key Features
 
-### 1. AI-Powered Travel Assistant
+<!-- ### 1. AI-Powered Travel Assistant
 - **Multi-Model AI Integration**: Utilizes OpenAI, Google GenAI, Anthropic, and HuggingFace models
 - **LangChain Framework**: Advanced prompt engineering and agent-based conversations
 - **Intent Classification**: Intelligent query understanding and routing
 - **Image Analysis**: AI-powered image recognition for travel content
-- **Smart Recommendations**: Personalized travel suggestions based on user preferences
+- **Smart Recommendations**: Personalized travel suggestions based on user preferences -->
 
-### 2. Experience Management System
+### 1. Experience Management System
 - **CRUD Operations**: Full lifecycle management of travel experiences
 - **Rich Media Support**: Photo and video uploads with Supabase Storage integration
 - **Address-Based Grouping**: Experiences organized by geographical locations
@@ -19,39 +19,39 @@ A comprehensive AI-powered travel platform built with Next.js, TypeScript, and S
 - **Status Management**: Active, inactive, and internal experience states
 - **Translation Support**: Multi-language content with automatic translation
 
-### 3. User Authentication & Authorization
+### 2. User Authentication & Authorization
 - **Supabase Auth Integration**: Secure JWT-based authentication
 - **Multiple Auth Methods**: Email/password, OAuth providers, OTP verification
 - **Password Management**: Reset and recovery functionality
 - **Session Management**: Secure token handling and refresh
 - **Role-Based Access Control**: Different permission levels for users
 
-### 4. Company Management
+### 3. Company Management
 - **Multi-Tenant Architecture**: Support for multiple companies/organizations
 - **Member Management**: Add, remove, and manage company members
 - **Editor Roles**: Special permissions for content editors
 - **Business Profiles**: Comprehensive company profile management
 - **Ownership Tracking**: Clear ownership hierarchy for all content
 
-### 5. Story Generation & Sharing
-- **AI-Powered Story Creation**: Automatic travel story generation
+### 4. Story Generation & Sharing
+<!-- - **AI-Powered Story Creation**: Automatic travel story generation -->
 - **Social Features**: Comments, likes, and sharing functionality
 - **Content Management**: Full CRUD operations for stories
 - **Regeneration Capability**: AI-powered story regeneration
 - **Public/Private Stories**: Flexible privacy controls
 
-### 6. Media & Storage Management
+### 5. Media & Storage Management
 - **File Upload System**: Secure file handling with validation
 - **Supabase Storage**: Cloud-based media storage
 - **Image Processing**: Automatic optimization and resizing
 - **Asset Management**: Organized media library
 
-### 7. Analytics & Insights
+### 6. Analytics & Insights
 - **User Behavior Tracking**: Comprehensive analytics system
 - **Engagement Metrics**: Detailed interaction analytics
 - **Performance Monitoring**: System performance insights
 
-### 8. Communication & Notifications
+### 7. Communication & Notifications
 - **Email Integration**: SendGrid and MailerSend support
 - **Notification System**: Automated user notifications
 - **Template Management**: Customizable email templates
@@ -81,14 +81,6 @@ graph TB
         MW["🛡️ Middleware<br/>Auth + CORS"]
     end
     
-    subgraph "AI Services"
-        LangChain["🤖 LangChain Agents"]
-        OpenAI["🧠 OpenAI GPT"]
-        Google["🔍 Google GenAI"]
-        Anthropic["💭 Anthropic Claude"]
-        HF["🤗 HuggingFace"]
-    end
-    
     subgraph "Database & Storage"
         Supabase["🗄️ Supabase PostgreSQL<br/>Users, Experiences, Stories"]
         Storage["📁 Supabase Storage<br/>Media Files"]
@@ -105,11 +97,9 @@ graph TB
     API --> MW
     MW --> Supabase
     MW --> Auth
-    API --> LangChain
-    LangChain --> OpenAI
-    LangChain --> Google
-    LangChain --> Anthropic
-    LangChain --> HF
+    API --> Storage
+    API --> Email
+    API --> AgentServer
     API --> Storage
     API --> Email
     API --> AgentServer
@@ -117,7 +107,6 @@ graph TB
     style UI fill:#e1f5fe
     style API fill:#f3e5f5
     style Supabase fill:#e8f5e8
-    style LangChain fill:#fff3e0
 ```
 
 ### Project Structure
@@ -155,13 +144,11 @@ journey
       Profile Setup: 5: User
     section Experience Discovery
       Browse Experiences: 5: User
-      AI-Powered Search: 5: User, AI
       Filter by Location: 4: User
       View Details: 5: User
     section Content Creation
       Create Experience: 5: User
       Upload Media: 4: User
-      AI Story Generation: 5: User, AI
       Publish Content: 5: User
     section Social Interaction
       Like/Comment: 5: User
@@ -183,7 +170,6 @@ sequenceDiagram
     participant API as 🔌 API Route
     participant Auth as 🔐 Supabase Auth
     participant DB as 🗄️ Database
-    participant AI as 🤖 AI Service
     participant Storage as 📁 File Storage
     
     Client->>MW: HTTP Request + JWT Token
@@ -194,11 +180,6 @@ sequenceDiagram
         MW->>API: Forward Request
         API->>DB: Query/Mutation
         DB-->>API: Data Response
-        
-        opt AI Processing Needed
-            API->>AI: Process with AI
-            AI-->>API: AI Response
-        end
         
         opt File Upload
             API->>Storage: Store Media
@@ -286,42 +267,6 @@ erDiagram
     STORIES ||--o{ STORY_INTERACTIONS : receives
 ```
 
-### AI Workflow & Processing
-
-```mermaid
-flowchart TD
-    A["👤 User Input<br/>(Text/Images/Query)"] --> B{"🧠 Intent Classification"}
-    
-    B -->|Chat| C["💬 LangChain Chat Agent"]
-    B -->|Search| D["🔍 AI-Powered Search"]
-    B -->|Story Generation| E["📝 Story Generator"]
-    B -->|Image Analysis| F["🖼️ Image Recognition"]
-    
-    C --> G["🤖 Multi-Model Processing"]
-    D --> G
-    E --> G
-    F --> G
-    
-    G --> H["🧠 OpenAI GPT"]
-    G --> I["🔍 Google GenAI"]
-    G --> J["💭 Anthropic Claude"]
-    G --> K["🤗 HuggingFace Models"]
-    
-    H --> L["🔄 Response Aggregation"]
-    I --> L
-    J --> L
-    K --> L
-    
-    L --> M["✨ Enhanced Response"]
-    M --> N["📊 Context Storage"]
-    M --> O["👤 User Response"]
-    
-    style A fill:#e3f2fd
-    style G fill:#fff3e0
-    style L fill:#f3e5f5
-    style O fill:#e8f5e8
-```
-
 ### Feature Integration Overview
 
 ```mermaid
@@ -340,14 +285,6 @@ mindmap
       Company Ownership
       Status Control
       Multi-language
-    
-    (AI Features)
-      Chat Assistant
-      Smart Search
-      Story Generation
-      Image Analysis
-      Intent Classification
-      Recommendations
     
     (Company System)
       Multi-tenant
@@ -457,14 +394,8 @@ The project includes comprehensive API documentation via Swagger. Access it at:
 #### Stories (`/api/story/`)
 - `GET /get-all` - List all stories
 - `POST /create` - Create new story
-- `POST /generate` - AI-generate story
 - `POST /likes/toggle` - Toggle story like
 - `POST /comments/create` - Add comment
-
-#### AI Agents (`/api/agents/`)
-- `POST /chat` - Chat with AI agent
-- `POST /search` - AI-powered search
-- `POST /intent-classifier` - Classify user intent
 
 ## 🧑‍💻 Developer Guidelines
 
@@ -487,11 +418,11 @@ The project includes comprehensive API documentation via Swagger. Access it at:
 3. **Token Refresh**: Implement proper token refresh logic
 4. **Role Checking**: Validate user roles for protected operations
 
-### AI Integration Best Practices
+<!-- ### AI Integration Best Practices
 1. **Error Handling**: Implement robust error handling for AI services
 2. **Rate Limiting**: Consider API rate limits for AI providers
 3. **Fallback Strategies**: Have fallbacks when AI services are unavailable
-4. **Prompt Engineering**: Use structured prompts in LangChain agents
+4. **Prompt Engineering**: Use structured prompts in LangChain agents -->
 
 ### Testing & Quality
 1. **TypeScript**: Maintain strict type checking
@@ -521,12 +452,12 @@ The project includes comprehensive API documentation via Swagger. Access it at:
 4. Implement RLS policies if needed
 5. Push migration with `supabase db push`
 
-#### Integrating New AI Features
+<!-- #### Integrating New AI Features
 1. Add new service in `/libs/services/agents/`
 2. Implement proper error handling and fallbacks
 3. Add configuration for new AI provider
 4. Test with various input scenarios
-5. Update documentation
+5. Update documentation -->
 
 ## 🚀 Getting Started for Junior Developers
 
@@ -558,7 +489,6 @@ The project includes comprehensive API documentation via Swagger. Access it at:
 ### 5. Resources for Learning
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Supabase Documentation](https://supabase.com/docs)
-- [LangChain Documentation](https://js.langchain.com/docs/)
 - [Material-UI Documentation](https://mui.com/)
 
 ## 📞 Support & Contact

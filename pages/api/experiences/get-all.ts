@@ -23,10 +23,12 @@ export default async function handler(
 
     try {
         const { data, error } = await supabase.from("experiences")
-            .select('*,visits(count),stories(count)')
+            .select('*,visits(count),stories(count),company_accounts(id,name)')
             .eq('status', 'active')
             .eq('visits.user_id',user!.id)
-            .eq('stories.user_id',user!.id);
+            .eq('stories.user_id',user!.id)
+            .in('company_accounts.name', ["Vespa Adventures","The Wink Hotels"])
+            .order("created_at", { ascending: false });
           
         const newData = data?.map((item) => {
           const {visits, stories, ...rest} = item;
