@@ -1,4 +1,5 @@
 import sgMail from '@sendgrid/mail';
+import postmark from 'postmark';
 
 export default async function mailSendHandler({
     sender, senderName, to, cc, bcc, subject, html
@@ -13,20 +14,21 @@ export default async function mailSendHandler({
 }) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 
-    const rawMessage: sgMail.MailDataRequired = {
-        to: to,
-        from: {
-          name: senderName,
-          email: sender
-        },
-        cc: cc ?? [],
-        bcc: bcc ?? [],
-        subject: subject,
-        html: html,
-      };
+    const client = new postmark.ServerClient("67824027-a6af-4fca-94e6-b6212e36ae9d");
+
+
+    const postMarkPayload = {
+        "From": `${senderName} <${sender}>`,
+        "To": to.join(","),
+        "Cc": cc?.join(","),
+        "Bcc": bcc?.join(","),
+        "Subject": subject,
+        "HtmlBody": html,
+        "MessageStream": "outbound"
+      }
   
     try {
-        const response = await sgMail.send(rawMessage);
+        const response = client.sendEmail(postMarkPayload);
         return {data: response, error: null};
     } catch (error) {
         console.error(error);

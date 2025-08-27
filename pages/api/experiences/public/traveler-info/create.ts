@@ -12,7 +12,7 @@ export default async function handler(
 
   try {
 
-    const { experience_id, email, language } = req.body;
+    const { experience_id, company_id, email, language } = req.body;
 
     const { data: visitorData } = await supabase
       .from("visitors")
@@ -22,6 +22,57 @@ export default async function handler(
       .single();
 
     if (!visitorData) {
+      if (!company_id && !experience_id) {
+        const { data, error } = await supabase
+        .from("visitors")
+        .insert({
+          email,
+          language,
+        })
+        .select("*")
+        .single();
+
+        if (error) {
+          return res.status(400).json({
+            error: error.message
+          });
+        }
+
+        return res.status(200).json({
+          data: {
+            visitor_id: data.id,
+            language: data.language,
+          }
+        });
+      }
+
+      if (company_id) {
+        const { data, error } = await supabase
+        .from("visitors")
+        .insert({
+          email,
+          language,
+          company_id,
+        })
+        .select("*")
+        .single();
+
+        if (error) {
+          return res.status(400).json({
+            error: error.message
+          });
+        }
+
+        return res.status(200).json({
+          data: {
+            visitor_id: data.id,
+            experience_id: data.experience_id,
+            language: data.language,
+            company_id: data.company_id,
+          }
+        });
+      }
+
       const { data: expData } = await supabase
         .from("experiences")
         .select("*")
