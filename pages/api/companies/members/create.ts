@@ -8,7 +8,7 @@ const baseUrl = process.env.NODE_ENV === 'production' ?
 process.env.NEXT_PUBLIC_BASE_URL
 : 'http://localhost:3000';
 
-function generateRandomPassword(length: number): string {
+export function generateRandomPassword(length: number): string {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
   let password = "";
   const randomValues = new Uint32Array(length); // Use Uint8Array for smaller values if preferred
