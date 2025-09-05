@@ -281,6 +281,8 @@ export default async function handler(
 
       const userId = user?.id;
       const accessToken = session?.access_token;
+      const expiresIn = session?.expires_at;
+      const refreshToken = session?.refresh_token;
       console.log(userId);
       console.log(token);
 
@@ -335,7 +337,8 @@ export default async function handler(
           company_id: visitorFinalData.company_id,
           profile: userProfileUpToDate,
           access_token: accessToken,
-          refresh_token: session?.refresh_token,
+          refresh_token: refreshToken,
+          expires_at: expiresIn,
         }
       });
     }
@@ -362,6 +365,7 @@ export default async function handler(
         profile: userProfileUpToDate,
         access_token: null,
         refresh_token: null,
+        expires_at: null,
       }
     });
 
