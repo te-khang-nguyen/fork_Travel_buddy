@@ -32,7 +32,8 @@ export default async function handler(
               likes(count),
               shares(count),
               comments(count)`)
-            .eq("user_id", user!.id);
+            .eq("user_id", user!.id)
+            .order("created_at", { ascending: false, referencedTable: "media_assets" });
 
         if (error) {
             return res.status(400).json({ error: error.message });

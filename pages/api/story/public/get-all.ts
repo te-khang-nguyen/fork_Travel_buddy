@@ -23,7 +23,8 @@ export default async function handler(
               shares(count),
               comments(count)`)
             .eq("status", "PUBLISHED")
-            .eq("channels.channel_type", "Travel Buddy");
+            .eq("channels.channel_type", "Travel Buddy")
+            .order("created_at", { ascending: false, referencedTable: "media_assets" });
 
         if (error) {
             return res.status(400).json({ error: error.message });

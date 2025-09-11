@@ -16,6 +16,8 @@ export default async function handler(
             .from("experiences")
             .select("*,company_accounts(name),businessprofiles(username)")
             .eq("status", "active")
+            .neq('owned_by', "c7ae75f1-96f0-409d-b5e7-24ce7d304d5a")
+            .not('owned_by', 'is', null)
             .order("created_at", { ascending: false });
         
         // const { visits, stories, ...rest } = data as any;

@@ -33,6 +33,7 @@ export default async function handler(
               shares(count),
               comments(count)`)
             .eq("id", storyId)
+            .order("created_at", { ascending: false, referencedTable: "media_assets" })
             .single();
 
         if (error) {
