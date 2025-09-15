@@ -14,48 +14,19 @@ export default async function handler(
     const token = req.headers.authorization?.split(" ")[1];
     // Create Supabase client
     const supabase = createApiClient(token!);
-    // const companyId = req.query["company-id"];
-
-    let finalCompanyData
+    const companyId = req.query["company-id"];
 
     try {
-        const { data: { user }} = await supabase.auth.getUser(token);
-        const userId = user?.id || "";
 
-        const { data: businessProfileData } = await supabase
-            .from('businessprofiles')
-            .select('type')
-            .eq('businessid', userId)
-            .single();
-
-        if (!businessProfileData) {
-            return res.status(404).json({ error: 'Business profile not found' });
-        }
-
-        if (businessProfileData?.type !== "SUPER_ADMIN") {
-          const { data: companyData, error: companyError } = await supabase
+        const { data: companyData, error: companyError } = await supabase
             .from('company_accounts')
             .select('id,company_members!inner(member_id,role)')
-            .eq('company_members.member_id', userId)
-            //.in('company_members.role', ['member', 'editor', 'admin']);
+            .eq('id', companyId)
+            .single();
 
-          if (companyError || !companyData) {
-              return res.status(404).json({ error: 'Company not found' });
-          }
 
-          finalCompanyData = companyData;
-            
-        } else {
-          const { data: companyData, error: companyError } = await supabase
-          .from('company_accounts')
-          .select('id')
-          .order('created_at', { ascending: false });
-
-          if (companyError || !companyData) {
+        if (companyError || !companyData) {
             return res.status(404).json({ error: 'Company not found' });
-          }
-
-          finalCompanyData = companyData;
         }
 
         const { 
@@ -64,13 +35,15 @@ export default async function handler(
         } = await supabase
             .from("experiences")
             .select("*")
+            .eq("owned_by", companyData?.id)
             .in("status", ["active", "inactive", "internal"])
-            .in("owned_by", finalCompanyData?.map((company: any) => company.id))
-            .order("created_at", { ascending: true });
+            .order("created_at", { ascending: false });
 
         if (experienceQueryError) {
             return res.status(400).json({ error: experienceQueryError.message });
         }
+
+        console.log("Experiences: ",data)
         
         return res.status(200).json({ data });
     } catch (err: any) {
@@ -85,9 +58,9 @@ export const swaggerBussExpGetAll = {
     text:
 `"/api/v1/experiences/business/members": {
       "get": {
-        "tags": ["B2B-experience"],
-        "summary": "Get all active experiences",
-        "description": "Retrieve all active experiences.",
+        "tags": ["B2B-experience-client-member"],
+        "summary": "Get all experiences for a client member",
+        "description": "Retrieve all experiences for a client member.",
         "security": [
           {
             "bearerAuth": []
