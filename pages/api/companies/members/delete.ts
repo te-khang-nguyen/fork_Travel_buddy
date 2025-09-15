@@ -12,7 +12,7 @@ export default async function handler(
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token!);
 
-    const { 'company-id': companyId, 'member-id': memberId } = req.query;
+    const { 'company-id': companyId, 'member-id': memberId, role } = req.query;
 
     if (!companyId) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -24,8 +24,8 @@ export default async function handler(
             .delete()
             .eq('member_id', memberId)
             .eq('company_id', companyId)
+            .eq('role', role)
             .select('*')
-            .single();
 
         if (error) {
           return res.status(500).json({ error: error.message });

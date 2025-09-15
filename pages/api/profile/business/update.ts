@@ -27,12 +27,13 @@ export default async function handler(
         const {
             data: updateData, 
             error: updateError
-        } = await supabase.from('businessprofiles')
-                    .update({
-                        ...data 
-                    })
-                .eq('businessid', user?.id)
-                    .select("id");
+        } = await supabase
+        .from('businessprofiles')
+        .update({
+            ...data 
+        })
+        .eq('businessid', user?.id)
+        .select("id");
 
         if (updateError) {
             return res.status(400).json({ error: updateError });

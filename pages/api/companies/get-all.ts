@@ -18,7 +18,8 @@ export default async function handler(
             error 
         } = await supabase
             .from("company_accounts")
-            .select(`id,name,created_at,description,business_owner:businessprofiles!company_accounts_owned_by_fkey(businessid,username,created)`) ;
+            .select(`id,name,created_at,description,business_owner:businessprofiles!company_accounts_owned_by_fkey(businessid,username,created)`)
+            .is('is_deleted', false);
 
         if (error) {
             return res.status(400).json({ error: error.message });

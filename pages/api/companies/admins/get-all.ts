@@ -12,36 +12,32 @@ export default async function handler(
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token!);
 
-    const { "company-id": companyId } = req.query;
-
     try {
-        if (!companyId) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
         const { data: companyData, error: companyError } = await supabase
             .from('company_accounts')
-            .select('*')
-            .eq('id', companyId)
+            .select('*, company_members(member_id,role,created_at,businessprofiles(username,email,businessname))')
             .is('is_deleted', false)
-            .single();
+            .eq('company_members.role', 'admin')
+            .order('created_at', { referencedTable: 'company_members', ascending: false })
+            .order('role', { referencedTable: 'company_members', ascending: false })
 
         if (companyError || !companyData) {
             return res.status(404).json({ error: 'Company not found' });
         }
 
-        const editors = companyData.editors;
+        const companyAdminPairs = companyData.map((company: any) => {
+          const companyAdmins = company.company_members.map((member: any) => ({
+            id: member.member_id,
+            role: member.role,
+            username: member.businessprofiles?.username,
+            email: member.businessprofiles?.email,
+            businessname: member.businessprofiles?.businessname,
+            created_at: member.created_at
+          }));
+          return { ...company, admins: companyAdmins };
+        });
 
-        const {data: editorProfiles, error: editorError} = await supabase
-            .from('businessprofiles')
-            .select('*')
-            .in('businessid', editors || []);
-        
-        if (editorError) {
-            return res.status(500).json({ error: editorError.message });
-        }
-        
-        return res.status(201).json({ data: editorProfiles });
+        return res.status(201).json({ data: companyAdminPairs });
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
     }

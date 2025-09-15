@@ -28,7 +28,7 @@ export default async function handler(
           .from("businessprofiles")
           .select(`
             *,
-            company_members(role,company_accounts(id,name))
+            company_members(role,company_accounts(id,name,is_deleted))
           `)
           .eq("businessid", user_id || user?.id)
           .is('company_members.is_deleted', false)
@@ -49,11 +49,15 @@ export default async function handler(
           || (lastSignInAt.valueOf() - createdAt.valueOf() < 5000)
           || userData?.username === null;
 
-        const isPartOf = userData?.company_members?.map((item) => (
-          {
-            ...item.company_accounts, role: item.role
-          }
-        )).map((item: {
+        const isPartOf = userData?.company_members?.filter((
+          item
+        ) => !item.company_accounts.is_deleted)
+          .map((item) => (
+            {
+              ...item.company_accounts, role: item.role
+            }
+          ))
+          .map((item: {
           id: string;
           name: string;
           role: string;

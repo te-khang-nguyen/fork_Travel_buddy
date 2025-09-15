@@ -29,7 +29,7 @@ export default async function handler(
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token!);
 
-    const { companyId, emails, redirect_link, name, role } = req.body;
+    const { companyId, members, redirect_link, role } = req.body;
 
     if (!companyId) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -46,7 +46,7 @@ export default async function handler(
             return res.status(404).json({ error: 'Company not found' });
         }
 
-        const newMembers = Promise.all(emails.map(async (email: string) => {
+        const newMembers = Promise.all(members.map(async ({ email, name }) => {
             // Create a account for the new user if it doesn't exist with randomized password
             const redirectLinkHost = (new URL(redirect_link)).host;
             const { data: userData, error: userError } = await supabase
@@ -61,14 +61,16 @@ export default async function handler(
                 .eq('email', email)
                 .single();
               
+            console.log(userData, userprofileData);
+              
             if (userError || !userData || userprofileError || !userprofileData) {
               const password = generateRandomPassword(8);
               let userCredential: any;
               if(!userprofileData && !userData){
-                const { data: { user } } = await supabase.auth.signUp({ email, password });
+                const { data: { user }, error: userError } = await supabase.auth.signUp({ email, password });
                 userCredential = user;
-                if (!user) {
-                    return res.status(400).json({ error: 'User not found' });
+                if (userError || !user) {
+                    return res.status(400).json({ error: userError });
                 }
               } else if (userprofileData && !userData){
                 userCredential = { id: userprofileData.userid };

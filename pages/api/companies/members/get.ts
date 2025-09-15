@@ -23,6 +23,7 @@ export default async function handler(
             .from('company_accounts')
             .select('*, company_members(member_id,role,created_at,businessprofiles(username,email,businessname))')
             .eq('id', companyId)
+            .is('is_deleted', false)
             .is('company_members.is_deleted', false)
             .order('created_at', { referencedTable: 'company_members', ascending: false })
             .order('role', { referencedTable: 'company_members', ascending: false })

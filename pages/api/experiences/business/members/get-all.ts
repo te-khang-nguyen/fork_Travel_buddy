@@ -49,6 +49,7 @@ export default async function handler(
           const { data: companyData, error: companyError } = await supabase
           .from('company_accounts')
           .select('id')
+          .is('is_deleted', false)
           .order('created_at', { ascending: false });
 
           if (companyError || !companyData) {

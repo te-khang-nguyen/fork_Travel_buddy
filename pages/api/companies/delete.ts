@@ -5,7 +5,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method !== 'PUT') {
+    if (req.method !== 'DELETE') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
@@ -13,46 +13,16 @@ export default async function handler(
     const supabase = createApiClient(token!);
 
     const companyId = req.query["company-id"];
-    const { name, description, owner_id } = req.body;
 
     if (!companyId) {
         return res.status(400).json({ error: 'Company ID is required' });
     }
 
-    if (!name) {
-        return res.status(400).json({ error: 'Missing required fields' });
-    }
-
     try {
-        const { data: companyData, error: companyError } = await supabase
-            .from('company_accounts')
-            .select('*')
-            .eq('id', companyId)
-            .single();
-
-        if (companyError || !companyData) {
-            return res.status(404).json({ error: 'Company not found' });
-        }
-
-        if(owner_id){
-            const { data: ownerData, error: ownerError } = await supabase
-                .from('businessprofiles')
-                .select('*')
-                .eq('id', owner_id)
-                .single();
-
-            if(ownerError || !ownerData){
-                return res.status(404).json({ error: 'Owner not found' });
-            }
-        }
-
         const { data, error } = await supabase
             .from('company_accounts')
-            .update({
-                name,
-                description,
-                owned_by: owner_id
-            })
+            .delete()
+            .eq('id', companyId)
             .select('*')
             .single();
 
