@@ -1,64 +1,72 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export const config = {
-    api: {
-        bodyParser: {
-            sizeLimit: '4.5mb', // Increase the body size limit (e.g., 5MB)
-        },
+  api: {
+    bodyParser: {
+      sizeLimit: '4.5mb', // Increase the body size limit (e.g., 5MB)
     },
+  },
 };
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-    if (req.method !== "PUT") {
-        return res.status(405).json({ error: "Method not allowed!" });
-    }
+  if (req.method !== "PUT") {
+    return res.status(405).json({ error: "Method not allowed!" });
+  }
 
-    const storyId = req.query?.["story-id"];
-    const updatedData = req.body;
-    const token = req.headers.authorization?.split(' ')[1];
-    const supabase = createApiClient(token!);
+  const storyId = req.query?.["story-id"];
+  const updatedData = req.body;
+
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: "Authorization token is required." });
+  }
+
+  const supabase = createApiClient(token);
+
+
+  try {
+    await supabase.auth.getUser();
 
     const {
-        data: { user },
-    } = await supabase.auth.getUser();
+      data: storyData,
+      error: storyErr
+    } = await supabase
+      .from('stories')
+      .update(updatedData)
+      .eq("id", storyId)
+      .select()
+      .single();
 
-    try {
-        const {
-            data: storyData,
-            error: storyErr
-        } = await supabase
-            .from('stories')
-            .update(updatedData)
-            .eq("id", storyId)
-            .select();
-            // .single();
-
-        if (storyErr) {
-            return res.status(400).json({ error: storyErr.message });
-        }
-
-        return res.status(200).json({ data: storyData });
-
-    } catch (err: any) {
-        return res.status(500).json({ error: err.message || "An error has occurred while updating location." });
+    if (storyErr) {
+      return res.status(400).json({ error: storyErr.message });
     }
+
+    return res.status(200).json({ data: storyData });
+
+  } catch (err: any) {
+    if (err.message?.includes('Invalid token') || err.message?.includes('Auth')) {
+      return res.status(401).json({ error: "Invalid or expired authorization token" });
+    }
+
+    return res.status(500).json({ error: err.message || "An error has occurred while updating location." });
+  }
 
 };
 
 
 // Workaround to enable Swagger on production 
 export const swaggerStoryUpdate = {
-  index:22, 
+  index: 22,
   text:
-`"/api/v1/story/": {
+    `"/api/v1/story/": {
       "put": {
         "tags": ["story"],
         "summary": "Update a story",
-        "description": "Update the details of an existing story.",
+        "description": "Update the details of an existing story. Requires valid authorization token from story creation.",
         "security": [
           {
             "bearerAuth": []
@@ -158,6 +166,19 @@ export const swaggerStoryUpdate = {
           },
           "400": {
             "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authorization token",
             "content": {
               "application/json": {
                 "schema": {

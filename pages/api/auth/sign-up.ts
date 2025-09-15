@@ -14,12 +14,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
-    
+
     if (authError || !authData) {
       return res.status(400).json({ error: authError?.message });
     }
 
-    const userId = authData.user?.id;  
+    const userId = authData.user?.id;
     const accessToken = authData.session?.access_token;
     const expiresIn = authData.session?.expires_at;
     const refreshToken = authData.session?.refresh_token;
@@ -27,17 +27,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const userProfile =
       firstName !== lastName
         ? {
-            email,
-            username: `${firstName}${lastName}`,
-            firstname: firstName,
-            lastname: lastName,
-            phone,
-          }
+          email,
+          username: `${firstName}${lastName}`,
+          firstname: firstName,
+          lastname: lastName,
+          phone,
+        }
         : {
-            email,
-            businessname: firstName || lastName || "",
-            phone: phone || "",
-          };
+          email,
+          businessname: firstName || lastName || "",
+          phone: phone || "",
+        };
 
     const { error: profileError } = await supabase
       .from("userprofiles")
@@ -47,8 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: profileError.message });
     }
 
-    // await supabase.auth.signOut();
-    return res.status(200).json({ 
+    return res.status(200).json({
       message: "User created successfully!",
       userId: userId,
       access_token: accessToken,
@@ -63,9 +62,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 // Workaround to enable Swagger on production 
 export const swaggerUserSignUp = {
-  index:1, 
+  index: 1,
   text:
-  `"/api/v1/auth/sign-up": {
+    `"/api/v1/auth/sign-up": {
     "post": {
       "tags": ["auth (for Web App)"],
       "summary": "Sign up a new user",

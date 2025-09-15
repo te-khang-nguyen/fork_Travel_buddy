@@ -4,10 +4,6 @@ import { memberCreationEmailTemplate } from "./email-template";
 import mailSendHandler from "./send-email";
 import crypto from 'crypto';
 
-const baseUrl = process.env.NODE_ENV === 'production' ? 
-process.env.NEXT_PUBLIC_BASE_URL
-: 'http://localhost:3000';
-
 export function generateRandomPassword(length: number): string {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
   let password = "";
@@ -33,7 +29,7 @@ export default async function handler(
     const token = req.headers.authorization?.split(' ')[1];
     const supabase = createApiClient(token!);
 
-    const { companyId, emails, redirect_link } = req.body;
+    const { companyId, emails, redirect_link, name, role } = req.body;
 
     if (!companyId) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -84,6 +80,7 @@ export default async function handler(
                         businessid: userCredential.id,
                         email,
                         businessname: `Member of ${companyData.name}`,
+                        username: name,
                     })
                     .select('*')
                     .single();
@@ -97,7 +94,8 @@ export default async function handler(
                     email,
                     password: !userprofileData ? password : undefined,
                     redirect_link,
-                    recovery_link: `https://${redirectLinkHost}/auth/forgot-password`
+                    recovery_link: `https://${redirectLinkHost}/auth/forgot-password`,
+                    role
                 });
 
                 const mailSendResp = await mailSendHandler({
@@ -105,7 +103,7 @@ export default async function handler(
                     senderName: 'Travel Buddy 8',
                     to: [email],
                     bcc: ["trac.nguyen@edge8.ai"],
-                    subject: 'Welcome to Travel Buddy 8 Trip report platform',
+                    subject: 'Welcome to Travel Buddy 8 Business Management Platform',
                     html: emailBodyNewMember,
                 });
 
@@ -121,7 +119,8 @@ export default async function handler(
               companyName: companyData.name,
               email,
               redirect_link,
-              recovery_link: `https://${redirectLinkHost}/auth/forgot-password`
+              recovery_link: `https://${redirectLinkHost}/auth/forgot-password`,
+              role
             });
 
             const mailSendResp = await mailSendHandler({
@@ -129,7 +128,7 @@ export default async function handler(
               senderName: 'Travel Buddy 8',
               to: [email],
               bcc: ["trac.nguyen@edge8.ai"],
-              subject: 'Welcome to Travel Buddy 8 Trip report platform',
+              subject: 'Welcome to Travel Buddy 8 Business Management Platform',
               html: emailBodyReinvite,
             });
 
@@ -150,7 +149,7 @@ export default async function handler(
             .insert(newMembersList.map((memberId) => ({
                 company_id: companyId,
                 member_id: memberId,
-                role: 'member'
+                role: role || 'member'
             })))
             .select('*');
 
@@ -168,15 +167,14 @@ export default async function handler(
 }
 
 
-//
 // Workaround to enable Swagger on production
 export const swaggerBussExpCreateEditor = {
     index: 13,
-    text: `"/api/v1/companies/editors/create": {
+    text: `"/api/v1/companies/members/": {
       "post": {
-        "tags": ["B2B-experience"],
-        "summary": "Create a new editor for a company",
-        "description": "Add a new editor to a company account.",
+        "tags": ["B2B-experience-client-member"],
+        "summary": "Create a new member for a company",
+        "description": "Add a new member to a company account.",
         "security": [
           {
             "bearerAuth": []
@@ -191,51 +189,40 @@ export const swaggerBussExpCreateEditor = {
                 "properties": {
                   "companyId": {
                     "type": "string",
-                    "description": "The ID of the company to which the editor will be added"
+                    "description": "The ID of the company to which the member will be added"
                   },
-                  "editorEmail": {
-                    "type": "string",
-                    "description": "The email of the editor to be added"
+                  "emails": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "The emails of the members to be added"
                   }
                 },
-                "required": ["companyId", "editorEmail"]
+                "required": ["companyId", "emails"]
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Editor created successfully",
+            "description": "Member created successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": { "type": "string" },
-                        "editors": {
-                          "type": "array",
-                          "items": { "type": "string" }
-                        },
-                        "created_by": { "type": "string" },
-                        "name": { "type": "string" },
-                        "primary_photo": { "type": "string" },
-                        "photos": {
-                          "type": "array",
-                          "items": { "type": "string" }
-                        },
-                        "address": { "type": "string" },
-                        "status": { "type": "string" },
-                        "created_at": { "type": "string" },
-                        "updated_at": { "type": "string" },
-                        "primary_keyword": { "type": "string" },
-                        "url_slug": { "type": "string" },
-                        "description": { "type": "string" },
-                        "thumbnail_description": { "type": "string" },
-                        "primary_video": { "type": "string" },
-                        "parent_destination": { "type": "string" }
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                        "properties": {
+                          "id": { "type": "string" },
+                          "member_id": { "type": "string" },
+                          "role": { "type": "string" },
+                          "created_at": { "type": "string" },
+                          "updated_at": { "type": "string" },
+                          "company_id": { "type": "string" },
+                          "is_deleted": { "type": "boolean" }
+                        }
                       }
                     }
                   }

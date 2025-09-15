@@ -1,7 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
 import { createClient } from "@supabase/supabase-js";
-import { StoryProps } from "@/libs/services/user/story";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
@@ -40,23 +39,23 @@ export default async function handler(
   try {
     // Insert story into database
     const { data, error } = await supabase
-            .from("stories")
-            .insert([{
-                status: "DRAFT",
-                user_id: user?.id,
-                experience_id: experience_id,
-                ...rest
-            }])
-            .select('id')
-            .single();
+      .from("stories")
+      .insert([{
+        status: "DRAFT",
+        user_id: user?.id,
+        experience_id: experience_id,
+        ...rest
+      }])
+      .select('id')
+      .single();
 
     if (error) {
       return res.status(400).json({ error: error.message });
     }
 
-    const { 
-      data: reportLink, 
-      error: reportLinkError 
+    const {
+      data: reportLink,
+      error: reportLinkError
     } = await supabaseSecondary
       .from("reporters_stories")
       .insert([{
@@ -68,12 +67,8 @@ export default async function handler(
       .single();
 
     if (reportLinkError) {
-      console.log(reportLinkError.message);
+      console.error(reportLinkError.message);
     }
-
-    // if (reportLink) {
-    //   console.log(reportLink);
-    // }
 
     const toMediaAssets = media.map((mediaItem) => ({
       user_id: user!.id,
@@ -97,7 +92,7 @@ export default async function handler(
     const {
       error: storyMediaErr
     } = await supabase.from("story_media")
-      .insert(mediaData.map((item)=>({
+      .insert(mediaData.map((item) => ({
         story_id: data?.id,
         media_id: item.id
       })))
@@ -127,7 +122,7 @@ export default async function handler(
 export const swaggerStoryCreate = {
   index: 19,
   text:
-`"/api/v1/story/ ": {
+    `"/api/v1/story/ ": {
   "post": {
     "tags": ["story"],
     "summary": "Create a new story",
