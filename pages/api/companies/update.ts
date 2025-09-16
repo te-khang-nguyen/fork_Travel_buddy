@@ -51,13 +51,14 @@ export default async function handler(
             .update({
                 name,
                 description,
-                owned_by: owner_id
+                // owned_by: owner_id
             })
+            .eq('id', company_id)
             .select('*')
             .single();
 
         if(error){
-            return res.status(500).json({ error: error });
+            return res.status(500).json({ error: error?.message });
         }
 
         return res.status(201).json({ data });
