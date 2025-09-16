@@ -43,11 +43,23 @@ export default async function handler(
             .single();
 
         if (companyError || !companyData) {
-            return res.status(404).json({ error: 'Company not found' });
+            return res.status(404).json({ error: 'Client not found' });
         }
 
         const newMembers = Promise.all(members.map(async ({ email, name }) => {
             // Create a account for the new user if it doesn't exist with randomized password
+            const { data: companyMemberData, error: companyMemberError } = await supabase
+                .from('company_members')
+                .select('*')
+                .eq('company_id', companyId)
+                .eq('member_id', email)
+                .eq('role', role)
+                .single();
+            
+            if (companyMemberError || companyMemberData) {
+                return res.status(400).json({ error: `Member is already assigned as ${role} for this client` });
+            }
+            
             const redirectLinkHost = (new URL(redirect_link)).host;
             const { data: userData, error: userError } = await supabase
                 .from('businessprofiles')

@@ -58,22 +58,26 @@ export default async function handler(
             }
           ))
           .map((item: {
-          id: string;
-          name: string;
-          role: string;
-        }) => {
-          if (company) {
-            if (item.name === company) {
-              return item;
+            id: string;
+            name: string;
+            role: string;
+          }) => {
+            if (company) {
+              if (item.name === company) {
+                return item;
+              }
+              return null;
             }
-            return null;
-          }
-          return item;
-        }).filter((item: {
-          id: string;
-          name: string;
-          role: string;
-        }) => item !== null);
+            return item;
+          }).filter((item: {
+            id: string;
+            name: string;
+            role: string;
+          }) => item !== null);
+
+        const uniqueCompanies = isPartOf.filter((item, index) => isPartOf.findIndex((t) => t.id === item.id) === index);
+
+        console.log(uniqueCompanies);
 
         const {company_members, ...userProfile} = userData;
 
