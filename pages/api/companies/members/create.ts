@@ -31,8 +31,18 @@ export default async function handler(
 
     const { companyId, members, redirect_link, role } = req.body;
 
-    if (!companyId) {
+    if (!companyId || !redirect_link || !role) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    if (!members || members.length === 0) {
+      return res.status(400).json({ error: 'Missing members' });
+    }
+
+    const checkMembersWithoutEmail = members.filter((member) => !member.email);
+
+    if (checkMembersWithoutEmail.length > 0) {
+      return res.status(400).json({ error: 'Missing email for some members' });
     }
 
     try {
@@ -47,19 +57,6 @@ export default async function handler(
         }
 
         const newMembers = Promise.all(members.map(async ({ email, name }) => {
-            // Create a account for the new user if it doesn't exist with randomized password
-            const { data: companyMemberData, error: companyMemberError } = await supabase
-                .from('company_members')
-                .select('*')
-                .eq('company_id', companyId)
-                .eq('member_id', email)
-                .eq('role', role)
-                .single();
-            
-            if (companyMemberError || companyMemberData) {
-                return res.status(400).json({ error: `Member is already assigned as ${role} for this client` });
-            }
-            
             const redirectLinkHost = (new URL(redirect_link)).host;
             const { data: userData, error: userError } = await supabase
                 .from('businessprofiles')
@@ -67,7 +64,7 @@ export default async function handler(
                 .eq('email', email)
                 .single();
             
-            const { data: userprofileData, error: userprofileError } = await supabase
+            const { data: userprofileData } = await supabase
                 .from('userprofiles')
                 .select('*')
                 .eq('email', email)
@@ -75,16 +72,16 @@ export default async function handler(
               
             console.log(userData, userprofileData);
               
-            if (userError || !userData || userprofileError || !userprofileData) {
+            if (userError || !userData) {
               const password = generateRandomPassword(8);
               let userCredential: any;
-              if(!userprofileData && !userData){
-                const { data: { user }, error: userError } = await supabase.auth.signUp({ email, password });
+              if(!userprofileData){
+                const { data: { user }, error } = await supabase.auth.signUp({ email, password });
                 userCredential = user;
-                if (userError || !user) {
-                    return res.status(400).json({ error: userError });
+                if (error || !user) {
+                    return res.status(400).json({ error: error });
                 }
-              } else if (userprofileData && !userData){
+              } else {
                 userCredential = { id: userprofileData.userid };
               }
                 
@@ -127,6 +124,17 @@ export default async function handler(
                 }
                 
                 return newUser.businessid;
+            }
+
+            const { data: companyMemberData } = await supabase
+                .from('company_members')
+                .select('*')
+                .eq('company_id', companyId)
+                .eq('member_id', userData.businessid)
+                .eq('role', role)
+            
+            if (companyMemberData && companyMemberData.length > 0) {
+              return res.status(400).json({ error: `Member is already assigned as ${role} for this client` });
             }
 
             const emailBodyReinvite = memberCreationEmailTemplate({
