@@ -1,43 +1,43 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-    if (req.method !== 'PUT') {
-        return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'PUT') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const token = req.headers.authorization?.split(' ')[1];
+  const supabase = createApiClient(token!);
+
+  const { 'company-id': companyId, role, 'member-id': memberId } = req.body;
+
+  if (!companyId) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('company_members')
+      .update({
+        role
+      })
+      .eq('member_id', memberId)
+      .eq('company_id', companyId)
+      .select('*')
+      .single();
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
     }
 
-    const token = req.headers.authorization?.split(' ')[1];
-    const supabase = createApiClient(token!);
+    return res.status(201).json({ data });
 
-    const { 'company-id': companyId, 'role': role, 'member-id': memberId } = req.body;
-
-    if (!companyId) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    try {
-        const { data, error } = await supabase
-            .from('company_members')
-            .update({
-                role: role
-            })
-            .eq('member_id', memberId)
-            .eq('company_id', companyId)
-            .select('*')
-            .single();
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        return res.status(201).json({ data });
-
-    } catch (error) {
-        return res.status(500).json({ error: error });
-    }
+  } catch (error) {
+    return res.status(500).json({ error: error });
+  }
 }
 
 

@@ -1,7 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { supabase, supabase_admin } from "@/libs/supabase/supabase_client";
+import { supabase } from "@/libs/supabase/supabase_client";
 import { generateRandomPassword } from "@/pages/api/companies/members/create";
 import mailSendHandler from "@/pages/api/companies/members/send-email";
+import { NextApiRequest, NextApiResponse } from "next";
 
 
 const userCreationEmailTemplate = ({
@@ -129,7 +129,7 @@ const userCreationEmailTemplate = ({
 </html>
   `;
 }
-  
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -157,13 +157,13 @@ export default async function handler(
     if (!visitorData) {
       if (!company_id && !experience_id) {
         const { data, error } = await supabase
-        .from("visitors")
-        .insert({
-          email,
-          language,
-        })
-        .select("*")
-        .single();
+          .from("visitors")
+          .insert({
+            email,
+            language,
+          })
+          .select("*")
+          .single();
 
         if (error) {
           console.log(error.message);
@@ -181,14 +181,14 @@ export default async function handler(
 
       if (company_id) {
         const { data, error } = await supabase
-        .from("visitors")
-        .insert({
-          email,
-          language,
-          company_id,
-        })
-        .select("*")
-        .single();
+          .from("visitors")
+          .insert({
+            email,
+            language,
+            company_id,
+          })
+          .select("*")
+          .single();
 
         if (error) {
           console.log(error.message);
@@ -196,25 +196,25 @@ export default async function handler(
 
         visitorFinalData = data;
 
-      } 
-      
+      }
+
       if (experience_id) {
         const { data: expData } = await supabase
-        .from("experiences")
-        .select("*")
-        .eq("id", experience_id)
-        .single();
-      
-      const { data, error } = await supabase
-        .from("visitors")
-        .insert({
-          experience_id,
-          email,
-          language,
-          company_id: expData.owned_by,
-        })
-        .select("*")
-        .single();
+          .from("experiences")
+          .select("*")
+          .eq("id", experience_id)
+          .single();
+
+        const { data, error } = await supabase
+          .from("visitors")
+          .insert({
+            experience_id,
+            email,
+            language,
+            company_id: expData.owned_by,
+          })
+          .select("*")
+          .single();
 
         if (error) {
           console.log(error.message);
@@ -233,13 +233,13 @@ export default async function handler(
       .select('*')
       .eq('email', email)
       .single();
-    
+
     userProfileUpToDate = userprofileData;
 
     // If not, create a new user and profile
     if (!userProfileUpToDate) {
       let companyName;
-      if(company_id && !experience_id){
+      if (company_id && !experience_id) {
         const { data: company } = await supabase
           .from('company_accounts')
           .select('*')
@@ -253,7 +253,7 @@ export default async function handler(
         companyName = company.name;
       }
 
-      if(!company_id && experience_id){
+      if (!company_id && experience_id) {
         const { data: experience } = await supabase
           .from('experiences')
           .select('id,company_accounts(name)')
@@ -272,11 +272,11 @@ export default async function handler(
       }
 
       const password = generateRandomPassword(8);
-                    
+
       const { data: { user, session }, error: userError } = await supabase.auth.signUp({ email, password });
 
       if (userError) {
-          return res.status(400).json({ error: userError.message });
+        return res.status(400).json({ error: userError.message });
       }
 
       const userId = user?.id;
@@ -324,10 +324,8 @@ export default async function handler(
       });
 
       if (mailSendError) {
-        console.log(mailSendError);
+        console.error(mailSendError);
       }
-
-      console.log(mailSendResp);
 
       return res.status(200).json({
         data: {

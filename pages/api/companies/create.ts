@@ -1,59 +1,57 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const token = req.headers.authorization?.split(' ')[1];
+  const supabase = createApiClient(token!);
+
+  const { name, description } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const { data: companyData, error: companyError } = await supabase
+      .from('company_accounts')
+      .select('*')
+      .eq('name', name)
+      .single();
+
+    if (!companyError && companyData) {
+      return res.status(404).json({ error: 'Company already exists' });
     }
 
-    const token = req.headers.authorization?.split(' ')[1];
-    const supabase = createApiClient(token!);
+    const { data, error } = await supabase
+      .from('company_accounts')
+      .insert({
+        name,
+        description,
+      })
+      .select('*')
+      .single();
 
-    const { name, description } = req.body;
-
-    if (!name) {
-        return res.status(400).json({ error: 'Missing required fields' });
+    if (error) {
+      return res.status(500).json({ error: error });
     }
 
-    try {
-        const { data: companyData, error: companyError } = await supabase
-            .from('company_accounts')
-            .select('*')
-            .eq('name', name)
-            .single();
-
-        if (!companyError && companyData) {
-            return res.status(404).json({ error: 'Company already exists' });
-        }
-
-        const { data, error } = await supabase
-            .from('company_accounts')
-            .insert({
-                name,
-                description,
-            })
-            .select('*')
-            .single();
-
-        if(error){
-            return res.status(500).json({ error: error });
-        }
-
-        return res.status(201).json({ data });
-    } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
-    }
+    return res.status(201).json({ data });
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 }
 
-
-//
 // Workaround to enable Swagger on production
 export const swaggerBussExpCreateEditor = {
     index: 13,
-    text: `"/api/v1/companies/": {
+    text: `"/api/v1/companies/  ": {
       "post": {
         "tags": ["B2B-experience-client"],
         "summary": "Create a new company",

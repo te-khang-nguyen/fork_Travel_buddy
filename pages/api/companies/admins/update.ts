@@ -1,5 +1,5 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
     req: NextApiRequest,
@@ -13,10 +13,10 @@ export default async function handler(
     const supabase = createApiClient(token!);
 
     const { 'member-id': memberId } = req.query;
-    const payload = req.body;
+    const payload = req.body;  // TODO: Validate `payload.members.email`
 
     if (!memberId) {
-      return res.status(400).json({ error: 'Missing required fields' });
+        return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
@@ -28,7 +28,7 @@ export default async function handler(
             .single();
 
         if (error) {
-          return res.status(500).json({ error: error.message });
+            return res.status(500).json({ error: error.message });
         }
 
         return res.status(201).json({ data });

@@ -41,7 +41,7 @@ export default async function handler(
 // Workaround to enable Swagger on production
 export const swaggerBussExpCreateEditor = {
     index: 13,
-    text: `"/api/v1/companies/": {
+    text: `"/api/v1/companies/ ": {
       "put": {
         "tags": ["B2B-experience-client"],
         "summary": "Update a company",

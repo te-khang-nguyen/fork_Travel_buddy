@@ -1,54 +1,74 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { createApiClient } from "@/libs/supabase/supabaseApi";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-    if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const token = req.headers.authorization?.split(' ')[1];
+  const supabase = createApiClient(token!);
+
+  try {
+    const { data: superAdmins, error: superAdminsErr } = await supabase
+      .from('company_members')
+      .select('member_id')
+      .eq('company_id', 'c7ae75f1-96f0-409d-b5e7-24ce7d304d5a')  // Filter `Edge8 AI`
+      .eq('businessprofiles.type', 'SUPER_ADMIN')
+      .is('is_deleted', false);
+    if (superAdminsErr) {
+      console.error('Unable to select SUPER_ADMIN role:', superAdminsErr);
     }
 
-    const token = req.headers.authorization?.split(' ')[1];
-    const supabase = createApiClient(token!);
+    const superAdminsIds = superAdmins?.map(member => member.member_id) || [];
 
-    try {
-        const { data: companyData, error: companyError } = await supabase
-            .from('company_accounts')
-            .select('*, company_members(member_id,role,created_at,businessprofiles(username,email,businessname))')
-            .is('is_deleted', false)
-            .eq('company_members.role', 'admin')
-            .order('created_at', { referencedTable: 'company_members', ascending: false })
-            .order('role', { referencedTable: 'company_members', ascending: false })
+    const { error: superAdminUpdateErr } = await supabase
+      .from('company_members')
+      .update({ role: 'admin' })
+      .in('member_id', superAdminsIds);
 
-        if (companyError || !companyData) {
-            return res.status(404).json({ error: 'Company not found' });
-        }
-
-        const companyAdminPairs = companyData.map((company: any) => {
-          const companyAdmins = company.company_members.map((member: any) => ({
-            id: member.member_id,
-            role: member.role,
-            username: member.businessprofiles?.username,
-            email: member.businessprofiles?.email,
-            businessname: member.businessprofiles?.businessname,
-            created_at: member.created_at
-          }));
-          return { ...company, admins: companyAdmins };
-        });
-
-        return res.status(201).json({ data: companyAdminPairs });
-    } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+    if (superAdminUpdateErr) {
+      console.error(`Error updating "admin" role for "SUPER_ADMIN":`, superAdminUpdateErr);
     }
+
+    const { data: companyData, error: companyError } = await supabase
+      .from('company_accounts')
+      .select('*, company_members(member_id,role,created_at,businessprofiles(username,email,businessname))')
+      .is('is_deleted', false)
+      .eq('company_members.role', 'admin')
+      .order('created_at', { referencedTable: 'company_members', ascending: false })
+      .order('role', { referencedTable: 'company_members', ascending: false })
+
+    if (companyError || !companyData) {
+      return res.status(404).json({ error: 'Company not found' });
+    }
+
+    const companyAdminPairs = companyData.map((company: any) => {
+      const companyAdmins = company.company_members.map((member: any) => ({
+        id: member.member_id,
+        role: member.role,
+        username: member.businessprofiles?.username,
+        email: member.businessprofiles?.email,
+        businessname: member.businessprofiles?.businessname,
+        created_at: member.created_at
+      }));
+      return { ...company, admins: companyAdmins };
+    });
+
+    return res.status(201).json({ data: companyAdminPairs });
+  } catch (error) {
+    console.error('Error when getting admins for companies:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 }
 
-
-//
 // Workaround to enable Swagger on production
 export const swaggerBussExpCreateEditor = {
-    index: 13,
-    text: `"/api/v1/companies/editors/create": {
+  index: 13,
+  text: `"/api/v1/companies/editors/create": {
       "post": {
         "tags": ["B2B-experience"],
         "summary": "Create a new editor for a company",
