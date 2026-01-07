@@ -26,7 +26,7 @@ export default async function handler(
             .from("company_accounts")
             .select(`
                 id,name,created_at,
-                description,
+                description,slogan,
                 business_owner:businessprofiles!company_accounts_owned_by_fkey(businessid,username,created),
                 banner:media_assets!company_accounts_banner_media_id_fkey(url),
                 logo:media_assets!company_accounts_logo_id_fkey(url)
